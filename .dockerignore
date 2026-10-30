@@ -1,0 +1,8 @@
+.git
+.env
+.env.*
+!.env.example
+.song-data
+node_modules
+*.zip
+.DS_Store

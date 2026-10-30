@@ -1,4 +1,4 @@
-import {AppError,buildMusicPrompt,extractAudio} from './lib.mjs';
+import {AppError,buildMusicPrompt,buildLyricPrompt,extractAudio} from './lib.mjs';
 
 const GOOGLE_URL = 'https://generativelanguage.googleapis.com/v1beta/interactions';
 const ELEVEN_BASE = 'https://api.elevenlabs.io/v1';
@@ -18,6 +18,22 @@ async function apiFetch(url, opts, timeout = 180_000) {
     throw new AppError(502,`외부 AI 서비스 오류 (${new URL(url).hostname}, HTTP ${resp.status}). API 키·권한·요금제·요청 규격을 확인하세요.`);
   }
   return resp;
+}
+
+export async function makeLyrics(input,env=process.env) {
+  const key=requireKey(env,'GEMINI_API_KEY');
+  const model=env.GEMINI_LYRICS_MODEL || 'gemini-2.5-flash';
+  if(!/^[a-zA-Z0-9_.-]{3,80}$/.test(model)) throw new AppError(500,'잘못된 가사 모델 이름입니다.');
+  const response=await apiFetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,{
+    method:'POST', headers:{'Content-Type':'application/json','x-goog-api-key':key},
+    body:JSON.stringify({contents:[{parts:[{text:buildLyricPrompt(input)}]}],generationConfig:{temperature:0.65,maxOutputTokens:1300}})
+  },60_000);
+  const result=await response.json();
+  const text=(result?.candidates?.[0]?.content?.parts ?? []).map(p=>p.text??'').join('\n').trim()
+    .replace(/^```(?:text|markdown)?\s*/i,'').replace(/\s*```$/,'').trim();
+  if(text.length<12 || text.length>1400 || !/\[Verse\]|\[Chorus\]/i.test(text))
+    throw new AppError(502,'가사 생성 결과가 예상 형식과 다릅니다. 다시 생성하거나 직접 작성해 주세요.');
+  return text;
 }
 
 export async function makeMusic(input, env=process.env) {

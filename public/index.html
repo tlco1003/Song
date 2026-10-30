@@ -21,15 +21,21 @@
           <textarea id="story" maxlength="1500" rows="6" placeholder="예) 우리가 처음 만난 어느 봄날, 서툴지만 함께 걸었던 시간들이 아직도 선명해. 너에게 꼭 전하고 싶은 말이 있어…"></textarea>
           <div class="field-foot"><span>💌 <button class="text-example" type="button" id="fillExample">예시 사연 넣기</button></span><span id="storyCount">0 / 1500</span></div>
           <div class="two-fields"><div><label class="field-label" for="genre">음악 장르</label><select id="genre"><option>발라드</option><option>인디팝</option><option>R&B</option><option>어쿠스틱</option><option>K-POP</option><option>트로트</option></select></div><div><label class="field-label" for="mood">노래 분위기</label><select id="mood"><option>따뜻한</option><option>설레는</option><option>감동적인</option><option>애절한</option><option>희망찬</option><option>신나는</option></select></div></div>
+          <div class="lyrics-editor">
+            <div class="field-foot"><label class="field-label" for="draftLyrics">부를 가사 <span>직접 수정 가능 · 30초 분량 권장</span></label></div>
+            <button class="outline-btn" type="button" id="generateLyrics">✦ 내 사연으로 AI 가사 초안 만들기</button>
+            <textarea id="draftLyrics" rows="8" maxlength="1400" placeholder="[Verse]&#10;...&#10;&#10;[Chorus]&#10;..." aria-label="노래에 사용할 가사"></textarea>
+            <p class="section-sub" id="lyricsNotice" role="status">AI 가사는 실제 Gemini API로 생성됩니다. API 키가 없다면 직접 가사를 입력할 수 있어요. 가사 생성 시 별도 호출 비용이 발생할 수 있습니다.</p>
+          </div>
           <button class="primary-btn" type="button" id="toVoice">다음 · 내 목소리 녹음하기 <span>→</span></button>
         </section>
         <section id="stage2" class="stage hidden"><h2>어떤 목소리를<br/>가지고 있나요?</h2><p class="section-sub">조용한 곳에서 평소 목소리로 30~60초 정도 이야기해 주세요. 고음으로 노래할 필요는 없어요.</p>
-          <div class="record-card"><div class="record-visual"><div class="mic-core">♬</div><div class="record-waves" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div><span class="record-time" id="recordTime">00:00</span><span class="record-help" id="recordHelp">녹음을 시작하면 마이크 접근 권한을 요청해요.</span>
+          <div class="record-card"><div class="record-visual"><div class="mic-core">♬</div><div class="record-waves" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div><span class="record-time" id="recordTime">00:00</span><span class="record-help" id="recordHelp">녹음은 HTTPS 또는 localhost 브라우저에서만 가능하며, 채팅 내 삽입 화면에서는 차단될 수 있어요.</span>
             <div class="record-actions"><button id="recordBtn" type="button" class="record-btn">● 녹음 시작</button><button id="stopBtn" class="outline-btn hidden" type="button">■ 녹음 끝내기</button></div><audio id="voicePreview" controls class="audio-preview hidden"></audio>
           </div>
           <label class="file-alt">또는 파일 선택 <input id="voiceFile" type="file" accept="audio/webm,audio/mp4,audio/mpeg,audio/wav,audio/ogg"/></label>
           <label class="consent"><input id="consent" type="checkbox"/> <span><strong>제가 직접 녹음한 본인 목소리입니다.</strong><br/>음성 샘플이 음색 복제 목적으로 ElevenLabs API에 전송되며, 해당 제공업체의 보관·처리 정책이 적용됨에 동의합니다. 실험 후 음성 프로필을 삭제할 수 있습니다.</span></label>
-          <div id="voiceNotice" role="status" class="notice hidden"></div>
+          <div id="voiceNotice" role="status" class="notice hidden"></div><p class="section-sub" id="micDiagnostic" role="status">마이크 사용 환경 확인 중…</p>
           <div class="button-row"><button id="backToStory" class="outline-btn" type="button">← 이전</button><button id="registerVoice" class="primary-btn" type="button">내 목소리 등록하기 <span>→</span></button></div>
         </section>
         <section id="stage3" class="stage hidden"><h2>이제 당신의<br/>노래를 만들어요.</h2><p class="section-sub">작곡부터 목소리 변환, 반주 믹싱까지 단계별로 진행돼요.</p>
@@ -37,7 +43,7 @@
           <div class="progress-list" id="progressList"><div class="progress-item" data-step="0"><span>01</span> AI 작곡 · 가창 제작</div><div class="progress-item" data-step="1"><span>02</span> 보컬 · 반주 분리</div><div class="progress-item" data-step="2"><span>03</span> 내 목소리로 변환</div><div class="progress-item" data-step="3"><span>04</span> 마지막 믹싱</div></div>
           <div id="jobMessage" class="notice muted-note">실제 API 요청에는 이용료가 발생할 수 있어요. 생성 버튼을 누르면 유료 작업이 시작됩니다.</div>
           <button class="primary-btn" id="startJob" type="button">30초 노래 만들기 <span>✧</span></button>
-          <div id="results" class="results hidden"><h3>완성된 오디오</h3><div id="audioGrid" class="audio-grid"></div><div class="tiny" id="lyricsOutput"></div><button id="deleteJob" type="button" class="danger-link">이 작업의 로컬 음원 모두 삭제</button></div>
+          <div id="results" class="results hidden"><h3>완성된 오디오</h3><div id="audioGrid" class="audio-grid"></div><div class="tiny"><strong>작곡에 전달한 가사:</strong><pre id="requestedLyricsOutput" style="white-space:pre-wrap"></pre><strong>음악 모델에서 돌려준 가사·구조:</strong><pre id="lyricsOutput" style="white-space:pre-wrap"></pre><p id="lyricsDisclaimer">음악 모델이 입력 가사를 정확히 발음했는지는 실제 음원 청취로 검증해야 합니다.</p></div><button id="deleteJob" type="button" class="danger-link">이 작업의 로컬 음원 모두 삭제</button></div>
           <div class="button-row"><button id="backToVoice" class="outline-btn" type="button">← 목소리 다시 확인</button><button id="deleteVoice" class="danger-link" type="button">외부 AI 음성 프로필 삭제</button></div>
         </section>
       </div>

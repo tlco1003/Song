@@ -2,8 +2,8 @@ import http from 'node:http';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {readFile,mkdir,writeFile,rm,stat} from 'node:fs/promises';
-import {AppError,validateSong,validateRecording,validateVoiceId,newId,publicJob} from './lib.mjs';
-import {cloneVoice,removeVoice,makeMusic,separateStems,convertVoice} from './providers.mjs';
+import {AppError,validateSong,validateLyricInput,validateRecording,validateVoiceId,newId,publicJob} from './lib.mjs';
+import {cloneVoice,removeVoice,makeLyrics,makeMusic,separateStems,convertVoice} from './providers.mjs';
 import {unzipStems,mixVocals} from './audio.mjs';
 
 // Local-first prototype: no sign-up, database, or hosted multi-tenant identity.
@@ -54,6 +54,11 @@ async function handle(req,res) {
   if(pathname.startsWith('/api/')) {
     auth(req);
     if(req.method==='GET' && pathname==='/api/config')return respond(res,200,{musicReady:!!process.env.GEMINI_API_KEY,voiceReady:!!process.env.ELEVENLABS_API_KEY,ffmpegRequired:true,localOnly:['127.0.0.1','localhost','::1'].includes(host),ttlMinutes:ttlMin});
+    if(req.method==='POST' && pathname==='/api/lyrics') {
+      limited(req.socket.remoteAddress??'local');
+      const input=validateLyricInput(await jsonBody(req,10_000));
+      return respond(res,200,{lyrics:await makeLyrics(input)});
+    }
     if(req.method==='POST' && pathname==='/api/voices') {
       limited(req.socket.remoteAddress??'local');const sample=validateRecording(await jsonBody(req));
       const created=await cloneVoice(sample);return respond(res,201,created);
@@ -66,7 +71,7 @@ async function handle(req,res) {
       if(!process.env.GEMINI_API_KEY || !process.env.ELEVENLABS_API_KEY)throw new AppError(503,'GEMINI_API_KEY 및 ELEVENLABS_API_KEY가 모두 필요합니다.');
       if(running>=2)throw new AppError(429,'동시 생성 작업이 많습니다. 이전 작업이 끝난 후 다시 시도해 주세요.');
       const input=validateSong(await jsonBody(req,10_000));
-      const job={id:newId(),createdAt:Date.now(),status:'queued',stage:'준비 중',error:null,assets:{},lyrics:''};jobs.set(job.id,job);
+      const job={id:newId(),createdAt:Date.now(),status:'queued',stage:'준비 중',error:null,assets:{},lyrics:'',requestedLyrics:input.lyrics};jobs.set(job.id,job);
       void runJob(job,input);
       return respond(res,202,publicJob(job));
     }

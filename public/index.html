@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#101225"/><meta name="description" content="당신의 사연과 목소리로 만드는 특별한 노래, SONG"/>
+<title>SONG — 너의 이야기가 노래가 되는 순간</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"/><link rel="stylesheet" href="/styles.css"/></head>
+<body>
+  <div class="ambient a1"></div><div class="ambient a2"></div>
+  <header class="topbar shell"><a href="/" class="wordmark"><span class="logo-mark">♪</span> song<span class="logo-dot">.</span></a><div class="top-right"><span class="pill"><span class="status-dot"></span> PRIVATE STUDIO / MVP</span><button class="help-link" id="openInfo" type="button">사용 안내 <span aria-hidden="true">↗</span></button></div></header>
+  <main class="shell">
+    <section class="intro"><div class="eyebrow"><span class="eyebrow-line"></span> YOUR STORY. YOUR VOICE. YOUR SONG.</div><h1>내 이야기가<br/><em>나의 노래</em>가 되는 순간.</h1><p class="intro-sub">노래를 잘 부르지 못해도 괜찮아요. 사연을 들려주고 목소리를 남겨 주세요.<br class="desktop"/> AI가 당신만의 30초 노래를 만들어요.</p></section>
+    <section class="studio" aria-label="노래 만들기 스튜디오">
+      <aside class="step-rail"><div class="step-rail-head">CREATE A SONG <span>01 / 03</span></div>
+        <div class="step-nav current" id="nav1"><span class="step-no">01</span><div><strong>이야기 쓰기</strong><small>노래에 담을 추억</small></div></div>
+        <div class="rail-line"></div><div class="step-nav" id="nav2"><span class="step-no">02</span><div><strong>내 목소리</strong><small>나만의 음색 등록</small></div></div>
+        <div class="rail-line"></div><div class="step-nav" id="nav3"><span class="step-no">03</span><div><strong>노래 완성</strong><small>AI 가창 & 믹싱</small></div></div>
+        <div class="rail-bottom"><div class="sound-art" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span>MADE WITH YOUR HEART</span></div>
+      </aside>
+      <div class="main-panel">
+        <div class="panel-header"><span class="kicker" id="stageLabel">STEP 01 · THE STORY</span><span class="muted" id="setupState">연결 확인 중…</span></div>
+        <section id="stage1" class="stage"><h2>어떤 이야기를<br/>노래에 담을까요?</h2><p class="section-sub">마음에 간직한 순간을 편하게 적어 주세요. 길지 않아도 괜찮아요.</p>
+          <label for="story" class="field-label">당신의 이야기 <span>최소 10자</span></label>
+          <textarea id="story" maxlength="1500" rows="6" placeholder="예) 우리가 처음 만난 어느 봄날, 서툴지만 함께 걸었던 시간들이 아직도 선명해. 너에게 꼭 전하고 싶은 말이 있어…"></textarea>
+          <div class="field-foot"><span>💌 <button class="text-example" type="button" id="fillExample">예시 사연 넣기</button></span><span id="storyCount">0 / 1500</span></div>
+          <div class="two-fields"><div><label class="field-label" for="genre">음악 장르</label><select id="genre"><option>발라드</option><option>인디팝</option><option>R&B</option><option>어쿠스틱</option><option>K-POP</option><option>트로트</option></select></div><div><label class="field-label" for="mood">노래 분위기</label><select id="mood"><option>따뜻한</option><option>설레는</option><option>감동적인</option><option>애절한</option><option>희망찬</option><option>신나는</option></select></div></div>
+          <button class="primary-btn" type="button" id="toVoice">다음 · 내 목소리 녹음하기 <span>→</span></button>
+        </section>
+        <section id="stage2" class="stage hidden"><h2>어떤 목소리를<br/>가지고 있나요?</h2><p class="section-sub">조용한 곳에서 평소 목소리로 30~60초 정도 이야기해 주세요. 고음으로 노래할 필요는 없어요.</p>
+          <div class="record-card"><div class="record-visual"><div class="mic-core">♬</div><div class="record-waves" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div><span class="record-time" id="recordTime">00:00</span><span class="record-help" id="recordHelp">녹음을 시작하면 마이크 접근 권한을 요청해요.</span>
+            <div class="record-actions"><button id="recordBtn" type="button" class="record-btn">● 녹음 시작</button><button id="stopBtn" class="outline-btn hidden" type="button">■ 녹음 끝내기</button></div><audio id="voicePreview" controls class="audio-preview hidden"></audio>
+          </div>
+          <label class="file-alt">또는 파일 선택 <input id="voiceFile" type="file" accept="audio/webm,audio/mp4,audio/mpeg,audio/wav,audio/ogg"/></label>
+          <label class="consent"><input id="consent" type="checkbox"/> <span><strong>제가 직접 녹음한 본인 목소리입니다.</strong><br/>음성 샘플이 음색 복제 목적으로 ElevenLabs API에 전송되며, 해당 제공업체의 보관·처리 정책이 적용됨에 동의합니다. 실험 후 음성 프로필을 삭제할 수 있습니다.</span></label>
+          <div id="voiceNotice" role="status" class="notice hidden"></div>
+          <div class="button-row"><button id="backToStory" class="outline-btn" type="button">← 이전</button><button id="registerVoice" class="primary-btn" type="button">내 목소리 등록하기 <span>→</span></button></div>
+        </section>
+        <section id="stage3" class="stage hidden"><h2>이제 당신의<br/>노래를 만들어요.</h2><p class="section-sub">작곡부터 목소리 변환, 반주 믹싱까지 단계별로 진행돼요.</p>
+          <div class="song-summary"><div class="album-icon">♫</div><div><strong id="summaryGenre">발라드 · 따뜻한</strong><p id="summaryStory">내 이야기를 노래로</p></div><span class="mini-tag" id="voiceTag">목소리 등록됨</span></div>
+          <div class="progress-list" id="progressList"><div class="progress-item" data-step="0"><span>01</span> AI 작곡 · 가창 제작</div><div class="progress-item" data-step="1"><span>02</span> 보컬 · 반주 분리</div><div class="progress-item" data-step="2"><span>03</span> 내 목소리로 변환</div><div class="progress-item" data-step="3"><span>04</span> 마지막 믹싱</div></div>
+          <div id="jobMessage" class="notice muted-note">실제 API 요청에는 이용료가 발생할 수 있어요. 생성 버튼을 누르면 유료 작업이 시작됩니다.</div>
+          <button class="primary-btn" id="startJob" type="button">30초 노래 만들기 <span>✧</span></button>
+          <div id="results" class="results hidden"><h3>완성된 오디오</h3><div id="audioGrid" class="audio-grid"></div><div class="tiny" id="lyricsOutput"></div><button id="deleteJob" type="button" class="danger-link">이 작업의 로컬 음원 모두 삭제</button></div>
+          <div class="button-row"><button id="backToVoice" class="outline-btn" type="button">← 목소리 다시 확인</button><button id="deleteVoice" class="danger-link" type="button">외부 AI 음성 프로필 삭제</button></div>
+        </section>
+      </div>
+    </section>
+    <section class="trust"><div><span class="trust-num">01</span><strong>당신의 사연</strong><p>원하는 분위기와 장르까지 반영한 음악 프롬프트</p></div><div><span class="trust-num">02</span><strong>당신의 음색</strong><p>본인 동의하에 목소리를 복제해 AI 보컬로 변환</p></div><div><span class="trust-num">03</span><strong>당신만의 노래</strong><p>단계별 중간 음원과 완성곡을 비교 재생</p></div></section>
+  </main>
+  <footer class="shell"><span>© SONG LAB · Private prototype</span><span>실제 가창 품질과 상업 권리는 별도 검증 필요</span></footer>
+  <dialog id="infoDialog"><div class="dialog-inner"><button id="closeInfo" class="dialog-close" type="button" aria-label="닫기">×</button><div class="kicker">BEFORE YOU BEGIN</div><h2>개인 실험용 웹앱 안내</h2><p>이 프로젝트는 <strong>로컬 전용 MVP</strong>입니다. 서버에 Gemini와 ElevenLabs API 키를 넣어야 실제 노래가 생성됩니다. 키를 넣지 않은 경우 버튼은 실패 사유를 안내하고 가짜 음원을 만들지 않습니다.</p><p>녹음 목소리는 음성 프로필 등록 시 ElevenLabs에 전송됩니다. 서버의 생성 음원은 기본 60분 동안 보관되고 자동 삭제됩니다. 제공업체 데이터는 별도의 삭제·보관 정책이 적용됩니다.</p><p>음성 변환은 가창 전문 AI 품질을 보장하지 않습니다. 개인 음색의 유사도, 한국어 발음과 고음 품질은 실제 음원을 들어 확인해야 합니다.</p><p>마이크 기능은 localhost 또는 HTTPS 환경이 필요합니다. 본인 목소리만 사용하고 공개 배포 전 사용자 인증·결제 제한·법적 검토를 완료하세요.</p><button id="understood" type="button" class="primary-btn">확인했어요 →</button></div></dialog>
+  <script type="module" src="/app.js"></script>
+</body></html>

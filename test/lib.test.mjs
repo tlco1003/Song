@@ -1,0 +1,17 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {validateSong,validateRecording,buildMusicPrompt,extractAudio,publicJob} from '../src/lib.mjs';
+import {pickStems} from '../src/audio.mjs';
+const song={story:'처음 만난 날부터 오래 기억하고 싶은 이야기',genre:'발라드',mood:'따뜻한',voiceId:'voiceABC123'};
+test('valid song inputs',()=>assert.equal(validateSong(song).genre,'발라드'));
+test('invalid story is blocked',()=>assert.throws(()=>validateSong({...song,story:'짧다'}),/10~1500/));
+test('invalid genre is blocked',()=>assert.throws(()=>validateSong({...song,genre:'admin'})));
+test('voice id required',()=>assert.throws(()=>validateSong({...song,voiceId:''})));
+test('story is explicitly delimited in prompt',()=>assert.ok(buildMusicPrompt(song).includes(JSON.stringify(song.story))));
+test('reference voice consent is required',()=>assert.throws(()=>validateRecording({consent:false}),/동의/));
+test('recording invalid data is blocked',()=>assert.throws(()=>validateRecording({consent:true,mimeType:'audio/mp4',audioBase64:'!!'})));
+test('extract nested Lyria audio',()=>{const bytes=Buffer.from('test');const r=extractAudio({interaction:{steps:[{type:'model_output',content:[{type:'text',text:'lyrics'},{type:'audio',data:bytes.toString('base64')}]}]}});assert.equal(r.bytes.toString(),'test');assert.equal(r.lyrics,'lyrics');});
+test('extract convenience audio',()=>{const r=extractAudio({output_audio:{data:Buffer.from('song').toString('base64')},output_text:'hello'});assert.equal(r.lyrics,'hello');});
+test('separation requires both stems',()=>assert.deepEqual(pickStems(['vocal.mp3','instrumental.mp3']),{vocal:'vocal.mp3',instrumental:'instrumental.mp3'}));
+test('separation handles vocals and no_vocals',()=>assert.deepEqual(pickStems(['audio/vocals.mp3','audio/no_vocals.mp3']),{vocal:'audio/vocals.mp3',instrumental:'audio/no_vocals.mp3'}));
+test('public job excludes story and voice id',()=>{const p=publicJob({id:'test',status:'failed',stage:'실패',assets:{original:true},createdAt:0,error:'oops',story:'secret',voiceId:'hidden'});assert.equal(p.story,undefined);assert.equal(p.voiceId,undefined);assert.equal(p.assets.original,'/api/jobs/test/audio/original');});

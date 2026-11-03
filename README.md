@@ -4,6 +4,17 @@
 
 **중요:** 이 저장소는 개발용 웹앱이다. GPT API 및 Suno OAuth 자격 증명이 없으면 실제 외부 생성은 실행되지 않는다. 서버 배포와 실사용 계정에서의 라이브 생성 성공은 별도로 검증해야 한다. Gemini는 사용하지 않는다.
 
+## 공식 API·MCP·내 목소리(Voices) 구현 문서
+
+**[Suno API / MCP / 내 목소리 연동 조사·실행 지시서](./docs/SUNO_API_MCP_VOICES_내목소리_연동지시서.md)**
+
+- 공식 REST 개발자 포털: https://platform.suno.com/ — 일반 유료 구독과 API 접근권은 별개
+- 공식 Suno MCP: https://api.suno.com/mcp — 계정 OAuth 인증, 본인 Suno 크레딧 사용
+- Suno Voices: https://suno.com/ko/voices — 본인 음성을 등록하고 인증한 후 내 음색으로 가창
+- **Suno MCP 공식 페이지는 이미 등록된 자신의 Voice를 작곡에 사용하는 기능을 소개한다.** 다만 신규 Voice 프로필의 MCP 등록·검증 API 스키마는 아직 검증되지 않았다.
+- **현재 SONG의 Voice UI와 Voice 지정 생성은 미구현.** 이 문서에 확인된 기능·미확인 기능·검증 체크리스트를 구분해 보관했다.
+- **사업상 중요:** Suno 현행 이용약관의 경쟁 서비스·재판매 제한이 SONG의 유료 고객용 서비스에 적용될 수 있다. 사업용 API 및 Voice 이용에 대한 **Suno의 별도 서면 허가**가 확인되기 전에는 공개 상용 출시 금지.
+
 ## 확인된 Suno 공식 MCP
 
 - 공식 연결 주소: `https://api.suno.com/mcp`

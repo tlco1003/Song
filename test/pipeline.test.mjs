@@ -12,7 +12,8 @@ test('mocked paid providers: voice create -> 30s generation -> stem split -> con
   const oldFetch=globalThis.fetch;
   const oldGoogle=process.env.GEMINI_API_KEY;
   const oldEleven=process.env.ELEVENLABS_API_KEY;
-  process.env.GEMINI_API_KEY='test-key';process.env.ELEVENLABS_API_KEY='test-key';
+  const oldLegacy=process.env.LEGACY_LYRIA_ENABLED;
+  process.env.GEMINI_API_KEY='test-key';process.env.ELEVENLABS_API_KEY='test-key';process.env.LEGACY_LYRIA_ENABLED='true';
   const temp=await mkdtemp(path.join(os.tmpdir(),'song-pipeline-test-'));
   const mockMp3=path.join(temp,'voice.mp3');
   const zipfile=path.join(temp,'stems.zip');
@@ -48,6 +49,7 @@ test('mocked paid providers: voice create -> 30s generation -> stem split -> con
     globalThis.fetch=oldFetch;
     if(oldGoogle===undefined)delete process.env.GEMINI_API_KEY;else process.env.GEMINI_API_KEY=oldGoogle;
     if(oldEleven===undefined)delete process.env.ELEVENLABS_API_KEY;else process.env.ELEVENLABS_API_KEY=oldEleven;
+    if(oldLegacy===undefined)delete process.env.LEGACY_LYRIA_ENABLED;else process.env.LEGACY_LYRIA_ENABLED=oldLegacy;
     await new Promise(resolve=>app.close(resolve));await rm(temp,{recursive:true,force:true});
   }
 });

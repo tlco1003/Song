@@ -61,6 +61,8 @@ async function prepareSunoHandoff() {
     $('openSuno').href=pack.sunoUrl;
     $('sunoStatus').textContent=pack.note;
     $('sunoPreview').classList.remove('hidden');
+    $('nav1').classList.remove('current');$('nav2').classList.add('current');
+    $('stageLabel').textContent='STEP 02 · SUNO HANDOFF';
     $('sunoPreview').scrollIntoView({behavior:'smooth',block:'start'});
   }catch(e){$('lyricsNotice').textContent='Suno 준비 실패: '+e.message;}
   finally{button.disabled=false;}
@@ -94,7 +96,14 @@ $('fillExample').addEventListener('click',()=>{$('speechStyle').value='casual';$
 $('toVoice').addEventListener('click',prepareSunoHandoff);
 $('copySunoLyrics').addEventListener('click',()=>copySunoText('sunoLyrics','가사'));
 $('copySunoStyle').addEventListener('click',()=>copySunoText('sunoStyle','편곡 프롬프트'));
-$('draftLyrics').addEventListener('input',()=>$('sunoPreview').classList.add('hidden'));
+function invalidateSunoPackage() {
+  $('sunoPreview').classList.add('hidden');
+  $('nav2').classList.remove('current');$('nav1').classList.add('current');
+  $('stageLabel').textContent='STEP 01 · THE STORY';
+}
+for(const id of ['recipient','memory','message','gratitudeApology','occasion','recipientAgeGroup','relativePosition','speechStyle','genre','mood','lyricLength','draftLyrics']) {
+  $(id).addEventListener('input',invalidateSunoPackage);
+}
 $('backToStory').addEventListener('click',()=>go(1));
 $('backToVoice').addEventListener('click',()=>go(2));
 $('recordBtn').addEventListener('click',startRecording);

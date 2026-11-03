@@ -7,10 +7,11 @@ A Korean-language **local-first prototype** for writing personalized gift-song l
 ## Requirements
 
 - Node.js 22 or later
-- `ffmpeg`, `ffprobe`, `unzip` CLI tools installed
-- Google Gemini API key with Lyria 3 Clip access
-- ElevenLabs API key/plan granting IVC cloning, music stem separation and voice changer
-- HTTPS for browser mic recording when accessing remotely; localhost works over HTTP
+- **Suno Custom handoff:** no Suno API key required; manually log in at https://suno.com/create and use the generated Lyrics and Style texts
+- **AI-written lyrics:** Gemini API key currently required; approved user-written lyrics can be handed to Suno without an AI lyric request
+- **Future automatic Suno generation:** eligible official Suno REST API account and permitted commercial integration terms required; not yet connected
+- **Legacy Lyria/ElevenLabs experiments only:** `ffmpeg`, `ffprobe`, `unzip`, appropriate provider keys and explicit `LEGACY_LYRIA_ENABLED=true`
+- HTTPS required for browser mic recording when accessing remotely; localhost works over HTTP
 
 ## Run
 
@@ -34,11 +35,11 @@ No npm dependencies or network access are needed for the app shell and tests. Th
 
 ## App flow
 
-1. Answer five questions (recipient name, shared scenes, message, gratitude/apology, gift occasion), then choose genre, mood, and lyric length.
-2. Record (or upload) your own speaking voice; check explicit provider consent.
-3. Register an ElevenLabs IVC voice, provided the account and service support it.
-4. Generate and edit letter-style lyrics, then click **Suno 제작용 가사·스타일 프롬프트 준비하기**; copy Lyrics and Style of Music separately into Suno Custom Mode. Automatic Suno generation is not yet enabled.
-5. Play and download available intermediate and final MP3 assets; delete job and voice model independently.
+1. Answer the **original five gift-song questions** and optionally select recipient age group, relative age/relationship and *actual everyday speech style* (informal, polite, mixed, or automatic).
+2. Choose music genre, mood and either full-length lyric draft or a short trial. Generate with Gemini or enter your own lyrics and edit until approved.
+3. Select **Suno 제작용 가사·스타일 프롬프트 준비하기** to create two copy-ready texts and open Suno Custom Mode. Nothing is sent to Suno before you paste it yourself.
+4. Generate and listen to the song **inside Suno**. The SONG app is not yet automatically connected to the Suno REST API.
+5. Voice cloning, advanced stem processing, hosted multi-user accounts and payment are later milestones, not functional steps in this Suno-first flow.
 
 ## Notes
 

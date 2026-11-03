@@ -34,7 +34,7 @@ No npm dependencies or network access are needed for the app shell and tests. Th
 
 ## App flow
 
-1. Enter a story of 10–1500 Korean characters, select genre and mood.
+1. Answer five questions (recipient name, shared scenes, message, gratitude/apology, gift occasion), then choose genre, mood, and lyric length.
 2. Record (or upload) your own speaking voice; check explicit provider consent.
 3. Register an ElevenLabs IVC voice, provided the account and service support it.
 4. Approve real paid job: Lyria 30s composition → ElevenLabs two-stem separation → ElevenLabs Voice Changer → local FFmpeg mix.
@@ -54,3 +54,11 @@ See [implementation and privacy notes](docs/IMPLEMENTATION.md).
 Repository: `tlco1003/Song` (user-created; GitHub repository name uses uppercase `S`). The repository was **public** when checked on 2026-10-31. Only application source, tests, documentation and `.env.example` should be committed. No API keys, recorded voices, generated media or `.song-data` files belong in Git.
 
 The app defaults to localhost and is **not safe to deploy as a public multi-user service** until proper authentication, per-user data isolation, abuse controls, retention, consent records and vendor agreement reviews are implemented. For private source hosting, change repository visibility using GitHub repository settings.
+
+## Personalized letter-style lyric authoring
+
+[가사 프롬프트.md](./가사%20프롬프트.md) is the canonical instruction file. The server reads it directly at runtime from `src/lib.mjs`; it is not a document-only spec. Its rules cover first-person conversational Korean, natural reflection (e.g., '그랬었어', '그랬네', '그랬을까' when context warrants), empathy for the recipient without inventing their emotions, gratitude for concrete observed actions, a progressive emotional arc, and **restrained** adjectives.
+
+The web UI collects `recipient`, `memory`, `message`, `gratitudeApology` and `occasion`. The lyrics request passes all five values to the server, plus `genre`, `mood` and `lyricLength` (`full` or `short`). The older free-form `story` payload is accepted only as a compatibility path. The prompt is provider-neutral and currently runs through the existing Gemini lyrics API; **OpenAI GPT API has not yet been connected**.
+
+`full` produces an editable target 3–4-minute lyric, **not a full audio track**. Current music generation still supports 30-second songs only. The client blocks voice registration from the long-form lyric path, and the server rejects `full` music jobs. Actual paid API quality and sung Korean lyric accuracy are unverified.

@@ -1,6 +1,6 @@
 # SONG — 내 사연과 내 목소리로 만드는 노래
 
-A Korean-language **local-first prototype web app** that collects a personal story, records your own voice, generates a 30-second sung song with Google Lyria and attempts to convert its lead vocal into your voice using ElevenLabs APIs.
+A Korean-language **local-first prototype** for writing personalized gift-song lyrics and preparing copy-ready Suno Custom Mode prompts. The older Lyria/ElevenLabs 30-second audio pipeline is legacy and disabled by default.
 
 > **STATUS: Functional code and local UI, not verified with live paid APIs.** Singing timbre quality is experimental. Not a deployed, multi-user service.
 
@@ -37,7 +37,7 @@ No npm dependencies or network access are needed for the app shell and tests. Th
 1. Answer five questions (recipient name, shared scenes, message, gratitude/apology, gift occasion), then choose genre, mood, and lyric length.
 2. Record (or upload) your own speaking voice; check explicit provider consent.
 3. Register an ElevenLabs IVC voice, provided the account and service support it.
-4. Approve real paid job: Lyria 30s composition → ElevenLabs two-stem separation → ElevenLabs Voice Changer → local FFmpeg mix.
+4. Generate and edit letter-style lyrics, then click **Suno 제작용 가사·스타일 프롬프트 준비하기**; copy Lyrics and Style of Music separately into Suno Custom Mode. Automatic Suno generation is not yet enabled.
 5. Play and download available intermediate and final MP3 assets; delete job and voice model independently.
 
 ## Notes
@@ -54,6 +54,23 @@ See [implementation and privacy notes](docs/IMPLEMENTATION.md).
 Repository: `tlco1003/Song` (user-created; GitHub repository name uses uppercase `S`). The repository was **public** when checked on 2026-10-31. Only application source, tests, documentation and `.env.example` should be committed. No API keys, recorded voices, generated media or `.song-data` files belong in Git.
 
 The app defaults to localhost and is **not safe to deploy as a public multi-user service** until proper authentication, per-user data isolation, abuse controls, retention, consent records and vendor agreement reviews are implemented. For private source hosting, change repository visibility using GitHub repository settings.
+
+
+## Suno-first product flow (November 2026)
+
+**Primary product target:** Suno music generation, **not Google Lyria**. The default interface uses the five gift-song questions plus optional `recipientAgeGroup`, `relativePosition`, and `speechStyle`, genre/mood and lyric length. The selected speech style takes precedence over age or seniority. For example, an older parent may be addressed in natural casual Korean, and a peer may be addressed politely.
+
+**Immediate functional integration:** `POST /api/suno-package` returns `{provider:'suno', mode:'manual-custom-handoff', apiConnected:false, title, lyrics, stylePrompt, sunoUrl, note}`. It uses the **approved user lyrics verbatim** and derives a genre-specific style prompt with natural Korean diction and dynamic development. This call does not generate audio and needs no paid music API key. The UI supplies separate copy buttons and opens https://suno.com/create for manual Custom Mode creation.
+
+**Official automated REST integration — NOT YET CONNECTED:** Suno advertises a REST API at https://platform.suno.com/, but accessing production credentials/documentation requires an eligible Suno API account. The official Suno MCP at https://api.suno.com/mcp connects an authorized Suno account to supported AI assistants; it should not be mistaken for production permission to run a customer-facing multi-user SaaS. Confirm account access, authenticated API schema, pricing, user-data policy, permitted resale and commercial terms before implementing/launching an automated provider adapter. Avoid unofficial cookie/session wrappers.
+
+**Legacy safety switch:** The existing Lyria/ElevenLabs 30-second experiment is retained in source for historical reproducibility but `POST /api/jobs` now returns HTTP 410 unless the operator explicitly sets `LEGACY_LYRIA_ENABLED=true`. The default SONG experience does **not** call Lyria behind the customer's back. Legacy voice registration endpoints are not part of the main Suno Custom handoff.
+
+**Lyrics API today:** the prompt is provider-independent, but `/api/lyrics` still uses Gemini until an OpenAI GPT integration is separately completed. Live output quality with older AI models, generated Korean singing, and Suno API are not yet verified.
+
+**Age/register contract:** all five original fields are preserved. The optional fields have safe defaults of `unknown`, `unknown`, `auto`. `recipientAgeGroup`: `unknown|under20|20s|30s|40s|50s|60s|70plus`; `relativePosition`: `unknown|older|peer|younger`; `speechStyle`: `auto|casual|polite|mixed`. Never hard-code 'older=polite' or age-to-music-genre assumptions.
+
+Run `npm run check && npm test`, including `test/suno-handoff.test.mjs` for the age/register rules and safe Suno route.
 
 ## Personalized letter-style lyric authoring
 

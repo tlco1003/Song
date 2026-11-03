@@ -1,45 +1,42 @@
-# SONG MVP architecture & constraints (2026-10-30)
+# SONG Implementation — GPT + official Suno MCP (2026-11-03)
 
-## Proven API integrations (verify current contract before production)
+## Product contract
+SONG collects five recipient-centered answers:
+1. 상대방을 어떻게 부르나요?
+2. 그 사람과의 추억의 장소나 있었던 일이 있나요?
+3. 그 사람에게 해주고 싶은 말이 있나요?
+4. 미안했던 일이나 고마웠던 일을 이야기해주세요.
+5. 어떤 상황에 보내는 노래인가요?
 
-| Stage | Provider | Endpoint / behavior |
-| --- | --- | --- |
-| 30-second song with singing | Google Gemini Interactions Lyria 3 Clip | `POST https://generativelanguage.googleapis.com/v1beta/interactions`, `model=lyria-3-clip-preview`, output audio in `interaction.output_audio` or `steps` |
-| Sample voice instant clone | ElevenLabs IVC | `POST https://api.elevenlabs.io/v1/voices/add`, multipart `files` and `name` |
-| Voice / music stem separation | ElevenLabs | `POST https://api.elevenlabs.io/v1/music/stem-separation`, multipart `file`, `stem_variation_id=two_stems_v1` returns ZIP |
-| Timbre replacement | ElevenLabs Voice Changer | `POST https://api.elevenlabs.io/v1/voice-changer/{voice_id}/stream`, multipart `audio`, `model_id=eleven_multilingual_sts_v2` |
-| Mix / QC | Local FFmpeg | duration tolerance guard and `amix`, limiting |
+Additional fields: `recipientAgeGroup`, `relativePosition`, `speechStyle`, `genre`, `mood`, `lyricLength`.
+A user's explicit everyday speech register (informal/polite/mixed) overrides stereotypes about older or younger recipients.
 
-## Official documentation
+## Current production-intended pipeline
+`input validation -> 가사 프롬프트.md -> OpenAI GPT Responses API -> editable lyrics -> Suno style prompt -> official Suno MCP via OpenAI Responses tool -> Suno library`.
 
-- https://ai.google.dev/gemini-api/docs/music-generation
-- https://elevenlabs.io/docs/api-reference/voices/ivc/create
-- https://elevenlabs.io/docs/api-reference/music/separate-stems
-- https://elevenlabs.io/docs/api-reference/speech-to-speech/stream
-- https://elevenlabs.io/docs/api-reference/voices/delete
+- `src/providers.mjs`: OpenAI GPT for lyrics and `https://api.suno.com/mcp` (the **official** Suno MCP URL) for songs.
+- `src/server.mjs`: `POST /api/lyrics`, `POST /api/suno-package`, `POST /api/suno-mcp/create`.
+- The final stage only executes after the user explicitly approves credit spending, data transfer and the private server has `APP_ACCESS_TOKEN`. Missing OAuth token fails before any music-generation call.
+- Manual Suno Custom Mode remains available without OAuth token.
+- Gemini, Lyria and the old ElevenLabs speech conversion flow have been removed from live API paths. Older unused helper code may remain for regression reference; it is not called by the server.
 
-## Explicitly NOT claimed
+## OAuth scope and commercial boundaries
+Suno confirms that MCP supports all account tiers, with music generation charged in Suno credits. A paid Suno subscription grants certain commercial usage rights for qualifying tracks but does not automatically authorize a multi-user commercial web app to share a single creator's credentials.
 
-- No assertion that speech-to-speech preserves sung pitch/vibrato perfectly. This needs Korean singing listening tests.
-- Not a self-trained singing model. It orchestrates third-party APIs.
-- No paid API end-to-end verification without keys/permissions.
-- Not production ready: no registered users, database, queues, tenant-level isolation or production deployment. Do not expose publicly.
-- No automatic proof of copyright clearances, rights to uploaded voices or commercial use. Review provider agreements and Korea privacy law.
+The personal Suno login on Claude Code or ChatGPT is **not** the same credential stored by this standalone web service. Authenticating the standalone web service requires an OAuth authorization-code + PKCE flow with appropriate client registration, credential protection, refresh and revocation. This is **not implemented**. An app developer must first establish the authorized OAuth path and correct contractual terms. Do not copy web session cookies or credentials from another client.
 
-## Security posture
+An authenticated, validated personal `SUNO_MCP_ACCESS_TOKEN` can be supplied to the development server as an environment secret; never commit it or provide it in a chat. The backend then uses OpenAI's documented remote MCP tool `{type:'mcp',server_url:'https://api.suno.com/mcp',authorization:<OAuth token>}` with user-initiated authorization. Only an actual MCP tool call is considered progress. A fake MP3 is never produced.
 
-- Binds to 127.0.0.1 by default. External HOST requires APP_ACCESS_TOKEN but that alone is NOT multi-user security.
-- Explicit checked consent for the recording and vendor transfer, audio format and body size validation.
-- Paid API usage requires explicit click; rate limits 15/hour/IP, concurrent jobs cap 2; user data not logged by application.
-- Voice recordings are passed directly to ElevenLabs, not saved locally. Provider may retain data per its policies.
-- Generated audio persists only to `.song-data/<random-uuid>/` with restricted permissions; deleted on request or after retention TTL when the cleanup interval runs. Server restart does not currently auto-clean stranded assets; delete `.song-data` as needed.
-- External voice profiles are separately deleted via ElevenLabs API; requires the original voice ID. The browser caches the voice ID in its tab session.
-- Apps accessible via internet require auth, encryption, consent storage, signed asset URLs, rate limits per user, cost caps, background queue and DPA reviews.
+## Verification still required
+- Live OpenAI text generation with the user's API account.
+- Live Suno OAuth token acquisition using the official supported consent flow, and actual `mcp_call` return semantics.
+- Exact sung lyrics, accent and Korean diction.
+- Suno return link/media mapping, download/stems, voice personalization, track licensing and ownership terms.
+- Per-user auth, billing, credit restrictions, data retention, consent records and token vault before public deployment.
 
-## Next release milestones
-
-1. Real API smoke test using the user's own account/API keys (do not commit keys).
-2. Verify stem ZIP naming, cloned voice verification flags, speech-to-speech conversion quality on Korean vocals.
-3. Move long-running jobs to persistent queue / database and all media to private object storage.
-4. Implement user accounts and scoped access control; voice deletion and automated vendor retention management.
-5. Add explicit payment ledger/cost limits, opt-in retention controls, exports, provider rights review, and FTO check.
+## Official docs
+- https://help.suno.com/en/articles/14551425
+- https://help.suno.com/en/articles/14486145
+- https://help.suno.com/en/articles/14551361
+- https://developers.openai.com/api/docs/guides/text
+- https://developers.openai.com/api/docs/guides/tools-connectors-mcp

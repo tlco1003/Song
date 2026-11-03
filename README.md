@@ -1,82 +1,81 @@
-# SONG — 내 사연과 내 목소리로 만드는 노래
+# SONG — 사연을 편지 같은 가사로, Suno로 노래로
 
-A Korean-language **local-first prototype** for writing personalized gift-song lyrics and preparing copy-ready Suno Custom Mode prompts. The older Lyria/ElevenLabs 30-second audio pipeline is legacy and disabled by default.
+**현재 개발 목표:** 사용자의 짧은 사연 → OpenAI GPT 작사 → 가사 검토·수정 → 공식 Suno MCP 작곡.
 
-> **STATUS: Functional code and local UI, not verified with live paid APIs.** Singing timbre quality is experimental. Not a deployed, multi-user service.
+**중요:** 이 저장소는 개발용 웹앱이다. GPT API 및 Suno OAuth 자격 증명이 없으면 실제 외부 생성은 실행되지 않는다. 서버 배포와 실사용 계정에서의 라이브 생성 성공은 별도로 검증해야 한다. Gemini는 사용하지 않는다.
 
-## Requirements
+## 확인된 Suno 공식 MCP
 
-- Node.js 22 or later
-- **Suno Custom handoff:** no Suno API key required; manually log in at https://suno.com/create and use the generated Lyrics and Style texts
-- **AI-written lyrics:** Gemini API key currently required; approved user-written lyrics can be handed to Suno without an AI lyric request
-- **Future automatic Suno generation:** eligible official Suno REST API account and permitted commercial integration terms required; not yet connected
-- **Legacy Lyria/ElevenLabs experiments only:** `ffmpeg`, `ffprobe`, `unzip`, appropriate provider keys and explicit `LEGACY_LYRIA_ENABLED=true`
-- HTTPS required for browser mic recording when accessing remotely; localhost works over HTTP
+- 공식 연결 주소: `https://api.suno.com/mcp`
+- 공식 안내: [How to connect Suno MCP](https://help.suno.com/en/articles/14551425)
+- 공식 기능: [What is Suno MCP?](https://help.suno.com/en/articles/14551361) — 가사 기반 노래, Covers, Extends, Mashups, Speech, 오디오 업로드, 크레딧 조회
+- 공식 요금 FAQ: [Suno MCP FAQ](https://help.suno.com/en/articles/14486145) — 무료/유료 플랜 모두 연결 가능; 음악 생성에 해당 Suno 계정 크레딧 사용
 
-## Run
+### 빠르게 사용자 본인의 Suno 계정 연결하기
 
-```bash
+**Claude Code**
+```sh
+claude mcp add --transport http suno https://api.suno.com/mcp
+# Claude Code 세션에서 /mcp 실행 → Suno 로그인 → 승인
+```
+
+**ChatGPT**  
+Plugins → Add → Add custom MCP server → 이름 `Suno` → 서버 URL `https://api.suno.com/mcp` → Create as a plugin → Connect Suno → 본인 계정 인증.
+
+위 절차는 **각 AI 조력자에서 개인 Suno 계정으로 음악을 만드는 기능**을 연결한다. 고객들이 사용하는 SONG 서버에 로그인 토큰을 자동으로 제공하는 것은 아니다.
+
+## SONG 소스 구성
+
+- `가사 프롬프트.md`: 5개 질문과 나이대·관계·평소 반말/존댓말을 감안한 편지형 작사 정책. 구형 모델도 이해하도록 단계별 기승전결, 상대방 행동에 대한 구체적 감사, 마음 헤아리기, 1인칭 회상과 조심스러운 수식 규칙.
+- `src/lib.mjs`: 입력 검증, 작사 프롬프트 조립, Suno Style of Music 편곡 지침 생성.
+- `src/providers.mjs`: **OpenAI Responses API**로 가사 생성, **공식 Suno MCP**를 OpenAI remote MCP 도구로 호출하는 어댑터. Gemini 및 비공식 Suno 래퍼는 호출하지 않는다.
+- `src/server.mjs`: 인증과 사용량 제한, `/api/lyrics`, `/api/suno-package`, `/api/suno-mcp/create` 엔드포인트.
+- `public/index.html`, `public/app.js`: 5개 고객 질문, 받는 사람의 나이대·관계·말투, 음악 장르/분위기, 가사 편집, Suno 수동 복사 및 공식 MCP 생성 요청 화면.
+- `test/`: 입력 보존, 적절한 존댓말, API 호출 사양, 실패 처리와 인증 검사.
+
+## 개발용 실행
+
+Node.js **22+** 필요.
+
+```sh
 cp .env.example .env
-# edit .env with your API keys locally (never commit)
-# Node has no builtin .env auto-loader unless --env-file is used
+# .env에 자신이 발급받은 OpenAI API 키를 설정
 node --env-file=.env src/server.mjs
 ```
 
-Then visit **http://127.0.0.1:3000**. You can run `npm start` if environment variables are already loaded, or `node --env-file=.env src/server.mjs` to load your .env directly.
+브라우저: http://127.0.0.1:3000
 
-## Validate
-
-```bash
+```sh
 npm run check
 npm test
 ```
 
-No npm dependencies or network access are needed for the app shell and tests. The real-song flow needs provider access and will generate actual API costs. **There is no demo audio or mocked success.**
+### 환경변수
 
-## App flow
+- `OPENAI_API_KEY`: 필수 (GPT 가사 작성 및 OpenAI를 통한 MCP 호출)
+- `OPENAI_LYRICS_MODEL`: 기본 `gpt-6-astra`; 실제 OpenAI 계정에서 접근 가능한 모델로 변경 가능
+- `OPENAI_SUNO_MODEL`: 기본 `gpt-6-astra`
+- `SUNO_MCP_ACCESS_TOKEN`: 본인 Suno 계정에서 **정식 OAuth로 획득한 액세스 토큰**. 아직 SONG 웹앱에서 OAuth 로그인 화면/콜백을 구현하지 않았으므로 Suno 앱이나 ChatGPT/Claude에 로그인한 것만으로 생기지 않는다. 임의의 세션 쿠키·비공식 토큰을 추출해 쓰지 않는다.
+- `APP_ACCESS_TOKEN`: 개발 서버 비밀 접근 토큰. **Suno MCP 유료 작업은 이 값이 없으면 실행되지 않는다.**
+- `HOST`, `PORT`: 개발 서버 주소·포트
 
-1. Answer the **original five gift-song questions** and optionally select recipient age group, relative age/relationship and *actual everyday speech style* (informal, polite, mixed, or automatic).
-2. Choose music genre, mood and either full-length lyric draft or a short trial. Generate with Gemini or enter your own lyrics and edit until approved.
-3. Select **Suno 제작용 가사·스타일 프롬프트 준비하기** to create two copy-ready texts and open Suno Custom Mode. Nothing is sent to Suno before you paste it yourself.
-4. Generate and listen to the song **inside Suno**. The SONG app is not yet automatically connected to the Suno REST API.
-5. Voice cloning, advanced stem processing, hosted multi-user accounts and payment are later milestones, not functional steps in this Suno-first flow.
+### 음악 생성 동작과 안전
 
-## Notes
+1. GPT로 가사를 만들거나 사용자가 가사를 직접 작성한다.
+2. 가사를 확정하면 그 **원문을 그대로** Suno 작곡 지시에 싣는다. Style of Music은 장르·분위기·말투와 가사 흐름에서 생성한다.
+3. 서버에 정식 OAuth 토큰이 설치된 **개인 개발 환경**에서만 `Suno MCP로 노래 생성하기` 버튼 사용 가능. 크레딧 사용·사연 전송에 대한 사용자 체크와 확인창이 있다.
+4. OpenAI Responses API의 `type: "mcp"`, `server_url: "https://api.suno.com/mcp"` 도구를 통해 호출한다. 실제 Suno MCP tool call이 확인되지 않으면 오류를 반환하고, 가짜 MP3나 완료 메시지를 만들지 않는다.
+5. 호출 후 결과를 받아보고 Suno 라이브러리에서 실제 곡·한국어 가사 일치·상업 라이선스를 확인한다.
+6. 서버에 토큰이 없는 경우 두 텍스트를 복사해 Suno Custom 모드에서 직접 제작할 수 있다.
 
-- A speaking reference does not guarantee a high-quality natural *singing* result. ElevenLabs Voice Changer is speech-to-speech; preserving pitch, timing, Korean lyrics and vibrato must be tested. For higher singing quality consider replacing this adapter with a licensed singing-voice-conversion provider.
-- An IVC voice may require verification; if so, generation is blocked pending verification rather than pretending success.
-- Generated MP3s are temporary and auto-deleted after TTL while the server is running; voice models remain on the vendor until deleted. No registration/login: **do not deploy this MVP publicly.**
-- This is unrelated to `tlco1003/whthu` and does not depend on the ChefOS codebase.
+**현재 구현 한계:** 사용자의 Suno OAuth 로그인/토큰 갱신/토큰 폐기, 다중 사용자 계정 분리·권한 관리, 실제 MP3 URL 회수·자동 다운로드, 사용자 목소리 훈련·가창 변환은 아직 미구현이다. 특히 고객용 상업 SaaS에서 운영자의 단일 Suno 유료 계정을 공유하는 것이 허용되는지 별도의 계약/약관 확인이 필요하다.
 
-See [implementation and privacy notes](docs/IMPLEMENTATION.md).
+프로젝트에는 고객 음성 파일, API 비밀키, OAuth 토큰을 Git에 커밋하지 않는다. 서버는 아직 공개 서비스용 인증·사용자 데이터 격리를 구현하지 않았다. 기존 YOONGYOYA/ChefOS 저장소와 무관하다.
 
-## GitHub repository and safety
+## 공식 참고
 
-Repository: `tlco1003/Song` (user-created; GitHub repository name uses uppercase `S`). The repository was **public** when checked on 2026-10-31. Only application source, tests, documentation and `.env.example` should be committed. No API keys, recorded voices, generated media or `.song-data` files belong in Git.
-
-The app defaults to localhost and is **not safe to deploy as a public multi-user service** until proper authentication, per-user data isolation, abuse controls, retention, consent records and vendor agreement reviews are implemented. For private source hosting, change repository visibility using GitHub repository settings.
-
-
-## Suno-first product flow (November 2026)
-
-**Primary product target:** Suno music generation, **not Google Lyria**. The default interface uses the five gift-song questions plus optional `recipientAgeGroup`, `relativePosition`, and `speechStyle`, genre/mood and lyric length. The selected speech style takes precedence over age or seniority. For example, an older parent may be addressed in natural casual Korean, and a peer may be addressed politely.
-
-**Immediate functional integration:** `POST /api/suno-package` returns `{provider:'suno', mode:'manual-custom-handoff', apiConnected:false, title, lyrics, stylePrompt, sunoUrl, note}`. It uses the **approved user lyrics verbatim** and derives a genre-specific style prompt with natural Korean diction and dynamic development. This call does not generate audio and needs no paid music API key. The UI supplies separate copy buttons and opens https://suno.com/create for manual Custom Mode creation.
-
-**Official automated REST integration — NOT YET CONNECTED:** Suno advertises a REST API at https://platform.suno.com/, but accessing production credentials/documentation requires an eligible Suno API account. The official Suno MCP at https://api.suno.com/mcp connects an authorized Suno account to supported AI assistants; it should not be mistaken for production permission to run a customer-facing multi-user SaaS. Confirm account access, authenticated API schema, pricing, user-data policy, permitted resale and commercial terms before implementing/launching an automated provider adapter. Avoid unofficial cookie/session wrappers.
-
-**Legacy safety switch:** The existing Lyria/ElevenLabs 30-second experiment is retained in source for historical reproducibility but `POST /api/jobs` now returns HTTP 410 unless the operator explicitly sets `LEGACY_LYRIA_ENABLED=true`. The default SONG experience does **not** call Lyria behind the customer's back. Legacy voice registration endpoints are not part of the main Suno Custom handoff.
-
-**Lyrics API today:** the prompt is provider-independent, but `/api/lyrics` still uses Gemini until an OpenAI GPT integration is separately completed. Live output quality with older AI models, generated Korean singing, and Suno API are not yet verified.
-
-**Age/register contract:** all five original fields are preserved. The optional fields have safe defaults of `unknown`, `unknown`, `auto`. `recipientAgeGroup`: `unknown|under20|20s|30s|40s|50s|60s|70plus`; `relativePosition`: `unknown|older|peer|younger`; `speechStyle`: `auto|casual|polite|mixed`. Never hard-code 'older=polite' or age-to-music-genre assumptions.
-
-Run `npm run check && npm test`, including `test/suno-handoff.test.mjs` for the age/register rules and safe Suno route.
-
-## Personalized letter-style lyric authoring
-
-[가사 프롬프트.md](./가사%20프롬프트.md) is the canonical instruction file. The server reads it directly at runtime from `src/lib.mjs`; it is not a document-only spec. Its rules cover first-person conversational Korean, natural reflection (e.g., '그랬었어', '그랬네', '그랬을까' when context warrants), empathy for the recipient without inventing their emotions, gratitude for concrete observed actions, a progressive emotional arc, and **restrained** adjectives.
-
-The web UI collects `recipient`, `memory`, `message`, `gratitudeApology` and `occasion`. The lyrics request passes all five values to the server, plus `genre`, `mood` and `lyricLength` (`full` or `short`). The older free-form `story` payload is accepted only as a compatibility path. The prompt is provider-neutral and currently runs through the existing Gemini lyrics API; **OpenAI GPT API has not yet been connected**.
-
-`full` produces an editable target 3–4-minute lyric, **not a full audio track**. Current music generation still supports 30-second songs only. The client blocks voice registration from the long-form lyric path, and the server rejects `full` music jobs. Actual paid API quality and sung Korean lyric accuracy are unverified.
+- [Suno MCP 연결 방법](https://help.suno.com/en/articles/14551425)
+- [Suno MCP FAQ](https://help.suno.com/en/articles/14486145)
+- [Suno MCP 기능 소개](https://help.suno.com/en/articles/14551361)
+- [OpenAI Responses text generation](https://developers.openai.com/api/docs/guides/text)
+- [OpenAI remote MCP](https://developers.openai.com/api/docs/guides/tools-connectors-mcp)

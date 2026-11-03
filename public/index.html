@@ -17,15 +17,25 @@
       <div class="main-panel">
         <div class="panel-header"><span class="kicker" id="stageLabel">STEP 01 · THE STORY</span><span class="muted" id="setupState">연결 확인 중…</span></div>
         <section id="stage1" class="stage"><h2>어떤 이야기를<br/>노래에 담을까요?</h2><p class="section-sub">마음에 간직한 순간을 편하게 적어 주세요. 길지 않아도 괜찮아요.</p>
-          <label for="story" class="field-label">당신의 이야기 <span>최소 10자</span></label>
-          <textarea id="story" maxlength="1500" rows="6" placeholder="예) 우리가 처음 만난 어느 봄날, 서툴지만 함께 걸었던 시간들이 아직도 선명해. 너에게 꼭 전하고 싶은 말이 있어…"></textarea>
-          <div class="field-foot"><span>💌 <button class="text-example" type="button" id="fillExample">예시 사연 넣기</button></span><span id="storyCount">0 / 1500</span></div>
+          <label for="recipient" class="field-label">상대방을 어떻게 부르나요? <span>필수</span></label>
+          <input id="recipient" class="story-input" maxlength="80" placeholder="예) 엄마, 정미야, 태환아" autocomplete="off" />
+          <label for="memory" class="field-label">그 사람과의 추억의 장소나 있었던 일이 있나요?</label>
+          <textarea id="memory" maxlength="1500" rows="3" placeholder="예) 늘 열심히 일하고 다른 사람을 배려하는 모습, 따뜻하게 안아주던 순간"></textarea>
+          <label for="message" class="field-label">그 사람에게 해주고 싶은 말이 있나요?</label>
+          <textarea id="message" maxlength="1000" rows="3" placeholder="예) 내 마음속엔 늘 엄마가 최고야. 엄마 딸이라서 다행이야."></textarea>
+          <label for="gratitudeApology" class="field-label">미안했던 일이나 고마웠던 일을 이야기해주세요.</label>
+          <textarea id="gratitudeApology" maxlength="1500" rows="3" placeholder="예) 나를 먼저 생각하고 사랑으로 안아줘서 고마워."></textarea>
+          <label for="occasion" class="field-label">어떤 상황에 보내는 노래인가요? <span>필수</span></label>
+          <select id="occasion"><option>감사</option><option>생일</option><option>축하</option><option>결혼</option><option>사랑·고백</option><option>사과·화해</option><option>위로·응원</option><option>추억·그리움</option><option>기타</option></select>
+          <div class="field-foot"><span>💌 <button class="text-example" type="button" id="fillExample">엄마 선물곡 예시 넣기</button></span><span>다섯 질문 기반 작사</span></div>
           <div class="two-fields"><div><label class="field-label" for="genre">음악 장르</label><select id="genre"><option>발라드</option><option>인디팝</option><option>R&B</option><option>어쿠스틱</option><option>K-POP</option><option>트로트</option></select></div><div><label class="field-label" for="mood">노래 분위기</label><select id="mood"><option>따뜻한</option><option>설레는</option><option>감동적인</option><option>애절한</option><option>희망찬</option><option>신나는</option></select></div></div>
           <div class="lyrics-editor">
-            <div class="field-foot"><label class="field-label" for="draftLyrics">부를 가사 <span>직접 수정 가능 · 30초 분량 권장</span></label></div>
-            <button class="outline-btn" type="button" id="generateLyrics">✦ 내 사연으로 AI 가사 초안 만들기</button>
-            <textarea id="draftLyrics" rows="8" maxlength="1400" placeholder="[Verse]&#10;...&#10;&#10;[Chorus]&#10;..." aria-label="노래에 사용할 가사"></textarea>
-            <p class="section-sub" id="lyricsNotice" role="status">AI 가사는 실제 Gemini API로 생성됩니다. API 키가 없다면 직접 가사를 입력할 수 있어요. 가사 생성 시 별도 호출 비용이 발생할 수 있습니다.</p>
+            <div class="field-foot"><label class="field-label" for="draftLyrics">부를 가사 <span>직접 수정 가능 · 긴 가사/30초 분리</span></label></div>
+            <label class="field-label" for="lyricLength">가사 길이</label>
+            <select id="lyricLength"><option value="full" selected>3~4분 목표 · 편지형 전체 가사</option><option value="short">30초 · 음악 시험곡용 짧은 가사</option></select>
+            <button class="outline-btn" type="button" id="generateLyrics">✦ 다섯 질문으로 AI 가사 초안 만들기</button>
+            <textarea id="draftLyrics" rows="12" maxlength="4200" placeholder="[Verse]&#10;...&#10;&#10;[Chorus]&#10;..." aria-label="노래에 사용할 가사"></textarea>
+            <p class="section-sub" id="lyricsNotice" role="status">작사 AI는 서버의 「가사 프롬프트」 문서와 다섯 답변을 사용합니다. 3~4분 전체 가사는 작성·수정까지만 가능하며, 현재 음악 API는 30초 시험곡만 지원합니다.</p>
           </div>
           <button class="primary-btn" type="button" id="toVoice">다음 · 내 목소리 녹음하기 <span>→</span></button>
         </section>

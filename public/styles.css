@@ -2,3 +2,10 @@
 
 .lyrics-editor{margin:22px 0 12px;padding:15px;border:1px solid rgba(192,170,220,.22);border-radius:13px;background:rgba(21,24,43,.75)}
 .lyrics-editor textarea{width:100%;margin-top:12px;resize:vertical;background:#151a2d;border:1px solid #40435c;border-radius:10px;color:#f7f1fd;padding:12px;font:inherit;line-height:1.6}.lyrics-editor .outline-btn{margin-top:8px}.lyrics-editor .section-sub{font-size:12px;line-height:1.6;margin:9px 0 0}
+
+/* Five recipient-centered story fields */
+.story-input{display:block;width:100%;min-height:44px;border-radius:12px;background:#171b2b;color:#fff;border:1px solid #44475a;padding:11px 12px;font:inherit;box-sizing:border-box}
+.story-input:focus{outline:2px solid #bb98f6;outline-offset:1px}
+#stage1>label.field-label:not(:first-child){margin-top:15px}
+#stage1>textarea{margin-bottom:9px}
+#occasion,#lyricLength{display:block;width:100%;max-width:100%;background:#151728;border:1px solid #424356;border-radius:11px;color:#f2eef1;padding:12px}

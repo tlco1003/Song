@@ -1,13 +1,13 @@
 const $ = id => document.getElementById(id);
 const state={step:1,recorder:null,stream:null,chunks:[],started:0,recording:null,recordingMime:'',timer:null,voiceId:sessionStorage.getItem('song_voice_id')||'',voiceVerified:sessionStorage.getItem('song_voice_verified')==='true',jobId:sessionStorage.getItem('song_job_id')||'',busy:false,apiToken:''};
-const stageLabels=['STEP 01 · THE STORY','STEP 02 · YOUR VOICE','STEP 03 · YOUR SONG'];
+const stageLabels=['STEP 01 · THE STORY','STEP 02 · SUNO HANDOFF','STEP 03 · OPTIONAL VOICE'];
 const stages=['작곡·가창 생성 중','리드 보컬과 반주 분리 중','내 목소리로 변환 중','반주와 보컬 믹싱 중'];
 const fileTypes=['audio/webm','audio/mp4','audio/mpeg','audio/wav','audio/x-wav','audio/ogg'];
 
 function setNotice(message,kind='info',target='voiceNotice') {const el=$(target);el.textContent=message;el.classList.remove('hidden','error','success');if(kind!=='info')el.classList.add(kind);}
 function toggleBusy(busy) {state.busy=busy;for(const id of ['toVoice','registerVoice','startJob','deleteVoice','deleteJob'])$(id).disabled=busy;}
 function go(step) {state.step=step;for(let i=1;i<=3;i++) {$( `stage${i}`).classList.toggle('hidden',i!==step);$( `nav${i}`).classList.toggle('current',i===step);} $('stageLabel').textContent=stageLabels[step-1];window.scrollTo({top:Math.min(window.scrollY,370),behavior:'smooth'});}
-function songBrief(){return {recipient:$('recipient').value.trim(),memory:$('memory').value.trim(),message:$('message').value.trim(),gratitudeApology:$('gratitudeApology').value.trim(),occasion:$('occasion').value,genre:$('genre').value,mood:$('mood').value,lyricLength:$('lyricLength').value};}
+function songBrief(){return {recipient:$('recipient').value.trim(),memory:$('memory').value.trim(),message:$('message').value.trim(),gratitudeApology:$('gratitudeApology').value.trim(),occasion:$('occasion').value,recipientAgeGroup:$('recipientAgeGroup').value,relativePosition:$('relativePosition').value,speechStyle:$('speechStyle').value,genre:$('genre').value,mood:$('mood').value,lyricLength:$('lyricLength').value};}
 function validateStory(){const b=songBrief();if(!b.recipient){alert('상대방을 어떻게 부르는지 적어 주세요.');$('recipient').focus();return false;}if((b.memory+b.message+b.gratitudeApology).length<10){alert('추억, 전할 말, 감사·미안함 중 10자 이상 적어 주세요.');$('message').focus();return false;}return true;}
 async function request(route, options={}) {
   const headers={...(options.body && typeof options.body==='string'?{'Content-Type':'application/json'}:{}),...(state.apiToken?{'x-app-token':state.apiToken}:{})};
@@ -17,7 +17,7 @@ async function request(route, options={}) {
   if(!res.ok)throw new Error(data.error||`서버 오류 HTTP ${res.status}`);
   return data;
 }
-async function refreshSetup(){try {const config=await request('/api/config');$('setupState').textContent=(config.musicReady&&config.voiceReady)?'● API 준비됨':'○ API 키 설정 필요';$('setupState').title='음악: '+(config.musicReady?'연결 준비':'키 없음')+' / 음성: '+(config.voiceReady?'연결 준비':'키 없음');}catch(e){$('setupState').textContent='서버 연결 확인 필요';}}
+async function refreshSetup(){try {const config=await request('/api/config');$('setupState').textContent=config.sunoHandoffReady?'● Suno 가사·스타일 준비 가능':'○ 서버 설정 확인 필요';$('setupState').title='Suno 자동 생성: '+(config.sunoAutomatedGenerationReady?'연결됨':'미연결')+' / 작사 AI: '+(config.musicReady?'키 준비됨':'Gemini 키 필요');}catch(e){$('setupState').textContent='서버 연결 확인 필요';}}
 
 function stopTimer(){clearInterval(state.timer);state.timer=null;}
 function stopTracks(){for(const t of state.stream?.getTracks()||[])t.stop();state.stream=null;}
@@ -48,6 +48,34 @@ async function startJob(){if(!validateStory())return;if($('lyricLength').value==
 async function deleteVoice(){if(!state.voiceId)return alert('등록된 음성 프로필이 없습니다.');if(!confirm('ElevenLabs에 저장된 이 음성 프로필을 삭제할까요? 생성된 노래 파일은 별도로 삭제해야 합니다.'))return;try{toggleBusy(true);await request(`/api/voices/${encodeURIComponent(state.voiceId)}`,{method:'DELETE'});state.voiceId='';state.voiceVerified=false;sessionStorage.removeItem('song_voice_id');sessionStorage.removeItem('song_voice_verified');updateSummary();setNotice('외부 AI 음성 프로필 삭제 요청이 완료됐습니다.','success','jobMessage');}catch(e){setNotice(e.message,'error','jobMessage')}finally{toggleBusy(false);}}
 async function deleteJob(){if(!state.jobId)return;if(!confirm('이 작업의 서버 내 음원을 모두 삭제할까요?'))return;try{await request(`/api/jobs/${state.jobId}`,{method:'DELETE'});clearInterval(poller);poller=null;state.jobId='';sessionStorage.removeItem('song_job_id');$('results').classList.add('hidden');setNotice('로컬 서버의 생성 파일을 삭제했습니다. 공급업체의 데이터 보관은 별도 정책에 따릅니다.','success','jobMessage')}catch(e){setNotice(e.message,'error','jobMessage');}}
 
+
+async function prepareSunoHandoff() {
+  if(!validateStory())return;
+  const lyrics=$('draftLyrics').value.trim();
+  if(lyrics.length<12){$('lyricsNotice').textContent='먼저 가사를 생성하거나 12자 이상 직접 적어 주세요.';return;}
+  const button=$('toVoice');button.disabled=true;
+  try{
+    const pack=await request('/api/suno-package',{method:'POST',body:JSON.stringify({...songBrief(),lyrics})});
+    $('sunoLyrics').value=pack.lyrics;
+    $('sunoStyle').value=pack.stylePrompt;
+    $('openSuno').href=pack.sunoUrl;
+    $('sunoStatus').textContent=pack.note;
+    $('sunoPreview').classList.remove('hidden');
+    $('sunoPreview').scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(e){$('lyricsNotice').textContent='Suno 준비 실패: '+e.message;}
+  finally{button.disabled=false;}
+}
+async function copySunoText(source,label) {
+  const el=$(source);el.focus();el.select();
+  try{
+    if(!navigator.clipboard?.writeText)throw Error('Clipboard API unavailable');
+    await navigator.clipboard.writeText(el.value);
+    $('sunoStatus').textContent=label+'를 복사했어요. Suno Custom 모드에 붙여넣어 주세요.';
+  }catch(_){
+    $('sunoStatus').textContent='이 브라우저가 자동 복사를 막았어요. 선택된 텍스트를 직접 복사해 주세요.';
+  }
+}
+
 $('generateLyrics').addEventListener('click',async()=>{
   if(!validateStory())return;
   const btn=$('generateLyrics');btn.disabled=true;
@@ -56,13 +84,17 @@ $('generateLyrics').addEventListener('click',async()=>{
     if($('draftLyrics').value.trim() && !confirm('현재 작성한 가사를 새 AI 초안으로 바꾸시겠어요?'))return;
     const result=await request('/api/lyrics',{method:'POST',body:JSON.stringify(songBrief())});
     $('draftLyrics').value=result.lyrics;
+    $('sunoPreview').classList.add('hidden');
     $('lyricsNotice').textContent=$('lyricLength').value==='full'?'전체 가사 초안입니다. 원하는 표현을 수정해 보세요. 현재 작곡은 30초 시험곡만 지원해요.':'30초용 가사 초안입니다. 직접 수정해 작곡에 보낼 수 있지만 실제 발음 일치는 보장되지 않아요.';
   }catch(e){$('lyricsNotice').textContent='가사 생성 실패: '+e.message+' 직접 입력해도 됩니다.';}
   finally{btn.disabled=false;}
 });
 
-$('fillExample').addEventListener('click',()=>{$('recipient').value='엄마';$('memory').value='항상 열심히 일하고 사람들을 배려하는 모습, 사랑으로 안아주는 모습, 나를 사랑해 주는 눈빛';$('message').value='내 마음속엔 언제나 엄마가 최고야. 엄마 딸이라서 다행이야.';$('gratitudeApology').value='나만 생각해 주는 한없는 사랑에 감사해. 위대하고 숭고한 사랑이라는 건 엄마를 두고 하는 말이야.';$('occasion').value='감사';});
-$('toVoice').addEventListener('click',()=>{if(!validateStory())return;if($('lyricLength').value==='full'){alert('3~4분 전체 가사 작성과 수정은 가능하지만 현재 음악 생성은 30초 시험곡만 지원합니다. 30초 가사로 바꾼 다음 녹음 단계로 이동해 주세요.');return;}go(2)});
+$('fillExample').addEventListener('click',()=>{$('speechStyle').value='casual';$('relativePosition').value='older';$('recipientAgeGroup').value='unknown';$('recipient').value='엄마';$('memory').value='항상 열심히 일하고 사람들을 배려하는 모습, 사랑으로 안아주는 모습, 나를 사랑해 주는 눈빛';$('message').value='내 마음속엔 언제나 엄마가 최고야. 엄마 딸이라서 다행이야.';$('gratitudeApology').value='나만 생각해 주는 한없는 사랑에 감사해. 위대하고 숭고한 사랑이라는 건 엄마를 두고 하는 말이야.';$('occasion').value='감사';});
+$('toVoice').addEventListener('click',prepareSunoHandoff);
+$('copySunoLyrics').addEventListener('click',()=>copySunoText('sunoLyrics','가사'));
+$('copySunoStyle').addEventListener('click',()=>copySunoText('sunoStyle','편곡 프롬프트'));
+$('draftLyrics').addEventListener('input',()=>$('sunoPreview').classList.add('hidden'));
 $('backToStory').addEventListener('click',()=>go(1));
 $('backToVoice').addEventListener('click',()=>go(2));
 $('recordBtn').addEventListener('click',startRecording);

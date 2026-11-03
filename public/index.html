@@ -77,9 +77,9 @@
         </section>
       </div>
     </section>
-    <section class="trust"><div><span class="trust-num">01</span><strong>당신의 사연</strong><p>원하는 분위기와 장르까지 반영한 음악 프롬프트</p></div><div><span class="trust-num">02</span><strong>당신의 음색</strong><p>본인 동의하에 목소리를 복제해 AI 보컬로 변환</p></div><div><span class="trust-num">03</span><strong>당신만의 노래</strong><p>단계별 중간 음원과 완성곡을 비교 재생</p></div></section>
+    <section class="trust"><div><span class="trust-num">01</span><strong>당신의 사연</strong><p>원하는 분위기와 장르까지 반영한 음악 프롬프트</p></div><div><span class="trust-num">02</span><strong>당신의 말투</strong><p>나이보다 실제 관계와 평소 존댓말·반말을 먼저 존중</p></div><div><span class="trust-num">03</span><strong>Suno에서 완성</strong><p>가사와 편곡 지침을 준비해 Suno Custom 모드로 전달</p></div></section>
   </main>
-  <footer class="shell"><span>© SONG LAB · Private prototype</span><span>실제 가창 품질과 상업 권리는 별도 검증 필요</span></footer>
-  <dialog id="infoDialog"><div class="dialog-inner"><button id="closeInfo" class="dialog-close" type="button" aria-label="닫기">×</button><div class="kicker">BEFORE YOU BEGIN</div><h2>개인 실험용 웹앱 안내</h2><p>이 프로젝트는 <strong>로컬 전용 MVP</strong>입니다. 서버에 Gemini와 ElevenLabs API 키를 넣어야 실제 노래가 생성됩니다. 키를 넣지 않은 경우 버튼은 실패 사유를 안내하고 가짜 음원을 만들지 않습니다.</p><p>녹음 목소리는 음성 프로필 등록 시 ElevenLabs에 전송됩니다. 서버의 생성 음원은 기본 60분 동안 보관되고 자동 삭제됩니다. 제공업체 데이터는 별도의 삭제·보관 정책이 적용됩니다.</p><p>음성 변환은 가창 전문 AI 품질을 보장하지 않습니다. 개인 음색의 유사도, 한국어 발음과 고음 품질은 실제 음원을 들어 확인해야 합니다.</p><p>마이크 기능은 localhost 또는 HTTPS 환경이 필요합니다. 본인 목소리만 사용하고 공개 배포 전 사용자 인증·결제 제한·법적 검토를 완료하세요.</p><button id="understood" type="button" class="primary-btn">확인했어요 →</button></div></dialog>
-  <script type="module" src="/app.js"></script>
+  <footer class="shell"><span>© SONG LAB · Private prototype</span><span>Suno REST API 미연결 · 실제 곡 생성은 Suno에서 진행</span></footer>
+  <dialog id="infoDialog"><div class="dialog-inner"><button id="closeInfo" class="dialog-close" type="button" aria-label="닫기">×</button><div class="kicker">BEFORE YOU BEGIN</div><h2>SONG · Suno 준비용 가사 스튜디오</h2><p>다섯 질문과 나이·관계·평소 말투를 바탕으로 감정선이 있는 한국어 가사 초안을 만듭니다. 작사는 현재 Gemini API를 사용하며, 추후 GPT API로 교체할 수 있게 프롬프트를 분리했습니다.</p><p>작사 후 「Suno 제작용 가사·스타일 프롬프트 준비하기」를 누르면 Suno Custom 모드의 Lyrics와 Style of Music에 넣을 두 텍스트를 제공합니다. 실제 곡 생성은 Suno에서 직접 실행해야 하며, 이 화면에서는 Suno REST API가 아직 연결되지 않았습니다.</p><p>기존 30초 Lyria/ElevenLabs 실험 경로는 기본 비활성화돼 있습니다. 공식 Suno API 계정 접근과 사용 조건을 확인한 뒤 자동 생성 기능을 추가할 수 있습니다.</p><p>가사 속 개인적인 사연을 외부 AI에 전달하기 전 서비스의 데이터 처리 정책을 확인하세요. 실서비스 출시 전 사용자 인증, 삭제 정책과 상업 이용 조건 검증이 필요합니다.</p><button id="understood" type="button" class="primary-btn">확인했어요 →</button></div></dialog>
+    <script type="module" src="/app.js"></script>
 </body></html>

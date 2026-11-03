@@ -8,10 +8,10 @@
   <main class="shell">
     <section class="intro"><div class="eyebrow"><span class="eyebrow-line"></span> YOUR STORY. YOUR VOICE. YOUR SONG.</div><h1>내 이야기가<br/><em>나의 노래</em>가 되는 순간.</h1><p class="intro-sub">노래를 잘 부르지 못해도 괜찮아요. 사연을 들려주고 목소리를 남겨 주세요.<br class="desktop"/> 편지 같은 가사를 다듬고, Suno에서 원하는 노래로 완성해 보세요.</p></section>
     <section class="studio" aria-label="노래 만들기 스튜디오">
-      <aside class="step-rail"><div class="step-rail-head">CREATE A SONG <span>01 / 03</span></div>
+      <aside class="step-rail"><div class="step-rail-head">CREATE A SONG <span>01 / 02</span></div>
         <div class="step-nav current" id="nav1"><span class="step-no">01</span><div><strong>이야기 쓰기</strong><small>노래에 담을 추억</small></div></div>
-        <div class="rail-line"></div><div class="step-nav" id="nav2"><span class="step-no">02</span><div><strong>Suno에 전달</strong><small>가사·편곡 프롬프트</small></div></div>
-        <div class="rail-line"></div><div class="step-nav" id="nav3"><span class="step-no">03</span><div><strong>가창 실험</strong><small>추후 API 연동</small></div></div>
+        <div class="rail-line"></div><div class="step-nav" id="nav2"><span class="step-no">02</span><div><strong>Suno MCP 작곡</strong><small>가사·편곡 → 생성</small></div></div>
+
         <div class="rail-bottom"><div class="sound-art" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span>MADE WITH YOUR HEART</span></div>
       </aside>
       <div class="main-panel">
@@ -37,14 +37,14 @@
           <div class="field-foot"><span>💌 <button class="text-example" type="button" id="fillExample">엄마 선물곡 예시 넣기</button></span><span>다섯 질문 기반 작사</span></div>
           <div class="two-fields"><div><label class="field-label" for="genre">음악 장르</label><select id="genre"><option>발라드</option><option>인디팝</option><option>R&B</option><option>어쿠스틱</option><option>K-POP</option><option>트로트</option><option>재즈</option></select></div><div><label class="field-label" for="mood">노래 분위기</label><select id="mood"><option>따뜻한</option><option>설레는</option><option>감동적인</option><option>애절한</option><option>희망찬</option><option>신나는</option></select></div></div>
           <div class="lyrics-editor">
-            <div class="field-foot"><label class="field-label" for="draftLyrics">부를 가사 <span>직접 수정 가능 · 긴 가사/30초 분리</span></label></div>
+            <div class="field-foot"><label class="field-label" for="draftLyrics">부를 가사 <span>직접 수정 가능 · 30초 또는 전체 가사</span></label></div>
             <label class="field-label" for="lyricLength">가사 길이</label>
             <select id="lyricLength"><option value="full" selected>3~4분 목표 · 편지형 전체 가사</option><option value="short">30초 · 음악 시험곡용 짧은 가사</option></select>
             <button class="outline-btn" type="button" id="generateLyrics">✦ 다섯 질문으로 AI 가사 초안 만들기</button>
             <textarea id="draftLyrics" rows="12" maxlength="4200" placeholder="[Verse]&#10;...&#10;&#10;[Chorus]&#10;..." aria-label="노래에 사용할 가사"></textarea>
-            <p class="section-sub" id="lyricsNotice" role="status">작사 AI는 서버의 「가사 프롬프트」 문서와 다섯 답변을 사용합니다. 3~4분 전체 가사는 작성·수정까지만 가능하며, Suno용 가사·스타일 복사는 지금 준비할 수 있고, 자동 Suno 생성은 공식 API 연결 권한 확보 후 제공됩니다.</p>
+            <p class="section-sub" id="lyricsNotice" role="status">작사 AI는 서버의 「가사 프롬프트」 문서와 다섯 답변을 사용합니다. 작사는 OpenAI GPT를 사용합니다. 가사를 수정·승인하면 Suno MCP로 전송할 수 있습니다. 자동 생성은 Suno OAuth 인증이 준비된 서버에서만 실행됩니다.</p>
           </div>
-          <button class="primary-btn" type="button" id="toVoice">Suno 제작용 가사·스타일 프롬프트 준비하기 <span>→</span></button>
+          <button class="primary-btn" type="button" id="toVoice">Suno에 전달할 가사·스타일 준비하기 <span>→</span></button>
           <section id="sunoPreview" class="lyrics-editor hidden" aria-label="Suno Custom 제작용 자료">
             <h3>Suno Custom 모드에 전달할 자료</h3>
             <p class="section-sub">실제 작곡 API는 아직 연결되지 않았습니다. 아래 두 항목을 따로 복사해 Suno의 Lyrics와 Style of Music에 붙여넣으세요.</p>
@@ -56,30 +56,28 @@
             <button id="copySunoStyle" type="button" class="outline-btn">스타일 복사</button>
             <a id="openSuno" class="outline-btn" href="https://suno.com/create" target="_blank" rel="noopener noreferrer">Suno Create 새 탭에서 열기 ↗</a>
             <p class="section-sub" id="sunoStatus" role="status"></p>
+            <div class="divider"></div>
+            <h3>공식 Suno MCP 음악 생성</h3>
+            <p class="section-sub">Suno 유료 계정을 공식 OAuth로 인증한 서버라면 GPT가 Suno MCP를 통해 작곡을 요청합니다. 크레딧이 사용되며 곡은 Suno 라이브러리에 저장됩니다.</p>
+            <label class="consent"><input id="mcpConsent" type="checkbox"/> <span>수정·확정한 가사와 스타일을 Suno에 전달하고 음악 생성 크레딧을 사용하는 데 동의합니다.</span></label>
+            <button class="primary-btn" id="generateSunoMcp" type="button">Suno MCP로 노래 생성하기 <span>♫</span></button>
+            <p class="section-sub" id="sunoMcpStatus" role="status">Suno 계정 OAuth 연결 및 서버 인증이 필요합니다.</p>
+            <pre id="sunoMcpResult" class="tiny" style="white-space:pre-wrap"></pre>
           </section>
-        </section>
-        <section id="stage2" class="stage hidden"><h2>어떤 목소리를<br/>가지고 있나요?</h2><p class="section-sub">조용한 곳에서 평소 목소리로 30~60초 정도 이야기해 주세요. 고음으로 노래할 필요는 없어요.</p>
-          <div class="record-card"><div class="record-visual"><div class="mic-core">♬</div><div class="record-waves" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div><span class="record-time" id="recordTime">00:00</span><span class="record-help" id="recordHelp">녹음은 HTTPS 또는 localhost 브라우저에서만 가능하며, 채팅 내 삽입 화면에서는 차단될 수 있어요.</span>
-            <div class="record-actions"><button id="recordBtn" type="button" class="record-btn">● 녹음 시작</button><button id="stopBtn" class="outline-btn hidden" type="button">■ 녹음 끝내기</button></div><audio id="voicePreview" controls class="audio-preview hidden"></audio>
-          </div>
-          <label class="file-alt">또는 파일 선택 <input id="voiceFile" type="file" accept="audio/webm,audio/mp4,audio/mpeg,audio/wav,audio/ogg"/></label>
-          <label class="consent"><input id="consent" type="checkbox"/> <span><strong>제가 직접 녹음한 본인 목소리입니다.</strong><br/>음성 샘플이 음색 복제 목적으로 ElevenLabs API에 전송되며, 해당 제공업체의 보관·처리 정책이 적용됨에 동의합니다. 실험 후 음성 프로필을 삭제할 수 있습니다.</span></label>
-          <div id="voiceNotice" role="status" class="notice hidden"></div><p class="section-sub" id="micDiagnostic" role="status">마이크 사용 환경 확인 중…</p>
-          <div class="button-row"><button id="backToStory" class="outline-btn" type="button">← 이전</button><button id="registerVoice" class="primary-btn" type="button">내 목소리 등록하기 <span>→</span></button></div>
-        </section>
-        <section id="stage3" class="stage hidden"><h2>이제 당신의<br/>노래를 만들어요.</h2><p class="section-sub">작곡부터 목소리 변환, 반주 믹싱까지 단계별로 진행돼요.</p>
-          <div class="song-summary"><div class="album-icon">♫</div><div><strong id="summaryGenre">발라드 · 따뜻한</strong><p id="summaryStory">내 이야기를 노래로</p></div><span class="mini-tag" id="voiceTag">목소리 등록됨</span></div>
-          <div class="progress-list" id="progressList"><div class="progress-item" data-step="0"><span>01</span> AI 작곡 · 가창 제작</div><div class="progress-item" data-step="1"><span>02</span> 보컬 · 반주 분리</div><div class="progress-item" data-step="2"><span>03</span> 내 목소리로 변환</div><div class="progress-item" data-step="3"><span>04</span> 마지막 믹싱</div></div>
-          <div id="jobMessage" class="notice muted-note">실제 API 요청에는 이용료가 발생할 수 있어요. 생성 버튼을 누르면 유료 작업이 시작됩니다.</div>
-          <button class="primary-btn" id="startJob" type="button">30초 노래 만들기 <span>✧</span></button>
-          <div id="results" class="results hidden"><h3>완성된 오디오</h3><div id="audioGrid" class="audio-grid"></div><div class="tiny"><strong>작곡에 전달한 가사:</strong><pre id="requestedLyricsOutput" style="white-space:pre-wrap"></pre><strong>음악 모델에서 돌려준 가사·구조:</strong><pre id="lyricsOutput" style="white-space:pre-wrap"></pre><p id="lyricsDisclaimer">음악 모델이 입력 가사를 정확히 발음했는지는 실제 음원 청취로 검증해야 합니다.</p></div><button id="deleteJob" type="button" class="danger-link">이 작업의 로컬 음원 모두 삭제</button></div>
-          <div class="button-row"><button id="backToVoice" class="outline-btn" type="button">← 목소리 다시 확인</button><button id="deleteVoice" class="danger-link" type="button">외부 AI 음성 프로필 삭제</button></div>
         </section>
       </div>
     </section>
     <section class="trust"><div><span class="trust-num">01</span><strong>당신의 사연</strong><p>원하는 분위기와 장르까지 반영한 음악 프롬프트</p></div><div><span class="trust-num">02</span><strong>당신의 말투</strong><p>나이보다 실제 관계와 평소 존댓말·반말을 먼저 존중</p></div><div><span class="trust-num">03</span><strong>Suno에서 완성</strong><p>가사와 편곡 지침을 준비해 Suno Custom 모드로 전달</p></div></section>
   </main>
-  <footer class="shell"><span>© SONG LAB · Private prototype</span><span>Suno REST API 미연결 · 실제 곡 생성은 Suno에서 진행</span></footer>
-  <dialog id="infoDialog"><div class="dialog-inner"><button id="closeInfo" class="dialog-close" type="button" aria-label="닫기">×</button><div class="kicker">BEFORE YOU BEGIN</div><h2>SONG · Suno 준비용 가사 스튜디오</h2><p>다섯 질문과 나이·관계·평소 말투를 바탕으로 감정선이 있는 한국어 가사 초안을 만듭니다. 작사는 현재 Gemini API를 사용하며, 추후 GPT API로 교체할 수 있게 프롬프트를 분리했습니다.</p><p>작사 후 「Suno 제작용 가사·스타일 프롬프트 준비하기」를 누르면 Suno Custom 모드의 Lyrics와 Style of Music에 넣을 두 텍스트를 제공합니다. 실제 곡 생성은 Suno에서 직접 실행해야 하며, 이 화면에서는 Suno REST API가 아직 연결되지 않았습니다.</p><p>기존 30초 Lyria/ElevenLabs 실험 경로는 기본 비활성화돼 있습니다. 공식 Suno API 계정 접근과 사용 조건을 확인한 뒤 자동 생성 기능을 추가할 수 있습니다.</p><p>가사 속 개인적인 사연을 외부 AI에 전달하기 전 서비스의 데이터 처리 정책을 확인하세요. 실서비스 출시 전 사용자 인증, 삭제 정책과 상업 이용 조건 검증이 필요합니다.</p><button id="understood" type="button" class="primary-btn">확인했어요 →</button></div></dialog>
-    <script type="module" src="/app.js"></script>
+  <footer class="shell"><span>© SONG LAB · Private prototype</span><span>GPT 작사 · 공식 Suno MCP 연결형 · OAuth 필요</span></footer>
+  <dialog id="infoDialog"><div class="dialog-inner">
+  <button id="closeInfo" class="dialog-close" type="button" aria-label="닫기">×</button>
+  <div class="kicker">SONG · GPT + SUNO MCP</div>
+  <h2>사용 안내</h2>
+  <p>사연 다섯 질문과 받는 사람의 나이·평소 말투로 가사를 생성합니다. OpenAI GPT API를 사용하며 Gemini는 사용하지 않습니다.</p>
+  <p>확정된 가사·음악 스타일을 공식 Suno MCP (https://api.suno.com/mcp)로 전달할 수 있습니다. 서버가 본인 Suno OAuth 토큰을 안전하게 보유해야 하고, 크레딧 사용에 대한 명시적 동의가 있어야 합니다.</p>
+  <p>Suno 연결이 아직 없다면 가사와 Style of Music을 복사해 Suno Custom 모드에서 직접 노래를 만들 수 있습니다. 공개 상업 서비스에는 고객별 OAuth 인증·결제·권한 검증을 별도로 구현해야 합니다.</p>
+  <button id="understood" type="button" class="primary-btn">확인했어요 →</button>
+  </div></dialog>
+      <script type="module" src="/app.js"></script>
 </body></html>

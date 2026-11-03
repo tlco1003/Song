@@ -26,12 +26,12 @@ export async function makeLyrics(input,env=process.env) {
   if(!/^[a-zA-Z0-9_.-]{3,80}$/.test(model)) throw new AppError(500,'잘못된 가사 모델 이름입니다.');
   const response=await apiFetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,{
     method:'POST', headers:{'Content-Type':'application/json','x-goog-api-key':key},
-    body:JSON.stringify({contents:[{parts:[{text:buildLyricPrompt(input)}]}],generationConfig:{temperature:0.65,maxOutputTokens:1300}})
+    body:JSON.stringify({contents:[{parts:[{text:buildLyricPrompt(input)}]}],generationConfig:{temperature:0.7,maxOutputTokens:input.lyricLength==='full'?3000:1300}})
   },60_000);
   const result=await response.json();
   const text=(result?.candidates?.[0]?.content?.parts ?? []).map(p=>p.text??'').join('\n').trim()
     .replace(/^```(?:text|markdown)?\s*/i,'').replace(/\s*```$/,'').trim();
-  if(text.length<12 || text.length>1400 || !/\[Verse\]|\[Chorus\]/i.test(text))
+  if(text.length<12 || text.length>(input.lyricLength==='full'?4200:1400) || !/\[Verse(?:\s+\d+)?\]/i.test(text) || !/\[Chorus\]/i.test(text))
     throw new AppError(502,'가사 생성 결과가 예상 형식과 다릅니다. 다시 생성하거나 직접 작성해 주세요.');
   return text;
 }

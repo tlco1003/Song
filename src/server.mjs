@@ -2,7 +2,7 @@ import http from 'node:http';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {readFile,mkdir,writeFile,rm,stat} from 'node:fs/promises';
-import {AppError,validateSong,validateLyricInput,validateRecording,validateVoiceId,newId,publicJob} from './lib.mjs';
+import {AppError,validateSong,validateLyricInput,validateRecording,validateVoiceId,newId,publicJob,buildSunoPackage} from './lib.mjs';
 import {cloneVoice,removeVoice,makeLyrics,makeMusic,separateStems,convertVoice} from './providers.mjs';
 import {unzipStems,mixVocals} from './audio.mjs';
 
@@ -53,11 +53,15 @@ async function handle(req,res) {
   const u=new URL(req.url,`http://${host}:${port}`);const pathname=u.pathname;
   if(pathname.startsWith('/api/')) {
     auth(req);
-    if(req.method==='GET' && pathname==='/api/config')return respond(res,200,{musicReady:!!process.env.GEMINI_API_KEY,voiceReady:!!process.env.ELEVENLABS_API_KEY,ffmpegRequired:true,localOnly:['127.0.0.1','localhost','::1'].includes(host),ttlMinutes:ttlMin});
+    if(req.method==='GET' && pathname==='/api/config')return respond(res,200,{musicReady:!!process.env.GEMINI_API_KEY,voiceReady:!!process.env.ELEVENLABS_API_KEY,ffmpegRequired:true,localOnly:['127.0.0.1','localhost','::1'].includes(host),ttlMinutes:ttlMin,sunoHandoffReady:true,sunoAutomatedGenerationReady:false,musicTarget:'Suno (Custom Mode)'});
     if(req.method==='POST' && pathname==='/api/lyrics') {
       limited(req.socket.remoteAddress??'local');
       const input=validateLyricInput(await jsonBody(req,10_000));
       return respond(res,200,{lyrics:await makeLyrics(input)});
+    }
+    if(req.method==='POST' && pathname==='/api/suno-package') {
+      const input=await jsonBody(req,30_000);
+      return respond(res,200,buildSunoPackage(input));
     }
     if(req.method==='POST' && pathname==='/api/voices') {
       limited(req.socket.remoteAddress??'local');const sample=validateRecording(await jsonBody(req));
@@ -67,6 +71,7 @@ async function handle(req,res) {
       limited(req.socket.remoteAddress??'local');await removeVoice(validateVoiceId(pathname.split('/')[3]));return respond(res,200,{deleted:true});
     }
     if(req.method==='POST' && pathname==='/api/jobs') {
+      if(process.env.LEGACY_LYRIA_ENABLED!=='true')throw new AppError(410,'음악 제작 대상을 Suno로 변경했습니다. 이 엔드포인트의 기존 Lyria 실험은 기본 비활성화입니다. Suno 공식 API 계약 전에는 /api/suno-package로 가사와 스타일을 준비하세요.');
       limited(req.socket.remoteAddress??'local');
       if(!process.env.GEMINI_API_KEY || !process.env.ELEVENLABS_API_KEY)throw new AppError(503,'GEMINI_API_KEY 및 ELEVENLABS_API_KEY가 모두 필요합니다.');
       if(running>=2)throw new AppError(429,'동시 생성 작업이 많습니다. 이전 작업이 끝난 후 다시 시도해 주세요.');

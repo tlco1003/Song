@@ -62,7 +62,7 @@ $('generateLyrics').addEventListener('click',async()=>{
 });
 
 $('fillExample').addEventListener('click',()=>{$('recipient').value='엄마';$('memory').value='항상 열심히 일하고 사람들을 배려하는 모습, 사랑으로 안아주는 모습, 나를 사랑해 주는 눈빛';$('message').value='내 마음속엔 언제나 엄마가 최고야. 엄마 딸이라서 다행이야.';$('gratitudeApology').value='나만 생각해 주는 한없는 사랑에 감사해. 위대하고 숭고한 사랑이라는 건 엄마를 두고 하는 말이야.';$('occasion').value='감사';});
-$('toVoice').addEventListener('click',()=>{if(validateStory())go(2)});
+$('toVoice').addEventListener('click',()=>{if(!validateStory())return;if($('lyricLength').value==='full'){alert('3~4분 전체 가사 작성과 수정은 가능하지만 현재 음악 생성은 30초 시험곡만 지원합니다. 30초 가사로 바꾼 다음 녹음 단계로 이동해 주세요.');return;}go(2)});
 $('backToStory').addEventListener('click',()=>go(1));
 $('backToVoice').addEventListener('click',()=>go(2));
 $('recordBtn').addEventListener('click',startRecording);

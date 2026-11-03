@@ -9,3 +9,15 @@
 #stage1>label.field-label:not(:first-child){margin-top:15px}
 #stage1>textarea{margin-bottom:9px}
 #occasion,#lyricLength{display:block;width:100%;max-width:100%;background:#151728;border:1px solid #424356;border-radius:11px;color:#f2eef1;padding:12px}
+
+/* SONG: recipient age & real-life speech register and Suno Custom handoff */
+.story-input,.speech-select{width:100%;min-height:43px;padding:11px 13px;background:#151728;border:1px solid #424356;border-radius:10px;color:#f2eef1;font:inherit;font-size:13px}
+.story-input:focus,.speech-select:focus{outline:1px solid #e8bda9}
+#sunoPreview{margin-top:22px}
+#sunoPreview h3{margin:0 0 10px;font-size:17px}
+#sunoPreview .field-label{margin-top:14px}
+#sunoPreview textarea[readonly]{opacity:1;cursor:text;line-height:1.75}
+#sunoPreview .outline-btn{display:inline-flex;align-items:center;justify-content:center;margin-top:8px;margin-right:8px;min-height:43px}
+#sunoPreview #openSuno{border-color:#e8bda9;color:#f0cfbf}
+#sunoStatus{margin-top:14px;white-space:pre-wrap}
+@media(max-width:550px){#sunoPreview .outline-btn{display:flex;width:100%;margin-right:0}}

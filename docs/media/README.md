@@ -41,3 +41,16 @@
 - 파일 선택 및 업로드 링크: https://github.com/tlco1003/Song/upload/main/docs/media
 - 배포 후 직접 재생 URL: https://tlco1003.github.io/Song/media/cinderella-laundry.mp3
 - `.mr`처럼 잘못된 확장자는 재생에서 제외될 수 있으므로 실제 MP3 파일을 `.mp3`로 올릴 것.
+
+## 세탁소의 신데렐라 — 신규 공개곡
+
+- 고객 화면 제목: **세탁소의 신데렐라**
+- 부제: **동전 하나만 더!**
+- 공개 재생 파일 이름: `cinderella-laundry.mp3` (**반드시 .mp3 확장자**)
+- 가사 파일: `lyrics-cinderella-laundry.txt` (원문을 저장하되 고객 화면은 구간·편곡 지시를 걸러내고 노랫말만 표시)
+- 전달된 원본 MP3 검사: `Cinderella-of-the-laundry.mp3`, 5,116,203 bytes, 길이 221.64초, 오디오 코덱 MP3, 48 kHz.
+- `Cinderella of the laundry.mr`은 `main` 브랜치 전체 트리에서 확인되지 않았으며, `.mr`는 현재 HTML5 오디오 및 공개 서버의 지원 확장자가 아니다.
+- **2026-11-04 현재 상태:** 곡 정보와 가사는 GitHub에 등록되었으나 `docs/media/cinderella-laundry.mp3` 바이너리 파일은 **아직 GitHub에 없음**. 음원이 업로드되기 전에는 공개 플레이어에서 정상 재생을 보장할 수 없다.
+- GitHub 관리자 업로드: https://github.com/tlco1003/Song/upload/main/docs/media
+- 업로드 후 `https://tlco1003.github.io/Song/media/cinderella-laundry.mp3`가 실제로 재생되는지 검증한다. 사이트 자체에는 이 GitHub 관리자 링크를 표시하지 않는다.
+

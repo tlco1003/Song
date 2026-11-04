@@ -1,7 +1,8 @@
 import http from 'node:http';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {readFile} from 'node:fs/promises';
+import {stat} from 'node:fs/promises';
+import {createReadStream} from 'node:fs';
 import {AppError,validateLyricInput,buildSunoPackage} from './lib.mjs';
 import {makeLyrics,createSunoSong,SUNO_MCP_URL} from './providers.mjs';
 
@@ -22,7 +23,7 @@ function harden(res){
   res.setHeader('X-Content-Type-Options','nosniff');
   res.setHeader('Referrer-Policy','no-referrer');
   res.setHeader('X-Frame-Options','DENY');
-  res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; media-src 'self' blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'");
+  res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; media-src 'self' blob:; frame-src https://suno.com https://*.suno.com; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'");
   res.setHeader('Permissions-Policy','camera=(), microphone=(self)');
 }
 async function jsonBody(req,limit=50000){
@@ -81,14 +82,70 @@ async function handle(req,res){
     throw new AppError(404,'해당 API가 없습니다.');
   }
   if(req.method!=='GET'&&req.method!=='HEAD')throw new AppError(405,'허용되지 않은 요청입니다.');
-  const filename=pathname==='/'?'index.html':pathname.slice(1);
-  if(!['index.html','app.js','styles.css','favicon.svg'].includes(filename))
-    throw new AppError(404,'파일을 찾지 못했습니다.');
-  const full=path.join(appRoot,'public',filename);
-  const bytes=await readFile(full);
-  const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml'};
-  res.writeHead(200,{'Content-Type':mime[path.extname(filename)]||'application/octet-stream','Content-Length':bytes.length,'Cache-Control':'no-cache'});
-  return res.end(req.method==='HEAD'?undefined:bytes);
+  // Only explicitly approved customer-facing assets may be served by the HTTPS API.
+  // Never expose docs/*.md, the proprietary lyric prompt, source files or .env.
+  const routes={
+    '/':'docs/index.html',
+    '/index.html':'docs/index.html',
+    '/style.css':'docs/style.css',
+    '/player.js':'docs/player.js',
+    '/media/tracks.json':'docs/media/tracks.json',
+    '/reviews/reviews.json':'docs/reviews/reviews.json',
+    '/studio':'public/index.html',
+    '/studio/':'public/index.html',
+    '/app.js':'public/app.js',
+    '/styles.css':'public/styles.css',
+    '/favicon.svg':'public/favicon.svg'
+  };
+  let relative=routes[pathname];
+  if(!relative && /^\/media\/[a-zA-Z0-9가-힣_.-]+\.(?:mp3|m4a|wav|ogg|txt)$/i.test(pathname))
+    relative='docs'+pathname;
+  if(!relative && /^\/reviews\/[a-zA-Z0-9가-힣_.-]+\.(?:mp4|webm)$/i.test(pathname))
+    relative='docs'+pathname;
+  if(!relative)throw new AppError(404,'파일을 찾지 못했습니다.');
+  const full=path.join(appRoot,relative);
+  let fileInfo;
+  try{fileInfo=await stat(full);}
+  catch(error){if(error?.code==='ENOENT')throw new AppError(404,'파일을 찾지 못했습니다.');throw error;}
+  if(!fileInfo.isFile())throw new AppError(404,'파일을 찾지 못했습니다.');
+  const mime={
+    '.html':'text/html; charset=utf-8',
+    '.js':'text/javascript; charset=utf-8',
+    '.css':'text/css; charset=utf-8',
+    '.svg':'image/svg+xml',
+    '.json':'application/json; charset=utf-8',
+    '.txt':'text/plain; charset=utf-8',
+    '.mp3':'audio/mpeg','.m4a':'audio/mp4','.wav':'audio/wav','.ogg':'audio/ogg',
+    '.mp4':'video/mp4','.webm':'video/webm'
+  };
+  const size=fileInfo.size;
+  const contentType=mime[path.extname(full).toLowerCase()]||'application/octet-stream';
+  const basic={'Content-Type':contentType,'Accept-Ranges':'bytes','Cache-Control':'public, max-age=120'};
+  const range=typeof req.headers.range==='string'?req.headers.range:'';
+  if(range){
+    const match=/^bytes=(\d*)-(\d*)$/.exec(range);
+    if(!match || (!match[1]&&!match[2])) {
+      res.writeHead(416,{'Content-Range':'bytes */'+size});return res.end();
+    }
+    let start=match[1]?Number(match[1]):null;
+    let finish=match[2]?Number(match[2]):null;
+    if(start===null){
+      const suffix=finish;
+      start=Math.max(0,size-suffix);finish=size-1;
+    }else if(finish===null)finish=size-1;
+    if(!Number.isSafeInteger(start)||!Number.isSafeInteger(finish)||start<0||finish<start||start>=size){
+      res.writeHead(416,{'Content-Range':'bytes */'+size});return res.end();
+    }
+    finish=Math.min(finish,size-1);
+    res.writeHead(206,{...basic,'Content-Range':'bytes '+start+'-'+finish+'/'+size,'Content-Length':finish-start+1});
+    if(req.method==='HEAD')return res.end();
+    createReadStream(full,{start,end:finish}).on('error',()=>res.destroy()).pipe(res);
+    return;
+  }
+  res.writeHead(200,{...basic,'Content-Length':size});
+  if(req.method==='HEAD')return res.end();
+  createReadStream(full).on('error',()=>res.destroy()).pipe(res);
+  return;
 }
 export function createApp(){
   return http.createServer((req,res)=>{void handle(req,res).catch(error=>{

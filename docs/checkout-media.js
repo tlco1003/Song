@@ -164,7 +164,9 @@
     $('open-camera').disabled=recording||!!state.stream;
     $('close-camera').disabled=recording||!state.stream;
   }
-  function closeCamera() {
+  function closeCamera(discardRecording=false) {
+    // Clearing media must not asynchronously re-add a recording on MediaRecorder.onstop.
+    if(discardRecording&&state.recorder)state.recorder.onstop=null;
     if(state.recorder?.state==='recording')state.recorder.stop();
     if(state.recordTimer)clearInterval(state.recordTimer);
     state.recordTimer=null;
@@ -245,7 +247,7 @@
   });
   $('close-camera').addEventListener('click',()=>{closeCamera();cameraNotice('카메라를 껐어요.');});
   function clearMedia(){
-    closeCamera();
+    closeCamera(true);
     $('face-photo').value='';$('face-video').value='';$('native-camera-capture').value='';
     const v=$('video-preview');v.pause();v.removeAttribute('src');v.load();v.hidden=true;
     const photo=$('photo-preview'),stage=$('stage-portrait-image');
@@ -259,19 +261,25 @@
   function switchProduct(){
     const show=selectedProduct()==='audio_video';
     $('video-media-section').hidden=!show;
-    if(!show&&state.stream)closeCamera();
+    if(!show&&state.stream)closeCamera(true);
   }
   for(const radio of document.querySelectorAll('input[name="product"]')){
     radio.addEventListener('change',switchProduct);
   }
   $('media-consent').addEventListener('change',()=>{
-    if(!$('media-consent').checked&&state.stream)closeCamera();
+    if(!$('media-consent').checked&&state.stream)closeCamera(true);
   });
   window.addEventListener('pagehide',()=>{
-    closeCamera();audio.pause();
+    closeCamera(true);audio.pause();
     clearInterval(state.audioTimer);
     for(const name of ['audioUrl','photoUrl','videoUrl'])revoke(name);
   });
+  // Test links can open the matching product without any customer data in the URL.
+  const requestedProduct=new URLSearchParams(window.location.search).get('product');
+  if(requestedProduct==='audio_video'||requestedProduct==='audio_duo'){
+    const radio=document.querySelector('input[name="product"][value="'+requestedProduct+'"]');
+    if(radio){radio.checked=true;radio.dispatchEvent(new Event('change',{bubbles:true}));}
+  }
   switchProduct();
   void loadExamples();
 })();

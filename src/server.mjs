@@ -54,6 +54,8 @@ async function handle(req,res){
     // licensed commercial fulfillment implementation passes verification.
     if(req.method==='GET'&&pathname==='/api/commerce/readiness')
       return json(res,200,publicCommerceReadiness());
+    if(req.method==='GET'&&pathname==='/api/commerce/catalog')
+      return json(res,200,publicPriceCatalog());
     if(pathname==='/api/commerce/orders'||pathname.startsWith('/api/commerce/orders/'))
       throw new AppError(503,'자동 음악 제작·결제·이메일 발송 서비스는 준비 중이며 현재 주문을 받지 않습니다.');
     auth(req);

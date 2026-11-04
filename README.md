@@ -1,10 +1,13 @@
-# SONG — 사연을 편지 같은 가사로, Suno로 노래로
+# WITHU — 마음을 노래로 전하는 선물곡 서비스 (코드 저장소: Song)
 
-## SONG 제휴 신청용 소개 웹사이트
 
-- **정적 소개 화면:** [docs/index.html](./docs/index.html)
+> **브랜드 변경:** 2026-11-04부터 대외 서비스명은 **WITHU**. 이전 대화·Suno 지원 메일·일부 내부 경로에 남아 있는 `SONG`은 기존 프로젝트를 가리키며, GitHub 저장소 경로 `tlco1003/Song`은 의도적으로 유지한다. 사이트 방문자에게는 WITHU가 표시된다. 회사 사업자 등록이나 상표등록이 완료됐다는 뜻은 아니다.
+
+## WITHU 제휴 신청용 소개 웹사이트
+
+- **WITHU 정적 소개 화면:** [docs/index.html](./docs/index.html)
 - **GitHub Pages 최초 공개 설정:** [GitHub Pages 배포 안내](./docs/GITHUB_PAGES_배포안내.md)
-- **공개 예정 URL:** https://tlco1003.github.io/Song/ (Pages 배포 성공 확인 후에만 실제 사이트 주소로 사용)
+- **공개 예정 URL:** https://tlco1003.github.io/Song/ (브랜드는 WITHU, 저장소 이름은 Song으로 유지; Pages 배포 성공 확인 후 사용)
 - **목적:** Suno API Interest Form의 Website/Company URL 제출용. 회사가 설립·등록되지 않았다면 `SONG Project`라고 사실대로 소개한다.
 - **중요:** 이는 홍보용 정적 사이트이며, 실제 GPT/Suno 노래 생성 앱이 배포되었다는 뜻은 아니다.
 

@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {ORDER_STATES,assertOrderTransition,publicCommerceReadiness} from '../src/commerce.mjs';
+import {ORDER_STATES,assertOrderTransition,publicCommerceReadiness,publicPriceCatalog} from '../src/commerce.mjs';
 
 const read=path=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
 const html=read('docs/checkout.html');
@@ -30,7 +30,7 @@ test('commercial ordering remains disabled and cannot be unlocked by env or user
  assert.equal(c.licenseVerified,false);
  assert.equal(c.emailVerified,false);
  assert.equal(c.orderStoreVerified,false);
- assert.deepEqual(c.products,['audio','audio_video']);
+ assert.deepEqual(c.products,['audio','audio_duo','audio_video']);
 });
 
 test('a payment is never considered paid without provider proof and server-side amount',()=>{
@@ -68,11 +68,36 @@ test('six planned payment methods can be previewed but none can charge or gather
  }
  assert.match(script,/showPaymentPreview/);
  assert.match(script,/\.showModal\(\)/);
- assert.match(script,/가격 미확정 · 청구 불가/);
+ assert.match(script,/가격 확인 중 · 청구 불가/);
  assert.match(script,/\$\('confirm-checkout'\)\.disabled=true/);
  assert.match(html,/id="confirm-checkout"[^>]*disabled/);
  assert.doesNotMatch(html,/name="(?:cardNumber|cardCvv|cardPassword|accountPassword)"|autocomplete="cc-number"/i);
  assert.doesNotMatch(script,/requestPayment\s*\(|api\/payments\/confirm|window\.location\.href\s*=|fetch\s*\(\s*['"]https?:\/\//);
  assert.ok(styles.includes('.payment-methods'));
  assert.ok(styles.includes('.payment-preview-dialog'));
+});
+
+
+test('catalog is the only planned price source and video is starting-at with a required quote',()=>{
+ const catalog=publicPriceCatalog();
+ assert.equal(catalog.version,1);
+ assert.equal(catalog.currency,'KRW');
+ assert.deepEqual(catalog.products.map(p=>[p.id,p.amountKrw,p.priceKind,p.quoteRequired]),[
+  ['audio',29000,'fixed',false],
+  ['audio_duo',39000,'fixed',false],
+  ['audio_video',300000,'starting_at',true]
+ ]);
+ assert.equal(catalog.products[1].amountKrw-catalog.products[0].amountKrw,10000);
+ assert.equal(catalog.products[0].amountKrw*2-catalog.products[1].amountKrw,19000);
+ const readCatalog=JSON.parse(read('docs/prices.json'));
+ assert.deepEqual(catalog,readCatalog);
+ assert.match(html,/id="product-audio-duo"/);
+ assert.match(html,/data-price-for="audio"/);
+ assert.match(html,/data-price-for="audio_duo"/);
+ assert.match(html,/data-price-for="audio_video"/);
+ assert.match(script,/fetch\('prices.json'/);
+ assert.match(script,/showProductPrice/);
+ assert.match(script,/quoteRequired===true/);
+ assert.match(html,/id="confirm-checkout"[^>]*disabled/);
+ assert.equal(publicCommerceReadiness().canCharge,false);
 });

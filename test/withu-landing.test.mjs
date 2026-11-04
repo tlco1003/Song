@@ -46,7 +46,7 @@ test('playlist controls and private local upload controls are connected to new J
     assert.ok(html.includes('id="'+id+'"'),id);
     assert.ok(js.includes("'"+id+"'"),id+' not used by JS');
   }
-  assert.match(html,/내 기기에서만/);
+  assert.match(html,/기기에서만/);
   assert.doesNotMatch(html,/embedded-player|embedded-zone|suno.com\/embed/);
   assert.doesNotMatch(js,/suno.com\/embed/);
   assert.match(js,/videoPlayer/);

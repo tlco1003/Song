@@ -20,7 +20,7 @@ async function readText(url){
  return result.text();
 }
 async function available(url){
- try{const result=await fetch(url,{method:'HEAD',cache:'no-store'});return result.ok}
+ try{const result=await fetch(url,{method:'HEAD',cache:'no-store'});const bytes=Number(result.headers.get('content-length'));return result.ok&&(!Number.isFinite(bytes)||bytes===0||bytes>1024)}
  catch(_){return false}
 }
 function status(text){$('playback-message').textContent=text}
@@ -138,6 +138,9 @@ async function start(){
   tracks=manifest.tracks.filter(t=>t&&fileOK(t.file)&&(!t.lyricsFile||fileOK(t.lyricsFile)));
  }catch(_){tracks=fallback.map(t=>({...t}))}
  await Promise.all(tracks.map(async track=>{track.available=await available(fileURL('media/',track.file))}));
+ // A private showcase must not offer broken play buttons for files that are not yet published.
+ const published=tracks.filter(track=>track.available||track.deviceURL);
+ if(published.length)tracks=published;
  showTracks();await select(0);
 }
 $('previous-track').addEventListener('click',()=>select(current-1));

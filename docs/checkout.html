@@ -10,9 +10,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="checkout.css?v=20261105-media-v3">
+<link rel="stylesheet" href="checkout.css?v=20261105-media-v4">
 <script src="checkout.js?v=20261105-price-catalog" defer></script>
-<script src="checkout-media.js?v=20261105-media-v3" defer></script>
+<script src="checkout-media.js?v=20261105-media-v4" defer></script>
 </head>
 <body>
 <header class="site-header"><div class="frame header-inner">
@@ -77,22 +77,26 @@
     <section id="video-media-section" class="video-media-section" hidden aria-labelledby="video-media-title">
       <span class="small-caps">YOUR FACE · YOUR STAGE</span>
       <h3 id="video-media-title">내 얼굴과 영상으로 준비하는 무대</h3>
-      <p class="small-explain">얼굴 사진, 직접 촬영한 영상, 휴대폰 카메라 녹화를 바로 확인할 수 있어요. <strong>실제 얼굴 교체와 립싱크 생성은 아직 연결 전</strong>이므로 영상 합성 결과로 표시하지 않습니다. 선택한 파일은 서버로 전송되지 않고 현재 브라우저에서만 사용됩니다.</p>
-      <label class="consent-row"><input id="media-consent" type="checkbox"><span>본인 사진·영상이거나 출연자의 명시적 합성·사용 동의를 받았습니다.</span></label>
+      <p class="small-explain">얼굴 사진과 얼굴 영상을 각각 선택하면 바로 아래 작은 미리보기에서 확인할 수 있어요. 휴대폰 카메라 촬영도 가능해요. <strong>실제 얼굴 교체와 립싱크 생성은 아직 연결 전</strong>이므로 영상 합성 결과로 표시하지 않습니다. 선택한 파일은 서버로 전송되지 않고 현재 브라우저에서만 사용됩니다. 파일을 미리 보는 데는 동의 체크가 필요하지 않으며, 실제 촬영·합성 신청에는 사용 동의가 필요해요.</p>
+      <label class="consent-row"><input id="media-consent" type="checkbox"><span>본인 사진·영상이거나 출연자의 명시적 촬영·합성·사용 동의를 받았습니다.</span></label>
       <div class="media-preview-grid">
         <div class="media-preview-card">
-          <label class="form-label" for="face-photo">얼굴 사진 올리기</label>
+          <label class="form-label" for="face-photo">얼굴 사진 올리기 <span class="media-field-hint">선택 즉시 아래에서 확인</span></label>
           <input id="face-photo" class="media-input" type="file" accept="image/*,.jpg,.jpeg,.png,.webp,.heic">
-          <div class="preview-frame"><img id="photo-preview" alt="선택한 얼굴 사진" hidden><span id="photo-empty">얼굴 사진 미리보기</span></div>
-          <p id="photo-feedback" class="small-explain">최대 15MB</p>
+          <div class="preview-frame compact-preview"><img id="photo-preview" alt="내가 선택한 얼굴 사진 미리보기" hidden><span id="photo-empty">사진을 선택하면 여기에서 보여요.</span></div>
+          <p id="photo-filename" class="media-filename" hidden></p>
+          <button id="clear-face-photo" type="button" class="media-btn media-clear-one" hidden>사진 지우기</button>
+          <p id="photo-feedback" class="small-explain" role="status">JPG·PNG·WebP·HEIC · 최대 15MB</p>
         </div>
         <div class="media-preview-card">
-          <label class="form-label" for="face-video">얼굴 영상 올리기</label>
+          <label class="form-label" for="face-video">얼굴 영상 올리기 <span class="media-field-hint">선택 즉시 아래에서 재생</span></label>
           <input id="face-video" class="media-input" type="file" accept="video/*,.mp4,.mov,.webm">
           <label for="native-camera-capture" class="media-file-cta secondary">＋ 휴대폰 기본 카메라로 촬영</label>
           <input id="native-camera-capture" type="file" accept="video/*" capture="user" hidden>
-          <div class="preview-frame"><video id="video-preview" controls playsinline preload="metadata" hidden></video><span id="video-empty">촬영한 영상 미리보기</span></div>
-          <p id="video-feedback" class="small-explain">최대 200MB · 서버로 전송되지 않음</p>
+          <div class="preview-frame compact-preview"><video id="video-preview" controls playsinline preload="metadata" aria-label="선택한 얼굴 영상 미리보기" hidden></video><span id="video-empty">영상을 선택하면 여기에서 재생돼요.</span></div>
+          <p id="video-filename" class="media-filename" hidden></p>
+          <button id="clear-face-video" type="button" class="media-btn media-clear-one" hidden>영상 지우기</button>
+          <p id="video-feedback" class="small-explain" role="status">MP4·MOV·WebM · 최대 200MB · 서버로 전송되지 않음</p>
         </div>
       </div>
       <div class="camera-area">

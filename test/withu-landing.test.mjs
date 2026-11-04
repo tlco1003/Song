@@ -20,13 +20,17 @@ test('WITHU first screen leads with premium handwritten listening UI',()=>{
 test('no proprietary process, provider name, source code links or five questions in public HTML',()=>{
   assert.doesNotMatch(html,/Suno|Gemini|GPT|OpenAI|github\.com|프로젝트 살펴보기|다섯 가지 물음|FIVE QUESTIONS|Verse\s*\d/);
   assert.doesNotMatch(html,/상대방을 어떻게 부르나요/);
-  assert.match(html,/마음이 머무는 곳에/);
+  assert.match(html,/세상에서 하나뿐인 당신의 노래로,/);
+  assert.match(html,/마음을 담은 감동을 선물해요/);
+  assert.ok(css.includes('height:126px'));
+  assert.ok(js.includes('advanceLyrics'));
+  assert.ok(js.includes('filterLyricLines'));
 });
 test('three user-provided songs have lyrics files matched to track IDs',()=>{
   assert.deepEqual(tracks.tracks.map(t=>t.title),['나라는 사람','구태환에게','내사랑김정미']);
   assert.deepEqual(tracks.tracks.map(t=>t.file),['nara.mp3','taehwan.mp3','jeongmi.mp3']);
   for(const t of tracks.tracks){
-    assert.match(t.sunoId,/^[0-9a-f-]{36}$/);
+    assert.equal(Object.hasOwn(t,'sunoId'),false);
     assert.match(t.lyricsFile,/^lyrics-[a-z]+\.txt$/);
     const lyrics=read('docs/media/'+t.lyricsFile);
     assert.ok(lyrics.length>400);
@@ -36,11 +40,13 @@ test('three user-provided songs have lyrics files matched to track IDs',()=>{
   assert.match(read('docs/media/lyrics-jeongmi.txt'),/정미야, 네가 있어 참 다행이야/);
 });
 test('playlist controls and private local upload controls are connected to new JS',()=>{
-  for(const id of ['previous-track','next-track','music-audio','embedded-player','track-list','local-song','local-lyrics','lyrics-scroll','copy-lyrics','local-review','review-gallery']){
+  for(const id of ['previous-track','next-track','music-audio','no-audio','track-list','local-song','local-lyrics','lyrics-scroll','copy-lyrics','local-review','review-gallery']){
     assert.ok(html.includes('id="'+id+'"'),id);
     assert.ok(js.includes("'"+id+"'"),id+' not used by JS');
   }
   assert.match(html,/내 기기에서만/);
+  assert.doesNotMatch(html,/embedded-player|embedded-zone|suno.com\/embed/);
+  assert.doesNotMatch(js,/suno.com\/embed/);
   assert.equal(html.includes('/upload/main/docs/media'),false);
 });
 test('reviews show only files with confirmed consent',()=>{

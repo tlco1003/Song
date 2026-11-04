@@ -31,7 +31,7 @@ test('GET UI and GPT/Suno config without provider credentials',async()=>{
     assert.equal((await res.arrayBuffer()).byteLength,20);
     res=await fetch(url+'/media/tracks.json');
     assert.equal(res.status,200);
-    assert.equal((await res.json()).tracks.length,4);
+    assert.equal((await res.json()).tracks.length,6);
     res=await fetch(url+'/docs/IMPLEMENTATION.md');
     assert.equal(res.status,404);
     res=await fetch(url+'/가사 프롬프트.md');

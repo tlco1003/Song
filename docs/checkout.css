@@ -165,3 +165,6 @@
 .fulfillment-path p{font-size:12px;line-height:1.8;color:#7f7180;margin:8px 0 0}
 .fulfillment-preview .fulfillment-note{font-size:11px;color:#886e7e}
 @media(max-width:600px){.fulfillment-paths{grid-template-columns:1fr}.fulfillment-preview{padding:18px 16px}}
+
+/* Show the genre of the selected checkout audio example beneath the selector. */
+.audio-genre-caption{font:700 12px/1.6 "Gowun Batang",serif;color:#825e75;background:#f8eff4;border-left:3px solid #bf9eb0;border-radius:0 6px 6px 0;margin:9px 0 2px;padding:8px 12px;word-break:keep-all}

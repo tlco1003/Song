@@ -27,9 +27,11 @@ test('no proprietary process, provider name, source code links or five questions
   assert.ok(js.includes('filterLyricLines'));
 });
 test('three user-provided songs have lyrics files matched to track IDs',()=>{
-  assert.deepEqual(tracks.tracks.map(t=>t.title),['나라는 사람','구태환에게','내사랑김정미']);
-  assert.deepEqual(tracks.tracks.map(t=>t.file),['nara.mp3','taehwan.mp3','jeongmi.mp3']);
-  for(const t of tracks.tracks){
+  assert.deepEqual(tracks.tracks.map(t=>t.title),['엄마에게 전하는 노래','나라는 사람','구태환에게','내사랑김정미']);
+  assert.equal(tracks.tracks[0].file,'mother-song.mp4');
+  assert.equal(tracks.tracks[0].mediaKind,'video');
+  assert.deepEqual(tracks.tracks.slice(1).map(t=>t.file),['nara.mp3','taehwan.mp3','jeongmi.mp3']);
+  for(const t of tracks.tracks.slice(1)){
     assert.equal(Object.hasOwn(t,'sunoId'),false);
     assert.match(t.lyricsFile,/^lyrics-[a-z]+\.txt$/);
     const lyrics=read('docs/media/'+t.lyricsFile);
@@ -40,13 +42,15 @@ test('three user-provided songs have lyrics files matched to track IDs',()=>{
   assert.match(read('docs/media/lyrics-jeongmi.txt'),/정미야, 네가 있어 참 다행이야/);
 });
 test('playlist controls and private local upload controls are connected to new JS',()=>{
-  for(const id of ['previous-track','next-track','music-audio','no-audio','track-list','local-song','local-lyrics','lyrics-scroll','copy-lyrics','local-review','review-gallery']){
+  for(const id of ['previous-track','next-track','music-audio','music-video','no-audio','track-list','local-song','local-lyrics','lyrics-scroll','copy-lyrics','local-review','review-gallery']){
     assert.ok(html.includes('id="'+id+'"'),id);
     assert.ok(js.includes("'"+id+"'"),id+' not used by JS');
   }
   assert.match(html,/내 기기에서만/);
   assert.doesNotMatch(html,/embedded-player|embedded-zone|suno.com\/embed/);
   assert.doesNotMatch(js,/suno.com\/embed/);
+  assert.match(js,/videoPlayer/);
+  assert.match(js,/track\.mediaKind==='video'/);
   assert.equal(html.includes('/upload/main/docs/media'),false);
 });
 test('reviews show only files with confirmed consent',()=>{

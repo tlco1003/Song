@@ -76,10 +76,22 @@ async function copyField(id,success){
 $('copy-lyrics').addEventListener('click',()=>copyField('song-lyrics','가사를 복사했어요. 음악 제작 화면의 Lyrics에 붙여넣어 주세요.'));
 $('copy-style').addEventListener('click',()=>copyField('song-style','음악 스타일을 복사했어요. 음악 제작 화면의 Style에 붙여넣어 주세요.'));
 $('go-create').addEventListener('click',event=>{
- if(!$('song-lyrics').value.trim()){
-   event.preventDefault();$('handoff-status').textContent='가사를 먼저 입력해 주세요.';return;
- }
+ const lyrics=$('song-lyrics').value.trim();
+ if(!lyrics){event.preventDefault();$('handoff-status').textContent='가사를 먼저 입력해 주세요.';return;}
  if(!$('song-style').value.trim())updateStyle();
- $('handoff-status').textContent='음악 제작 화면이 열립니다. Custom 모드에서 가사와 스타일을 각각 붙여넣어 주세요.';
+ const title=$('song-title').value.trim()||'WITHU 노래 선물';
+ const draft={
+   version:1,title:title.slice(0,100),lyrics:lyrics.slice(0,5500),
+   style:$('song-style').value.trim().slice(0,1200),
+   savedAt:Date.now()
+ };
+ try{
+   // Short-lived session-only handoff; no recipient story or email is persisted.
+   sessionStorage.setItem('withu-order-draft-v1',JSON.stringify(draft));
+   $('handoff-status').textContent='주문 화면으로 이동합니다. 실제 결제는 아직 진행되지 않습니다.';
+ }catch(_){
+   event.preventDefault();
+   $('handoff-status').textContent='이 브라우저에서 임시 저장이 제한되어 주문 화면으로 이동할 수 없습니다.';
+ }
 });
 })();

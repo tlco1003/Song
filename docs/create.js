@@ -75,10 +75,11 @@ async function copyField(id,success){
 }
 $('copy-lyrics').addEventListener('click',()=>copyField('song-lyrics','가사를 복사했어요. 음악 제작 화면의 Lyrics에 붙여넣어 주세요.'));
 $('copy-style').addEventListener('click',()=>copyField('song-style','음악 스타일을 복사했어요. 음악 제작 화면의 Style에 붙여넣어 주세요.'));
-$('go-create').addEventListener('click',()=>{
- if(!$('song-lyrics').value.trim()){$('handoff-status').textContent='가사를 먼저 입력해 주세요.';return;}
+$('go-create').addEventListener('click',event=>{
+ if(!$('song-lyrics').value.trim()){
+   event.preventDefault();$('handoff-status').textContent='가사를 먼저 입력해 주세요.';return;
+ }
  if(!$('song-style').value.trim())updateStyle();
- $('handoff-status').textContent='새 탭에서 음악 제작 화면을 엽니다. Custom 모드에서 복사한 가사와 스타일을 붙여넣어 주세요.';
- window.open('https://suno.com/create','_blank','noopener,noreferrer');
+ $('handoff-status').textContent='음악 제작 화면이 열립니다. Custom 모드에서 가사와 스타일을 각각 붙여넣어 주세요.';
 });
 })();

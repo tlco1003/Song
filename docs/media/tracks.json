@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "tracks": [
+    {
+      "id": "song-nara",
+      "title": "나라는 사람",
+      "subtitle": "나를 알아가는 마음 · 인생 이야기",
+      "file": "nara.mp3",
+      "durationSeconds": 257.544
+    },
+    {
+      "id": "song-taehwan",
+      "title": "구태환에게",
+      "subtitle": "연인에게 보내는 편지 같은 노래",
+      "file": "taehwan.mp3",
+      "durationSeconds": 320.04
+    },
+    {
+      "id": "song-jeongmi",
+      "title": "내사랑김정미",
+      "subtitle": "소중한 친구에게 전하는 노래",
+      "file": "jeongmi.mp3",
+      "durationSeconds": 350.04
+    }
+  ]
+}

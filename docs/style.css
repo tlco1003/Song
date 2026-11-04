@@ -116,3 +116,27 @@ button:focus-visible,a:focus-visible,label:focus-visible,.lyrics-scroll:focus-vi
  .local-review-tools{flex-wrap:wrap}.footer-inner{flex-wrap:wrap;gap:7px}.footer-brand{width:100%}.copyright{margin-left:0}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* First-party gift-song video showcase and music-creation entry points */
+.header-create{font-size:12px;display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid #9b818f;border-radius:5px;background:#ffffff0c;color:#fff;white-space:nowrap}
+.header-create:hover{background:#ffffff1d}
+.listen-create-link{margin:28px auto 0;text-align:center;border-top:1px solid #ffffff30;padding:28px 0 0}
+.listen-create-link p{font-size:14px;color:#e2d2dc;margin:0 0 14px}
+.main-cta-link{display:inline-flex;align-items:center;justify-content:center;gap:16px;min-height:48px;border-radius:7px;background:#e8d4d7;color:#35283b;padding:12px 24px;font-size:14px;font-weight:700}
+.main-cta-link:hover{background:#f3e4e6}
+.main-cta-link.light{background:#382b3f;color:#fff;margin-top:18px}
+.featured-video-section{padding:95px 0;background:#e9dfdc}
+.featured-video-grid{display:grid;grid-template-columns:1fr minmax(0,.95fr);gap:70px;align-items:center}
+.featured-video-copy .small-caps{color:#96717f}
+.featured-video-copy h2{font:400 clamp(44px,5.5vw,76px)/1.19 "Nanum Brush Script","Gowun Batang",serif;margin:18px 0}
+.featured-video-copy h2 em{font-style:normal;color:#986e80}
+.featured-video-copy p{font-size:17px;line-height:1.95;color:#6e5f6b;max-width:420px;word-break:keep-all}
+.featured-video-label{display:inline-block;font:600 12px "Cormorant Garamond",serif;letter-spacing:2px;color:#8d6879;margin-top:26px}
+.featured-video-viewer{border-radius:18px;background:linear-gradient(145deg,#3c2e3f,#231c29);box-shadow:0 19px 50px #33243639;min-height:300px;display:grid;place-items:center;overflow:hidden}
+.featured-video-viewer video{display:block;width:100%;max-height:650px;object-fit:contain;background:#100c14}
+.featured-video-pending{color:#ead9df;text-align:center;padding:60px 20px}
+.featured-video-pending>span{font-size:58px;display:block;color:#d6b9c3}
+.featured-video-pending strong{font-size:23px;display:block;margin:10px 0}
+.featured-video-pending p{font-size:14px;color:#cdbeca}
+@media(max-width:930px){.featured-video-grid{gap:30px}}
+@media(max-width:690px){.site-header nav a[href="#featured"]{display:none}.site-header nav{gap:11px}.header-create{font-size:10px;padding:9px}.featured-video-grid{grid-template-columns:1fr;gap:27px}.featured-video-section{padding:60px 0}.featured-video-copy h2{font-size:58px}}

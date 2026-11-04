@@ -153,3 +153,15 @@
  .video-media-section .media-preview-card .compact-preview{height:158px;min-height:158px;max-height:158px}
  .video-media-section .media-preview-grid{gap:11px}
 }
+
+/* Paid-only fulfillment roadmap: UI explanation, never payment activation. */
+.fulfillment-preview{margin:18px 0 24px;padding:22px 24px;border:1px solid #e5d9e0;background:#fff;border-radius:14px}
+.fulfillment-preview>h2{font:400 29px/1.4 "Nanum Brush Script","Gowun Batang",serif;margin:0 0 5px;color:#5f4558}
+.fulfillment-preview>p{font-size:12px;line-height:1.8;color:#716271;margin:5px 0 11px}
+.fulfillment-paths{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}
+.fulfillment-path{border:1px solid #ebdfe6;border-radius:11px;background:#fcf8fa;padding:15px;min-width:0}
+.fulfillment-path .path-kicker{display:block;font-size:10px;letter-spacing:.09em;color:#9b798e;margin-bottom:9px}
+.fulfillment-path strong{font-size:14px;color:#654a5d}
+.fulfillment-path p{font-size:12px;line-height:1.8;color:#7f7180;margin:8px 0 0}
+.fulfillment-preview .fulfillment-note{font-size:11px;color:#886e7e}
+@media(max-width:600px){.fulfillment-paths{grid-template-columns:1fr}.fulfillment-preview{padding:18px 16px}}

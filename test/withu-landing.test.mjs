@@ -45,7 +45,7 @@ test('published songs retain unique IDs and wedding music and lyrics are paired'
     const track=byId.get(id);
     assert.ok(track,'missing '+id);
     assert.equal(Object.hasOwn(track,'sunoId'),false);
-    assert.match(track.lyricsFile,/^lyrics-[a-z]+\\.txt$/);
+    assert.match(track.lyricsFile,/^lyrics-[a-z]+\.txt$/);
     const lyrics=read('docs/media/'+track.lyricsFile);
     assert.ok(lyrics.length>400,'missing lyrics for '+id);
   }
@@ -53,7 +53,7 @@ test('published songs retain unique IDs and wedding music and lyrics are paired'
   assert.match(read('docs/media/lyrics-taehwan.txt'),/금호동 집에서/);
   assert.match(read('docs/media/lyrics-jeongmi.txt'),/정미야, 네가 있어 참 다행이야/);
   assert.match(read('docs/media/lyrics-wedding.txt'),/우리 서로 기도해요/);
-  assert.match(js,/manifest\\.tracks\\.filter/);
+  assert.match(js,/manifest\.tracks\.filter/);
   assert.doesNotMatch(js,/tracks=published/,'HEAD failures must not hide songs from the manifest');
 });
 test('playlist controls and private local upload controls are connected to new JS',()=>{

@@ -29,6 +29,13 @@ test('GET UI and GPT/Suno config without provider credentials',async()=>{
     assert.equal(res.status,200);
     res=await fetch(url+'/checkout.js');
     assert.equal(res.status,200);
+    res=await fetch(url+'/checkout-media.js');
+    assert.equal(res.status,200);
+    assert.match(res.headers.get('content-type'),/javascript/);
+    assert.match(await res.text(),/MediaRecorder/);
+    assert.match(res.headers.get('permissions-policy'),/camera=\(self\)/);
+    assert.match(res.headers.get('content-security-policy'),/img-src 'self' data: blob:/);
+
     res=await fetch(url+'/api/commerce/readiness');
     assert.equal(res.status,200);
     const commerce=await res.json();

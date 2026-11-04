@@ -1,0 +1,32 @@
+.checkout-page{background:linear-gradient(160deg,#f5efec,#fffaf7);min-height:calc(100vh - 160px);padding:48px 0 92px}
+.checkout-intro{text-align:center;margin-bottom:31px}.checkout-intro .small-caps,.checkout-card .small-caps{color:#a1798b}
+.checkout-intro h1{font:400 clamp(42px,5vw,67px)/1.25 "Nanum Brush Script","Gowun Batang",serif;margin:10px 0}
+.checkout-intro h1 em{color:#a8798b;font-style:normal}.checkout-intro p{color:#776b76;font-size:14px}
+.checkout-status{border:1px solid #e5d3da;background:#fffaf9;border-radius:12px;padding:19px 24px;margin:25px 0}
+.checkout-status strong{font-size:15px;color:#675262}.checkout-status p{font-size:13px;line-height:1.75;color:#897984;margin:9px 0 0}
+.checkout-layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:21px;align-items:start}
+.checkout-card{background:#fff;border:1px solid #eadce2;border-radius:16px;padding:30px;box-shadow:0 15px 35px #3025350a;min-width:0}
+.checkout-card h2{font:400 39px/1.2 "Nanum Brush Script","Gowun Batang",serif;margin:9px 0 25px}
+.gift-options{border:0;padding:0;margin:0;display:grid;gap:11px}.screen-reader-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+.gift-choice{display:flex;align-items:center;gap:11px;border:1px solid #e2d5db;border-radius:11px;padding:18px 15px;cursor:pointer}
+.gift-choice.active,.gift-choice:has(input:checked){border-color:#ab8597;background:#fdf5f7}
+.gift-choice input{accent-color:#947283;flex:0 0 auto}.choice-body{display:grid;gap:5px;flex:1}
+.choice-body strong{font-size:14px}.choice-body small,.choice-side{font-size:11px;color:#887785;line-height:1.7}
+.choice-side{white-space:nowrap}.small-explain{font-size:12px;color:#897e86;line-height:1.7;margin:11px 0 14px}
+.form-label{display:block;margin:18px 0 8px;font-weight:700;font-size:13px}
+.checkout-card input[type=email]{width:100%;border:1px solid #dfced7;background:#fcfaf9;padding:14px;border-radius:8px;color:#352837;font:13px "Gowun Batang",serif}
+.checkout-card input[type=email]:focus{outline:2px solid #b795a6;outline-offset:1px}
+.consent-row{display:flex;align-items:flex-start;gap:9px;line-height:1.6;margin:14px 0;cursor:pointer;font-size:12px;color:#695b67}
+.consent-row input{accent-color:#8f6c80;margin-top:3px}
+.preview-group{padding:14px 0;border-bottom:1px solid #ede4e9}.preview-label{display:block;color:#9d8994;font-size:11px;margin-bottom:8px}
+.preview-group strong{font-size:18px}.preview-group p{font-size:12px;color:#7f717b;line-height:1.8;margin:0;overflow-wrap:anywhere}
+.lyric-preview{white-space:pre-wrap;font-size:12px;line-height:1.8;max-height:160px;overflow:auto;color:#6b5b69}
+.price-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:22px 0 7px;padding-top:6px}
+.price-row span{font-size:13px}.price-row strong{font-size:17px;color:#876779}
+.checkout-button{display:block;width:100%;border-radius:8px;background:#35293b;color:#fff;border:0;min-height:47px;padding:12px 16px;font-size:13px;margin:11px 0;cursor:pointer}
+.checkout-button.secondary{background:#f5eef2;color:#6a5564;border:1px solid #dccbd4}
+.checkout-button:disabled{background:#aaa0aa;color:#f3eaf1;cursor:not-allowed}
+.checkout-message{color:#856f80;font-size:12px;line-height:1.8}
+.edit-link{display:inline-block;font-size:12px;color:#896779;text-decoration:underline;margin-top:10px}
+@media(max-width:850px){.checkout-layout{grid-template-columns:1fr;max-width:650px;margin:auto}.checkout-card{padding:24px}}
+@media(max-width:480px){.checkout-page{padding:35px 0 65px}.checkout-intro h1{font-size:51px}.gift-choice{align-items:flex-start}.choice-side{font-size:10px}.checkout-card h2{font-size:36px}}

@@ -7,7 +7,8 @@
       "subtitle": "사랑과 감사를 담은 영상 편지",
       "file": "mother-song.mp4",
       "mediaKind": "video",
-      "durationSeconds": 436.8
+      "durationSeconds": 436.8,
+      "dlyricsFile": "mother-song.txt"
     },
     {
       "id": "song-nara",
@@ -15,7 +16,7 @@
       "subtitle": "나를 알아가는 마음 · 인생 이야기",
       "file": "nara.mp3",
       "durationSeconds": 257.544,
-      "lyricsFile": "lyrics-nara.txt"
+      "dlyricsFile": "lyrics-nara.txt"
     },
     {
       "id": "song-taehwan",

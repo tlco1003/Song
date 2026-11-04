@@ -6,6 +6,10 @@
 ## WITHU 제휴 신청용 소개 웹사이트
 
 - **WITHU 정적 소개 화면:** [docs/index.html](./docs/index.html)
+- **음악·후기 플레이어와 관리자용 게시:** [WITHU 음악 및 후기 영상 게시방법](./docs/WITHU_음악_후기_게시방법.md)
+- **오리지널 3곡:** Suno ID3 메타데이터로 곡 연결. MP3 직접 업로드 전에는 Suno iframe, 업로드 후에는 자체 오디오 플레이어를 우선 사용.
+- **실제 후기 영상:** 업로드된 실제 동의 영상만 표시. 현재 동영상 자료 미제공.
+- **방문자 파일 선택:** 이 브라우저에서만 미리 듣기/미리보기. 영구 게시에는 GitHub 관리자 파일 업로드, 일반 고객 공개 게시에는 별도 인증·저장 서버가 필요.
 - **GitHub Pages 최초 공개 설정:** [GitHub Pages 배포 안내](./docs/GITHUB_PAGES_배포안내.md)
 - **공개 예정 URL:** https://tlco1003.github.io/Song/ (브랜드는 WITHU, 저장소 이름은 Song으로 유지; Pages 배포 성공 확인 후 사용)
 - **목적:** Suno API Interest Form의 Website/Company URL 제출용. 회사가 설립·등록되지 않았다면 `SONG Project`라고 사실대로 소개한다.

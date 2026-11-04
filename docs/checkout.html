@@ -10,8 +10,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="checkout.css">
-<script src="checkout.js" defer></script>
+<link rel="stylesheet" href="checkout.css?v=20261105-payment-preview">
+<script src="checkout.js?v=20261105-payment-preview" defer></script>
 </head>
 <body>
 <header class="site-header"><div class="frame header-inner">
@@ -27,8 +27,8 @@
    <p>완성된 가사와 선물 옵션을 확인하고 받을 이메일을 입력해 주세요.</p>
   </header>
   <div class="checkout-status" role="status" id="commerce-status">
-   <strong>주문·결제 기능을 준비하고 있어요.</strong>
-   <p>아직 실제 결제나 노래 제작 요청은 받지 않습니다. 필요한 연동이 승인되면 이 화면에서 주문할 수 있습니다.</p>
+   <strong>결제수단 미리보기 · 실제 결제 비활성화</strong>
+   <p>토스페이먼츠 통합 결제 도입을 전제로 6가지 수단의 화면을 미리 확인할 수 있어요. 현재는 결제 요청·입금계좌 발급·이메일 전송이 실행되지 않습니다.</p>
   </div>
   <div class="checkout-layout">
    <section class="checkout-card">
@@ -55,9 +55,28 @@
     <p class="small-explain">주문 기능 활성화 전에는 입력한 이메일을 서버에 전송하거나 저장하지 않습니다.</p>
     <label class="consent-row"><input type="checkbox" id="consent-delivery"><span>선물 제작과 전달을 위한 이메일 처리에 동의합니다.</span></label>
     <label class="consent-row"><input type="checkbox" id="consent-service"><span>제작 정책, 취소·환불 조건 및 예상 제공 범위 확인 후 결제하겠습니다.</span></label>
+    <section class="payment-selection" aria-labelledby="payment-title">
+      <span class="small-caps">02 · PAYMENT METHOD</span>
+      <h2 id="payment-title">어떤 방법으로 결제할까요?</h2>
+      <p class="small-explain">선택해도 돈이 빠져나가지 않아요. 결제사 계약 후 실제 사용 가능한 수단만 활성화됩니다.</p>
+      <fieldset class="payment-methods" id="payment-methods">
+        <legend class="screen-reader-only">결제 방법 선택 미리보기</legend>
+        <label class="payment-option" for="pay-toss"><input type="radio" id="pay-toss" name="paymentMethod" value="toss_pay" checked><span class="payment-option-copy"><strong>토스페이</strong><small>Toss Pay · 간편결제</small></span></label>
+        <label class="payment-option" for="pay-kakao"><input type="radio" id="pay-kakao" name="paymentMethod" value="kakao_pay"><span class="payment-option-copy"><strong>카카오페이</strong><small>Kakao Pay · 간편결제</small></span></label>
+        <label class="payment-option" for="pay-naver"><input type="radio" id="pay-naver" name="paymentMethod" value="naver_pay"><span class="payment-option-copy"><strong>네이버페이</strong><small>Naver Pay · 간편결제</small></span></label>
+        <label class="payment-option" for="pay-card"><input type="radio" id="pay-card" name="paymentMethod" value="card"><span class="payment-option-copy"><strong>신용·체크카드</strong><small>PG 보안 결제창</small></span></label>
+        <label class="payment-option" for="pay-transfer"><input type="radio" id="pay-transfer" name="paymentMethod" value="transfer"><span class="payment-option-copy"><strong>실시간 계좌이체</strong><small>은행 인증 후 결제</small></span></label>
+        <label class="payment-option" for="pay-virtual"><input type="radio" id="pay-virtual" name="paymentMethod" value="virtual_account"><span class="payment-option-copy"><strong>가상계좌 입금</strong><small>무통장입금 · 입금 확인형</small></span></label>
+      </fieldset>
+      <div class="method-explainer" aria-live="polite">
+        <strong id="payment-method-title">토스페이</strong>
+        <p id="payment-method-help">실제 결제 시 토스페이 앱 또는 제공된 인증창에서 승인합니다.</p>
+      </div>
+      <p class="small-explain">일반 계좌번호에 직접 송금받는 방식은 자동 대조가 어렵습니다. 무통장입금을 자동화하려면 PG 가상계좌와 입금 완료 알림을 연결해야 합니다.</p>
+    </section>
    </section>
    <aside class="checkout-card order-summary" aria-labelledby="summary-title">
-    <span class="small-caps">02 · YOUR MUSIC LETTER</span>
+    <span class="small-caps">03 · YOUR MUSIC LETTER</span>
     <h2 id="summary-title">주문 내용 확인</h2>
     <div class="preview-group">
      <span class="preview-label">노래 제목</span>
@@ -72,13 +91,29 @@
      <div id="order-lyrics" class="lyric-preview">가사 작성 화면으로 돌아가 먼저 노랫말을 준비해 주세요.</div>
     </div>
     <div class="price-row"><span>결제 예정 금액</span><strong id="order-price">가격 확정 전</strong></div>
+    <div class="method-summary"><span>선택한 결제수단</span><strong id="selected-payment-method">토스페이</strong></div>
     <p class="small-explain">가격은 서버에서 확정한 금액만 사용하며, 주문·결제 단계에서 임의로 변경할 수 없습니다.</p>
     <button id="inspect-order" type="button" class="checkout-button secondary">입력 내용 확인</button>
+    <button id="preview-payment" type="button" class="checkout-button preview">선택한 결제수단 미리보기</button>
     <button id="confirm-checkout" type="button" class="checkout-button" disabled>결제 및 노래 제작 신청 준비 중</button>
     <p id="checkout-message" class="checkout-message" role="status">현재는 실제 결제나 이메일 발송이 진행되지 않습니다.</p>
     <a class="edit-link" href="create.html">← 가사 수정하러 돌아가기</a>
    </aside>
   </div>
+  <dialog id="payment-preview-dialog" class="payment-preview-dialog" aria-labelledby="demo-title" aria-describedby="demo-notice">
+    <div class="preview-dialog-head"><span class="small-caps">WITHU · PAYMENT PREVIEW</span><button id="close-payment-preview" type="button" class="preview-close" aria-label="미리보기 닫기">×</button></div>
+    <h2 id="demo-title">결제 화면 미리보기</h2>
+    <p id="demo-notice" class="demo-notice">실제 PG 결제창이 아닌 WITHU 화면 구성 시안입니다. 결제·청구·입금계좌 발급·이메일 발송은 발생하지 않습니다.</p>
+    <dl class="demo-detail">
+      <div><dt>상품</dt><dd id="demo-product">노래 선물</dd></div>
+      <div><dt>노래 제목</dt><dd id="demo-order">미확정</dd></div>
+      <div><dt>결제수단</dt><dd id="demo-payment-method">토스페이</dd></div>
+      <div><dt>결제금액</dt><dd id="demo-amount">가격 미확정</dd></div>
+    </dl>
+    <p id="demo-method-detail" class="demo-method-detail"></p>
+    <button type="button" disabled class="checkout-button">실제 결제 준비 중 · 결제 불가</button>
+    <button type="button" id="finish-payment-preview" class="checkout-button secondary">미리보기 닫기</button>
+  </dialog>
  </div>
 </main>
 <footer class="site-footer"><div class="frame footer-inner"><span class="footer-brand">WITHU</span><p>전하고 싶은 마음이 노래가 되는 곳.</p><span class="copyright">© 2026 WITHU</span></div></footer>

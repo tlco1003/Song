@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "currency": "KRW",
+  "pricingStatus": "display_only_until_commercial_readiness",
+  "products": [
+    {
+      "id": "audio",
+      "name": "맞춤 노래 1곡",
+      "amountKrw": 29000,
+      "priceKind": "fixed",
+      "quoteRequired": false,
+      "description": "고객이 확정한 한 사연·가사로 MP3 1곡과 가사 전달"
+    },
+    {
+      "id": "audio_duo",
+      "name": "맞춤 노래 2곡",
+      "amountKrw": 39000,
+      "priceKind": "fixed",
+      "quoteRequired": false,
+      "description": "같은 사연과 가사로 분위기가 다른 2가지 완성곡(MP3 2곡)"
+    },
+    {
+      "id": "audio_video",
+      "name": "맞춤 노래 + 뮤직비디오",
+      "amountKrw": 300000,
+      "priceKind": "starting_at",
+      "quoteRequired": true,
+      "description": "노래 1곡과 협의한 분량의 뮤직비디오 제작. 길이·품질·장면·수정횟수에 따라 개별 견적 확정"
+    }
+  ]
+}

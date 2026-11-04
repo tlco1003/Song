@@ -12,7 +12,8 @@ const fallback=[
  {id:'song-mother',title:'엄마에게 전하는 노래',subtitle:'사랑과 감사를 담은 영상 편지',file:'mother-song.mp4',mediaKind:'video',durationSeconds:436.8},
  {id:'song-nara',title:'나라는 사람',subtitle:'삶과 사랑을 돌아보는 노래',file:'nara.mp3',lyricsFile:'lyrics-nara.txt',durationSeconds:257.544},
  {id:'song-taehwan',title:'구태환에게',subtitle:'연인에게 보내는 편지 같은 노래',file:'taehwan.mp3',lyricsFile:'lyrics-taehwan.txt',durationSeconds:320.04},
- {id:'song-jeongmi',title:'내사랑김정미',subtitle:'소중한 친구에게 전하는 노래',file:'jeongmi.mp3',lyricsFile:'lyrics-jeongmi.txt',durationSeconds:350.04}
+ {id:'song-jeongmi',title:'내사랑김정미',subtitle:'소중한 친구에게 전하는 노래',file:'jeongmi-new.mp3',lyricsFile:'lyrics-jeongmi.txt',durationSeconds:350.04},
+ {id:'song-romantic-wedding',title:'로맨틱 웨딩',subtitle:'특별한 결혼식날 서로의 약속을 담은 듀엣곡',file:'romantic-wedding.mp3',lyricsFile:'lyrics-wedding.txt'}
 ];
 async function readText(url){
  const result=await fetch(url,{cache:'no-store'});
@@ -20,8 +21,16 @@ async function readText(url){
  return result.text();
 }
 async function available(url){
- try{const result=await fetch(url,{method:'HEAD',cache:'no-store'});const bytes=Number(result.headers.get('content-length'));return result.ok&&(!Number.isFinite(bytes)||bytes===0||bytes>1024)}
- catch(_){return false}
+ // HEAD may be blocked or temporarily unavailable on some CDNs.
+ // Only a confirmed missing or implausibly short file is treated as missing.
+ try{
+  const result=await fetch(url,{method:'HEAD',cache:'no-store'});
+  const header=result.headers.get('content-length');
+  const bytes=header===null?NaN:Number(header);
+  if(result.ok)return Number.isFinite(bytes)&&bytes>0&&bytes<=1024?'missing':'ready';
+  if(result.status===404||result.status===410)return 'missing';
+ }catch(_){}
+ return 'unchecked';
 }
 function status(text){$('playback-message').textContent=text}
 function filterLyricLines(text){
@@ -106,7 +115,7 @@ async function select(index,autoPlay=false){
    if(token!==requestId)return;rawLyrics=text;drawLyrics(rawLyrics);
   }).catch(()=>{if(token===requestId)drawLyrics('')});
  }
- if(track.deviceURL||track.available){
+ if(track.deviceURL||track.availability!=='missing'){
   const isVideo=track.mediaKind==='video'||/\.mp4$/i.test(track.file||'');
   const player=isVideo?videoPlayer:audio;
   player.src=track.deviceURL||fileURL('media/',track.file);
@@ -127,21 +136,27 @@ function showTracks(){
   const title=document.createElement('strong');title.textContent=track.title;
   const subtitle=document.createElement('small');subtitle.textContent=track.subtitle||'음악 선물';
   const duration=document.createElement('span');duration.className='track-length';
-  duration.textContent=track.available||track.deviceURL?(track.durationSeconds?Math.floor(track.durationSeconds/60)+':'+String(Math.round(track.durationSeconds)%60).padStart(2,'0'):'▶'):'준비 중';
+  duration.textContent=track.availability==='missing'&&!track.deviceURL?'준비 중':(track.durationSeconds?Math.floor(track.durationSeconds/60)+':'+String(Math.round(track.durationSeconds)%60).padStart(2,'0'):'▶');
   info.append(title,subtitle);b.append(num,info,duration);
   b.addEventListener('click',()=>select(idx));root.appendChild(b);
  }
 }
 async function start(){
+ let usingFallback=false;
  try{
-  const manifest=JSON.parse(await readText('media/tracks.json'));
+  // Bust stale manifest caches when a new music gift is published.
+  const manifest=JSON.parse(await readText('media/tracks.json?updated='+Date.now()));
+  if(!Array.isArray(manifest.tracks))throw Error('invalid playlist');
   tracks=manifest.tracks.filter(t=>t&&fileOK(t.file)&&(!t.lyricsFile||fileOK(t.lyricsFile)));
- }catch(_){tracks=fallback.map(t=>({...t}))}
- await Promise.all(tracks.map(async track=>{track.available=await available(fileURL('media/',track.file))}));
- // A private showcase must not offer broken play buttons for files that are not yet published.
- const published=tracks.filter(track=>track.available||track.deviceURL);
- if(published.length)tracks=published;
+ }catch(_){
+  usingFallback=true;
+  tracks=fallback.map(t=>({...t}));
+ }
+ await Promise.all(tracks.map(async track=>{track.availability=await available(fileURL('media/',track.file))}));
+ // Keep approved manifest entries visible; show unavailable audio as "준비 중".
+ // Otherwise a temporary HEAD failure can silently remove a song and its lyrics.
  showTracks();await select(0);
+ if(usingFallback)status('최신 곡 목록을 불러오지 못해 임시 목록을 표시하고 있어요. 인터넷 연결을 확인하고 새로고침해 주세요.');
 }
 $('previous-track').addEventListener('click',()=>select(current-1));
 $('next-track').addEventListener('click',()=>select(current+1));

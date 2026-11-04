@@ -10,12 +10,12 @@ const fileOK=s=>typeof s==='string'&&/^[a-zA-Z0-9가-힣_.-]{1,110}$/.test(s);
 const fileURL=(root,s)=>root+encodeURIComponent(s);
 const shortName=s=>s.replace(/\.[^.]+$/,'').replace(/[_-]+/g,' ').slice(0,95);
 const fallback=[
- {id:'song-mother',title:'엄마에게 전하는 노래',subtitle:'사랑과 감사를 담은 영상 편지',file:'mother-song.mp4',mediaKind:'video',durationSeconds:436.8,lyricsFile:'lyrics-mother-song.txt'},
- {id:'song-cinderella-laundry',title:'세탁소의 신데렐라',subtitle:'동전 하나만 더!',file:'cinderella-laundry.mp3',visualFile:'cinderella-laundry-loop.mp4',visualMode:'silent-loop',durationSeconds:221.64,lyricsFile:'lyrics-cinderella-laundry.txt'},
- {id:'song-nara',title:'나라는 사람',subtitle:'삶과 사랑을 돌아보는 노래',file:'nara.mp3',lyricsFile:'lyrics-nara.txt',durationSeconds:257.544},
- {id:'song-taehwan',title:'구태환에게',subtitle:'연인에게 보내는 편지 같은 노래',file:'taehwan.mp3',lyricsFile:'lyrics-taehwan.txt',durationSeconds:320.04},
- {id:'song-jeongmi',title:'내사랑김정미',subtitle:'소중한 친구에게 전하는 노래',file:'jeongmi-new.mp3',lyricsFile:'lyrics-jeongmi.txt',durationSeconds:350.04},
- {id:'song-romantic-wedding',title:'로맨틱 웨딩',subtitle:'특별한 결혼식날 서로의 약속을 담은 듀엣곡',file:'romantic-wedding.mp3',lyricsFile:'lyrics-wedding.txt'}
+ {id:'song-mother',title:'엄마에게 전하는 노래',genre:'감성 발라드',subtitle:'사랑과 감사를 담은 영상 편지',file:'mother-song.mp4',mediaKind:'video',durationSeconds:436.8,lyricsFile:'lyrics-mother-song.txt'},
+ {id:'song-cinderella-laundry',title:'세탁소의 신데렐라',genre:'뮤지컬 팝 · 재즈 스윙',subtitle:'동전 하나만 더!',file:'cinderella-laundry.mp3',visualFile:'cinderella-laundry-loop.mp4',visualMode:'silent-loop',durationSeconds:221.64,lyricsFile:'lyrics-cinderella-laundry.txt'},
+ {id:'song-nara',title:'나라는 사람',genre:'어쿠스틱 팝',subtitle:'삶과 사랑을 돌아보는 노래',file:'nara.mp3',lyricsFile:'lyrics-nara.txt',durationSeconds:257.544},
+ {id:'song-taehwan',title:'구태환에게',genre:'로맨틱 발라드',subtitle:'연인에게 보내는 편지 같은 노래',file:'taehwan.mp3',lyricsFile:'lyrics-taehwan.txt',durationSeconds:320.04},
+ {id:'song-jeongmi',title:'내사랑김정미',genre:'감성 발라드',subtitle:'소중한 친구에게 전하는 노래',file:'jeongmi-new.mp3',lyricsFile:'lyrics-jeongmi.txt',durationSeconds:350.04},
+ {id:'song-romantic-wedding',title:'로맨틱 웨딩',genre:'웨딩 발라드 · 듀엣',subtitle:'특별한 결혼식날 서로의 약속을 담은 듀엣곡',file:'romantic-wedding.mp3',lyricsFile:'lyrics-wedding.txt'}
 ];
 async function readText(url){
  const result=await fetch(url,{cache:'no-store'});
@@ -105,6 +105,7 @@ async function select(index,autoPlay=false){
  musicVisualStage.hidden=true;albumArt.hidden=false;
  $('track-title').textContent=track.title;
  $('track-subtitle').textContent=track.subtitle||'소중한 이야기를 담은 노래';
+ $('track-genre').textContent=track.genre||'장르 정보 준비 중';
  $('lyrics-track-title').textContent=track.title;
  $('track-position').textContent=String(current+1).padStart(2,'0')+' / '+String(tracks.length).padStart(2,'0');
  $('track-counter').textContent=String(current+1).padStart(2,'0')+' — '+String(tracks.length).padStart(2,'0');
@@ -147,10 +148,11 @@ function showTracks(){
   const num=document.createElement('span');num.textContent=String(idx+1).padStart(2,'0');
   const info=document.createElement('span');info.className='track-name';
   const title=document.createElement('strong');title.textContent=track.title;
-  const subtitle=document.createElement('small');subtitle.textContent=track.subtitle||'음악 선물';
+  const genre=document.createElement('small');genre.className='track-genre';genre.textContent=track.genre||'장르 정보 준비 중';
+  const subtitle=document.createElement('small');subtitle.className='track-subtitle';subtitle.textContent=track.subtitle||'음악 선물';
   const duration=document.createElement('span');duration.className='track-length';
   duration.textContent=track.availability==='missing'&&!track.deviceURL?'준비 중':(track.durationSeconds?Math.floor(track.durationSeconds/60)+':'+String(Math.round(track.durationSeconds)%60).padStart(2,'0'):'▶');
-  info.append(title,subtitle);b.append(num,info,duration);
+  info.append(title,genre,subtitle);b.append(num,info,duration);
   b.addEventListener('click',()=>select(idx,true));root.appendChild(b);
  }
 }

@@ -32,7 +32,7 @@
    <label for="memory">그 사람과의 추억이나 기억에 남는 장면이 있나요?</label><textarea id="memory" rows="3" maxlength="2000" placeholder="함께 웃었던 일, 기억에 남는 순간"></textarea>
    <label for="message">가장 전하고 싶은 말이 무엇인가요?</label><textarea id="message" rows="3" maxlength="1500" placeholder="꼭 전하고 싶었던 진심"></textarea>
    <label for="gratitudeApology">고맙거나 미안했던 일이 있나요?</label><textarea id="gratitudeApology" rows="3" maxlength="1800" placeholder="마음속에 남아 있는 말"></textarea>
-   <label for="occasion">어떤 때 선물할 노래인가요?</label><select id="occasion"><option>감사</option><option>사랑</option><option>생일</option><option>결혼</option><option>기념일</option><option>위로</option><option>축하</option><option>사과</option><option>기타</option></select>
+   <label for="occasion">어떤 때 선물할 노래인가요?</label><select id="occasion"><option>감사</option><option value="사랑·고백">사랑</option><option>생일</option><option>결혼</option><option value="추억·그리움">기념일·추억</option><option value="위로·응원">위로</option><option>축하</option><option value="사과·화해">사과</option><option>기타</option></select>
    <div class="choice-grid">
     <div><label for="recipientAgeGroup">받는 사람의 나이대</label><select id="recipientAgeGroup"><option value="unknown">선택 안 함</option><option value="under20">10대 이하</option><option value="20s">20대</option><option value="30s">30대</option><option value="40s">40대</option><option value="50s">50대</option><option value="60s">60대</option><option value="70plus">70대 이상</option></select></div>
     <div><label for="relativePosition">상대방과 나의 관계</label><select id="relativePosition"><option value="unknown">자연스럽게</option><option value="older">윗사람</option><option value="peer">친구·동등한 사이</option><option value="younger">아랫사람</option></select></div>
@@ -40,7 +40,7 @@
    <label for="speechStyle">평소 그 사람에게 쓰는 말투</label><select id="speechStyle"><option value="auto">내 사연의 말투에 맞게</option><option value="casual">친근한 반말</option><option value="polite">따뜻한 존댓말</option><option value="mixed">반말과 존댓말을 함께</option></select>
    <div class="choice-grid">
     <div><label for="genre">음악 장르</label><select id="genre"><option>발라드</option><option>어쿠스틱</option><option>재즈</option><option>트로트</option><option>R&B</option><option>K-POP</option><option>인디팝</option></select></div>
-    <div><label for="mood">음악 분위기</label><select id="mood"><option>따뜻한</option><option>감동적인</option><option>아련한</option><option>밝은</option><option>웅장한</option><option>잔잔한</option></select></div>
+    <div><label for="mood">음악 분위기</label><select id="mood"><option>따뜻한</option><option>감동적인</option><option value="애절한">아련한</option><option value="희망찬">밝은</option><option value="신나는">활기찬</option><option value="설레는">설레는</option></select></div>
    </div>
    <input type="hidden" id="lyricLength" value="full">
    <button type="submit" id="generate-lyrics" class="main-create-button">내 이야기로 가사 만들기 <span>✦</span></button>

@@ -46,7 +46,7 @@ function setActiveLine(index,force=false){
  el.classList.add('is-active');
  // Keep the active lyric centered inside a 3-line viewport.
  const top=Math.max(0,el.offsetTop-root.offsetTop-(view.clientHeight-el.clientHeight)/2);
- if(typeof view.scrollTo==='function')view.scrollTo({top,behavior:force?'instant':'smooth'});
+ if(typeof view.scrollTo==='function')view.scrollTo({top,behavior:force?'auto':'smooth'});
  else view.scrollTop=top;
 }
 function drawLyrics(text){

@@ -108,5 +108,15 @@ $('local-review').addEventListener('change',e=>{
  $('review-file-notice').textContent='이 기기에서만 감상할 수 있습니다.';e.target.value='';
 });
 window.addEventListener('pagehide',()=>[...local,...videos].forEach(u=>URL.revokeObjectURL(u)));
-void init();void reviews();
+
+async function featureMotherVideo(){
+  const player=$('mother-featured-video'),fallback=$('mother-video-pending');
+  const url='media/mother-song.mp4';
+  try{
+    const response=await fetch(url,{method:'HEAD',cache:'no-store'});
+    if(!response.ok)return;
+    player.src=url;player.hidden=false;fallback.hidden=true;
+  }catch(_){}
+}
+void init();void reviews();void featureMotherVideo();
 })();

@@ -12,8 +12,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20261104-cinderella-loop">
-  <script src="player.js?v=20261104-cinderella-loop" defer></script>
+  <link rel="stylesheet" href="style.css?v=20261105-genres-01">
+  <script src="player.js?v=20261105-genres-01" defer></script>
 </head>
 <body>
 <header class="site-header">
@@ -43,6 +43,7 @@
           <div class="song-heading">
             <p class="song-number">THE MUSIC LETTER</p>
             <h2 id="track-title">노래를 불러오는 중</h2>
+            <p id="track-genre" class="current-track-genre">장르 정보 불러오는 중</p>
             <p id="track-subtitle">마음을 담은 특별한 선물</p>
           </div>
           <div id="audio-zone" class="audio-zone">
@@ -76,6 +77,7 @@
       <div class="song-selector">
         <div class="selector-header"><span class="small-caps">SELECT YOUR MUSIC LETTER</span><span>소중한 노래들의 이야기</span></div>
         <div id="track-list" class="track-list" role="group" aria-label="노래 목록"></div>
+        <p class="genre-disclaimer">장르 표기는 곡의 분위기를 안내하기 위한 간단한 분류입니다.</p>
       </div>
       <div class="own-music">
         <div><strong>내가 간직한 음악도 들어볼까요?</strong><p>휴대폰에 저장된 음악을 가져와 가사와 함께 감상할 수 있어요.</p></div>

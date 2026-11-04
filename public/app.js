@@ -1,4 +1,4 @@
-// SONG: GPT lyric authoring + official Suno MCP music creation.
+// WITHU (repository: Song): GPT lyric authoring + official Suno MCP music creation.
 const $=id=>document.getElementById(id);
 const state={apiToken:'',busy:false,sunoReady:false};
 function answers(){
@@ -29,7 +29,7 @@ async function request(route,options={}){
   };
   let response=await fetch(route,{...options,headers:{...headers,...options.headers}});
   if(response.status===401&&!state.apiToken){
-    const token=prompt('이 SONG 개발 서버의 APP_ACCESS_TOKEN을 입력하세요. Suno 계정 OAuth 토큰이 아닙니다.');
+    const token=prompt('이 WITHU 개발 서버의 APP_ACCESS_TOKEN을 입력하세요. Suno 계정 OAuth 토큰이 아닙니다.');
     if(token){state.apiToken=token;response=await fetch(route,{...options,headers:{...headers,'x-app-token':token}});}
   }
   let json;

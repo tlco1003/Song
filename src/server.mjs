@@ -88,6 +88,9 @@ async function handle(req,res){
     '/':'docs/index.html',
     '/index.html':'docs/index.html',
     '/style.css':'docs/style.css',
+    '/create.html':'docs/create.html',
+    '/create.css':'docs/create.css',
+    '/create.js':'docs/create.js',
     '/player.js':'docs/player.js',
     '/media/tracks.json':'docs/media/tracks.json',
     '/reviews/reviews.json':'docs/reviews/reviews.json',
@@ -98,7 +101,7 @@ async function handle(req,res){
     '/favicon.svg':'public/favicon.svg'
   };
   let relative=routes[pathname];
-  if(!relative && /^\/media\/[a-zA-Z0-9가-힣_.-]+\.(?:mp3|m4a|wav|ogg|txt)$/i.test(pathname))
+  if(!relative && /^\/media\/[a-zA-Z0-9가-힣_.-]+\.(?:mp3|m4a|wav|ogg|txt|mp4)$/i.test(pathname))
     relative='docs'+pathname;
   if(!relative && /^\/reviews\/[a-zA-Z0-9가-힣_.-]+\.(?:mp4|webm)$/i.test(pathname))
     relative='docs'+pathname;

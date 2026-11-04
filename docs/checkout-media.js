@@ -121,7 +121,6 @@
   },200);
 
   function showPhoto(file) {
-    if(!requireConsent())return;
     if(!file||file.size>15*1024*1024||!(/image\//.test(file.type)||/\.(jpg|jpeg|png|webp|heic)$/i.test(file.name))){
       $('photo-feedback').textContent='15MB 이하 이미지 파일을 선택해 주세요.';return;
     }
@@ -129,18 +128,24 @@
     const img=$('photo-preview'),stage=$('stage-portrait-image');
     for(const item of [img,stage]){item.src=state.photoUrl;item.hidden=false;}
     $('photo-empty').hidden=true;$('stage-placeholder').hidden=true;
-    $('photo-feedback').textContent='선택한 사진을 이 기기에서 미리 보고 있어요.';
+    $('photo-filename').textContent='선택한 사진: '+file.name.slice(0,120);
+    $('photo-filename').hidden=false;
+    $('clear-face-photo').hidden=false;
+    $('photo-feedback').textContent='사진 선택 완료 · 이 기기에서 바로 확인할 수 있어요. 서버에는 전송하지 않았어요.';
   }
   function showVideoBlob(file) {
-    if(!requireConsent())return;
-    if(!file||file.size>200*1024*1024||!/^(video\/|application\/octet-stream)/.test(file.type||'video/')&&!/\.(mp4|mov|webm)$/i.test(file.name||'')){
+    if(!file||file.size>200*1024*1024||
+      !(/^(?:video\/|application\/octet-stream)/.test(file.type||'')||/\.(mp4|mov|webm)$/i.test(file.name||''))){
       $('video-feedback').textContent='200MB 이하 MP4·MOV·WebM 영상을 선택해 주세요.';return;
     }
     revoke('videoUrl');state.videoUrl=URL.createObjectURL(file);
     const video=$('video-preview');
     video.pause();video.src=state.videoUrl;video.hidden=false;video.load();
     $('video-empty').hidden=true;
-    $('video-feedback').textContent='영상 미리보기입니다. 아직 서버에 업로드되거나 얼굴 교체가 적용되지 않았어요.';
+    $('video-filename').textContent='선택한 영상: '+file.name.slice(0,120);
+    $('video-filename').hidden=false;
+    $('clear-face-video').hidden=false;
+    $('video-feedback').textContent='영상 선택 완료 · 위 미리보기의 ▶ 버튼을 눌러 확인할 수 있어요. 서버에는 전송하지 않았어요.';
   }
   $('face-photo').addEventListener('change',e=>{
     if(e.target.files?.[0])showPhoto(e.target.files[0]);
@@ -246,22 +251,37 @@
     if(state.recorder?.state==='recording')state.recorder.stop();
   });
   $('close-camera').addEventListener('click',()=>{closeCamera();cameraNotice('카메라를 껐어요.');});
-  function clearMedia(){
-    closeCamera(true);
-    $('face-photo').value='';$('face-video').value='';$('native-camera-capture').value='';
-    const v=$('video-preview');v.pause();v.removeAttribute('src');v.load();v.hidden=true;
+  function clearPhoto(){
+    $('face-photo').value='';
     const photo=$('photo-preview'),stage=$('stage-portrait-image');
     for(const node of [photo,stage]){node.removeAttribute('src');node.hidden=true;}
-    $('photo-empty').hidden=false;$('video-empty').hidden=false;$('stage-placeholder').hidden=false;
-    $('photo-feedback').textContent='사진을 선택하면 여기에서 확인할 수 있어요.';
-    $('video-feedback').textContent='영상을 선택하거나 촬영하면 여기에서 재생할 수 있어요.';
-    revoke('photoUrl');revoke('videoUrl');
+    $('photo-empty').hidden=false;$('stage-placeholder').hidden=false;
+    $('photo-filename').textContent='';$('photo-filename').hidden=true;
+    $('clear-face-photo').hidden=true;
+    $('photo-feedback').textContent='사진을 선택하면 바로 아래에서 확인할 수 있어요.';
+    revoke('photoUrl');
   }
+  function clearVideo(){
+    $('face-video').value='';$('native-camera-capture').value='';
+    const v=$('video-preview');v.pause();v.removeAttribute('src');v.load();v.hidden=true;
+    $('video-empty').hidden=false;
+    $('video-filename').textContent='';$('video-filename').hidden=true;
+    $('clear-face-video').hidden=true;
+    $('video-feedback').textContent='영상을 선택하면 바로 아래에서 재생할 수 있어요.';
+    revoke('videoUrl');
+  }
+  function clearMedia(){
+    closeCamera(true);
+    clearPhoto();
+    clearVideo();
+  }
+  $('clear-face-photo').addEventListener('click',clearPhoto);
+  $('clear-face-video').addEventListener('click',clearVideo);
   $('clear-media-preview').addEventListener('click',clearMedia);
   function switchProduct(){
     const show=selectedProduct()==='audio_video';
     $('video-media-section').hidden=!show;
-    if(!show&&state.stream)closeCamera(true);
+    if(!show)clearMedia();
   }
   for(const radio of document.querySelectorAll('input[name="product"]')){
     radio.addEventListener('change',switchProduct);

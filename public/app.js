@@ -92,7 +92,7 @@ async function copyText(id,label){
   try{
     if(!navigator.clipboard?.writeText)throw Error('clipboard unavailable');
     await navigator.clipboard.writeText(el.value);
-    $('sunoStatus').textContent=label+를 복사했어요.';
+    $('sunoStatus').textContent=label+'를 복사했어요.';
   }catch(_){$('sunoStatus').textContent='복사가 제한됐어요. 선택된 텍스트를 수동으로 복사하세요.';}
 }
 async function createWithMcp(){

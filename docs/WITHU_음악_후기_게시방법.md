@@ -1,47 +1,33 @@
-# WITHU — 음악 및 실제 후기 영상 게시 방법
+# WITHU 미디어 게시와 별도 서버 배포 안내
 
-브랜드 WITHU / GitHub 저장소 tlco1003/Song / 정적 사이트 docs/index.html.
+## 공개 프런트엔드
+- `docs/index.html` : 사이트 첫 화면(바로 음악과 가사)
+- `docs/style.css` : 고급 서체·반응형 디자인
+- `docs/player.js` : 음악 재생·목록 이동·가사 표시·파일 미리보기
+- `docs/media/tracks.json` : 공개 음악 목록
+- `docs/media/lyrics-*.txt` : 노래별 가사
+- `docs/reviews/reviews.json` : 실제 동의받은 후기 목록
 
-## 1. 세 곡 직접 재생
+원본 MP3 파일이 없이 내장 재생기를 사용할 때에는 외부 서비스의 플레이어가 노출될 수 있습니다. **고객에게 완전히 독립적인 WITHU 음악 재생 화면을 제공하려면, 게시 권한이 있는 MP3를 자체 호스팅해야 합니다.**
 
-다음 세 원본곡의 제목·길이와 Suno song ID는 사용자가 직접 보낸 MP3 메타데이터에서 확인했다.
+세 파일을 GitHub에 업로드할 때 이름:
+- `nara.mp3`
+- `taehwan.mp3`
+- `jeongmi.mp3`
 
-- nara.mp3 — 〈나라는 사람〉 (4:17)
-- taehwan.mp3 — 〈구태환에게〉 (5:20)
-- jeongmi.mp3 — 〈내사랑김정미〉 (5:50)
+관리자 업로드: https://github.com/tlco1003/Song/upload/main/docs/media
 
-현재 WITHU 페이지에서는 위 세 곡의 Suno embed 플레이어를 사용하도록 설정했다. 실제 라이브 재생 성공은 확인되지 않았고 각 곡의 Suno 공개/링크 전용 설정과 정책에 따라 달라질 수 있다. MP3를 GitHub Pages에 게시하면 Suno 임베드보다 자체 오디오 파일 재생을 우선한다.
+별도 곡을 게시하려면 MP3 파일과 가사 TXT를 올리고 `docs/media/tracks.json`에 항목을 추가하세요. 단순히 파일만 업로드해도 자동으로 목록에 표시되는 것은 아닙니다.
 
-### MP3 영구 게시 (저장소 관리자)
-1. 준비된 세 MP3를 각각 nara.mp3, taehwan.mp3, jeongmi.mp3 이름으로 저장한다.
-2. https://github.com/tlco1003/Song/upload/main/docs/media 를 브라우저에서 열어 본인 GitHub 계정으로 로그인한다.
-3. 세 MP3를 개별로 업로드한다. ZIP은 GitHub가 자동으로 풀지 않으니 ZIP 자체를 업로드하지 않는다.
-4. Commit changes를 눌러 main 브랜치에 추가한다.
-5. https://tlco1003.github.io/Song/ 를 새로고침하고 음악 플레이어로 듣는다.
-6. 실제 파일 주소를 확인한다: /Song/media/nara.mp3, /Song/media/taehwan.mp3, /Song/media/jeongmi.mp3. 업로드 전에는 404가 정상이다.
-7. 추가 음악을 같은 docs/media 폴더에 올리면 공개 GitHub Contents API를 통해 자동으로 목록에 나타나도록 구현했다. GitHub API 접근 제한이나 배포 지연 때는 늦게 나타날 수 있다.
+## 후기 영상
+후기 영상은 실제 촬영·공개 동의를 받은 MP4/WebM만 게시합니다. 파일을 `docs/reviews/`에 올린 후 `reviews.json`에 제목·파일명·`consentConfirmed:true`를 등록해야 화면에 표시됩니다. 가짜 후기는 없습니다.
 
-이 세 곡의 원본은 각 5.81MB, 7.09MB, 7.59MB이므로 일반적인 GitHub 웹 업로드의 개별 파일 용량 제한 범위 안이다. 다만 저장소 용량과 Pages 대역폭, 서비스 정책은 별도로 관리해야 한다.
+관리자 업로드: https://github.com/tlco1003/Song/upload/main/docs/reviews
 
-### 방문자가 자신의 음악 선택
-사이트의 ‘＋ 내 음악 선택 · 미리 듣기’는 브라우저에서 파일을 일시 재생하는 기능이다. 서버 업로드 또는 공개 게시가 아니다. ‘음악 게시하기 · 관리자용’ 버튼은 GitHub 업로드 페이지로 이동하며 저장소에 쓰기 권한이 있는 관리자만 영구 게시할 수 있다.
+## 방문자 파일 선택
+'내 음악 불러오기', '가사 파일 불러오기', '영상 미리보기'는 **방문자의 기기에서만 재생하는 미리보기**입니다. 서버 업로드, 공개 게시, 공유가 아닙니다.
 
-일반 고객 누구나 음악을 직접 공개 게시하는 기능은 현재 미구현. 사용자 인증, 파일 저장 서버, 악성 파일 검사, 소유권 확인, 콘텐츠 심사, 삭제/철회와 과금 제한이 필요하다. GitHub Pages 정적 사이트만으로 구현했다고 주장하지 않는다.
+## 서버 배포
+루트의 `Dockerfile`과 `render.yaml`은 별도 Node HTTPS 서버 배포를 위한 준비 파일입니다. `/healthz`는 키를 노출하지 않는 상태 확인 엔드포인트입니다. 인증·결제·고객별 보관·보안 스토리지·사업용 음악 API는 아직 실제 운영 검증이 필요합니다.
 
-## 2. 실제 영상 후기
-
-사용자가 동의한 실제 후기 MP4/WebM 파일만 게시한다. 현재 이 대화에 제공된 진짜 고객 후기 영상 파일은 없으므로, 실제 영상이 추가되기 전에는 빈 후기 영역에 ‘실제 영상 후기를 준비 중’이라고 표시한다. AI 합성 영상이나 허구 인물을 실사용자로 둔갑시키지 않는다.
-
-본인이 직접 촬영·공개 권리를 가진 영상이라면 https://github.com/tlco1003/Song/upload/main/docs/reviews 로 업로드하여 Commit changes를 누른다. 실제 업로드된 동영상은 사이트가 공개 GitHub 파일 목록에서 확인해 HTML5 video controls 로 재생한다. 리뷰 제공자나 제3자의 얼굴·목소리가 공개되는 경우 적절한 동의가 필요하다.
-
-방문자의 ‘내 후기 영상 선택 · 미리보기’ 역시 현재 기기에서만 임시 재생한다. 공개 저장소의 영상은 누구나 다운로드할 수 있고 Git 기록에 남을 수 있으므로 민감한 사연·초상권·보관기간을 별도로 검토한다.
-
-## 3. 디자인, 검증과 배포
-
-제목/편지 글씨체: Google Fonts Nanum Pen Script. 본문: Gaegu. 외부 폰트 로딩이 실패하면 대체 한글 글꼴을 사용한다.
-
-음악 리스트는 이전/다음 곡, 목록 터치, mp3 오디오 컨트롤을 제공한다. Suno embed 는 외부 프레임이므로 사이트의 이전/다음 버튼으로 곡만 교체하며 재생 버튼은 각 Suno 플레이어 안에서 눌러야 한다.
-
-검증: npm run check && npm test. iPhone Safari에서 반응형 UI, 트랙 변경, Suno iframe 재생, MP3 직접 재생, 영상 미리보기, 배포 여부를 추가 실기기 검사해야 한다.
-
-실제 GPT/Suno API 작곡 및 고객 음악/영상 영구 업로드는 GitHub Pages가 아니라 별도 HTTPS 서버와 사업용 계약이 필요한 후속 기능이다.
+**비공개 원칙:** 현재 GitHub 저장소 `tlco1003/Song`는 public입니다. 사이트에서 프로젝트 링크를 제거해도 소스와 커밋 기록은 공개됩니다. 상업용 노래 생성 로직·작사 프롬프트는 **private 백엔드 저장소**로 분리한 다음, WITHU 소개용 정적 파일만 공개 저장소에 배포하세요. Pages 사이트 자체는 공개할 수 있어도 서버 소스와 비밀키가 공개될 필요는 없습니다.

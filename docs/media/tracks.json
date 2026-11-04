@@ -16,7 +16,9 @@
       "subtitle": "동전 하나만 더!",
       "file": "cinderella-laundry.mp3",
       "durationSeconds": 221.64,
-      "lyricsFile": "lyrics-cinderella-laundry.txt"
+      "lyricsFile": "lyrics-cinderella-laundry.txt",
+      "visualFile": "cinderella-laundry-loop.mp4",
+      "visualMode": "silent-loop"
     },
     {
       "id": "song-nara",

@@ -31,26 +31,13 @@
 - 고객 목록에서는 파일이 실제 배포된 항목만 표시한다. 1바이트짜리 가짜 파일은 재생 목록에서 배제한다.
 - 가사: 웹에서는 구간 라벨 제거 후 세 줄씩 약식 자동 스크롤. 개별 가사 정확한 시간표는 필요.
 
-## 세탁소의 신데렐라 — 업로드 대기 (2026-11-04)
-- 화면 제목: **세탁소의 신데렐라**
-- 부제: **동전 하나만 더!**
-- 재생 파일명: `docs/media/cinderella-laundry.mp3` — 221.64초 / 5,116,203 bytes
-- 가사: `docs/media/lyrics-cinderella-laundry.txt` — 사용자 제공 노랫말 67줄 등록 완료
-- 음악 목록: `docs/media/tracks.json`에 `song-cinderella-laundry` 연결 완료
-- GitHub main에서 원래 언급한 `Cinderella of the laundry.mr` 파일은 확인되지 않았으며 MP3도 아직 미게시.
-- 파일 선택 및 업로드 링크: https://github.com/tlco1003/Song/upload/main/docs/media
-- 배포 후 직접 재생 URL: https://tlco1003.github.io/Song/media/cinderella-laundry.mp3
-- `.mr`처럼 잘못된 확장자는 재생에서 제외될 수 있으므로 실제 MP3 파일을 `.mp3`로 올릴 것.
+## 세탁소의 신데렐라 — 게시 완료 (2026-11-04)
 
-## 세탁소의 신데렐라 — 신규 공개곡
-
-- 고객 화면 제목: **세탁소의 신데렐라**
-- 부제: **동전 하나만 더!**
-- 공개 재생 파일 이름: `cinderella-laundry.mp3` (**반드시 .mp3 확장자**)
-- 가사 파일: `lyrics-cinderella-laundry.txt` (원문을 저장하되 고객 화면은 구간·편곡 지시를 걸러내고 노랫말만 표시)
-- 전달된 원본 MP3 검사: `Cinderella-of-the-laundry.mp3`, 5,116,203 bytes, 길이 221.64초, 오디오 코덱 MP3, 48 kHz.
-- `Cinderella of the laundry.mr`은 `main` 브랜치 전체 트리에서 확인되지 않았으며, `.mr`는 현재 HTML5 오디오 및 공개 서버의 지원 확장자가 아니다.
-- **2026-11-04 현재 상태:** 곡 정보와 가사는 GitHub에 등록되었으나 `docs/media/cinderella-laundry.mp3` 바이너리 파일은 **아직 GitHub에 없음**. 음원이 업로드되기 전에는 공개 플레이어에서 정상 재생을 보장할 수 없다.
-- GitHub 관리자 업로드: https://github.com/tlco1003/Song/upload/main/docs/media
-- 업로드 후 `https://tlco1003.github.io/Song/media/cinderella-laundry.mp3`가 실제로 재생되는지 검증한다. 사이트 자체에는 이 GitHub 관리자 링크를 표시하지 않는다.
-
+- 화면 제목: **세탁소의 신데렐라**, 부제: **동전 하나만 더!**
+- 원곡 MP3: `docs/media/cinderella-laundry.mp3` (5,116,203 bytes, 221.64초). 기존 대문자 파일 `Cinderella-of-the-laundry.mp3`의 Git blob을 같은 내용으로 소문자 표준 이름에 연결했습니다.
+- 짧은 영상: `docs/media/cinderella-laundry-loop.mp4` (8,926,947 bytes). 원래 `2026-11-04 22:15:09.mp4`였던 Git blob을 표준 이름에 연결했습니다.
+- 가사: `docs/media/lyrics-cinderella-laundry.txt`
+- `tracks.json`: `file`은 MP3, `visualFile`은 영상, `visualMode`는 `silent-loop`.
+- 선택하면 영상은 자동으로 **무음 반복재생**합니다. MP3는 독립 `audio` 요소에서 재생되고, 가사 진행도 원곡 시간 기준입니다. 영상 자체의 오디오 트랙은 사용하지 않습니다.
+- 모바일 브라우저의 자동재생 정책상 원곡은 사용자 동작 없이 자동재생하지 않습니다. 노래를 선택하거나 재생 버튼을 눌러 시작합니다.
+- 공개 페이지: https://tlco1003.github.io/Song/ (배포 반영 후 확인 필요).

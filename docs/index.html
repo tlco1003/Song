@@ -12,8 +12,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20261104-audio-fix">
-  <script src="player.js?v=20261104-mother-lyrics-fix" defer></script>
+  <link rel="stylesheet" href="style.css?v=20261104-cinderella-loop">
+  <script src="player.js?v=20261104-cinderella-loop" defer></script>
 </head>
 <body>
 <header class="site-header">
@@ -35,7 +35,11 @@
       <div class="listening-grid">
         <section class="album-panel" aria-label="음악 플레이어">
           <div class="album-eyebrow">WITHU ORIGINAL COLLECTION <span id="track-position">01 / 03</span></div>
-          <div class="album-art" aria-hidden="true"><div class="record-ring"><span>W</span></div><span class="art-notes">♪</span></div>
+          <div class="album-art" id="album-art" aria-hidden="true"><div class="record-ring"><span>W</span></div><span class="art-notes">♪</span></div>
+          <div class="music-visual-stage" id="music-visual-stage" hidden>
+            <video id="music-visual" autoplay muted loop playsinline preload="metadata" aria-label="세탁소의 신데렐라 뮤직비디오 무음 반복 재생"></video>
+            <span class="music-visual-caption" aria-hidden="true">WITHU · CINDERELLA · VISUAL LOOP</span>
+          </div>
           <div class="song-heading">
             <p class="song-number">THE MUSIC LETTER</p>
             <h2 id="track-title">노래를 불러오는 중</h2>

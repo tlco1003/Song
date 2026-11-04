@@ -105,6 +105,24 @@ test('세탁소의 신데렐라 is listed with complete lyrics and verified MP3 
   assert.doesNotMatch(lyrics,/\[(?:Verse|Chorus|Pre-Chorus|Bridge|Outro|Final)/);
 });
 
+test('Cinderella short loops silently while its full MP3 drives playback and lyrics',()=>{
+  const song=tracks.tracks.find(t=>t.id==='song-cinderella-laundry');
+  assert.ok(song);
+  assert.equal(song.file,'cinderella-laundry.mp3');
+  assert.equal(song.visualFile,'cinderella-laundry-loop.mp4');
+  assert.equal(song.visualMode,'silent-loop');
+  assert.ok(statSync(new URL('../docs/media/'+song.file,import.meta.url)).size>1024);
+  assert.ok(statSync(new URL('../docs/media/'+song.visualFile,import.meta.url)).size>1024);
+  assert.match(html,/<video id="music-visual" autoplay muted loop playsinline/);
+  assert.match(js,/musicVisual\.muted=true/);
+  assert.match(js,/musicVisual\.loop=true/);
+  assert.match(js,/musicVisual\.controls=false/);
+  assert.match(js,/track\.visualMode==='silent-loop'/);
+  assert.match(js,/musicVisualStage\.hidden=false;albumArt\.hidden=true/);
+  assert.match(js,/void musicVisual\.play\(\)/);
+  assert.match(css,/#music-visual\{/);
+});
+
 test('playlist controls and private local upload controls are connected to new JS',()=>{
   for(const id of ['previous-track','next-track','music-audio','music-video','no-audio','track-list','local-song','local-lyrics','lyrics-scroll','copy-lyrics','local-review','review-gallery']){
     assert.ok(html.includes('id="'+id+'"'),id);

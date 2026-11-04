@@ -3,6 +3,7 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const audio=$('music-audio'),videoPlayer=$('music-video');
+const musicVisual=$('music-visual'),musicVisualStage=$('music-visual-stage'),albumArt=$('album-art');
 let tracks=[],current=0,requestId=0,rawLyrics='',visibleLyrics=[],activeLine=-1;
 const deviceAudio=[],deviceVideo=[];
 const fileOK=s=>typeof s==='string'&&/^[a-zA-Z0-9가-힣_.-]{1,110}$/.test(s);
@@ -10,6 +11,7 @@ const fileURL=(root,s)=>root+encodeURIComponent(s);
 const shortName=s=>s.replace(/\.[^.]+$/,'').replace(/[_-]+/g,' ').slice(0,95);
 const fallback=[
  {id:'song-mother',title:'엄마에게 전하는 노래',subtitle:'사랑과 감사를 담은 영상 편지',file:'mother-song.mp4',mediaKind:'video',durationSeconds:436.8,lyricsFile:'lyrics-mother-song.txt'},
+ {id:'song-cinderella-laundry',title:'세탁소의 신데렐라',subtitle:'동전 하나만 더!',file:'cinderella-laundry.mp3',visualFile:'cinderella-laundry-loop.mp4',visualMode:'silent-loop',durationSeconds:221.64,lyricsFile:'lyrics-cinderella-laundry.txt'},
  {id:'song-nara',title:'나라는 사람',subtitle:'삶과 사랑을 돌아보는 노래',file:'nara.mp3',lyricsFile:'lyrics-nara.txt',durationSeconds:257.544},
  {id:'song-taehwan',title:'구태환에게',subtitle:'연인에게 보내는 편지 같은 노래',file:'taehwan.mp3',lyricsFile:'lyrics-taehwan.txt',durationSeconds:320.04},
  {id:'song-jeongmi',title:'내사랑김정미',subtitle:'소중한 친구에게 전하는 노래',file:'jeongmi-new.mp3',lyricsFile:'lyrics-jeongmi.txt',durationSeconds:350.04},
@@ -99,6 +101,8 @@ async function select(index,autoPlay=false){
  const track=tracks[current],token=++requestId;
  audio.pause();audio.removeAttribute('src');audio.load();
  videoPlayer.pause();videoPlayer.removeAttribute('src');videoPlayer.load();
+ musicVisual.pause();musicVisual.removeAttribute('src');musicVisual.load();
+ musicVisualStage.hidden=true;albumArt.hidden=false;
  $('track-title').textContent=track.title;
  $('track-subtitle').textContent=track.subtitle||'소중한 이야기를 담은 노래';
  $('lyrics-track-title').textContent=track.title;
@@ -115,12 +119,21 @@ async function select(index,autoPlay=false){
    if(token!==requestId)return;rawLyrics=text;drawLyrics(rawLyrics);
   }).catch(()=>{if(token===requestId)drawLyrics('')});
  }
+ // A short decorative video runs silently and loops independently of the full MP3.
+ // It is NOT a second audio source, so the song and its lyric timing stay on music-audio.
+ if(track.visualMode==='silent-loop'&&fileOK(track.visualFile||'')){
+  musicVisual.muted=true;musicVisual.defaultMuted=true;musicVisual.volume=0;
+  musicVisual.controls=false;musicVisual.loop=true;
+  musicVisual.src=fileURL('media/',track.visualFile);
+  musicVisualStage.hidden=false;albumArt.hidden=true;
+  void musicVisual.play().catch(()=>{/* Muted autoplay may require a later user gesture. */});
+ }
  if(track.deviceURL||track.availability!=='missing'){
   const isVideo=track.mediaKind==='video'||/\.mp4$/i.test(track.file||'');
   const player=isVideo?videoPlayer:audio;
   player.src=track.deviceURL||fileURL('media/',track.file);
   showPlayer(isVideo?'video':'audio');
-  status(isVideo?'재생 버튼으로 엄마 노래 영상을 감상할 수 있어요.':'노래를 재생하면 가사가 함께 이동해요.');
+  status(isVideo?'재생 버튼으로 엄마 노래 영상을 감상할 수 있어요.':track.visualMode==='silent-loop'?'영상은 무음으로 반복되고, 아래 재생 버튼으로 원곡을 들을 수 있어요.':'노래를 재생하면 가사가 함께 이동해요.');
   if(autoPlay)player.play().catch(()=>status('재생 버튼을 눌러 다음 곡을 감상해 주세요.'));
  }else{
   showPlayer('none');
@@ -138,7 +151,7 @@ function showTracks(){
   const duration=document.createElement('span');duration.className='track-length';
   duration.textContent=track.availability==='missing'&&!track.deviceURL?'준비 중':(track.durationSeconds?Math.floor(track.durationSeconds/60)+':'+String(Math.round(track.durationSeconds)%60).padStart(2,'0'):'▶');
   info.append(title,subtitle);b.append(num,info,duration);
-  b.addEventListener('click',()=>select(idx));root.appendChild(b);
+  b.addEventListener('click',()=>select(idx,true));root.appendChild(b);
  }
 }
 async function start(){
@@ -158,8 +171,16 @@ async function start(){
  showTracks();await select(0);
  if(usingFallback)status('최신 곡 목록을 불러오지 못해 임시 목록을 표시하고 있어요. 인터넷 연결을 확인하고 새로고침해 주세요.');
 }
-$('previous-track').addEventListener('click',()=>select(current-1));
-$('next-track').addEventListener('click',()=>select(current+1));
+$('previous-track').addEventListener('click',()=>select(current-1,true));
+$('next-track').addEventListener('click',()=>select(current+1,true));
+// On browsers that block muted autoplay until interaction, start the silent loop
+// when the user explicitly starts the MP3.
+audio.addEventListener('play',()=>{
+ if(!musicVisualStage.hidden)void musicVisual.play().catch(()=>{});
+});
+musicVisual.addEventListener('error',()=>{
+ if(!musicVisualStage.hidden)status('노래는 계속 재생할 수 있어요. 반복 영상만 불러오지 못했어요.');
+});
 for(const player of [audio,videoPlayer]){
  player.addEventListener('timeupdate',advanceLyrics);
  player.addEventListener('seeking',advanceLyrics);

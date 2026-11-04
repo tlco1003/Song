@@ -11,6 +11,6 @@
     "start": "node src/server.mjs",
     "dev": "node --watch src/server.mjs",
     "test": "node --test",
-    "check": "node --check src/server.mjs && node --check src/providers.mjs && node --check src/lib.mjs && node --check public/app.js && node --check docs/site.js"
+    "check": "node --check src/server.mjs && node --check src/providers.mjs && node --check src/lib.mjs && node --check public/app.js && node --check docs/player.js"
   }
 }

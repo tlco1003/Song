@@ -1,0 +1,14 @@
+# WITHU GitHub Pages: public presentation only.
+# Internal notes stored in docs/ must not be copied by the Jekyll branch deploy.
+# This is NOT repository secrecy; the GitHub source repository is currently public.
+exclude:
+  - "*.md"
+  - "**/*.md"
+  - "*.pdf"
+  - "**/*.pdf"
+include:
+  - index.html
+  - style.css
+  - player.js
+  - media
+  - reviews

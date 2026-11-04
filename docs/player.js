@@ -9,7 +9,7 @@ const fileOK=s=>typeof s==='string'&&/^[a-zA-Z0-9가-힣_.-]{1,110}$/.test(s);
 const fileURL=(root,s)=>root+encodeURIComponent(s);
 const shortName=s=>s.replace(/\.[^.]+$/,'').replace(/[_-]+/g,' ').slice(0,95);
 const fallback=[
- {id:'song-mother',title:'엄마에게 전하는 노래',subtitle:'사랑과 감사를 담은 영상 편지',file:'mother-song.mp4',mediaKind:'video',durationSeconds:436.8},
+ {id:'song-mother',title:'엄마에게 전하는 노래',subtitle:'사랑과 감사를 담은 영상 편지',file:'mother-song.mp4',mediaKind:'video',durationSeconds:436.8,lyricsFile:'lyrics-mother-song.txt'},
  {id:'song-nara',title:'나라는 사람',subtitle:'삶과 사랑을 돌아보는 노래',file:'nara.mp3',lyricsFile:'lyrics-nara.txt',durationSeconds:257.544},
  {id:'song-taehwan',title:'구태환에게',subtitle:'연인에게 보내는 편지 같은 노래',file:'taehwan.mp3',lyricsFile:'lyrics-taehwan.txt',durationSeconds:320.04},
  {id:'song-jeongmi',title:'내사랑김정미',subtitle:'소중한 친구에게 전하는 노래',file:'jeongmi-new.mp3',lyricsFile:'lyrics-jeongmi.txt',durationSeconds:350.04},

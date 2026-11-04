@@ -1,0 +1,29 @@
+.create-page{background:linear-gradient(155deg,#f7f1ed,#fdfaf7);min-height:90vh;padding:45px 0 78px}
+.creation-intro{text-align:center;margin-bottom:35px}
+.creation-intro .small-caps{color:#a98292}
+.creation-intro h1{font:400 clamp(47px,5vw,72px)/1.25 "Nanum Brush Script","Gowun Batang",serif;margin:12px 0}
+.creation-intro h1 em{font-style:normal;color:#ad788a}
+.creation-intro p{font-size:14px;color:#80717e;line-height:1.8;max-width:650px;margin:auto}
+.creation-layout{display:grid;grid-template-columns:1fr 1fr;gap:21px;align-items:start}
+.creation-card{background:#fff;border:1px solid #e7dadd;border-radius:16px;padding:31px;box-shadow:0 18px 40px #37243b0a}
+.card-heading{display:flex;align-items:start;gap:17px;padding-bottom:21px;border-bottom:1px solid #eee5e6;margin-bottom:23px}
+.step-indicator{color:#b08396;font:600 32px/1.2 "Cormorant Garamond",serif}
+.card-heading h2{font:400 34px/1.2 "Nanum Brush Script","Gowun Batang",serif;margin:0 0 5px}
+.card-heading p{font-size:12px;color:#857481;margin:0}
+.creation-card label{display:block;font-size:12px;font-weight:700;color:#544654;margin:16px 0 7px}
+.creation-card input:not([type=hidden]),.creation-card textarea,.creation-card select{width:100%;padding:13px 14px;border:1px solid #dacbd3;border-radius:7px;background:#fdfbf9;color:#322735;font:400 13px/1.65 "Gowun Batang",serif;outline:0}
+.creation-card textarea{resize:vertical}
+.creation-card input:focus,.creation-card textarea:focus,.creation-card select:focus{border-color:#a98192;box-shadow:0 0 0 3px #cba6b32b}
+.creation-card input::placeholder,.creation-card textarea::placeholder{color:#a1959c}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.main-create-button{display:flex;align-items:center;justify-content:center;gap:14px;width:100%;margin-top:22px;padding:16px 20px;background:#332638;color:#fff;border:0;border-radius:9px;font-size:14px;font-weight:700}
+.main-create-button:hover{background:#554059}
+.main-create-button span{font-size:21px}
+.action-status,.editor-hint{font-size:12px;line-height:1.8;color:#796b79;word-break:keep-all;margin:12px 0 0}
+#song-lyrics{min-height:390px}
+#song-style{min-height:130px}
+.lyrics-editor-card>.outline-button{margin-top:11px;color:#594452;background:#fff}
+.editor-buttons{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:17px}
+.editor-buttons .outline-button{width:100%;color:#624f61;background:#fefdfc;border-color:#d6c6d0}
+@media(max-width:840px){.creation-layout{grid-template-columns:1fr;max-width:650px}.creation-card{padding:25px}.create-page{padding:30px 0 70px}}
+@media(max-width:410px){.choice-grid{grid-template-columns:1fr}.creation-intro h1{font-size:53px}}

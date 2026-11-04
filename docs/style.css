@@ -172,3 +172,13 @@ button:focus-visible,a:focus-visible,label:focus-visible,.lyrics-scroll:focus-vi
 #music-visual{display:block;width:auto;height:min(310px,60vw);max-width:100%;aspect-ratio:9/16;object-fit:contain;border-radius:14px;background:#19111e;box-shadow:0 12px 30px #110a1790;pointer-events:none}
 .music-visual-caption{font:600 10px/1.4 "Cormorant Garamond",serif;color:#eacbd1;letter-spacing:2px;text-align:center}
 @media(max-width:690px){#music-visual{height:min(300px,70vw)}.music-visual-stage{margin:10px auto 14px}}
+
+/* Two clear customer entry points: song creation or prepayment media demo. */
+.listen-create-buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.listen-create-buttons .main-cta-link.outline{border:1px solid #d3b7c8;color:#f6e7ed;background:#ffffff10}
+.listen-create-buttons .main-cta-link.outline:hover{background:#ffffff24}
+@media(max-width:690px){
+ .site-header nav a[href="checkout.html"]{display:none}
+ .listen-create-buttons{flex-direction:column;align-items:center}
+ .listen-create-buttons .main-cta-link{width:min(100%,330px)}
+}

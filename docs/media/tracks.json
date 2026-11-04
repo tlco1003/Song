@@ -2,6 +2,14 @@
   "version": 1,
   "tracks": [
     {
+      "id": "song-mother",
+      "title": "엄마에게 전하는 노래",
+      "subtitle": "사랑과 감사를 담은 영상 편지",
+      "file": "mother-song.mp4",
+      "mediaKind": "video",
+      "durationSeconds": 436.8
+    },
+    {
       "id": "song-nara",
       "title": "나라는 사람",
       "subtitle": "나를 알아가는 마음 · 인생 이야기",

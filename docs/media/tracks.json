@@ -56,6 +56,14 @@
       "file": "am630.mp3",
       "lyricsFile": "lyrics-am630.txt",
       "durationSeconds": 428.04
+    },
+    {
+      "id": "song-cinderella-laundry",
+      "title": "세탁소의 신데렐라",
+      "subtitle": "동전 하나만 더!",
+      "file": "cinderella-laundry.mp3",
+      "durationSeconds": 221.64,
+      "lyricsFile": "lyrics-cinderella-laundry.txt"
     }
   ]
 }

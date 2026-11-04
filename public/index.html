@@ -6,11 +6,11 @@
   <div class="ambient a1"></div><div class="ambient a2"></div>
   <header class="topbar shell"><a href="/" class="wordmark"><span class="logo-mark">♪</span> withu<span class="logo-dot">.</span></a><div class="top-right"><span class="pill"><span class="status-dot"></span> PRIVATE STUDIO / MVP</span><button class="help-link" id="openInfo" type="button">사용 안내 <span aria-hidden="true">↗</span></button></div></header>
   <main class="shell">
-    <section class="intro"><div class="eyebrow"><span class="eyebrow-line"></span> YOUR STORY. YOUR HEART. WITHU.</div><h1>내 이야기가<br/><em>나의 노래</em>가 되는 순간.</h1><p class="intro-sub">노래를 잘 부르지 못해도 괜찮아요. 사연을 들려주고 목소리를 남겨 주세요.<br class="desktop"/> 편지 같은 가사를 다듬고, Suno에서 원하는 노래로 완성해 보세요.</p></section>
+    <section class="intro"><div class="eyebrow"><span class="eyebrow-line"></span> YOUR STORY. YOUR HEART. WITHU.</div><h1>내 이야기가<br/><em>나의 노래</em>가 되는 순간.</h1><p class="intro-sub">노래를 잘 부르지 못해도 괜찮아요. 마음속 이야기를 들려주세요.<br class="desktop"/> 전하지 못한 마음을 세상에 하나뿐인 노래로 만들어보세요.</p></section>
     <section class="studio" aria-label="노래 만들기 스튜디오">
       <aside class="step-rail"><div class="step-rail-head">CREATE WITHU <span>01 / 02</span></div>
         <div class="step-nav current" id="nav1"><span class="step-no">01</span><div><strong>이야기 쓰기</strong><small>노래에 담을 추억</small></div></div>
-        <div class="rail-line"></div><div class="step-nav" id="nav2"><span class="step-no">02</span><div><strong>Suno MCP 작곡</strong><small>가사·편곡 → 생성</small></div></div>
+        <div class="rail-line"></div><div class="step-nav" id="nav2"><span class="step-no">02</span><div><strong>노래 완성</strong><small>가사·편곡 → 생성</small></div></div>
 
         <div class="rail-bottom"><div class="sound-art" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span>MADE WITH YOUR HEART</span></div>
       </aside>
@@ -40,43 +40,43 @@
             <div class="field-foot"><label class="field-label" for="draftLyrics">부를 가사 <span>직접 수정 가능 · 30초 또는 전체 가사</span></label></div>
             <label class="field-label" for="lyricLength">가사 길이</label>
             <select id="lyricLength"><option value="full" selected>3~4분 목표 · 편지형 전체 가사</option><option value="short">30초 · 음악 시험곡용 짧은 가사</option></select>
-            <button class="outline-btn" type="button" id="generateLyrics">✦ 다섯 질문으로 AI 가사 초안 만들기</button>
+            <button class="outline-btn" type="button" id="generateLyrics">✦ 나만의 가사 만들기</button>
             <textarea id="draftLyrics" rows="12" maxlength="4200" placeholder="[Verse]&#10;...&#10;&#10;[Chorus]&#10;..." aria-label="노래에 사용할 가사"></textarea>
-            <p class="section-sub" id="lyricsNotice" role="status">작사 AI는 서버의 「가사 프롬프트」 문서와 다섯 답변을 사용합니다. 작사는 OpenAI GPT를 사용합니다. 가사를 수정·승인하면 Suno MCP로 전송할 수 있습니다. 자동 생성은 Suno OAuth 인증이 준비된 서버에서만 실행됩니다.</p>
+            <p class="section-sub" id="lyricsNotice" role="status">사연을 바탕으로 노랫말을 써보고, 내 마음에 들 때까지 직접 수정해보세요.</p>
           </div>
-          <button class="primary-btn" type="button" id="toVoice">Suno에 전달할 가사·스타일 준비하기 <span>→</span></button>
-          <section id="sunoPreview" class="lyrics-editor hidden" aria-label="Suno Custom 제작용 자료">
-            <h3>Suno Custom 모드에 전달할 자료</h3>
-            <p class="section-sub">실제 작곡 API는 아직 연결되지 않았습니다. 아래 두 항목을 따로 복사해 Suno의 Lyrics와 Style of Music에 붙여넣으세요.</p>
-            <label class="field-label" for="sunoLyrics">Lyrics — 승인한 가사 그대로</label>
+          <button class="primary-btn" type="button" id="toVoice">노래 만들기 준비하기 <span>→</span></button>
+          <section id="sunoPreview" class="lyrics-editor hidden" aria-label="노래 제작 준비">
+            <h3>내 노래에 담을 내용</h3>
+            <p class="section-sub">아래에 완성한 가사와 음악 분위기를 확인할 수 있어요.</p>
+            <label class="field-label" for="sunoLyrics">내가 완성한 가사</label>
             <textarea id="sunoLyrics" rows="10" readonly></textarea>
             <button id="copySunoLyrics" type="button" class="outline-btn">가사 복사</button>
-            <label class="field-label" for="sunoStyle">Style of Music — 편곡·보컬 지침</label>
+            <label class="field-label" for="sunoStyle">음악 분위기</label>
             <textarea id="sunoStyle" rows="6" readonly></textarea>
             <button id="copySunoStyle" type="button" class="outline-btn">스타일 복사</button>
-            <a id="openSuno" class="outline-btn" href="https://suno.com/create" target="_blank" rel="noopener noreferrer">Suno Create 새 탭에서 열기 ↗</a>
+            <a id="openSuno" hidden href="#" aria-hidden="true" tabindex="-1"></a>
             <p class="section-sub" id="sunoStatus" role="status"></p>
             <div class="divider"></div>
-            <h3>공식 Suno MCP 음악 생성</h3>
-            <p class="section-sub">Suno 유료 계정을 공식 OAuth로 인증한 서버라면 GPT가 Suno MCP를 통해 작곡을 요청합니다. 크레딧이 사용되며 곡은 Suno 라이브러리에 저장됩니다.</p>
-            <label class="consent"><input id="mcpConsent" type="checkbox"/> <span>수정·확정한 가사와 스타일을 Suno에 전달하고 음악 생성 크레딧을 사용하는 데 동의합니다.</span></label>
-            <button class="primary-btn" id="generateSunoMcp" type="button">Suno MCP로 노래 생성하기 <span>♫</span></button>
-            <p class="section-sub" id="sunoMcpStatus" role="status">Suno 계정 OAuth 연결 및 서버 인증이 필요합니다.</p>
+            <h3>음악으로 완성하기</h3>
+            <p class="section-sub">맞춤 음악 제작 기능을 준비하고 있습니다.</p>
+            <label class="consent"><input id="mcpConsent" type="checkbox"/> <span>가사와 음악 분위기를 외부 음악 제작 서비스에 전달하고 해당 서비스의 사용량이 차감될 수 있음에 동의합니다.</span></label>
+            <button class="primary-btn" id="generateSunoMcp" type="button">노래 완성하기 <span>♫</span></button>
+            <p class="section-sub" id="sunoMcpStatus" role="status">음악 제작 서비스 연결을 준비하고 있어요.</p>
             <pre id="sunoMcpResult" class="tiny" style="white-space:pre-wrap"></pre>
           </section>
         </section>
       </div>
     </section>
-    <section class="trust"><div><span class="trust-num">01</span><strong>당신의 사연</strong><p>원하는 분위기와 장르까지 반영한 음악 프롬프트</p></div><div><span class="trust-num">02</span><strong>당신의 말투</strong><p>나이보다 실제 관계와 평소 존댓말·반말을 먼저 존중</p></div><div><span class="trust-num">03</span><strong>Suno에서 완성</strong><p>가사와 편곡 지침을 준비해 Suno Custom 모드로 전달</p></div></section>
+    <section class="trust"><div><span class="trust-num">01</span><strong>당신의 사연</strong><p>원하는 분위기와 장르까지 반영한 음악 프롬프트</p></div><div><span class="trust-num">02</span><strong>당신의 말투</strong><p>나이보다 실제 관계와 평소 존댓말·반말을 먼저 존중</p></div><div><span class="trust-num">03</span><strong>나만의 노래</strong><p>가사와 분위기를 담은 하나의 노래</p></div></section>
   </main>
-  <footer class="shell"><span>© WITHU LAB · Private prototype</span><span>GPT 작사 · 공식 Suno MCP 연결형 · OAuth 필요</span></footer>
+  <footer class="shell"><span>© WITHU LAB · Private prototype</span><span>마음을 전하는 노래, WITHU</span></footer>
   <dialog id="infoDialog"><div class="dialog-inner">
   <button id="closeInfo" class="dialog-close" type="button" aria-label="닫기">×</button>
-  <div class="kicker">WITHU · GPT + SUNO MCP</div>
+  <div class="kicker">WITHU · MUSIC LETTER</div>
   <h2>사용 안내</h2>
-  <p>사연 다섯 질문과 받는 사람의 나이·평소 말투로 가사를 생성합니다. OpenAI GPT API를 사용하며 Gemini는 사용하지 않습니다.</p>
-  <p>확정된 가사·음악 스타일을 공식 Suno MCP (https://api.suno.com/mcp)로 전달할 수 있습니다. 서버가 본인 Suno OAuth 토큰을 안전하게 보유해야 하고, 크레딧 사용에 대한 명시적 동의가 있어야 합니다.</p>
-  <p>Suno 연결이 아직 없다면 가사와 Style of Music을 복사해 Suno Custom 모드에서 직접 노래를 만들 수 있습니다. 공개 상업 서비스에는 고객별 OAuth 인증·결제·권한 검증을 별도로 구현해야 합니다.</p>
+  <p>소중한 사람에게 전하고 싶은 말을 편하게 적어 주세요.</p>
+  <p>가사를 직접 읽고 수정한 뒤 음악 분위기를 선택할 수 있어요.</p>
+  <p>음악 생성과 내 목소리 기능은 순차적으로 제공할 예정입니다.</p>
   <button id="understood" type="button" class="primary-btn">확인했어요 →</button>
   </div></dialog>
       <script type="module" src="/app.js"></script>

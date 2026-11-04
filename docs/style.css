@@ -182,3 +182,10 @@ button:focus-visible,a:focus-visible,label:focus-visible,.lyrics-scroll:focus-vi
  .listen-create-buttons{flex-direction:column;align-items:center}
  .listen-create-buttons .main-cta-link{width:min(100%,330px)}
 }
+
+/* Compact, text-only genre information shared by the selected song and music cards. */
+.current-track-genre{font:700 12px/1.6 "Gowun Batang",serif;letter-spacing:.035em;color:#e9cbd7;margin:7px 0 4px}
+.track-name .track-genre{display:block;font:700 11px/1.45 "Gowun Batang",serif;color:#e9c1d2;white-space:normal}
+.track-name .track-subtitle{display:block;color:#cdbfca;font-size:11px;line-height:1.45;margin-top:3px;word-break:keep-all}
+.genre-disclaimer{text-align:right;margin:10px 0 0;color:#d5c3d0;font-size:11px;line-height:1.6}
+@media(max-width:690px){.current-track-genre{font-size:12px}.genre-disclaimer{text-align:center}.track-name .track-genre{font-size:11px}}

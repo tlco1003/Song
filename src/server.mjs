@@ -5,6 +5,7 @@ import {stat} from 'node:fs/promises';
 import {createReadStream} from 'node:fs';
 import {AppError,validateLyricInput,buildSunoPackage} from './lib.mjs';
 import {makeLyrics,createSunoSong,SUNO_MCP_URL} from './providers.mjs';
+import {publicCommerceReadiness} from './commerce.mjs';
 
 // Single-operator local MVP. Public multi-user deployment requires an
 // authenticated OAuth PKCE flow and per-user Suno credential vault.
@@ -49,6 +50,12 @@ async function handle(req,res){
   // Public health check: no user data, credentials, providers, or capability claims.
   if(req.method==='GET'&&pathname==='/healthz')return json(res,200,{status:'ok',service:'withu-api'});
   if(pathname.startsWith('/api/')){
+    // Customer payment-related routes must fail closed until a durable,
+    // licensed commercial fulfillment implementation passes verification.
+    if(req.method==='GET'&&pathname==='/api/commerce/readiness')
+      return json(res,200,publicCommerceReadiness());
+    if(pathname==='/api/commerce/orders'||pathname.startsWith('/api/commerce/orders/'))
+      throw new AppError(503,'자동 음악 제작·결제·이메일 발송 서비스는 준비 중이며 현재 주문을 받지 않습니다.');
     auth(req);
     if(req.method==='GET'&&pathname==='/api/config')
       return json(res,200,{
@@ -91,6 +98,9 @@ async function handle(req,res){
     '/create.html':'docs/create.html',
     '/create.css':'docs/create.css',
     '/create.js':'docs/create.js',
+    '/checkout.html':'docs/checkout.html',
+    '/checkout.css':'docs/checkout.css',
+    '/checkout.js':'docs/checkout.js',
     '/player.js':'docs/player.js',
     '/media/tracks.json':'docs/media/tracks.json',
     '/reviews/reviews.json':'docs/reviews/reviews.json',

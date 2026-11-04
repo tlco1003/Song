@@ -24,7 +24,7 @@ function harden(res){
   res.setHeader('X-Content-Type-Options','nosniff');
   res.setHeader('Referrer-Policy','no-referrer');
   res.setHeader('X-Frame-Options','DENY');
-  res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; media-src 'self' blob:; frame-src https://suno.com https://*.suno.com; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'");
+  res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; frame-src https://suno.com https://*.suno.com; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'");
   res.setHeader('Permissions-Policy','camera=(self), microphone=(self)');
 }
 async function jsonBody(req,limit=50000){

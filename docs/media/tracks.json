@@ -7,7 +7,6 @@
       "subtitle": "나를 알아가는 마음 · 인생 이야기",
       "file": "nara.mp3",
       "durationSeconds": 257.544,
-      "sunoId": "6723268c-9e91-4647-a8da-ed06d6b32b8c",
       "lyricsFile": "lyrics-nara.txt"
     },
     {
@@ -16,7 +15,6 @@
       "subtitle": "연인에게 보내는 편지 같은 노래",
       "file": "taehwan.mp3",
       "durationSeconds": 320.04,
-      "sunoId": "98a47c4c-ad1b-4bff-8f21-8afb55a4278a",
       "lyricsFile": "lyrics-taehwan.txt"
     },
     {
@@ -25,7 +23,6 @@
       "subtitle": "소중한 친구에게 전하는 노래",
       "file": "jeongmi.mp3",
       "durationSeconds": 350.04,
-      "sunoId": "f2f182c2-06e1-4c2d-927f-d26dfac7243b",
       "lyricsFile": "lyrics-jeongmi.txt"
     }
   ]

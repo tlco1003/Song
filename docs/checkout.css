@@ -139,3 +139,17 @@
  .preview-clock{flex:1 0 100%;text-align:center}
 }
 @media(prefers-reduced-motion:reduce){#audio-preview-fill{transition:none}}
+
+/* Compact customer-selected file previews, directly under photo and video inputs. */
+.video-media-section .media-preview-grid{align-items:start}
+.video-media-section .compact-preview{height:156px;min-height:156px;max-height:156px;margin:10px 0 7px;background:#f4eef1}
+.video-media-section .compact-preview img{object-fit:contain}
+.video-media-section .compact-preview video{object-fit:contain}
+.media-field-hint{display:block;margin-top:4px;font-size:10px;color:#967f8e;font-weight:400}
+.media-filename{margin:5px 0 8px;color:#695567;font-size:11px;line-height:1.5;overflow-wrap:anywhere;word-break:break-all}
+.media-clear-one{width:100%;min-height:36px;margin:2px 0 5px;background:#faf5f7}
+.video-media-section input[type=file]:focus-visible{outline:2px solid #987084;outline-offset:3px}
+@media(max-width:700px){
+ .video-media-section .media-preview-card .compact-preview{height:158px;min-height:158px;max-height:158px}
+ .video-media-section .media-preview-grid{gap:11px}
+}

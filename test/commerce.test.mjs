@@ -46,3 +46,33 @@ test('music must be contractually licensed and delivery must have verified asset
  assert.ok(assertOrderTransition(ORDER_STATES.READY_TO_DELIVER,ORDER_STATES.DELIVERING,{storedOutputVerified:true,recipientVerified:true}));
  assert.throws(()=>assertOrderTransition(ORDER_STATES.DELIVERED,ORDER_STATES.PAID,{verifiedProviderPayment:true,matchesServerOrderAmount:true}));
 });
+
+
+test('six planned payment methods can be previewed but none can charge or gather card details',()=>{
+ const methods=[
+  ['pay-toss','toss_pay','토스페이'],
+  ['pay-kakao','kakao_pay','카카오페이'],
+  ['pay-naver','naver_pay','네이버페이'],
+  ['pay-card','card','신용·체크카드'],
+  ['pay-transfer','transfer','실시간 계좌이체'],
+  ['pay-virtual','virtual_account','가상계좌 입금']
+ ];
+ for(const [id,value,label] of methods){
+  assert.ok(html.includes('id="'+id+'"'),id);
+  assert.ok(html.includes('value="'+value+'"'),value);
+  assert.ok(html.includes(label),label);
+  assert.ok(script.includes(value),value+' missing from client preview logic');
+ }
+ for(const id of ['payment-methods','preview-payment','payment-preview-dialog','demo-payment-method','finish-payment-preview','selected-payment-method']){
+  assert.ok(html.includes('id="'+id+'"'),id);
+ }
+ assert.match(script,/showPaymentPreview/);
+ assert.match(script,/\.showModal\(\)/);
+ assert.match(script,/가격 미확정 · 청구 불가/);
+ assert.match(script,/\$\('confirm-checkout'\)\.disabled=true/);
+ assert.match(html,/id="confirm-checkout"[^>]*disabled/);
+ assert.doesNotMatch(html,/name="(?:cardNumber|cardCvv|cardPassword|accountPassword)"|autocomplete="cc-number"/i);
+ assert.doesNotMatch(script,/requestPayment\s*\(|api\/payments\/confirm|window\.location\.href\s*=|fetch\s*\(\s*['"]https?:\/\//);
+ assert.ok(styles.includes('.payment-methods'));
+ assert.ok(styles.includes('.payment-preview-dialog'));
+});

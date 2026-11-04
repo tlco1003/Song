@@ -5,6 +5,19 @@
  * create music, or email files. Every external capability requires a real,
  * contractually licensed provider and an idempotent verified integration.
  */
+import {readFileSync} from 'node:fs';
+
+const catalog=JSON.parse(readFileSync(new URL('../docs/prices.json',import.meta.url),'utf8'));
+const validIds=['audio','audio_duo','audio_video'];
+if(catalog.version!==1||catalog.currency!=='KRW'||!Array.isArray(catalog.products)
+  ||catalog.products.length!==3||!validIds.every(id=>catalog.products.some(item=>item.id===id&&Number.isSafeInteger(item.amountKrw)&&item.amountKrw>0))
+  ||!catalog.products.some(item=>item.id==='audio_video'&&item.priceKind==='starting_at'&&item.quoteRequired===true))
+  throw new Error('Invalid WITHU price catalog');
+export function publicPriceCatalog(){
+  // DISPLAY ONLY: catalog prices cannot authorize a payment.
+  return structuredClone(catalog);
+}
+
 export const ORDER_STATES=Object.freeze({
   DRAFT:'draft',
   PAYMENT_PENDING:'payment_pending',
@@ -58,7 +71,7 @@ export function publicCommerceReadiness(){
    emailVerified:false,
    orderStoreVerified:false,
    videoGenerationVerified:false,
-   products:['audio','audio_video'],
+   products:validIds,
    status:'integration_pending'
  });
 }

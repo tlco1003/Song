@@ -28,8 +28,8 @@
     <div class="frame">
       <div class="opening-copy">
         <div class="small-caps">WITHU · MUSIC LETTERS</div>
-        <h1 id="listening-title">마음이 머무는 곳에, <em>노래가 남아요.</em></h1>
-        <p>어떤 말은 오래 마음속에 남습니다. 그 마음을 담은 노래를 들어보세요.</p>
+        <h1 id="listening-title"><span>세상에서 하나뿐인 당신의 노래로,</span><span>마음을 담은 감동을 선물해요.</span></h1>
+        <p>소중한 이야기가 오래 기억될 음악이 되는 순간.</p>
       </div>
 
       <div class="listening-grid">
@@ -43,8 +43,8 @@
           </div>
           <div id="audio-zone" class="audio-zone">
             <audio id="music-audio" controls preload="metadata" playsinline hidden aria-label="선택한 노래 재생"></audio>
-            <div id="embedded-zone" hidden><iframe id="embedded-player" title="선택한 노래 듣기" allow="autoplay; encrypted-media" loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
-            <p id="no-audio" hidden>음원 공개를 준비하고 있습니다.</p>
+            
+            <p id="no-audio" hidden>음악 파일을 준비하고 있어요. 내 음악 불러오기로 기기에 저장된 곡을 들어볼 수 있어요.</p>
           </div>
           <div class="playback-row">
             <button id="previous-track" class="circle-control" type="button" aria-label="이전 곡">‹</button>
@@ -58,11 +58,11 @@
           <div class="lyrics-topline"><span class="small-caps">A LETTER IN EVERY LYRIC</span><span class="lyrics-note">THE WORDS</span></div>
           <h2 id="lyrics-heading">가사</h2>
           <p class="lyrics-subtitle" id="lyrics-track-title">한 줄 한 줄, 마음을 담아</p>
-          <div id="lyrics-scroll" class="lyrics-scroll" tabindex="0" aria-label="노래 가사 스크롤">
+          <div id="lyrics-scroll" class="lyrics-scroll" tabindex="0" aria-label="현재 재생 중인 가사 세 줄">
             <div id="lyrics-content" class="lyrics-content">가사를 불러오는 중이에요.</div>
           </div>
           <div class="lyrics-footer">
-            <span>가사를 읽으며 함께 감상해 보세요.</span>
+            <span>재생에 따라 가사가 자동 이동해요.</span>
             <button id="copy-lyrics" type="button" class="text-link">가사 복사</button>
           </div>
         </section>

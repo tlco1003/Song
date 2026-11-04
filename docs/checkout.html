@@ -10,9 +10,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="checkout.css?v=20261105-media-v4">
+<link rel="stylesheet" href="checkout.css?v=20261105-genres-01">
 <script src="checkout.js?v=20261105-price-catalog" defer></script>
-<script src="checkout-media.js?v=20261105-media-v4" defer></script>
+<script src="checkout-media.js?v=20261105-genres-01" defer></script>
 </head>
 <body>
 <header class="site-header"><div class="frame header-inner">
@@ -116,8 +116,9 @@
       <span class="small-caps">LISTEN FIRST · 30 SECONDS</span>
       <h3 id="demo-audio-title">결제 전, 30초 먼저 들어보세요.</h3>
       <p class="small-explain">WITHU <strong>기존 예시곡</strong> 또는 내 휴대폰 음악의 30초 미리보기입니다. 새로 주문할 고객 맞춤곡을 미리 생성하는 기능은 아닙니다.</p>
-      <label for="audio-example" class="form-label">예시곡 선택</label>
+      <label for="audio-example" class="form-label">예시곡 선택 · 장르별 감상</label>
       <select id="audio-example" class="media-select"><option value="">예시곡을 불러오는 중이에요…</option></select>
+      <p id="audio-example-genre" class="audio-genre-caption" aria-live="polite">선택한 곡의 장르가 표시돼요.</p>
       <div class="preview-playbar">
         <button id="audio-preview-play" type="button" class="media-btn primary">▶ 30초 듣기</button>
         <button id="audio-preview-reset" type="button" class="media-btn">처음부터</button>

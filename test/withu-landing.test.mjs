@@ -41,7 +41,7 @@ test('playlist controls and private local upload controls are connected to new J
     assert.ok(js.includes("'"+id+"'"),id+' not used by JS');
   }
   assert.match(html,/내 기기에서만/);
-  assert.doesNotMatch(html,//upload/main/docs/media/);
+  assert.equal(html.includes('/upload/main/docs/media'),false);
 });
 test('reviews show only files with confirmed consent',()=>{
   assert.deepEqual(reviews.reviews,[]);

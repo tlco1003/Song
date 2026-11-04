@@ -25,7 +25,7 @@ function harden(res){
   res.setHeader('Referrer-Policy','no-referrer');
   res.setHeader('X-Frame-Options','DENY');
   res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; media-src 'self' blob:; frame-src https://suno.com https://*.suno.com; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'");
-  res.setHeader('Permissions-Policy','camera=(), microphone=(self)');
+  res.setHeader('Permissions-Policy','camera=(self), microphone=(self)');
 }
 async function jsonBody(req,limit=50000){
   let size=0;const chunks=[];
@@ -103,6 +103,7 @@ async function handle(req,res){
     '/checkout.html':'docs/checkout.html',
     '/checkout.css':'docs/checkout.css',
     '/checkout.js':'docs/checkout.js',
+    '/checkout-media.js':'docs/checkout-media.js',
     '/prices.json':'docs/prices.json',
     '/player.js':'docs/player.js',
     '/media/tracks.json':'docs/media/tracks.json',

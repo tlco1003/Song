@@ -161,3 +161,25 @@ test('Resend adapter refuses unpaid alerts and sends verified orders with stable
  assert.match(payload.text,/PG 서버 확인 완료/);
  assert.ok(!payload.text.includes('PRIVATE_API_KEY'));
 });
+
+
+test('one and two song prices must match catalog; premium video requires approved quote',async()=>{
+ const bad=makePorts({amountKrw:1});
+ await assert.rejects(confirmCheckoutAndQueue({
+  orderId,paymentKey,claimedAmountKrw:1,...bad
+ }),/Stored price differs from server catalog/);
+ assert.equal(bad.getCalls(),0);
+ const video=makePorts({productId:'audio_video',amountKrw:300000});
+ await assert.rejects(confirmCheckoutAndQueue({
+  orderId,paymentKey,claimedAmountKrw:300000,...video
+ }),/Video requires approved server-side quote/);
+ assert.equal(video.getCalls(),0);
+});
+test('an already-paid order cannot be acknowledged with a different payment key',async()=>{
+ const p=makePorts();
+ await confirmCheckoutAndQueue({orderId,paymentKey,claimedAmountKrw:39000,...p});
+ await assert.rejects(confirmCheckoutAndQueue({
+  orderId,paymentKey:'DIFFERENT_PAYMENT_KEY',claimedAmountKrw:39000,...p
+ }),/Payment key does not match/);
+ assert.equal(p.jobs.length,1);
+});

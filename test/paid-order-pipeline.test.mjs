@@ -27,6 +27,14 @@ function makePorts(overrides={}){
  let current=pending(overrides), calls=0, jobs=[];
  const orders={
   async getById(id){return id===current.id?structuredClone(current):null;},
+  async recordPendingDepositAtomic({orderId,paymentKey,providerSecret}){
+   assert.equal(orderId,current.id);
+   if(current.issuedPaymentKey&&current.issuedPaymentKey!==paymentKey)
+     throw Error('Unexpected deposit payment key');
+   current={...current,issuedPaymentKey:paymentKey,
+     issuedDepositSecret:providerSecret||current.issuedDepositSecret||null};
+   return {status:'waiting_for_deposit'};
+  },
   async confirmPaidAndEnqueueAtomic({orderId,paymentKey,amountKrw,expectedState,nextState,route,jobKey}){
    assert.equal(orderId,current.id);
    assert.equal(paymentKey,providerPayment().paymentKey);
@@ -95,6 +103,19 @@ test('provider mismatches and pending virtual accounts cannot trigger paid email
  assert.equal(waiting.read().state,ORDER_STATES.PAYMENT_PENDING);
  assert.equal(waiting.jobs.length,0);
 });
+test('deposit issuance persists original secret but does not send a paid job',async()=>{
+ const p=makePorts({issuedPaymentKey:null});
+ p.payments.confirm=async()=>providerPayment('WAITING_FOR_DEPOSIT',{secret:'verified-issuance-secret'});
+ const result=await confirmCheckoutAndQueue({
+  orderId,paymentKey,claimedAmountKrw:39000,...p
+ });
+ assert.equal(result.status,'awaiting_deposit');
+ assert.equal(p.read().issuedPaymentKey,paymentKey);
+ assert.equal(p.read().issuedDepositSecret,'verified-issuance-secret');
+ assert.equal(p.jobs.length,0);
+ assert.equal(p.read().state,ORDER_STATES.PAYMENT_PENDING);
+});
+
 test('deposit webhook notification alone never proves paid; PG re-lookup DONE is required',async()=>{
  const p=makePorts();
  p.payments.retrieve=async()=>providerPayment('WAITING_FOR_DEPOSIT');

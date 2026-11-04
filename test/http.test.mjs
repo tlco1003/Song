@@ -12,6 +12,15 @@ test('GET UI and GPT/Suno config without provider credentials',async()=>{
     let res=await fetch(url+'/');
     assert.equal(res.status,200);
     assert.match(await res.text(),/마음이 머무는 곳에/);
+    res=await fetch(url+'/create.html');
+    assert.equal(res.status,200);
+    assert.match(await res.text(),/나만의 노래 만들기/);
+    res=await fetch(url+'/create.js');
+    assert.equal(res.status,200);
+    res=await fetch(url+'/create.css');
+    assert.equal(res.status,200);
+    res=await fetch(url+'/media/mother-song.mp4');
+    assert.equal(res.status,404); // Music-video upload is owner-controlled, never a fake placeholder file.
     res=await fetch(url+'/studio');
     assert.equal(res.status,200);
     assert.match(await res.text(),/내 이야기가/);

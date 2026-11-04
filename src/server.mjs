@@ -45,6 +45,8 @@ async function handle(req,res){
   harden(res);
   const u=new URL(req.url,'http://'+host+':'+port);
   const pathname=u.pathname;
+  // Public health check: no user data, credentials, providers, or capability claims.
+  if(req.method==='GET'&&pathname==='/healthz')return json(res,200,{status:'ok',service:'withu-api'});
   if(pathname.startsWith('/api/')){
     auth(req);
     if(req.method==='GET'&&pathname==='/api/config')

@@ -19,8 +19,8 @@
 <header class="site-header">
   <div class="frame header-inner">
     <a class="brand" href="#top" aria-label="WITHU 홈"><span class="brand-icon" aria-hidden="true">♪</span><span>WITHU</span></a>
-    <nav aria-label="사이트 메뉴"><a href="#top">음악 감상</a><a href="#gifts">노래 선물</a><a href="#reviews">이야기와 후기</a></nav>
-    <span class="brand-caption">A song, made for someone.</span>
+    <nav aria-label="사이트 메뉴"><a href="#top">음악 감상</a><a href="#featured">엄마 노래 영상</a><a href="create.html">노래 만들기</a><a href="#reviews">이야기와 후기</a></nav>
+    <a class="header-create" href="create.html">나만의 노래 만들기 <span aria-hidden="true">↗</span></a>
   </div>
 </header>
 <main id="top">
@@ -82,6 +82,26 @@
         </div>
       </div>
       <p id="local-file-notice" class="local-file-notice">불러온 파일은 현재 기기에서만 미리 볼 수 있어요. 공개 게시 기능은 준비 중입니다.</p>
+      <div class="listen-create-link"><p>이런 노래를 누군가에게 선물하고 싶다면?</p><a href="create.html" class="main-cta-link">나만의 노래 만들기 <span aria-hidden="true">↗</span></a></div>
+    </div>
+  </section>
+
+  <section class="featured-video-section" id="featured" aria-labelledby="featured-title">
+    <div class="frame featured-video-grid">
+      <div class="featured-video-copy">
+        <span class="small-caps">A LETTER TO MOM</span>
+        <h2 id="featured-title">엄마에게 전하는<br><em>한 편의 노래.</em></h2>
+        <p>말로 다 전하지 못했던 고마움. 사랑하는 사람을 위한 노래가 담긴 영상입니다.</p>
+        <span class="featured-video-label">WITHU MUSIC LETTER · FAMILY</span>
+      </div>
+      <div class="featured-video-viewer">
+        <video id="mother-featured-video" playsinline preload="metadata" controls hidden aria-label="엄마에게 전하는 노래 영상"></video>
+        <div id="mother-video-pending" class="featured-video-pending">
+          <span aria-hidden="true">♫</span>
+          <strong>엄마에게 전하는 노래</strong>
+          <p>영상 공개를 준비하고 있어요.</p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -91,7 +111,7 @@
         <span class="small-caps">FOR SOMEONE YOU LOVE</span>
         <h2 id="gift-title">전하지 못했던 한마디가<br><em>평생 남을 선물이 되도록.</em></h2>
         <p>사랑하는 사람에게, 늘 곁을 지켜준 가족에게, 오래 함께한 친구에게.<br>당신이 마음에 담아둔 이야기는 특별한 노래가 될 수 있습니다.</p>
-        <span class="service-state">맞춤형 노래 제작 서비스 준비 중</span>
+        <a class="main-cta-link light" href="create.html">노래 제작하기 <span aria-hidden="true">↗</span></a>
       </div>
       <div class="gift-categories">
         <div class="gift-row"><span class="gift-number">01</span><span class="gift-word">사랑을 전하는 노래</span><span class="gift-detail">LOVE & PROMISE</span></div>

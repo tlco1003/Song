@@ -140,3 +140,25 @@ button:focus-visible,a:focus-visible,label:focus-visible,.lyrics-scroll:focus-vi
 .featured-video-pending p{font-size:14px;color:#cdbeca}
 @media(max-width:930px){.featured-video-grid{gap:30px}}
 @media(max-width:690px){.site-header nav a[href="#featured"]{display:none}.site-header nav{gap:11px}.header-create{font-size:10px;padding:9px}.featured-video-grid{grid-template-columns:1fr;gap:27px}.featured-video-section{padding:60px 0}.featured-video-copy h2{font-size:58px}}
+
+/* WITHU revision: dedicated luxury two-line headline and compact lyric cinema. */
+.opening-copy h1{font-size:clamp(36px,4.7vw,62px);line-height:1.12;letter-spacing:-.35px;max-width:1100px;margin:17px auto 20px;word-break:keep-all}
+.opening-copy h1 span{display:block}
+.opening-copy h1 span+span{margin-top:.22em;color:#eacbd1}
+.opening-copy>p{font-size:15px;letter-spacing:.04em}
+.lyrics-panel{align-self:start;min-height:0;max-height:none;padding:23px 26px 18px}
+.lyrics-panel h2{margin:7px 0 0;font-size:34px}
+.lyrics-subtitle{margin:0 0 9px}
+.lyrics-panel .lyrics-scroll{flex:0 0 auto;height:126px;min-height:126px;max-height:126px;overflow-y:auto;scrollbar-width:none;scroll-behavior:smooth;overscroll-behavior:contain;padding:4px 8px;mask-image:linear-gradient(to bottom, transparent 0,#000 13%,#000 86%,transparent 100%);-webkit-mask-image:linear-gradient(to bottom, transparent 0,#000 13%,#000 86%,transparent 100%)}
+.lyrics-panel .lyrics-scroll::-webkit-scrollbar{display:none}
+.lyrics-content{font-size:15px;line-height:1.7;white-space:normal;word-break:keep-all}
+.lyrics-content .lyric-line{font-family:"Gowun Batang",serif;font-size:16px;line-height:1.65;min-height:34px;margin:0;padding:3px 3px;text-align:center;color:#9e939d;opacity:.68;transition:opacity .32s,color .32s,font-weight .32s}
+.lyrics-content .lyric-line.is-active{color:#574252;opacity:1;font-weight:700}
+.lyrics-panel .lyrics-footer{margin-top:8px;padding-top:10px;font-size:11px}
+@media(max-width:690px){
+ .opening-copy h1{font-size:clamp(33px,8vw,49px);line-height:1.14;margin:13px auto 18px}
+ .opening-copy h1 span+span{margin-top:.26em}
+ .lyrics-panel{padding:20px}
+ .lyrics-panel .lyrics-scroll{height:126px;min-height:126px;max-height:126px}
+ .lyrics-content .lyric-line{font-size:15px}
+}

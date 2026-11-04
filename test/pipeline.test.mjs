@@ -46,7 +46,7 @@ test('Suno official MCP call contains approved lyrics and explicit OAuth authori
     assert.equal(body.tools[0].server_url,SUNO_MCP_URL);
     assert.equal(body.tools[0].authorization,'official-oauth-token');
     assert.equal(body.tools[0].require_approval,'never');
-    assert.ok(body.input.includes(sample));
+    assert.ok(body.input.includes(JSON.stringify(sample)));
     return new Response(JSON.stringify({
       status:'completed',output:[
         {type:'mcp_list_tools',server_label:'suno',tools:[{name:'create_song'}]},

@@ -11,7 +11,7 @@ test('GET UI and GPT/Suno config without provider credentials',async()=>{
     assert.deepEqual(await health.json(),{status:'ok',service:'withu-api'});
     let res=await fetch(url+'/');
     assert.equal(res.status,200);
-    assert.match(await res.text(),/마음이 머무는 곳에/);
+    assert.match(await res.text(),/세상에서 하나뿐인 당신의 노래로/);
     res=await fetch(url+'/create.html');
     assert.equal(res.status,200);
     assert.match(await res.text(),/나만의 노래 만들기/);
@@ -19,8 +19,9 @@ test('GET UI and GPT/Suno config without provider credentials',async()=>{
     assert.equal(res.status,200);
     res=await fetch(url+'/create.css');
     assert.equal(res.status,200);
-    res=await fetch(url+'/media/mother-song.mp4');
-    assert.equal(res.status,404); // Music-video upload is owner-controlled, never a fake placeholder file.
+    res=await fetch(url+'/media/mother-song.mp4',{method:'HEAD'});
+    assert.equal(res.status,200); // Uploaded video is now published in docs/media.
+    assert.equal(res.headers.get('content-type'),'video/mp4');
     res=await fetch(url+'/studio');
     assert.equal(res.status,200);
     assert.match(await res.text(),/내 이야기가/);

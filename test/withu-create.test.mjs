@@ -28,8 +28,11 @@ test('public creation collects the original five answers and speech choices',()=
   assert.match(create,/id="go-create"/);
   assert.match(css,/creation-layout/);
 });
-test('creation uses only documented official direct creation URL and clipboard, not invented auto-prefill',()=>{
-  assert.match(create,/href="https:\/\/suno\.com\/create"/);
+test('creation routes to WITHU checkout, keeps lyric authoring and avoids external payment redirects',()=>{
+  assert.match(create,/href="checkout\.html"/);
+  assert.doesNotMatch(create,/href="https:\/\/suno\.com\/create"/);
+  assert.match(createScript,/withu-order-draft-v1/);
+  assert.match(createScript,/sessionStorage\.setItem/);
   assert.match(createScript,/navigator\.clipboard\.writeText/);
   assert.match(createScript,/fetch\('api\/lyrics'/);
   assert.ok(!/\?lyrics=|\?prompt=|\?style=/.test(create+createScript));

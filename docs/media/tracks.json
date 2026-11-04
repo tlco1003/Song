@@ -32,6 +32,18 @@
       "file": "jeongmi.mp3",
       "durationSeconds": 350.04,
       "lyricsFile": "lyrics-jeongmi.txt"
+    },
+    {
+      "id": "song-romantic-wedding",
+      "title": "로맨틱 웨딩",
+      "subtitle": "소중한 약속을 담은 선물곡",
+      "file": "romantic-wedding.mp3"
+    },
+    {
+      "id": "song-jeongmi-new",
+      "title": "정미야, 참 다행이야",
+      "subtitle": "오랜 친구에게 전하는 마음",
+      "file": "jeongmi-new.mp3"
     }
   ]
 }

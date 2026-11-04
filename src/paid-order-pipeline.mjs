@@ -65,7 +65,17 @@ export function chooseFulfillmentRoute(settings={}){
 }
 async function finalizeVerifiedPayment({orders,order,payment,paymentKey,settings}){
   if(payment?.status==='WAITING_FOR_DEPOSIT'){
-    // Issuing a virtual account is NOT getting paid.
+    // Issuing a virtual account is NOT getting paid. Persist the original
+    // paymentKey and the initial provider secret without ever queuing a job.
+    if(payment.orderId!==order.id||payment.paymentKey!==paymentKey
+      ||payment.currency!=='KRW'||payment.totalAmount!==serverAmount(order))
+      throw new Error('Virtual account issuance details did not match');
+    if(typeof orders.recordPendingDepositAtomic!=='function')
+      throw new Error('Durable deposit record adapter is missing');
+    await orders.recordPendingDepositAtomic({
+      orderId:order.id,paymentKey,
+      providerSecret:typeof payment.secret==='string'&&payment.secret?payment.secret:undefined
+    });
     return Object.freeze({status:'awaiting_deposit',queued:false});
   }
   if(!paymentMatches(order,payment,paymentKey))

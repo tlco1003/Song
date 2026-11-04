@@ -1,5 +1,8 @@
 # SONG Implementation — GPT + official Suno MCP (2026-11-03)
 
+> **2026-11-04 Suno 지원 회신 반영:** 현재 소비자 계정용 셀프서비스 공개 Suno API 키 발급은 제공되지 않으며, 공식 신청은 https://sunomusic.typeform.com/apiform 입니다. Suno MCP는 **개인 AI 어시스턴트의 창작용**으로 안내됐으며 SONG 같은 제3자 고객용 유료 웹앱에 사용하는 권한은 아닙니다. REST API 및 Voices 등록·인증·가창 지원 범위는 **B2B 제휴 검토 및 서면 계약** 대상입니다. 지원 회신은 Suno의 *AI 고객지원 도우미가 작성*했으므로 승인·계약 확약으로 해석하지 않습니다.  
+> **[지원 회신과 정정된 실행 지침](./SUNO_공식지원답변_API_제휴신청_2026-11-04.md)**
+
 ## Product contract
 SONG collects five recipient-centered answers:
 1. 상대방을 어떻게 부르나요?
@@ -11,8 +14,8 @@ SONG collects five recipient-centered answers:
 Additional fields: `recipientAgeGroup`, `relativePosition`, `speechStyle`, `genre`, `mood`, `lyricLength`.
 A user's explicit everyday speech register (informal/polite/mixed) overrides stereotypes about older or younger recipients.
 
-## Current production-intended pipeline
-`input validation -> 가사 프롬프트.md -> OpenAI GPT Responses API -> editable lyrics -> Suno style prompt -> official Suno MCP via OpenAI Responses tool -> Suno library`.
+## Personal developer prototype pipeline (NOT licensed production integration)
+`input validation -> 가사 프롬프트.md -> OpenAI GPT Responses API -> editable lyrics -> Suno style prompt -> manual Suno consumer creation OR isolated personal MCP trial`. **For customer-facing SONG production: B2B API access, commercial terms, and Voices API scope remain blocked pending written Suno approval.**
 
 - `src/providers.mjs`: OpenAI GPT for lyrics and `https://api.suno.com/mcp` (the **official** Suno MCP URL) for songs.
 - `src/server.mjs`: `POST /api/lyrics`, `POST /api/suno-package`, `POST /api/suno-mcp/create`.

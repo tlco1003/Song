@@ -1,0 +1,23 @@
+# WITHU backend hosting blueprint.
+# Do not treat this as commercial music API authorization.
+# This only provisions the existing authenticated Node.js API prototype.
+services:
+  - type: web
+    name: withu-api
+    runtime: docker
+    branch: main
+    autoDeploy: false
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: APP_ACCESS_TOKEN
+        generateValue: true
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_LYRICS_MODEL
+        value: gpt-6-astra
+      - key: WITHU_B2B_API_APPROVED
+        value: "false"

@@ -10,8 +10,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="checkout.css?v=20261105-price-catalog">
+<link rel="stylesheet" href="checkout.css?v=20261105-media-v3">
 <script src="checkout.js?v=20261105-price-catalog" defer></script>
+<script src="checkout-media.js?v=20261105-media-v3" defer></script>
 </head>
 <body>
 <header class="site-header"><div class="frame header-inner">
@@ -54,6 +55,68 @@
     </fieldset>
     <p class="small-explain">2곡 구성은 같은 사연·가사를 바탕으로 편곡·분위기를 다르게 제작하는 상품이에요. 서로 다른 사연 두 건은 별도 주문입니다.</p>
     <p class="small-explain">뮤직비디오 30만 원은 <strong>시작 기준 가격</strong>으로, 전체 길이·영상 장면 수·인물 사용·해상도·수정횟수에 따라 사전 견적이 달라질 수 있어요. 현재 영상 제작 API와 인물·이미지 사용 권한 확인 전에는 구매할 수 없습니다.</p>
+
+    <section class="prepay-demo" id="prepay-demo" aria-labelledby="demo-audio-title">
+      <span class="small-caps">LISTEN FIRST · 30 SECONDS</span>
+      <h3 id="demo-audio-title">결제 전, 30초 먼저 들어보세요.</h3>
+      <p class="small-explain">WITHU <strong>기존 예시곡</strong> 또는 내 휴대폰 음악의 30초 미리보기입니다. 새로 주문할 고객 맞춤곡을 미리 생성하는 기능은 아닙니다.</p>
+      <label for="audio-example" class="form-label">예시곡 선택</label>
+      <select id="audio-example" class="media-select"><option value="">예시곡을 불러오는 중이에요…</option></select>
+      <div class="preview-playbar">
+        <button id="audio-preview-play" type="button" class="media-btn primary">▶ 30초 듣기</button>
+        <button id="audio-preview-reset" type="button" class="media-btn">처음부터</button>
+        <output id="audio-preview-time" class="preview-clock">00:00 / 00:30</output>
+      </div>
+      <div class="preview-meter" aria-hidden="true"><div id="audio-preview-fill"></div></div>
+      <audio id="audio-preview-element" preload="none" playsinline></audio>
+      <label for="audio-file-choice" class="media-file-cta">＋ 내 음악 선택 · 30초 미리 듣기</label>
+      <input id="audio-file-choice" type="file" accept="audio/*,.mp3,.m4a,.wav,.ogg" hidden>
+      <p id="audio-preview-message" role="status" class="small-explain">재생 버튼을 눌러주세요. 30초가 지나면 자동으로 멈춰요.</p>
+    </section>
+
+    <section id="video-media-section" class="video-media-section" hidden aria-labelledby="video-media-title">
+      <span class="small-caps">YOUR FACE · YOUR STAGE</span>
+      <h3 id="video-media-title">내 얼굴과 영상으로 준비하는 무대</h3>
+      <p class="small-explain">얼굴 사진, 직접 촬영한 영상, 휴대폰 카메라 녹화를 바로 확인할 수 있어요. <strong>실제 얼굴 교체와 립싱크 생성은 아직 연결 전</strong>이므로 영상 합성 결과로 표시하지 않습니다.</p>
+      <label class="consent-row"><input id="media-consent" type="checkbox"><span>본인 사진·영상이거나 출연자의 명시적 합성·사용 동의를 받았습니다.</span></label>
+      <div class="media-preview-grid">
+        <div class="media-preview-card">
+          <label class="form-label" for="face-photo">얼굴 사진 올리기</label>
+          <input id="face-photo" class="media-input" type="file" accept="image/*,.jpg,.jpeg,.png,.webp,.heic">
+          <div class="preview-frame"><img id="photo-preview" alt="선택한 얼굴 사진" hidden><span id="photo-empty">얼굴 사진 미리보기</span></div>
+          <p id="photo-feedback" class="small-explain">최대 15MB</p>
+        </div>
+        <div class="media-preview-card">
+          <label class="form-label" for="face-video">얼굴 영상 올리기</label>
+          <input id="face-video" class="media-input" type="file" accept="video/*,.mp4,.mov,.webm">
+          <label for="native-camera-capture" class="media-file-cta secondary">＋ 휴대폰 기본 카메라로 촬영</label>
+          <input id="native-camera-capture" type="file" accept="video/*" capture="user" hidden>
+          <div class="preview-frame"><video id="video-preview" controls playsinline preload="metadata" hidden></video><span id="video-empty">촬영한 영상 미리보기</span></div>
+          <p id="video-feedback" class="small-explain">최대 200MB · 서버로 전송되지 않음</p>
+        </div>
+      </div>
+      <div class="camera-area">
+        <h4>휴대폰에서 바로 녹화하기</h4>
+        <div class="preview-frame live-frame"><video id="camera-live" autoplay muted playsinline hidden></video><span id="camera-empty">카메라를 켜면 여기에 내 얼굴이 보여요.</span></div>
+        <div class="camera-actions">
+          <button id="open-camera" class="media-btn" type="button">카메라 켜기</button>
+          <button id="start-camera-record" class="media-btn primary" type="button" disabled>● 녹화 시작</button>
+          <button id="stop-camera-record" class="media-btn" type="button" disabled>■ 종료</button>
+          <button id="close-camera" class="media-btn" type="button" disabled>카메라 끄기</button>
+        </div>
+        <p id="record-timer" class="small-explain">촬영 최대 00:30</p>
+        <p id="camera-feedback" class="small-explain" role="status">HTTPS에서 카메라 사용을 허용해 주세요. 지원되지 않으면 기본 카메라 촬영 버튼을 이용할 수 있어요.</p>
+      </div>
+      <div class="stage-concept" aria-label="무대 콘셉트 미리보기">
+        <div class="stage-beams" aria-hidden="true">✦　✦　✦</div>
+        <div class="stage-portrait"><span id="stage-placeholder">♪</span><img id="stage-portrait-image" alt="무대 배경 위에 놓인 얼굴 사진" hidden></div>
+        <strong>WITHU · MY STAGE</strong>
+        <p>내 얼굴 사진과 무대 배경을 함께 보는 시안</p>
+      </div>
+      <p class="small-explain">이 무대 화면은 사진을 배치한 디자인 미리보기예요. 사진의 얼굴을 움직이는 가수 영상에 자동으로 교체한 결과는 아닙니다.</p>
+      <button id="clear-media-preview" class="media-btn" type="button">모든 얼굴·영상 미리보기 지우기</button>
+    </section>
+
     <label for="delivery-email" class="form-label">완성된 노래를 받을 이메일</label>
     <input id="delivery-email" type="email" autocomplete="email" inputmode="email" placeholder="name@example.com" maxlength="254" required>
     <label for="delivery-email-again" class="form-label">이메일 주소 다시 확인</label>

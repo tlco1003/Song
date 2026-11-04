@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#15152b">
+  <meta name="description" content="SONG — 당신의 진심이 노래가 되는 순간. 사연과 기억을 편지 같은 가사로 만들고, 음악으로 전하는 개인 맞춤형 선물곡 플랫폼. 현재 개발 및 Suno 상업 API 제휴 검토 중.">
+  <meta property="og:title" content="SONG — 마음을 노래로 선물하다">
+  <meta property="og:description" content="소중한 사람에게 전하고 싶은 말을 단 하나의 노래로. Personalized story-to-song gift platform.">
+  <meta property="og:type" content="website">
+  <title>SONG — 마음을 노래로 선물하다</title>
+  <style>
+  :root{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:#20203b;background:#fcf9f6;font-synthesis:none}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;overflow-x:hidden}
+  button,a{font:inherit}
+  a{text-decoration:none;color:inherit}
+  button{cursor:pointer}
+  :focus-visible{outline:3px solid #a57acc;outline-offset:4px}
+  .wrap{width:min(1100px,calc(100% - 48px));margin:0 auto}
+  header{position:relative;z-index:5;background:#fcf9f6e8;border-bottom:1px solid #eee8e5;backdrop-filter:blur(12px)}
+  .topbar{height:77px;display:flex;align-items:center;justify-content:space-between}
+  .logo{display:flex;align-items:center;gap:10px;font-size:27px;font-weight:830;letter-spacing:-1.6px;color:#24223a}
+  .logo-icon{width:35px;height:35px;border-radius:11px;background:#382b54;color:#f6ddca;display:grid;place-items:center;font-size:21px;box-shadow:0 8px 20px #46305e25}
+  .logo .dot{color:#cf947c}
+  .nav{display:flex;gap:26px;align-items:center;font-size:13px;color:#555469;font-weight:650}
+  .nav a:hover{color:#a56d67}
+  .nav .nav-action{background:#322747;color:white;border-radius:100px;padding:12px 18px}
+  .hero{position:relative;isolation:isolate;padding:100px 0 116px;background:radial-gradient(ellipse at 90% 5%,#f9e0db 0%,transparent 40%),radial-gradient(ellipse at 2% 70%,#ece5fc 0%,transparent 36%),#fcf9f6;overflow:hidden}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:64px}
+  .eyebrow{display:flex;align-items:center;gap:9px;color:#a47483;font-size:11px;letter-spacing:2.4px;font-weight:850;text-transform:uppercase}
+  .eyebrow:before{content:'';width:26px;height:1.5px;background:#b8848b}
+  h1{font-size:clamp(43px,5vw,68px);font-weight:840;line-height:1.24;letter-spacing:-3.6px;margin:25px 0 23px}
+  h1 em{font-style:normal;color:#a47382}
+  .hero-copy{color:#666275;font-size:16px;line-height:1.95;max-width:480px;word-break:keep-all}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px}
+  .btn{border-radius:100px;border:1px solid transparent;display:inline-flex;align-items:center;justify-content:center;padding:15px 22px;font-size:13px;font-weight:780;gap:9px;min-height:50px;transition:transform .2s,background .2s}
+  .btn:hover{transform:translateY(-2px)}
+  .btn.primary{background:#322747;color:white;box-shadow:0 9px 24px #34274a20}
+  .btn.secondary{border-color:#d4cbd2;color:#352b45;background:#fff9}
+  .status{margin-top:25px;color:#787084;font-size:12px;display:flex;gap:8px;align-items:center}
+  .status span{width:7px;height:7px;background:#b78882;border-radius:100%}
+  .art{position:relative;min-height:505px;display:grid;place-items:center}
+  .orb{width:420px;height:420px;max-width:100%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 30% 26%,#faead6,#efc4bb 36%,#b8a0bd 70%,#5a456b 100%);filter:drop-shadow(0 22px 50px #bca3bf50);position:absolute;right:3%;top:6%;opacity:.95}
+  .orb:before{content:'';position:absolute;inset:10%;border:1px solid #ffffff88;border-radius:50%}
+  .orb:after{content:'';position:absolute;inset:26%;border:1px solid #ffffff66;border-radius:50%}
+  .letter{width:min(345px,90%);min-height:375px;border-radius:16px;background:#fffefa;position:relative;z-index:2;box-shadow:0 25px 70px #4534493b;transform:rotate(-5deg);padding:34px 31px;border:1px solid #ffffffbd}
+  .letter .letter-top{color:#ab7c86;font-size:11px;letter-spacing:2px;font-weight:800}
+  .letter .salute{margin:38px 0 23px;font-size:23px;font-weight:800;letter-spacing:-1px}
+  .letter p{font-size:15px;color:#656078;line-height:2.25;letter-spacing:-.4px;margin:0}
+  .letter .highlight{color:#ac7980;font-weight:730}
+  .letter .sign{text-align:right;margin-top:28px;font-family:Georgia,serif;color:#c49ba4;font-style:italic;font-size:17px}
+  .music-note{position:absolute;z-index:3;font-size:37px;color:#fff4ec;text-shadow:0 6px 15px #392b5650}
+  .note-a{right:2%;top:10%;transform:rotate(12deg)}
+  .note-b{left:6%;bottom:15%;transform:rotate(-15deg);font-size:30px}
+  .scribble{position:absolute;z-index:4;right:0;bottom:0;background:#fffaf4d9;border:1px solid #f1e4df;border-radius:12px;padding:12px 18px;transform:rotate(5deg);box-shadow:0 15px 30px #4933551a;font-size:12px;color:#815e78}
+  .scribble b{color:#3b304a}
+  .section{padding:99px 0}
+  .section-kicker{font-weight:820;font-size:11px;letter-spacing:2.5px;color:#a87888;text-transform:uppercase;margin-bottom:18px}
+  h2{font-size:clamp(30px,3.5vw,45px);letter-spacing:-2px;line-height:1.33;margin:0 0 18px}
+  .section-lead{font-size:15px;color:#777185;line-height:1.85;max-width:665px;margin:0}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:42px}
+  .step{background:#fff;border:1px solid #f0e8e5;border-radius:20px;padding:31px;min-height:228px;box-shadow:0 12px 30px #3c304707}
+  .step .num{color:#d1a0a2;font-family:Georgia,serif;font-size:30px;letter-spacing:-1px}
+  .step h3{font-size:18px;letter-spacing:-.7px;margin:24px 0 12px}
+  .step p{font-size:13px;color:#787184;line-height:1.9;margin:0;word-break:keep-all}
+  .experience{background:#211b34;color:#fff;position:relative;overflow:hidden}
+  .experience:before{content:'';position:absolute;width:650px;height:650px;border-radius:50%;top:-240px;right:-220px;background:radial-gradient(circle,#9b6e89a1,transparent 65%);pointer-events:none}
+  .experience .section-kicker{color:#d1a1b4}
+  .experience .section-lead{color:#bcb6cd}
+  .experience-wrap{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:70px}
+  .questions{display:flex;flex-direction:column;gap:11px}
+  .q{padding:18px 20px;border:1px solid #50435d;border-radius:13px;background:#30283fba;font-size:14px;color:#ebdeeb;display:flex;gap:14px;line-height:1.55}
+  .q b{color:#dcb2bb;font-size:12px}
+  .card-panel{background:#fdfaf8;color:#32273f;border-radius:20px;padding:34px;box-shadow:0 25px 55px #0b081b45}
+  .panel-chip{font-size:10px;letter-spacing:2px;color:#9f8196;font-weight:850}
+  .panel-heading{font-size:23px;letter-spacing:-1px;margin:12px 0 20px}
+  .panel-lyrics{border-left:2px solid #d3acb4;padding-left:20px;font-size:15px;line-height:2.2;color:#6c6073}
+  .panel-lyrics strong{color:#9b6e83;font-weight:750}
+  .panel-foot{font-size:11px;color:#9b8fa1;margin-top:20px}
+  .features{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:40px}
+  .feature{padding:26px 22px 26px 0;border-top:1px solid #e2d8db}
+  .ficon{font-size:26px;margin-bottom:15px}
+  .feature h3{font-size:17px;letter-spacing:-.6px;margin:0 0 10px}
+  .feature p{font-size:13px;color:#746d80;line-height:1.85;margin:0;word-break:keep-all}
+  .roadmap{background:#f5f0ee}
+  .milestones{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:36px}
+  .milestone{border-radius:17px;border:1px solid #e7dcd9;background:#fffaf8;padding:25px}
+  .stage-label{font-size:11px;color:#9a7285;letter-spacing:1.5px;font-weight:800}
+  .milestone h3{font-size:17px;margin:18px 0 10px}
+  .milestone p{font-size:13px;color:#82798a;line-height:1.8;margin:0}
+  .milestone .tag{display:inline-block;margin-top:20px;border-radius:100px;padding:7px 11px;font-size:11px;background:#f1e5e4;color:#9a667b}
+  .milestone .tag.pending{background:#f2ece2;color:#92765d}
+  .milestone .tag.future{background:#eeeaf4;color:#7e7097}
+  .cta{padding:85px 0;background:#201c33;color:white;text-align:center}
+  .cta h2{font-size:clamp(30px,4vw,45px);margin-bottom:16px}
+  .cta p{font-size:14px;color:#c6bfd0;line-height:1.85;max-width:640px;margin:0 auto 28px}
+  .cta .btn{background:#eee3e5;color:#30283e}
+  footer{padding:27px 0;background:#171426;color:#b4abbf}
+  footer .foot{display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:11px;line-height:1.8}
+  .legal{max-width:690px}
+  .footer-name{font-size:20px;font-weight:850;color:#fff;margin-bottom:6px}
+  @media(max-width:890px){.hero-grid{grid-template-columns:1fr;gap:28px}.hero{padding:72px 0}.art{min-height:405px}.orb{width:345px;right:50%;transform:translateX(50%)}.letter{min-height:330px}.experience-wrap{gap:34px}.features{gap:14px}}
+  @media(max-width:660px){.wrap{width:min(100% - 36px,1100px)}.topbar{height:67px}.logo{font-size:24px}.nav{gap:12px}.nav a:not(.nav-action){display:none}.nav .nav-action{font-size:12px;padding:11px 13px}
+   h1{font-size:43px;letter-spacing:-2.5px}.hero-copy{font-size:14px}.hero{padding:65px 0 75px}.art{min-height:380px}.orb{width:315px}.letter{width:min(280px,86%);min-height:330px;padding:26px}.letter .salute{margin:30px 0 16px}.letter p{font-size:13px}.scribble{bottom:-6px;right:1%;font-size:10px}
+   .section{padding:68px 0}.steps,.features,.milestones,.experience-wrap{grid-template-columns:1fr}.steps{gap:12px}.step{min-height:auto;padding:24px}.step h3{margin:16px 0 8px}.experience-wrap{gap:31px}.card-panel{padding:27px}.features{gap:0}.milestones{gap:12px}.footer-name{margin-bottom:2px}footer .foot{display:block}.legal{margin-top:12px}}
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap topbar">
+      <a href="#top" class="logo" aria-label="SONG 홈"><span class="logo-icon" aria-hidden="true">♫</span><span>song<span class="dot">.</span></span></a>
+      <nav class="nav" aria-label="주요 메뉴">
+        <a href="#how">어떻게 만들까요?</a>
+        <a href="#features">SONG만의 경험</a>
+        <a href="#roadmap" class="nav-action">개발 현황 보기 ↗</a>
+      </nav>
+    </div>
+  </header>
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="wrap hero-grid">
+        <div>
+          <div class="eyebrow">PERSONALIZED MUSIC GIFT PLATFORM</div>
+          <h1 id="hero-title">말로는 다 못했던<br><em>마음을, 노래로.</em></h1>
+          <p class="hero-copy">고마웠던 순간, 함께한 기억, 아직 전하지 못한 진심.<br>당신의 이야기를 한 편의 편지 같은 가사로 다듬어, 세상에 하나뿐인 노래로 전하는 SONG을 준비하고 있습니다.</p>
+          <div class="hero-actions">
+            <a class="btn primary" href="#how">SONG 알아보기 <span aria-hidden="true">↗</span></a>
+            <a class="btn secondary" href="#roadmap">개발 현황 확인</a>
+          </div>
+          <div class="status"><span aria-hidden="true"></span> 현재 개발 중 · 음악 생성 서비스 제휴 검토 단계</div>
+        </div>
+        <div class="art" role="img" aria-label="따뜻한 색의 원형 배경 앞에 놓인 편지와 음악 기호">
+          <div class="orb" aria-hidden="true"></div>
+          <span class="music-note note-a" aria-hidden="true">♫</span>
+          <span class="music-note note-b" aria-hidden="true">♪</span>
+          <div class="letter">
+            <div class="letter-top">A LETTER IN A SONG</div>
+            <div class="salute">엄마에게,</div>
+            <p>나는 그게 늘 당연한 줄 알았어.<br>내가 돌아보지 못한 순간에도<br>엄마는 나를 안아줬다는 걸.<br><br><span class="highlight">이제야 조금 알 것 같아.<br>엄마의 딸이라서 참 다행이야.</span></p>
+            <div class="sign">with love, SONG</div>
+          </div>
+          <div class="scribble">진심이 담긴 <b>한 곡의 선물</b></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="how" aria-labelledby="how-title">
+      <div class="wrap">
+        <div class="section-kicker">HOW SONG WORKS</div>
+        <h2 id="how-title">복잡한 작곡 대신,<br>당신의 이야기부터.</h2>
+        <p class="section-lead">어렵게 글을 쓰거나 노래를 잘 부를 필요는 없습니다. 간단한 질문에 답하면, SONG은 사연에 담긴 관계와 감정의 흐름을 가사로 풀어내는 경험을 목표로 합니다.</p>
+        <div class="steps">
+          <article class="step"><div class="num">01.</div><h3>기억과 마음을 적어요</h3><p>누구에게 보내나요? 그 사람과의 기억은 무엇인가요? 고맙거나 미안했던 일, 꼭 전하고 싶은 말을 적어요.</p></article>
+          <article class="step"><div class="num">02.</div><h3>편지 같은 가사를 만들어요</h3><p>GPT를 활용해 상대의 마음을 헤아리고, 기억에서 깨달음으로 이어지는 가사를 다듬어요. 완성 전 직접 수정할 수 있어요.</p></article>
+          <article class="step"><div class="num">03.</div><h3>음악으로 마음을 전해요</h3><p>선택한 장르와 분위기에 따라 선율과 편곡을 구상해요. Suno를 통한 서비스 자동 생성은 공식 상업용 API 제휴를 검토하고 있어요.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section experience" id="story" aria-labelledby="story-title">
+      <div class="wrap experience-wrap">
+        <div>
+          <div class="section-kicker">FIVE QUESTIONS, ONE LETTER</div>
+          <h2 id="story-title">다섯 가지 물음으로<br>시작되는 마음의 이야기.</h2>
+          <p class="section-lead" style="margin-bottom:26px">상대의 나이만으로 말투를 정하지 않아요. 엄마에게 편하게 반말을 하기도 하고, 친구에게 존댓말을 쓰기도 하니까요. 실제 그 사람에게 이야기하던 어투를 존중합니다.</p>
+          <div class="questions" aria-label="SONG 사용자 입력 질문">
+            <div class="q"><b>01</b> 상대방을 어떻게 부르나요?</div>
+            <div class="q"><b>02</b> 추억의 장소나 함께했던 일이 있나요?</div>
+            <div class="q"><b>03</b> 그 사람에게 해주고 싶은 말이 있나요?</div>
+            <div class="q"><b>04</b> 미안하거나 고마웠던 일을 이야기해 주세요.</div>
+            <div class="q"><b>05</b> 어떤 상황에 선물하는 노래인가요?</div>
+          </div>
+        </div>
+        <aside class="card-panel" aria-label="가사 스타일을 보여주는 설명용 예시">
+          <div class="panel-chip">LETTER-LIKE LYRICS · ILLUSTRATIVE SAMPLE</div>
+          <div class="panel-heading">엄마 딸이라서 다행이야</div>
+          <div class="panel-lyrics">
+            엄마, 그땐 내가 잘 몰랐어.<br>
+            늘 바쁘게 살아가면서도<br>
+            다른 사람의 마음까지 살피던 걸.<br><br>
+            어쩌면 엄마도 힘든 날이 있었을까.<br>
+            나는 그 품이 당연한 줄 알았네.<br><br>
+            <strong>내 마음속엔 언제나 엄마가 최고야.<br>
+            엄마 딸이라서, 참 다행이야.</strong>
+          </div>
+          <div class="panel-foot">* SONG의 문체를 설명하는 예시 가사이며, 실제 생성곡 또는 공개 음원은 아닙니다.</div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="features" aria-labelledby="features-title">
+      <div class="wrap">
+        <div class="section-kicker">THE SONG EXPERIENCE</div>
+        <h2 id="features-title">그 사람만의 이야기니까,<br>노래도 달라져야 하니까.</h2>
+        <p class="section-lead">기념일의 축하부터 오랫동안 못 전한 감사까지. 획일적인 감동 문구보다 실제 기억과 자연스러운 말투를 중심에 둡니다.</p>
+        <div class="features">
+          <article class="feature"><div class="ficon" aria-hidden="true">✉</div><h3>마음을 헤아리는 가사</h3><p>상대의 행동에 대한 감사, 당시의 내 마음, 뒤늦게 깨달은 의미를 기승전결이 있는 이야기로 이어갑니다.</p></article>
+          <article class="feature"><div class="ficon" aria-hidden="true">♫</div><h3>다양한 음악적 표현</h3><p>발라드, 재즈, 트로트, 팝 등 상황과 취향에 맞는 장르를 선택하고 악기와 강약의 흐름을 설계합니다.</p></article>
+          <article class="feature"><div class="ficon" aria-hidden="true">◉</div><h3>언젠가는 내 목소리로</h3><p>본인 확인을 거친 사용자가 자신의 목소리로 노래를 선물하는 기능을 준비하고 있습니다. 현재 API 지원 범위는 검토 중입니다.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section roadmap" id="roadmap" aria-labelledby="roadmap-title">
+      <div class="wrap">
+        <div class="section-kicker">DEVELOPMENT ROADMAP</div>
+        <h2 id="roadmap-title">SONG는 지금 만들어지고 있습니다.</h2>
+        <p class="section-lead">SONG는 초기 개발 프로젝트입니다. 구현 완료와 향후 계획을 구분해 안내합니다.</p>
+        <div class="milestones">
+          <article class="milestone"><div class="stage-label">PHASE 01</div><h3>가사 설계 웹앱</h3><p>사연 입력, 관계에 맞는 말투, 가사 생성·수정을 위한 코드와 시제품을 개발했습니다. 라이브 운영 검증은 별도 진행합니다.</p><span class="tag">시제품 코드 개발</span></article>
+          <article class="milestone"><div class="stage-label">PHASE 02</div><h3>음악 생성 API 연동</h3><p>음악 생성 업체와의 공식 API 접근 및 고객 대상 상업 이용 계약을 검토하고 있습니다.</p><span class="tag pending">파트너십 검토 중</span></article>
+          <article class="milestone"><div class="stage-label">PHASE 03</div><h3>본인 목소리 노래</h3><p>이용자가 직접 본인 목소리를 인증하고 자기 음색으로 노래하는 기능은 API 허용 범위 확정 후 구현할 계획입니다.</p><span class="tag future">향후 개발 예정</span></article>
+        </div>
+      </div>
+    </section>
+    <section class="cta" aria-labelledby="cta-title">
+      <div class="wrap">
+        <div class="section-kicker" style="color:#d0a3bd">THE HEART BEHIND SONG</div>
+        <h2 id="cta-title">당신의 소중한 이야기는,<br>노래가 될 가치가 있으니까.</h2>
+        <p>누군가를 사랑하는 마음, 오래 지나서야 알게 된 고마움, 말로 전하기 어려웠던 진심까지. SONG은 음악을 통해 마음이 닿는 새로운 방식을 만들고자 합니다.</p>
+        <a class="btn" href="https://github.com/tlco1003/Song" target="_blank" rel="noopener noreferrer">SONG 프로젝트 살펴보기 ↗</a>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="wrap foot">
+      <div><div class="footer-name">♪ song.</div>© SONG Project · 2026</div>
+      <div class="legal">SONG은 개발 중인 독립 프로젝트입니다. Suno의 공식 서비스·제휴 제품이 아니며, Suno API 상업 제휴·목소리 생성 기능의 이용 권한은 아직 확보되지 않았습니다. 이 페이지는 사업 소개용으로 결제나 실제 음악 생성을 제공하지 않습니다.</div>
+    </div>
+  </footer>
+</body>
+</html>

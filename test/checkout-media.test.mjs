@@ -35,6 +35,19 @@ test('published audio examples and device audio preview are capped at thirty sec
  assert.match(page,/고객 맞춤곡을 미리 생성하는 기능은 아닙니다/);
 });
 
+test('checkout example selector displays genre for every published song including mother's MP4 audio',()=>{
+  const manifest=JSON.parse(read('docs/media/tracks.json'));
+  assert.equal(manifest.tracks.length,8);
+  assert.equal(manifest.tracks.filter(t=>typeof t.genre==='string'&&t.genre.trim()).length,8);
+  assert.ok(page.includes('id="audio-example-genre"'));
+  assert.match(page,/예시곡 선택 · 장르별 감상/);
+  assert.match(script,/option\.dataset\.genre/);
+  assert.match(script,/option\.textContent=track\.title\+' · '\+option\.dataset\.genre/);
+  assert.match(script,/\.\(\?:mp3\|mp4\)/);
+  assert.match(script,/\$\('audio-example-genre'\)\.textContent/);
+  assert.match(styles,/\.audio-genre-caption/);
+});
+
 test('video package includes photo, video, iPhone native camera fallback and self camera recorder',()=>{
  const ids=['video-media-section','media-consent','face-photo','face-video','native-camera-capture',
   'photo-preview','video-preview','stage-portrait-image','camera-live','open-camera',

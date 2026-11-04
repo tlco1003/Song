@@ -30,3 +30,14 @@
 - 기존 〈내사랑김정미〉의 정확한 원본 파일 `jeongmi.mp3`(7,588,611B)는 아직 미업로드. 지금 올라온 〈정미야, 참 다행이야〉는 별도 버전으로 처리해 기존 가사를 임의로 연결하지 않는다.
 - 고객 목록에서는 파일이 실제 배포된 항목만 표시한다. 1바이트짜리 가짜 파일은 재생 목록에서 배제한다.
 - 가사: 웹에서는 구간 라벨 제거 후 세 줄씩 약식 자동 스크롤. 개별 가사 정확한 시간표는 필요.
+
+## 세탁소의 신데렐라 — 업로드 대기 (2026-11-04)
+- 화면 제목: **세탁소의 신데렐라**
+- 부제: **동전 하나만 더!**
+- 재생 파일명: `docs/media/cinderella-laundry.mp3` — 221.64초 / 5,116,203 bytes
+- 가사: `docs/media/lyrics-cinderella-laundry.txt` — 사용자 제공 노랫말 67줄 등록 완료
+- 음악 목록: `docs/media/tracks.json`에 `song-cinderella-laundry` 연결 완료
+- GitHub main에서 원래 언급한 `Cinderella of the laundry.mr` 파일은 확인되지 않았으며 MP3도 아직 미게시.
+- 파일 선택 및 업로드 링크: https://github.com/tlco1003/Song/upload/main/docs/media
+- 배포 후 직접 재생 URL: https://tlco1003.github.io/Song/media/cinderella-laundry.mp3
+- `.mr`처럼 잘못된 확장자는 재생에서 제외될 수 있으므로 실제 MP3 파일을 `.mp3`로 올릴 것.

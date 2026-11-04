@@ -8,7 +8,7 @@
       "file": "mother-song.mp4",
       "mediaKind": "video",
       "durationSeconds": 436.8,
-      "dlyricsFile": "mother-song.txt"
+      "lyricsFile": "lyrics-mother-song.txt"
     },
     {
       "id": "song-nara",
@@ -16,7 +16,7 @@
       "subtitle": "나를 알아가는 마음 · 인생 이야기",
       "file": "nara.mp3",
       "durationSeconds": 257.544,
-      "dlyricsFile": "lyrics-nara.txt"
+      "lyricsFile": "lyrics-nara.txt"
     },
     {
       "id": "song-taehwan",

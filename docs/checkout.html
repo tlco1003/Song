@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#251e29">
+<meta name="description" content="WITHU 맞춤 음악 선물 주문 — 원하는 상품을 선택하고 이메일로 받으세요. 현재 서비스 준비 중입니다.">
+<title>WITHU — 노래 선물 주문</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="checkout.css">
+<script src="checkout.js" defer></script>
+</head>
+<body>
+<header class="site-header"><div class="frame header-inner">
+ <a class="brand" href="./" aria-label="WITHU 홈"><span class="brand-icon" aria-hidden="true">♪</span> WITHU</a>
+ <nav aria-label="사이트 메뉴"><a href="./">노래 감상</a><a href="create.html">가사 수정</a><a href="checkout.html" aria-current="page">주문 확인</a></nav>
+ <span class="brand-caption">A meaningful gift, made with love.</span>
+</div></header>
+<main class="checkout-page">
+ <div class="frame">
+  <header class="checkout-intro">
+   <span class="small-caps">A GIFT IN A SONG</span>
+   <h1>마음을 담아, <em>선물할 준비.</em></h1>
+   <p>완성된 가사와 선물 옵션을 확인하고 받을 이메일을 입력해 주세요.</p>
+  </header>
+  <div class="checkout-status" role="status" id="commerce-status">
+   <strong>주문·결제 기능을 준비하고 있어요.</strong>
+   <p>아직 실제 결제나 노래 제작 요청은 받지 않습니다. 필요한 연동이 승인되면 이 화면에서 주문할 수 있습니다.</p>
+  </div>
+  <div class="checkout-layout">
+   <section class="checkout-card">
+    <span class="small-caps">01 · SELECT YOUR GIFT</span>
+    <h2>어떤 선물을 준비할까요?</h2>
+    <fieldset class="gift-options">
+     <legend class="screen-reader-only">선물 상품</legend>
+     <label class="gift-choice active" for="product-audio">
+      <input type="radio" id="product-audio" name="product" value="audio" checked>
+      <span class="choice-body"><strong>노래 선물</strong><small>완성곡 MP3 · 가사 · 이메일 전달</small></span>
+      <span class="choice-side">요금 준비 중</span>
+     </label>
+     <label class="gift-choice" for="product-video">
+      <input type="radio" id="product-video" name="product" value="audio_video">
+      <span class="choice-body"><strong>노래 + 뮤직비디오</strong><small>음악과 장면이 연결된 MP4 영상 포함</small></span>
+      <span class="choice-side">요금 준비 중</span>
+     </label>
+    </fieldset>
+    <p class="small-explain">영상 옵션은 별도의 영상 제작 API와 인물·이미지 사용 권한이 확인된 후 제공됩니다.</p>
+    <label for="delivery-email" class="form-label">완성된 노래를 받을 이메일</label>
+    <input id="delivery-email" type="email" autocomplete="email" inputmode="email" placeholder="name@example.com" maxlength="254" required>
+    <label for="delivery-email-again" class="form-label">이메일 주소 다시 확인</label>
+    <input id="delivery-email-again" type="email" autocomplete="off" inputmode="email" placeholder="이메일 주소를 다시 입력해 주세요" maxlength="254" required>
+    <p class="small-explain">주문 기능 활성화 전에는 입력한 이메일을 서버에 전송하거나 저장하지 않습니다.</p>
+    <label class="consent-row"><input type="checkbox" id="consent-delivery"><span>선물 제작과 전달을 위한 이메일 처리에 동의합니다.</span></label>
+    <label class="consent-row"><input type="checkbox" id="consent-service"><span>제작 정책, 취소·환불 조건 및 예상 제공 범위 확인 후 결제하겠습니다.</span></label>
+   </section>
+   <aside class="checkout-card order-summary" aria-labelledby="summary-title">
+    <span class="small-caps">02 · YOUR MUSIC LETTER</span>
+    <h2 id="summary-title">주문 내용 확인</h2>
+    <div class="preview-group">
+     <span class="preview-label">노래 제목</span>
+     <strong id="order-title">아직 준비된 노래가 없어요.</strong>
+    </div>
+    <div class="preview-group">
+     <span class="preview-label">음악 스타일</span>
+     <p id="order-style">가사 작성 화면에서 음악 스타일을 확정해 주세요.</p>
+    </div>
+    <div class="preview-group">
+     <span class="preview-label">가사 미리보기</span>
+     <div id="order-lyrics" class="lyric-preview">가사 작성 화면으로 돌아가 먼저 노랫말을 준비해 주세요.</div>
+    </div>
+    <div class="price-row"><span>결제 예정 금액</span><strong id="order-price">가격 확정 전</strong></div>
+    <p class="small-explain">가격은 서버에서 확정한 금액만 사용하며, 주문·결제 단계에서 임의로 변경할 수 없습니다.</p>
+    <button id="inspect-order" type="button" class="checkout-button secondary">입력 내용 확인</button>
+    <button id="confirm-checkout" type="button" class="checkout-button" disabled>결제 및 노래 제작 신청 준비 중</button>
+    <p id="checkout-message" class="checkout-message" role="status">현재는 실제 결제나 이메일 발송이 진행되지 않습니다.</p>
+    <a class="edit-link" href="create.html">← 가사 수정하러 돌아가기</a>
+   </aside>
+  </div>
+ </div>
+</main>
+<footer class="site-footer"><div class="frame footer-inner"><span class="footer-brand">WITHU</span><p>전하고 싶은 마음이 노래가 되는 곳.</p><span class="copyright">© 2026 WITHU</span></div></footer>
+</body>
+</html>

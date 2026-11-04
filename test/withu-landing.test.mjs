@@ -72,6 +72,25 @@ test('mother video and nara song load the uploaded lyrics with the exact lyricsF
   assert.match(js,/lyricsFile:'lyrics-mother-song\.txt'/);
 });
 
+test('new 씨앗을심어 and 새벽여섯시반 entries have correct display names and real lyric text',()=>{
+  const sprout=tracks.tracks.find(t=>t.id==='song-sprout');
+  const morning=tracks.tracks.find(t=>t.id==='song-am630');
+  assert.ok(sprout);
+  assert.ok(morning);
+  assert.equal(sprout.title,'씨앗을심어');
+  assert.equal(sprout.file,'sprout.mp3');
+  assert.equal(sprout.lyricsFile,'lyrics-sprout.txt');
+  assert.equal(sprout.durationSeconds,274.944);
+  assert.equal(morning.title,'새벽여섯시반');
+  assert.equal(morning.file,'am630.mp3');
+  assert.equal(morning.lyricsFile,'lyrics-am630.txt');
+  assert.equal(morning.durationSeconds,428.04);
+  assert.match(read('docs/media/lyrics-sprout.txt'),/나는 매일매일 힘겹게 계속 씨앗을 심고 있어/);
+  assert.match(read('docs/media/lyrics-am630.txt'),/고요한 새벽 여섯 시 반/);
+  // The lyrics are ready, but audio is only considered published after its files exist.
+  assert.match(js,/track.availability!=='missing'/);
+});
+
 test('playlist controls and private local upload controls are connected to new JS',()=>{
   for(const id of ['previous-track','next-track','music-audio','music-video','no-audio','track-list','local-song','local-lyrics','lyrics-scroll','copy-lyrics','local-review','review-gallery']){
     assert.ok(html.includes('id="'+id+'"'),id);

@@ -31,7 +31,10 @@ test('GET UI and GPT/Suno config without provider credentials',async()=>{
     assert.equal((await res.arrayBuffer()).byteLength,20);
     res=await fetch(url+'/media/tracks.json');
     assert.equal(res.status,200);
-    assert.equal((await res.json()).tracks.length,6);
+    const publishedTracks=(await res.json()).tracks;
+    assert.ok(publishedTracks.length>=7);
+    assert.ok(publishedTracks.some(track=>track.id==='song-sprout'&&track.title==='씨앗을심어'));
+    assert.ok(publishedTracks.some(track=>track.id==='song-am630'&&track.title==='새벽여섯시반'));
     res=await fetch(url+'/docs/IMPLEMENTATION.md');
     assert.equal(res.status,404);
     res=await fetch(url+'/가사 프롬프트.md');

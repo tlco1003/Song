@@ -56,24 +56,6 @@
     <p class="small-explain">2곡 구성은 같은 사연·가사를 바탕으로 편곡·분위기를 다르게 제작하는 상품이에요. 서로 다른 사연 두 건은 별도 주문입니다.</p>
     <p class="small-explain">뮤직비디오 30만 원은 <strong>시작 기준 가격</strong>으로, 전체 길이·영상 장면 수·인물 사용·해상도·수정횟수에 따라 사전 견적이 달라질 수 있어요. 현재 영상 제작 API와 인물·이미지 사용 권한 확인 전에는 구매할 수 없습니다.</p>
 
-    <section class="prepay-demo" id="prepay-demo" aria-labelledby="demo-audio-title">
-      <span class="small-caps">LISTEN FIRST · 30 SECONDS</span>
-      <h3 id="demo-audio-title">결제 전, 30초 먼저 들어보세요.</h3>
-      <p class="small-explain">WITHU <strong>기존 예시곡</strong> 또는 내 휴대폰 음악의 30초 미리보기입니다. 새로 주문할 고객 맞춤곡을 미리 생성하는 기능은 아닙니다.</p>
-      <label for="audio-example" class="form-label">예시곡 선택</label>
-      <select id="audio-example" class="media-select"><option value="">예시곡을 불러오는 중이에요…</option></select>
-      <div class="preview-playbar">
-        <button id="audio-preview-play" type="button" class="media-btn primary">▶ 30초 듣기</button>
-        <button id="audio-preview-reset" type="button" class="media-btn">처음부터</button>
-        <output id="audio-preview-time" class="preview-clock">00:00 / 00:30</output>
-      </div>
-      <div class="preview-meter" aria-hidden="true"><div id="audio-preview-fill"></div></div>
-      <audio id="audio-preview-element" preload="none" playsinline></audio>
-      <label for="audio-file-choice" class="media-file-cta">＋ 내 음악 선택 · 30초 미리 듣기</label>
-      <input id="audio-file-choice" type="file" accept="audio/*,.mp3,.m4a,.wav,.ogg" hidden>
-      <p id="audio-preview-message" role="status" class="small-explain">재생 버튼을 눌러주세요. 30초가 지나면 자동으로 멈춰요.</p>
-    </section>
-
     <section id="video-media-section" class="video-media-section" hidden aria-labelledby="video-media-title">
       <span class="small-caps">YOUR FACE · YOUR STAGE</span>
       <h3 id="video-media-title">내 얼굴과 영상으로 준비하는 무대</h3>
@@ -120,6 +102,25 @@
       <p class="small-explain">이 무대 화면은 사진을 배치한 디자인 미리보기예요. 사진의 얼굴을 움직이는 가수 영상에 자동으로 교체한 결과는 아닙니다.</p>
       <button id="clear-media-preview" class="media-btn" type="button">모든 얼굴·영상 미리보기 지우기</button>
     </section>
+
+    <section class="prepay-demo" id="prepay-demo" aria-labelledby="demo-audio-title">
+      <span class="small-caps">LISTEN FIRST · 30 SECONDS</span>
+      <h3 id="demo-audio-title">결제 전, 30초 먼저 들어보세요.</h3>
+      <p class="small-explain">WITHU <strong>기존 예시곡</strong> 또는 내 휴대폰 음악의 30초 미리보기입니다. 새로 주문할 고객 맞춤곡을 미리 생성하는 기능은 아닙니다.</p>
+      <label for="audio-example" class="form-label">예시곡 선택</label>
+      <select id="audio-example" class="media-select"><option value="">예시곡을 불러오는 중이에요…</option></select>
+      <div class="preview-playbar">
+        <button id="audio-preview-play" type="button" class="media-btn primary">▶ 30초 듣기</button>
+        <button id="audio-preview-reset" type="button" class="media-btn">처음부터</button>
+        <output id="audio-preview-time" class="preview-clock">00:00 / 00:30</output>
+      </div>
+      <div class="preview-meter" aria-hidden="true"><div id="audio-preview-fill"></div></div>
+      <audio id="audio-preview-element" preload="none" playsinline></audio>
+      <label for="audio-file-choice" class="media-file-cta">＋ 내 음악 선택 · 30초 미리 듣기</label>
+      <input id="audio-file-choice" type="file" accept="audio/*,.mp3,.m4a,.wav,.ogg" hidden>
+      <p id="audio-preview-message" role="status" class="small-explain">재생 버튼을 눌러주세요. 30초가 지나면 자동으로 멈춰요.</p>
+    </section>
+
 
     <label for="delivery-email" class="form-label">완성된 노래를 받을 이메일</label>
     <input id="delivery-email" type="email" autocomplete="email" inputmode="email" placeholder="name@example.com" maxlength="254" required>

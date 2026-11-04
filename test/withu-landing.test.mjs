@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
+import {readFileSync,statSync} from 'node:fs';
 const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const html=read('docs/index.html');
 const css=read('docs/style.css');
@@ -26,22 +26,35 @@ test('no proprietary process, provider name, source code links or five questions
   assert.ok(js.includes('advanceLyrics'));
   assert.ok(js.includes('filterLyricLines'));
 });
-test('three user-provided songs have lyrics files matched to track IDs',()=>{
-  assert.deepEqual(tracks.tracks.map(t=>t.title),['엄마에게 전하는 노래','나라는 사람','구태환에게','내사랑김정미','로맨틱 웨딩','정미야, 참 다행이야']);
-  assert.equal(tracks.tracks[0].file,'mother-song.mp4');
-  assert.equal(tracks.tracks[0].mediaKind,'video');
-  assert.equal(tracks.tracks[4].file,'romantic-wedding.mp3');
-  assert.equal(tracks.tracks[5].file,'jeongmi-new.mp3');
-  assert.deepEqual(tracks.tracks.slice(1,4).map(t=>t.file),['nara.mp3','taehwan.mp3','jeongmi.mp3']);
-  for(const t of tracks.tracks.slice(1,4)){
-    assert.equal(Object.hasOwn(t,'sunoId'),false);
-    assert.match(t.lyricsFile,/^lyrics-[a-z]+\.txt$/);
-    const lyrics=read('docs/media/'+t.lyricsFile);
-    assert.ok(lyrics.length>400);
+test('published songs retain unique IDs and wedding music and lyrics are paired',()=>{
+  assert.equal(tracks.version,1);
+  const byId=new Map(tracks.tracks.map(track=>[track.id,track]));
+  assert.equal(byId.size,tracks.tracks.length,'duplicate track id');
+  assert.equal(byId.get('song-mother').file,'mother-song.mp4');
+  assert.equal(byId.get('song-mother').mediaKind,'video');
+  assert.equal(byId.get('song-nara').file,'nara.mp3');
+  assert.equal(byId.get('song-taehwan').file,'taehwan.mp3');
+
+  const wedding=byId.get('song-romantic-wedding');
+  assert.equal(wedding.title,'로맨틱 웨딩');
+  assert.equal(wedding.file,'romantic-wedding.mp3');
+  assert.equal(wedding.lyricsFile,'lyrics-wedding.txt');
+  assert.ok(statSync(new URL('../docs/media/romantic-wedding.mp3',import.meta.url)).size>1024);
+
+  for(const id of ['song-nara','song-taehwan','song-jeongmi','song-romantic-wedding']){
+    const track=byId.get(id);
+    assert.ok(track,'missing '+id);
+    assert.equal(Object.hasOwn(track,'sunoId'),false);
+    assert.match(track.lyricsFile,/^lyrics-[a-z]+\\.txt$/);
+    const lyrics=read('docs/media/'+track.lyricsFile);
+    assert.ok(lyrics.length>400,'missing lyrics for '+id);
   }
   assert.match(read('docs/media/lyrics-nara.txt'),/하나님께 감사드려요/);
   assert.match(read('docs/media/lyrics-taehwan.txt'),/금호동 집에서/);
   assert.match(read('docs/media/lyrics-jeongmi.txt'),/정미야, 네가 있어 참 다행이야/);
+  assert.match(read('docs/media/lyrics-wedding.txt'),/우리 서로 기도해요/);
+  assert.match(js,/manifest\\.tracks\\.filter/);
+  assert.doesNotMatch(js,/tracks=published/,'HEAD failures must not hide songs from the manifest');
 });
 test('playlist controls and private local upload controls are connected to new JS',()=>{
   for(const id of ['previous-track','next-track','music-audio','music-video','no-audio','track-list','local-song','local-lyrics','lyrics-scroll','copy-lyrics','local-review','review-gallery']){

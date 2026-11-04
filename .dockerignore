@@ -1,8 +1,13 @@
 .git
+.github
 .env
 .env.*
 !.env.example
-.song-data
 node_modules
+*.log
 *.zip
-.DS_Store
+*.mp3
+*.mp4
+*.webm
+coverage
+.tmp

@@ -1,0 +1,118 @@
+:root{--ink:#2b2430;--paper:#faf7f3;--cream:#f4eee8;--rose:#b68e97;--muted:#847780;--plum:#271f2c;--gold:#d0b293;font-family:"Gowun Batang","Apple SD Gothic Neo",serif;color:var(--ink);background:var(--paper);font-synthesis:none}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;min-width:320px}
+button,input,a{font:inherit}
+button{cursor:pointer}
+a{text-decoration:none;color:inherit}
+button:focus-visible,a:focus-visible,label:focus-visible,.lyrics-scroll:focus-visible{outline:2px solid #b994a1;outline-offset:4px}
+[hidden]{display:none!important}
+.frame{width:min(1130px,calc(100% - 52px));margin:auto}
+.site-header{background:#241d29;color:#f9f2ed;border-bottom:1px solid #ffffff19}
+.header-inner{height:78px;display:flex;align-items:center;gap:35px}
+.brand{font:600 37px/1 "Cormorant Garamond",serif;letter-spacing:3.5px;display:flex;align-items:center;gap:10px}
+.brand-icon{font-size:20px;color:#d8b7ac}
+.site-header nav{display:flex;align-items:center;gap:29px;font-size:13px;margin-left:auto;color:#ded1dc}
+.site-header nav a:hover{color:#fff}
+.brand-caption{font:italic 16px "Cormorant Garamond",serif;color:#bba9b6;padding-left:26px;border-left:1px solid #796778}
+.listening-section{background:radial-gradient(ellipse at 88% 10%,#513b4d44 0,transparent 48%),linear-gradient(#302536,#211b29);color:#f9f2ee;padding:45px 0 75px}
+.opening-copy{text-align:center;margin:0 auto 30px}
+.small-caps{font:600 11px/1.5 "Cormorant Garamond",serif;letter-spacing:2.7px;color:#cdb3b9}
+.opening-copy h1{font:400 clamp(39px,5.1vw,65px)/1.22 "Nanum Brush Script","Gowun Batang",serif;letter-spacing:-1px;margin:10px 0 8px}
+.opening-copy h1 em{color:#e5c4c3;font-style:normal}
+.opening-copy p{font-size:14px;color:#d0c3cd;margin:0}
+.listening-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.94fr);gap:19px;align-items:stretch}
+.album-panel{border:1px solid #6a5566;border-radius:16px;padding:27px 32px 21px;background:linear-gradient(135deg,#443449,#292030 75%);box-shadow:0 24px 48px #150e1d70;min-width:0}
+.album-eyebrow{display:flex;justify-content:space-between;gap:12px;font:600 10px/1.4 "Cormorant Garamond",serif;letter-spacing:2px;color:#d5c1cf}
+.album-art{width:210px;height:210px;margin:10px auto 16px;display:grid;place-items:center;position:relative}
+.record-ring{height:185px;width:185px;border-radius:50%;background:repeating-radial-gradient(circle,#4f3f53 0,#4f3f53 2px,#2d2534 3px,#483648 5px);border:5px solid #715768;box-shadow:0 14px 26px #0e07179c;display:grid;place-items:center}
+.record-ring:after{content:'';position:absolute;inset:76px;border-radius:50%;background:linear-gradient(145deg,#ecd3c3,#c3a0ac);box-shadow:0 3px 8px #2b1726}
+.record-ring span{position:relative;z-index:1;font:600 23px "Cormorant Garamond",serif;color:#513549}
+.art-notes{position:absolute;right:3px;top:10px;font:italic 32px "Cormorant Garamond",serif;color:#e8c3c7}
+.song-heading{text-align:center}
+.song-number{font:600 11px "Cormorant Garamond",serif;letter-spacing:3px;color:#d9bec4;margin:0 0 6px}
+.song-heading h2{font:400 clamp(34px,3.3vw,47px)/1.2 "Nanum Brush Script","Gowun Batang",serif;margin:0 0 6px}
+#track-subtitle{font-size:13px;min-height:22px;color:#d2c3cd;margin:0}
+.audio-zone{min-height:82px;display:flex;flex-direction:column;align-items:stretch;justify-content:center;margin-top:14px}
+#audio-zone audio{width:100%;height:45px}
+#embedded-player{border:0;width:100%;height:155px;border-radius:9px;background:#fff}
+#no-audio{margin:0;text-align:center;color:#ded1da;font-size:14px}
+.playback-row{display:flex;justify-content:center;align-items:center;gap:19px;margin-top:8px}
+.circle-control{width:39px;height:39px;display:grid;place-items:center;border-radius:50%;border:1px solid #9e8b9b;color:#fff;background:#ffffff0b;font-size:32px;line-height:1}
+.circle-control:hover{background:#ffffff20}
+.track-counter{font:500 12px "Cormorant Garamond",serif;letter-spacing:2px;color:#e7d8e0}
+.quiet-message{text-align:center;min-height:26px;color:#d3c3d1;font-size:12px;margin:12px 0 0}
+.lyrics-panel{border-radius:16px;padding:28px 31px 22px;min-height:540px;background:#fbf8f4;color:#342d38;min-width:0;display:flex;flex-direction:column}
+.lyrics-topline{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #e5d8d7;padding-bottom:13px}
+.lyrics-topline .small-caps,.lyrics-note{color:#a18b91}
+.lyrics-note{font:600 10px "Cormorant Garamond",serif;letter-spacing:2px}
+.lyrics-panel h2{font:400 42px "Nanum Brush Script","Gowun Batang",serif;margin:15px 0 2px}
+.lyrics-subtitle{font-size:13px;color:#8e7d86;margin:0 0 12px}
+.lyrics-scroll{flex:1;max-height:420px;overflow-y:auto;overscroll-behavior:contain;padding:0 14px 0 0;scrollbar-width:thin;scrollbar-color:#d4b8c3 #f1e8e5}
+.lyrics-content{font:400 14px/2.05 "Gowun Batang",serif;white-space:pre-wrap;word-break:keep-all}
+.lyric-line{margin:0}
+.lyric-section{font:600 11px/2.2 "Cormorant Garamond","Gowun Batang",serif;letter-spacing:1px;color:#ac7d8f;padding-top:13px;margin-top:10px}
+.lyric-gap{height:8px}
+.lyrics-footer{border-top:1px solid #e5d8d7;margin-top:15px;padding-top:15px;display:flex;justify-content:space-between;align-items:center;gap:12px;color:#8a7c86;font-size:12px}
+.text-link{border:0;background:none;text-decoration:underline;text-underline-offset:4px;color:#885f72;font-size:12px;padding:4px}
+.song-selector{margin-top:28px}
+.selector-header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:13px;color:#c9b2bf;font-size:12px}
+.track-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.track-item{display:flex;align-items:center;gap:13px;text-align:left;border-radius:11px;border:1px solid #766476;background:#ffffff0b;padding:15px 15px;color:#fff;min-height:77px}
+.track-item.active,.track-item:hover{border-color:#d0aabf;background:#9d73872a}
+.track-item>span:first-child{color:#c6a4b2;font:600 22px "Cormorant Garamond",serif}
+.track-name{flex:1;min-width:0}
+.track-name strong{font:700 14px/1.6 "Gowun Batang",serif;display:block}
+.track-name small{font-size:11px;color:#d2becd}
+.track-length{font:500 12px "Cormorant Garamond",serif;color:#d2c1ce}
+.own-music{margin-top:24px;display:flex;gap:18px;align-items:center;justify-content:space-between;border-top:1px solid #ffffff30;padding-top:25px}
+.own-music strong{font-size:15px;font-weight:700}
+.own-music p{margin:6px 0 0;font-size:12px;color:#c8bac8}
+.own-actions{display:flex;flex-wrap:wrap;gap:9px}
+.outline-button{display:inline-flex;justify-content:center;align-items:center;min-height:41px;padding:10px 13px;background:#ffffff0b;border:1px solid #b69aa9;color:inherit;border-radius:7px;font-size:12px;cursor:pointer}
+.outline-button:hover{background:#ffffff22}
+.local-file-notice{margin:11px 0 0;font-size:11px;color:#baaab8}
+.gift-section{padding:102px 0;background:#faf7f3}
+.gift-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.gift-intro .small-caps,.review-head .small-caps{color:#a47b86}
+.gift-intro h2,.review-head h2{font:400 clamp(37px,4.4vw,57px)/1.35 "Nanum Brush Script","Gowun Batang",serif;margin:14px 0 18px}
+.gift-intro em{font-style:normal;color:#a47887}
+.gift-intro p{font-size:15px;line-height:1.9;color:#6d626e;word-break:keep-all}
+.service-state{display:inline-block;border:1px solid #d6c0c5;padding:9px 15px;border-radius:4px;color:#8c6d78;margin-top:14px;font-size:11px}
+.gift-categories{border-top:1px solid #e3d8d6}
+.gift-row{display:flex;align-items:center;gap:14px;border-bottom:1px solid #e3d8d6;padding:22px 5px}
+.gift-number{font:600 20px "Cormorant Garamond",serif;color:#b38892}
+.gift-word{font-size:17px;flex:1}
+.gift-detail{font:600 10px "Cormorant Garamond",serif;letter-spacing:1px;color:#a4949c}
+.review-section{padding:98px 0;background:#f2ecea}
+.review-head{text-align:center}
+.review-head h2{margin-bottom:10px}
+.review-head p{font-size:14px;color:#796b77;margin:0}
+.review-gallery{margin-top:36px;display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.empty-reviews{grid-column:1/-1;min-height:240px;border:1px dashed #cab8bc;border-radius:14px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:25px;background:#fff9}
+.empty-reviews>span{font-size:42px;color:#ad8a9a;margin-bottom:5px}
+.empty-reviews strong{font-size:18px}
+.empty-reviews p{font-size:13px;color:#897b83;max-width:410px;line-height:1.85}
+.review-card{background:#fff;border-radius:12px;padding:12px}
+.review-card video{width:100%;aspect-ratio:16/9;border-radius:8px;background:#1d1922;display:block}
+.review-card h3{font-size:16px;margin:13px 7px 5px}
+.review-card p{font-size:12px;color:#887985;margin:0 7px 8px}
+.local-review-tools{display:flex;gap:13px;align-items:center;justify-content:center;margin-top:22px;font-size:12px;color:#877984}
+.local-review-tools .outline-button{color:#68515d;border-color:#cdb8be;background:#fff}
+.site-footer{background:#211a26;color:#f3e9e9;padding:24px 0}
+.footer-inner{display:flex;align-items:center;gap:22px}
+.footer-brand{font:600 30px "Cormorant Garamond",serif;letter-spacing:2px}
+.footer-inner p{font-size:13px;color:#d3c2cd;margin:0}
+.copyright{font:500 11px "Cormorant Garamond",serif;color:#b9aab4;margin-left:auto}
+@media(max-width:930px){.brand-caption{display:none}.gift-grid{gap:30px}.frame{width:min(100% - 40px,1130px)}}
+@media(max-width:690px){
+ .frame{width:calc(100% - 32px)}.header-inner{height:68px;gap:12px}.brand{font-size:29px}.site-header nav{gap:15px;font-size:11px}
+ .listening-section{padding:27px 0 52px}.opening-copy{margin-bottom:22px}.opening-copy h1{font-size:43px;line-height:1.15}.opening-copy p{font-size:12px}
+ .listening-grid{grid-template-columns:1fr;gap:13px}.album-panel{padding:21px}.album-art{width:156px;height:150px;margin:8px auto}.record-ring{width:145px;height:145px}.record-ring:after{inset:55px}.song-heading h2{font-size:42px}
+ .lyrics-panel{min-height:auto;padding:22px}.lyrics-scroll{min-height:260px;max-height:355px}.lyrics-panel h2{font-size:35px}
+ .track-list{grid-template-columns:1fr;gap:7px}.track-item{min-height:64px;padding:10px 14px}
+ .selector-header{font-size:11px}.own-music{flex-direction:column;align-items:stretch}.own-actions{width:100%;display:grid;grid-template-columns:1fr 1fr}.outline-button{font-size:11px}
+ .gift-section,.review-section{padding:65px 0}.gift-grid{grid-template-columns:1fr;gap:32px}.gift-intro h2,.review-head h2{font-size:43px}.review-gallery{grid-template-columns:1fr}
+ .local-review-tools{flex-wrap:wrap}.footer-inner{flex-wrap:wrap;gap:7px}.footer-brand{width:100%}.copyright{margin-left:0}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}

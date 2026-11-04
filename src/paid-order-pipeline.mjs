@@ -8,7 +8,7 @@
  * Never accept "paid", amount, operator route, or customer e-mail from a browser as proof.
  */
 
-import {ORDER_STATES} from './commerce.mjs';
+import {ORDER_STATES,publicPriceCatalog} from './commerce.mjs';
 
 export const FULFILLMENT_ROUTE=Object.freeze({
   HUMAN:'manual_operator',
@@ -27,6 +27,16 @@ function serverAmount(order){
   const amount=order?.amountKrw;
   if(!Number.isSafeInteger(amount)||amount<=0||order.currency!=='KRW')
     throw new Error('Missing server-owned KRW amount');
+  const product=publicPriceCatalog().products.find(item=>item.id===order.productId);
+  if(!product)throw new Error('Unknown server product');
+  if(product.priceKind==='fixed'&&amount!==product.amountKrw)
+    throw new Error('Stored price differs from server catalog');
+  if(product.priceKind==='starting_at'){
+    if(product.quoteRequired!==true||amount<product.amountKrw
+      ||order.adminApprovedQuote!==true||typeof order.quoteId!=='string'
+      ||!order.quoteId.trim())
+      throw new Error('Video requires approved server-side quote before charge');
+  }
   return amount;
 }
 function ensurePorts(orders,payments){
@@ -90,6 +100,7 @@ export async function confirmCheckoutAndQueue({
   if(!order)throw new Error('Unknown order');
   if(order.id!==orderId)throw new Error('Order ID mismatch');
   if(order.state===ORDER_STATES.PAID){
+    if(order.paymentKey!==paymentKey)throw new Error('Payment key does not match verified order');
     // Retried callback: do not call confirm API again or send another email.
     return Object.freeze({status:'already_processed',queued:true});
   }
@@ -114,8 +125,10 @@ export async function reconcileDepositAndQueue({
   ensureOrderId(orderId);ensurePaymentKey(paymentKey);ensurePorts(orders,payments);
   const order=await orders.getById(orderId);
   if(!order||order.id!==orderId)throw new Error('Unknown order');
-  if(order.state===ORDER_STATES.PAID)
+  if(order.state===ORDER_STATES.PAID){
+    if(order.paymentKey!==paymentKey)throw new Error('Payment key does not match verified order');
     return Object.freeze({status:'already_processed',queued:true});
+  }
   if(order.state!==ORDER_STATES.PAYMENT_PENDING)
     throw new Error('Order not awaiting deposit');
   if(order.issuedPaymentKey!==paymentKey)

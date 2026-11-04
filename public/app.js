@@ -29,7 +29,7 @@ async function request(route,options={}){
   };
   let response=await fetch(route,{...options,headers:{...headers,...options.headers}});
   if(response.status===401&&!state.apiToken){
-    const token=prompt('이 WITHU 개발 서버의 APP_ACCESS_TOKEN을 입력하세요. Suno 계정 OAuth 토큰이 아닙니다.');
+    const token=prompt('이 서비스의 관리자 접근 코드를 입력하세요.');
     if(token){state.apiToken=token;response=await fetch(route,{...options,headers:{...headers,'x-app-token':token}});}
   }
   let json;
@@ -48,25 +48,25 @@ async function config(){
   try{
     const v=await request('/api/config');
     state.sunoReady=v.sunoAutomatedGenerationReady===true;
-    $('setupState').textContent=state.sunoReady?'● Suno MCP 연결 준비됨':'○ Suno OAuth 연결 필요';
-    $('setupState').title='작사: '+(v.lyricsReady?'OpenAI API 키 준비됨':'OPENAI_API_KEY 필요')+
-      ' / 음악: '+(state.sunoReady?'공식 Suno MCP 연결 가능':'계정 OAuth 또는 서버 인증 필요');
+    $('setupState').textContent=state.sunoReady?'● 음악 제작 준비됨':'○ 음악 제작 준비 중';
+    $('setupState').title='가사 제작: '+(v.lyricsReady?'준비됨':'설정 중')+
+      ' / 음악: '+(state.sunoReady?'준비됨':'연결 준비 중');
     $('sunoMcpStatus').textContent=state.sunoReady?
-      '정식 Suno MCP 연결 준비됨. 동의 후 노래를 요청할 수 있습니다.':
-      '서버에 인증된 Suno OAuth 토큰과 OpenAI API 키가 필요합니다. 직접 Suno Custom 모드 이용도 가능합니다.';
+      '음악 제작 준비가 완료됐습니다. 동의 후 진행할 수 있습니다.':
+      '음악 제작 서비스를 연결하고 있습니다.';
   }catch(e){$('setupState').textContent='서버 접근 확인 필요';}
 }
 async function generateLyrics(){
   if(!validateAnswers())return;
   if($('draftLyrics').value.trim()&&!confirm('현재 가사 초안을 새로 생성한 내용으로 교체할까요?'))return;
   const btn=$('generateLyrics');btn.disabled=true;
-  $('lyricsNotice').textContent='OpenAI GPT가 편지형 가사를 작성하고 있어요…';
+  $('lyricsNotice').textContent='당신의 이야기를 노랫말로 옮기고 있어요…';
   try{
     const result=await request('/api/lyrics',{method:'POST',body:JSON.stringify(answers())});
     $('draftLyrics').value=result.lyrics;
     invalidate();
-    $('lyricsNotice').textContent='GPT 가사 초안입니다. 실제 본인의 말처럼 수정한 다음 Suno로 전달하세요.';
-  }catch(e){$('lyricsNotice').textContent='GPT 작사 실패: '+e.message;}
+    $('lyricsNotice').textContent='첫 번째 가사를 완성했어요. 마음에 들 때까지 직접 고쳐보세요.';
+  }catch(e){$('lyricsNotice').textContent='가사 작성에 실패했어요: '+e.message;}
   finally{btn.disabled=false;}
 }
 async function prepare(){
@@ -79,10 +79,10 @@ async function prepare(){
     $('sunoLyrics').value=pack.lyrics;
     $('sunoStyle').value=pack.stylePrompt;
     $('openSuno').href=pack.sunoUrl;
-    $('sunoStatus').textContent='선택한 가사와 편곡 방향을 준비했어요. 복사하거나 공식 Suno MCP 생성을 요청하세요.';
+    $('sunoStatus').textContent='가사와 음악 분위기가 준비됐어요. 내용을 확인해 주세요.';
     $('sunoPreview').classList.remove('hidden');
     $('nav1').classList.remove('current');$('nav2').classList.add('current');
-    $('stageLabel').textContent='STEP 02 · SUNO MCP';
+    $('stageLabel').textContent='STEP 02 · YOUR MUSIC';
     $('sunoPreview').scrollIntoView({behavior:'smooth',block:'start'});
   }catch(e){$('lyricsNotice').textContent='준비 실패: '+e.message;}
   finally{btn.disabled=false;}
@@ -92,15 +92,15 @@ async function copyText(id,label){
   try{
     if(!navigator.clipboard?.writeText)throw Error('clipboard unavailable');
     await navigator.clipboard.writeText(el.value);
-    $('sunoStatus').textContent=label+'를 복사했습니다. Suno Custom 모드에 붙여넣으세요.';
+    $('sunoStatus').textContent=label+를 복사했어요.';
   }catch(_){$('sunoStatus').textContent='복사가 제한됐어요. 선택된 텍스트를 수동으로 복사하세요.';}
 }
 async function createWithMcp(){
   if($('sunoPreview').classList.contains('hidden')){alert('가사와 스타일을 다시 준비해 주세요.');return;}
-  if(!$('mcpConsent').checked){alert('Suno에 내용 전송 및 크레딧 사용에 동의해 주세요.');return;}
-  if(!confirm('Suno 계정의 크레딧이 소모될 수 있습니다. 공식 Suno MCP로 노래 생성을 요청할까요?'))return;
+  if(!$('mcpConsent').checked){alert('음악 제작 시 자료 전송과 사용량 차감에 동의해 주세요.');return;}
+  if(!confirm('음악 제작 과정에서 사용량이 차감될 수 있습니다. 진행할까요?'))return;
   const button=$('generateSunoMcp');button.disabled=true;
-  $('sunoMcpStatus').textContent='Suno MCP 음악 생성 요청 중…';
+  $('sunoMcpStatus').textContent='노래를 만들고 있어요…';
   $('sunoMcpResult').textContent='';
   try{
     const result=await request('/api/suno-mcp/create',{
@@ -108,9 +108,9 @@ async function createWithMcp(){
       body:JSON.stringify({...answers(),lyrics:$('sunoLyrics').value,
         confirmedCreditSpend:true,consentMcpDataTransfer:true})
     });
-    $('sunoMcpStatus').textContent=result.note||'공식 Suno MCP 호출을 확인했어요.';
+    $('sunoMcpStatus').textContent=result.note||'노래 제작 요청이 완료됐어요.';
     $('sunoMcpResult').textContent=[result.response,...(result.toolResults||[]).map(x=>x.output)].filter(Boolean).join('\n\n').slice(0,18000);
-  }catch(e){$('sunoMcpStatus').textContent='Suno MCP 생성 실패: '+e.message;}
+  }catch(e){$('sunoMcpStatus').textContent='노래 제작에 실패했어요: '+e.message;}
   finally{button.disabled=false;}
 }
 function example(){

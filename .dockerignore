@@ -6,8 +6,7 @@
 node_modules
 *.log
 *.zip
-*.mp3
-*.mp4
-*.webm
+private-uploads/
+user-recordings/
 coverage
 .tmp

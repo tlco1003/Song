@@ -56,6 +56,22 @@ test('published songs retain unique IDs and wedding music and lyrics are paired'
   assert.match(js,/manifest\.tracks\.filter/);
   assert.doesNotMatch(js,/tracks=published/,'HEAD failures must not hide songs from the manifest');
 });
+test('mother video and nara song load the uploaded lyrics with the exact lyricsFile key',()=>{
+  const byId=new Map(tracks.tracks.map(track=>[track.id,track]));
+  for(const [id,expected] of [
+    ['song-mother','lyrics-mother-song.txt'],
+    ['song-nara','lyrics-nara.txt']
+  ]){
+    const track=byId.get(id);
+    assert.ok(track,'missing '+id);
+    assert.equal(track.lyricsFile,expected);
+    assert.equal(Object.hasOwn(track,'dlyricsFile'),false);
+    assert.ok(read('docs/media/'+expected).trim().length>400);
+  }
+  assert.match(js,/fileURL\('media\/',track\.lyricsFile\)/);
+  assert.match(js,/lyricsFile:'lyrics-mother-song\.txt'/);
+});
+
 test('playlist controls and private local upload controls are connected to new JS',()=>{
   for(const id of ['previous-track','next-track','music-audio','music-video','no-audio','track-list','local-song','local-lyrics','lyrics-scroll','copy-lyrics','local-review','review-gallery']){
     assert.ok(html.includes('id="'+id+'"'),id);

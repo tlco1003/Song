@@ -1,5 +1,13 @@
 # SONG — 사연을 편지 같은 가사로, Suno로 노래로
 
+## SONG 제휴 신청용 소개 웹사이트
+
+- **정적 소개 화면:** [docs/index.html](./docs/index.html)
+- **GitHub Pages 최초 공개 설정:** [GitHub Pages 배포 안내](./docs/GITHUB_PAGES_배포안내.md)
+- **공개 예정 URL:** https://tlco1003.github.io/Song/ (Pages 배포 성공 확인 후에만 실제 사이트 주소로 사용)
+- **목적:** Suno API Interest Form의 Website/Company URL 제출용. 회사가 설립·등록되지 않았다면 `SONG Project`라고 사실대로 소개한다.
+- **중요:** 이는 홍보용 정적 사이트이며, 실제 GPT/Suno 노래 생성 앱이 배포되었다는 뜻은 아니다.
+
 > **2026-11-04 Suno 지원 회신 반영:** 현재 소비자 계정용 셀프서비스 공개 Suno API 키 발급은 제공되지 않으며, 공식 신청은 https://sunomusic.typeform.com/apiform 입니다. Suno MCP는 **개인 AI 어시스턴트의 창작용**으로 안내됐으며 SONG 같은 제3자 고객용 유료 웹앱에 사용하는 권한은 아닙니다. REST API 및 Voices 등록·인증·가창 지원 범위는 **B2B 제휴 검토 및 서면 계약** 대상입니다. 지원 회신은 Suno의 *AI 고객지원 도우미가 작성*했으므로 승인·계약 확약으로 해석하지 않습니다.  
 > **[지원 회신과 정정된 실행 지침](./docs/SUNO_공식지원답변_API_제휴신청_2026-11-04.md)**
 

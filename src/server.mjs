@@ -66,6 +66,8 @@ async function handle(req,res){
       return json(res,200,buildSunoPackage(await jsonBody(req)));
     }
     if(req.method==='POST'&&pathname==='/api/suno-mcp/create'){
+      // Consumer assistant MCP must never power a public commercial website.
+      if(process.env.NODE_ENV==='production'||!isLocal)throw new AppError(403,'공개 서비스의 음악 생성은 별도 승인된 사업용 API가 연결될 때 제공됩니다.');
       // Never issue a credit-spending tool call from an unauthenticated web UI.
       if(!accessToken)throw new AppError(503,'Suno 자동 생성에는 서버 접근 토큰과 인증된 Suno OAuth 연결이 필요합니다.');
       limited(req,6);

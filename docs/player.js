@@ -2,13 +2,14 @@
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id);
-const audio=$('music-audio');
+const audio=$('music-audio'),videoPlayer=$('music-video');
 let tracks=[],current=0,requestId=0,rawLyrics='',visibleLyrics=[],activeLine=-1;
 const deviceAudio=[],deviceVideo=[];
 const fileOK=s=>typeof s==='string'&&/^[a-zA-Z0-9가-힣_.-]{1,110}$/.test(s);
 const fileURL=(root,s)=>root+encodeURIComponent(s);
 const shortName=s=>s.replace(/\.[^.]+$/,'').replace(/[_-]+/g,' ').slice(0,95);
 const fallback=[
+ {id:'song-mother',title:'엄마에게 전하는 노래',subtitle:'사랑과 감사를 담은 영상 편지',file:'mother-song.mp4',mediaKind:'video',durationSeconds:436.8},
  {id:'song-nara',title:'나라는 사람',subtitle:'삶과 사랑을 돌아보는 노래',file:'nara.mp3',lyricsFile:'lyrics-nara.txt',durationSeconds:257.544},
  {id:'song-taehwan',title:'구태환에게',subtitle:'연인에게 보내는 편지 같은 노래',file:'taehwan.mp3',lyricsFile:'lyrics-taehwan.txt',durationSeconds:320.04},
  {id:'song-jeongmi',title:'내사랑김정미',subtitle:'소중한 친구에게 전하는 노래',file:'jeongmi.mp3',lyricsFile:'lyrics-jeongmi.txt',durationSeconds:350.04}
@@ -59,33 +60,36 @@ function drawLyrics(text){
  setActiveLine(0,true);
 }
 function advanceLyrics(){
- if(!visibleLyrics.length||audio.hidden)return;
+ const player=tracks[current]?.mediaKind==='video'?videoPlayer:audio;
+ if(!visibleLyrics.length||player.hidden)return;
  const t=tracks[current];
- const duration=Number.isFinite(audio.duration)&&audio.duration>0?audio.duration:t.durationSeconds;
+ const duration=Number.isFinite(player.duration)&&player.duration>0?player.duration:t.durationSeconds;
  if(!duration||!Number.isFinite(duration))return;
  // True line-level synchronization needs confirmed per-line timestamps (.LRC or cues).
  // Until then the three-line window follows APPROXIMATE audio progress, not word timing.
  const intro=Math.min(14,Math.max(4,duration*0.035));
  const outro=Math.min(13,duration*0.025);
- const pos=Math.max(0,Math.min(1,(audio.currentTime-intro)/Math.max(1,duration-intro-outro)));
+ const pos=Math.max(0,Math.min(1,(player.currentTime-intro)/Math.max(1,duration-intro-outro)));
  let target=Math.floor(pos*visibleLyrics.length);
  if(Array.isArray(t.lyricCueSeconds)&&t.lyricCueSeconds.length===visibleLyrics.length){
   target=0;
   for(let n=1;n<t.lyricCueSeconds.length;n++){
-   if(Number(t.lyricCueSeconds[n])<=audio.currentTime)target=n;else break;
+   if(Number(t.lyricCueSeconds[n])<=player.currentTime)target=n;else break;
   }
  }
  setActiveLine(target);
 }
-function showAudio(yes){
- audio.hidden=!yes;
- $('no-audio').hidden=yes;
+function showPlayer(kind){
+ audio.hidden=kind!=='audio';
+ videoPlayer.hidden=kind!=='video';
+ $('no-audio').hidden=kind!=='none';
 }
 async function select(index,autoPlay=false){
  if(!tracks.length)return;
  current=(index+tracks.length)%tracks.length;
  const track=tracks[current],token=++requestId;
  audio.pause();audio.removeAttribute('src');audio.load();
+ videoPlayer.pause();videoPlayer.removeAttribute('src');videoPlayer.load();
  $('track-title').textContent=track.title;
  $('track-subtitle').textContent=track.subtitle||'소중한 이야기를 담은 노래';
  $('lyrics-track-title').textContent=track.title;
@@ -103,13 +107,15 @@ async function select(index,autoPlay=false){
   }).catch(()=>{if(token===requestId)drawLyrics('')});
  }
  if(track.deviceURL||track.available){
-  audio.src=track.deviceURL||fileURL('media/',track.file);
-  showAudio(true);
-  status(track.deviceURL?'내 기기에서 선택한 음악을 듣고 있어요.':'노래를 재생하면 가사가 함께 이동해요.');
-  if(autoPlay)audio.play().catch(()=>status('다음 곡은 재생 버튼을 눌러 주세요.'));
+  const isVideo=track.mediaKind==='video'||/\.mp4$/i.test(track.file||'');
+  const player=isVideo?videoPlayer:audio;
+  player.src=track.deviceURL||fileURL('media/',track.file);
+  showPlayer(isVideo?'video':'audio');
+  status(isVideo?'재생 버튼으로 엄마 노래 영상을 감상할 수 있어요.':'노래를 재생하면 가사가 함께 이동해요.');
+  if(autoPlay)player.play().catch(()=>status('재생 버튼을 눌러 다음 곡을 감상해 주세요.'));
  }else{
-  showAudio(false);
-  status('이 곡의 음원 파일이 아직 게시되지 않았어요. 음악 파일을 등록하면 여기에서 직접 재생할 수 있어요.');
+  showPlayer('none');
+  status('이 곡은 아직 MP3가 업로드되지 않았어요. 노래 파일을 등록하면 직접 재생할 수 있어요.');
  }
 }
 function showTracks(){
@@ -121,7 +127,7 @@ function showTracks(){
   const title=document.createElement('strong');title.textContent=track.title;
   const subtitle=document.createElement('small');subtitle.textContent=track.subtitle||'음악 선물';
   const duration=document.createElement('span');duration.className='track-length';
-  duration.textContent=track.durationSeconds?Math.floor(track.durationSeconds/60)+':'+String(Math.round(track.durationSeconds)%60).padStart(2,'0'):'♪';
+  duration.textContent=track.available||track.deviceURL?(track.durationSeconds?Math.floor(track.durationSeconds/60)+':'+String(Math.round(track.durationSeconds)%60).padStart(2,'0'):'▶'):'준비 중';
   info.append(title,subtitle);b.append(num,info,duration);
   b.addEventListener('click',()=>select(idx));root.appendChild(b);
  }
@@ -136,10 +142,16 @@ async function start(){
 }
 $('previous-track').addEventListener('click',()=>select(current-1));
 $('next-track').addEventListener('click',()=>select(current+1));
-audio.addEventListener('timeupdate',advanceLyrics);
-audio.addEventListener('seeking',advanceLyrics);
-audio.addEventListener('loadedmetadata',advanceLyrics);
-audio.addEventListener('ended',()=>select(current+1,true));
+for(const player of [audio,videoPlayer]){
+ player.addEventListener('timeupdate',advanceLyrics);
+ player.addEventListener('seeking',advanceLyrics);
+ player.addEventListener('loadedmetadata',advanceLyrics);
+ player.addEventListener('ended',()=>select(current+1,true));
+ player.addEventListener('error',()=>{
+  if(player.hidden||!player.currentSrc)return;
+  status('음악 파일을 불러오지 못했어요. 잠시 후 새로고침하거나 아래 영상 섹션에서 재생해 주세요.');
+ });
+}
 $('local-song').addEventListener('change',async event=>{
  const files=[...(event.target.files||[])],initial=tracks.length;
  for(const f of files){

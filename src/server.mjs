@@ -5,7 +5,7 @@ import {stat} from 'node:fs/promises';
 import {createReadStream} from 'node:fs';
 import {AppError,validateLyricInput,buildSunoPackage} from './lib.mjs';
 import {makeLyrics,createSunoSong,SUNO_MCP_URL} from './providers.mjs';
-import {publicCommerceReadiness} from './commerce.mjs';
+import {publicCommerceReadiness,publicPriceCatalog} from './commerce.mjs';
 
 // Single-operator local MVP. Public multi-user deployment requires an
 // authenticated OAuth PKCE flow and per-user Suno credential vault.
@@ -101,6 +101,7 @@ async function handle(req,res){
     '/checkout.html':'docs/checkout.html',
     '/checkout.css':'docs/checkout.css',
     '/checkout.js':'docs/checkout.js',
+    '/prices.json':'docs/prices.json',
     '/player.js':'docs/player.js',
     '/media/tracks.json':'docs/media/tracks.json',
     '/reviews/reviews.json':'docs/reviews/reviews.json',

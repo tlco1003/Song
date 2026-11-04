@@ -26,6 +26,21 @@ test('no proprietary process, provider name, source code links or five questions
   assert.ok(js.includes('advanceLyrics'));
   assert.ok(js.includes('filterLyricLines'));
 });
+test('all eight music letters display genre from the shared public track manifest',()=>{
+  assert.equal(tracks.tracks.length,8);
+  assert.equal(tracks.tracks.filter(t=>t.genreSource==='prompt').length,1);
+  for(const t of tracks.tracks){
+    assert.ok(typeof t.genre==='string'&&t.genre.trim().length>0,t.title+' missing genre');
+    assert.ok(['prompt','editorial'].includes(t.genreSource),t.title+' missing genre source');
+  }
+  assert.equal(tracks.tracks.find(t=>t.id==='song-cinderella-laundry').genre,'뮤지컬 팝 · 재즈 스윙');
+  assert.ok(html.includes('id="track-genre"'));
+  assert.ok(html.includes('class="genre-disclaimer"'));
+  assert.match(js,/\$\('track-genre'\)\.textContent=track\.genre/);
+  assert.match(js,/genre\.className='track-genre'/);
+  assert.match(css,/\.track-name \.track-genre/);
+});
+
 test('published songs retain unique IDs and wedding music and lyrics are paired',()=>{
   assert.equal(tracks.version,1);
   const byId=new Map(tracks.tracks.map(track=>[track.id,track]));

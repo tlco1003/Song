@@ -84,3 +84,58 @@
 .gift-options{gap:12px}
 .gift-choice:has(#product-video:checked){border-color:#92788e}
 @media(max-width:480px){.gift-choice .choice-side{font-size:12px}.gift-choice .choice-body small{font-size:10px}}
+
+
+/* In-browser previews: real 30-second audio cap and consented camera UI */
+.prepay-demo,.video-media-section{border:1px solid #e4d4da;background:linear-gradient(145deg,#fefbfd,#fcf6f7);border-radius:13px;padding:22px;margin:26px 0}
+.prepay-demo .small-caps,.video-media-section .small-caps{color:#9e7187}
+.prepay-demo h3,.video-media-section h3{font:400 34px/1.18 "Nanum Brush Script","Gowun Batang",serif;color:#4c384a;margin:9px 0}
+.media-select,.media-input{display:block;width:100%;border:1px solid #d8c8d2;border-radius:8px;padding:11px;background:#fff;color:#453446;font:13px/1.4 "Gowun Batang",serif}
+.media-select{min-height:43px}
+.media-file-cta{display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:10px 13px;border-radius:7px;border:1px solid #c5adb9;font-size:12px;color:#705366;background:#fff;min-height:41px;margin-top:12px}
+.media-file-cta.secondary{width:100%;margin-top:9px}
+.media-file-cta:hover,.media-btn:hover:not(:disabled){background:#ede1e8}
+.preview-playbar,.camera-actions{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin:14px 0}
+.media-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:41px;padding:9px 13px;border-radius:8px;color:#674e5f;background:#fff;border:1px solid #d2becb;font-size:12px;font-weight:700;cursor:pointer}
+.media-btn.primary,.media-btn.strong{background:#4d3447;border-color:#4d3447;color:#fff}
+.media-btn.primary:hover,.media-btn.strong:hover{background:#705268}
+.media-btn:disabled{opacity:.45;cursor:not-allowed}
+.audio-preview-timer,.preview-clock{font:600 12px "Cormorant Garamond",serif;letter-spacing:1px;color:#7f6171;white-space:nowrap}
+.preview-meter{height:7px;border-radius:10px;background:#e9dce3;overflow:hidden}
+#audio-preview-fill{height:100%;width:0%;background:linear-gradient(90deg,#bb889c,#80566f);border-radius:inherit;transition:width .16s linear}
+#audio-preview-element{display:none}
+.prepay-demo .small-explain,.video-media-section .small-explain{line-height:1.65;word-break:keep-all}
+.media-preview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin:12px 0}
+.media-preview-card{border:1px solid #e8dce1;border-radius:11px;padding:13px;background:#fff;min-width:0}
+.media-preview-card>.form-label{margin:0 0 10px}
+.media-input{font-size:11px;padding:9px}
+.media-input::file-selector-button{border:0;border-radius:5px;color:#563e53;background:#f1e4e9;padding:8px;margin-right:7px;font:600 11px "Gowun Batang",serif}
+.preview-frame{width:100%;height:172px;border-radius:10px;background:#ede4e8;display:flex;align-items:center;justify-content:center;overflow:hidden;margin:12px 0 0;position:relative}
+.preview-frame span{max-width:95%;font-size:12px;text-align:center;color:#897985;line-height:1.6;padding:15px}
+.preview-frame img,.preview-frame video{height:100%;width:100%;object-fit:contain;display:block;background:#231b29}
+.media-file-note{font-size:11px;color:#9b8992;line-height:1.6;margin:9px 0 0}
+.camera-area{border-top:1px solid #e8dce0;margin:20px 0 12px;padding-top:15px}
+.camera-area h4{font-size:16px;margin:0 0 4px}
+.camera-area .small-explain{margin:8px 0}
+.live-frame{height:245px;background:#241b2a}
+#camera-live{object-fit:cover;transform:scaleX(-1)}
+.stage-concept{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:7px;min-height:245px;padding:23px;border-radius:14px;background:radial-gradient(ellipse 65% 60% at 45% 25%,#a67a9c8c,transparent 75%),linear-gradient(130deg,#1c1424,#493047 45%,#1b1428 100%);color:#f7e6ed;text-align:center}
+.stage-concept:before,.stage-concept:after{content:"";position:absolute;width:110px;height:360px;top:-100px;background:linear-gradient(#f6dcb677,transparent);filter:blur(20px);transform:rotate(-30deg)}
+.stage-concept:before{left:5%}.stage-concept:after{right:5%;transform:rotate(30deg)}
+.stage-concept .stage-beams{position:absolute;top:18px;width:100%;font-size:28px;letter-spacing:14px;color:#e8cfb9}
+.stage-portrait{position:relative;z-index:1;display:grid;place-items:center;width:125px;height:125px;border-radius:50%;border:4px solid #dbc0d1;background:linear-gradient(140deg,#a27f9a,#503a60);overflow:hidden;box-shadow:0 13px 35px #18101cc4}
+.stage-portrait span{font:600 55px "Cormorant Garamond",serif;color:#f4e4f2}
+.stage-portrait img{width:100%;height:100%;object-fit:cover}
+.stage-concept strong{z-index:1;font:600 18px "Cormorant Garamond",serif;letter-spacing:3px}
+.stage-concept p{z-index:1;margin:0;font-size:12px;color:#ead6e5}
+#clear-media-preview{margin-top:11px}
+@media(max-width:700px){
+ .prepay-demo,.video-media-section{padding:15px}
+ .prepay-demo h3,.video-media-section h3{font-size:32px}
+ .media-preview-grid{grid-template-columns:1fr}
+ .media-preview-card .preview-frame{height:230px}
+ .camera-actions .media-btn{flex:1 1 calc(50% - 10px)}
+ .preview-playbar .media-btn{flex:1 1 44%}
+ .preview-clock{flex:1 0 100%;text-align:center}
+}
+@media(prefers-reduced-motion:reduce){#audio-preview-fill{transition:none}}

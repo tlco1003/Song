@@ -15,7 +15,9 @@ const fallback=[
  {id:'song-nara',title:'나라는 사람',genre:'어쿠스틱 팝',subtitle:'삶과 사랑을 돌아보는 노래',file:'nara.mp3',lyricsFile:'lyrics-nara.txt',durationSeconds:257.544},
  {id:'song-taehwan',title:'구태환에게',genre:'로맨틱 발라드',subtitle:'연인에게 보내는 편지 같은 노래',file:'taehwan.mp3',lyricsFile:'lyrics-taehwan.txt',durationSeconds:320.04},
  {id:'song-jeongmi',title:'내사랑김정미',genre:'감성 발라드',subtitle:'소중한 친구에게 전하는 노래',file:'jeongmi-new.mp3',lyricsFile:'lyrics-jeongmi.txt',durationSeconds:350.04},
- {id:'song-romantic-wedding',title:'로맨틱 웨딩',genre:'웨딩 발라드 · 듀엣',subtitle:'특별한 결혼식날 서로의 약속을 담은 듀엣곡',file:'romantic-wedding.mp3',lyricsFile:'lyrics-wedding.txt'}
+ {id:'song-romantic-wedding',title:'로맨틱 웨딩',genre:'웨딩 발라드 · 듀엣',subtitle:'특별한 결혼식날 서로의 약속을 담은 듀엣곡',file:'romantic-wedding.mp3',lyricsFile:'lyrics-wedding.txt'},
+ {id:'song-sprout',title:'씨앗을심어',genre:'희망 팝 발라드',subtitle:'작은 희망을 심고 다시 일어서는 이야기',file:'sprout.mp3',lyricsFile:'lyrics-sprout.txt',durationSeconds:274.944},
+ {id:'song-am630',title:'새벽여섯시반',genre:'새벽 감성 발라드',subtitle:'비 내리는 새벽, 다시 시작하는 마음',file:'am630.mp3',lyricsFile:'lyrics-am630.txt',durationSeconds:428.04}
 ];
 async function readText(url){
  const result=await fetch(url,{cache:'no-store'});

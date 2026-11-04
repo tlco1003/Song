@@ -27,11 +27,13 @@ test('no proprietary process, provider name, source code links or five questions
   assert.ok(js.includes('filterLyricLines'));
 });
 test('three user-provided songs have lyrics files matched to track IDs',()=>{
-  assert.deepEqual(tracks.tracks.map(t=>t.title),['엄마에게 전하는 노래','나라는 사람','구태환에게','내사랑김정미']);
+  assert.deepEqual(tracks.tracks.map(t=>t.title),['엄마에게 전하는 노래','나라는 사람','구태환에게','내사랑김정미','로맨틱 웨딩','정미야, 참 다행이야']);
   assert.equal(tracks.tracks[0].file,'mother-song.mp4');
   assert.equal(tracks.tracks[0].mediaKind,'video');
-  assert.deepEqual(tracks.tracks.slice(1).map(t=>t.file),['nara.mp3','taehwan.mp3','jeongmi.mp3']);
-  for(const t of tracks.tracks.slice(1)){
+  assert.equal(tracks.tracks[4].file,'romantic-wedding.mp3');
+  assert.equal(tracks.tracks[5].file,'jeongmi-new.mp3');
+  assert.deepEqual(tracks.tracks.slice(1,4).map(t=>t.file),['nara.mp3','taehwan.mp3','jeongmi.mp3']);
+  for(const t of tracks.tracks.slice(1,4)){
     assert.equal(Object.hasOwn(t,'sunoId'),false);
     assert.match(t.lyricsFile,/^lyrics-[a-z]+\.txt$/);
     const lyrics=read('docs/media/'+t.lyricsFile);

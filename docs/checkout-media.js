@@ -53,20 +53,26 @@
       if(!result.ok)throw Error('missing tracks');
       const data=await result.json();
       const tracks=(Array.isArray(data.tracks)?data.tracks:[])
-        .filter(t=>typeof t.title==='string'&&/^[a-zA-Z0-9가-힣_.-]+\.mp3$/i.test(t.file));
+        // MP4 with AAC audio (e.g. the mother's gift video) can be previewed
+        // with the HTML audio element as well as ordinary MP3 examples.
+        .filter(t=>typeof t.title==='string'&&/^[a-zA-Z0-9가-힣_.-]+\.(?:mp3|mp4)$/i.test(t.file));
       if(!tracks.length)throw Error('no samples');
       for(const track of tracks){
         const option=document.createElement('option');
-        option.value=track.file;option.textContent=track.title;
+        option.value=track.file;
+        option.dataset.genre=typeof track.genre==='string'&&track.genre.trim()?track.genre.trim():'장르 정보 준비 중';
+        option.textContent=track.title+' · '+option.dataset.genre;
         select.append(option);
       }
       select.selectedIndex=0;
+      $('audio-example-genre').textContent='장르 · '+(select.selectedOptions[0]?.dataset.genre||'장르 정보 준비 중');
       setAudio('media/'+encodeURIComponent(select.value));
       audioNotice('기존에 공개된 예시곡을 선택했어요. 재생을 누르면 30초만 들려줍니다.');
     }catch(_){
       const option=document.createElement('option');
       option.value='';option.textContent='지금은 예시곡 목록을 불러올 수 없어요';
       select.append(option);
+      $('audio-example-genre').textContent='장르 정보를 불러오지 못했어요.';
       audioNotice('예시곡을 불러오지 못했어요. 직접 음악 파일을 선택하면 30초 미리 듣기가 가능해요.');
     }
   }
@@ -75,6 +81,7 @@
     const file=$('audio-example').value;
     if(file)setAudio('media/'+encodeURIComponent(file));
     else setAudio('');
+    $('audio-example-genre').textContent=file?'장르 · '+($('audio-example').selectedOptions[0]?.dataset.genre||'장르 정보 준비 중'):'예시곡을 선택해 주세요.';
     audioNotice('예시곡을 변경했어요. 재생 버튼을 눌러보세요.');
   });
   $('audio-file-choice').addEventListener('change',event=>{
@@ -86,6 +93,7 @@
     revoke('audioUrl');
     state.audioUrl=URL.createObjectURL(file);
     setAudio(state.audioUrl);
+    $('audio-example-genre').textContent='내 음악 · 장르 미분류';
     audioNotice('선택한 내 음악을 이 브라우저에서 30초만 미리 들어요. 업로드되지 않습니다.');
     event.target.value='';
   });

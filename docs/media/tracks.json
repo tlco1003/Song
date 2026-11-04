@@ -42,10 +42,20 @@
       "lyricsFile": "lyrics-wedding.txt"
     },
     {
-      "id": "song-jeongmi-new",
-      "title": "새싹",
-      "subtitle": "나아가는길",
-      "file": "sprout.mp3"
+      "id": "song-sprout",
+      "title": "씨앗을심어",
+      "subtitle": "작은 희망을 심고 다시 일어서는 이야기",
+      "file": "sprout.mp3",
+      "lyricsFile": "lyrics-sprout.txt",
+      "durationSeconds": 274.944
+    },
+    {
+      "id": "song-am630",
+      "title": "새벽여섯시반",
+      "subtitle": "비 내리는 새벽, 다시 시작하는 마음",
+      "file": "am630.mp3",
+      "lyricsFile": "lyrics-am630.txt",
+      "durationSeconds": 428.04
     }
   ]
 }

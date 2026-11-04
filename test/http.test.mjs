@@ -6,6 +6,9 @@ test('GET UI and GPT/Suno config without provider credentials',async()=>{
   await new Promise(resolve=>app.listen(0,'127.0.0.1',resolve));
   const url='http://127.0.0.1:'+app.address().port;
   try{
+    let health=await fetch(url+'/healthz');
+    assert.equal(health.status,200);
+    assert.deepEqual(await health.json(),{status:'ok',service:'withu-api'});
     let res=await fetch(url+'/');
     assert.equal(res.status,200);
     assert.match(await res.text(),/내 이야기가/);

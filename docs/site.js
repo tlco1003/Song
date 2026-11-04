@@ -135,6 +135,7 @@
 
   const approvedReviews=[];
   async function loadReviews(){
+    approvedReviews.length=0;
     try{
       const r=await fetch('reviews/reviews.json',{cache:'no-store'});
       if(r.ok){
@@ -206,9 +207,11 @@
     $('withu-refresh-media').disabled=true;
     status('게시된 파일을 다시 확인하고 있어요…');
     try{
-      state.tracks=state.tracks.filter(t=>t.local);
+      const localPreviewTracks=state.tracks.filter(t=>t.local);
       state.tracks=[];
       await loadTracks();
+      for(const t of localPreviewTracks)register(t);
+      renderTrackList();
       await loadReviews();
     }finally{$('withu-refresh-media').disabled=false;}
   });

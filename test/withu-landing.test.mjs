@@ -91,6 +91,20 @@ test('new 씨앗을심어 and 새벽여섯시반 entries have correct display na
   assert.match(js,/track.availability!=='missing'/);
 });
 
+test('세탁소의 신데렐라 is listed with complete lyrics and verified MP3 metadata',()=>{
+  const song=tracks.tracks.find(x=>x.id==='song-cinderella-laundry');
+  assert.ok(song);
+  assert.equal(song.title,'세탁소의 신데렐라');
+  assert.equal(song.subtitle,'동전 하나만 더!');
+  assert.equal(song.file,'cinderella-laundry.mp3');
+  assert.equal(song.lyricsFile,'lyrics-cinderella-laundry.txt');
+  assert.equal(song.durationSeconds,221.64);
+  const lyrics=read('docs/media/'+song.lyricsFile);
+  assert.match(lyrics,/짝짝이 양말에 구겨진 셔츠/);
+  assert.match(lyrics,/그거요\? 내일 찾으러 올게요!/);
+  assert.doesNotMatch(lyrics,/\[(?:Verse|Chorus|Pre-Chorus|Bridge|Outro|Final)/);
+});
+
 test('playlist controls and private local upload controls are connected to new JS',()=>{
   for(const id of ['previous-track','next-track','music-audio','music-video','no-audio','track-list','local-song','local-lyrics','lyrics-scroll','copy-lyrics','local-review','review-gallery']){
     assert.ok(html.includes('id="'+id+'"'),id);

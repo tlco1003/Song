@@ -10,8 +10,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="checkout.css?v=20261105-payment-preview">
-<script src="checkout.js?v=20261105-payment-preview" defer></script>
+<link rel="stylesheet" href="checkout.css?v=20261105-price-catalog">
+<script src="checkout.js?v=20261105-price-catalog" defer></script>
 </head>
 <body>
 <header class="site-header"><div class="frame header-inner">
@@ -38,16 +38,22 @@
      <legend class="screen-reader-only">선물 상품</legend>
      <label class="gift-choice active" for="product-audio">
       <input type="radio" id="product-audio" name="product" value="audio" checked>
-      <span class="choice-body"><strong>노래 선물</strong><small>완성곡 MP3 · 가사 · 이메일 전달</small></span>
-      <span class="choice-side">요금 준비 중</span>
+      <span class="choice-body"><strong>맞춤 노래 1곡</strong><small>MP3 1곡 · 가사 · 이메일 전달</small></span>
+      <span class="choice-side" data-price-for="audio">가격 확인 중</span>
+     </label>
+     <label class="gift-choice" for="product-audio-duo">
+      <input type="radio" id="product-audio-duo" name="product" value="audio_duo">
+      <span class="choice-body"><strong>맞춤 노래 2곡 <em class="choice-highlight">추천</em></strong><small>같은 사연·가사 · 서로 다른 음악 분위기 2곡</small></span>
+      <span class="choice-side" data-price-for="audio_duo">가격 확인 중</span>
      </label>
      <label class="gift-choice" for="product-video">
       <input type="radio" id="product-video" name="product" value="audio_video">
-      <span class="choice-body"><strong>노래 + 뮤직비디오</strong><small>음악과 장면이 연결된 MP4 영상 포함</small></span>
-      <span class="choice-side">요금 준비 중</span>
+      <span class="choice-body"><strong>노래 + 뮤직비디오</strong><small>노래 1곡 + 협의된 분량의 뮤직비디오 · 개별 견적</small></span>
+      <span class="choice-side" data-price-for="audio_video">가격 확인 중</span>
      </label>
     </fieldset>
-    <p class="small-explain">영상 옵션은 별도의 영상 제작 API와 인물·이미지 사용 권한이 확인된 후 제공됩니다.</p>
+    <p class="small-explain">2곡 구성은 같은 사연·가사를 바탕으로 편곡·분위기를 다르게 제작하는 상품이에요. 서로 다른 사연 두 건은 별도 주문입니다.</p>
+    <p class="small-explain">뮤직비디오 30만 원은 <strong>시작 기준 가격</strong>으로, 전체 길이·영상 장면 수·인물 사용·해상도·수정횟수에 따라 사전 견적이 달라질 수 있어요. 현재 영상 제작 API와 인물·이미지 사용 권한 확인 전에는 구매할 수 없습니다.</p>
     <label for="delivery-email" class="form-label">완성된 노래를 받을 이메일</label>
     <input id="delivery-email" type="email" autocomplete="email" inputmode="email" placeholder="name@example.com" maxlength="254" required>
     <label for="delivery-email-again" class="form-label">이메일 주소 다시 확인</label>
@@ -90,7 +96,8 @@
      <span class="preview-label">가사 미리보기</span>
      <div id="order-lyrics" class="lyric-preview">가사 작성 화면으로 돌아가 먼저 노랫말을 준비해 주세요.</div>
     </div>
-    <div class="price-row"><span>결제 예정 금액</span><strong id="order-price">가격 확정 전</strong></div>
+    <div class="price-row"><span>상품 표시가격</span><strong id="order-price">가격 확인 중</strong></div>
+    <p id="order-pricing-notice" class="small-explain" role="status">이 화면은 가격표 미리보기이며 실제 결제가 진행되지 않습니다.</p>
     <div class="method-summary"><span>선택한 결제수단</span><strong id="selected-payment-method">토스페이</strong></div>
     <p class="small-explain">가격은 서버에서 확정한 금액만 사용하며, 주문·결제 단계에서 임의로 변경할 수 없습니다.</p>
     <button id="inspect-order" type="button" class="checkout-button secondary">입력 내용 확인</button>
@@ -108,7 +115,7 @@
       <div><dt>상품</dt><dd id="demo-product">노래 선물</dd></div>
       <div><dt>노래 제목</dt><dd id="demo-order">미확정</dd></div>
       <div><dt>결제수단</dt><dd id="demo-payment-method">토스페이</dd></div>
-      <div><dt>결제금액</dt><dd id="demo-amount">가격 미확정</dd></div>
+      <div><dt>표시가격</dt><dd id="demo-amount">가격 확인 중</dd></div>
     </dl>
     <p id="demo-method-detail" class="demo-method-detail"></p>
     <button type="button" disabled class="checkout-button">실제 결제 준비 중 · 결제 불가</button>

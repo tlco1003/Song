@@ -34,6 +34,15 @@ test('GET UI and GPT/Suno config without provider credentials',async()=>{
     const commerce=await res.json();
     assert.equal(commerce.canCharge,false);
     assert.equal(commerce.licenseVerified,false);
+    res=await fetch(url+'/prices.json');
+    assert.equal(res.status,200);
+    const prices=await res.json();
+    assert.equal(prices.currency,'KRW');
+    assert.deepEqual(prices.products.map(p=>p.amountKrw),[29000,39000,300000]);
+    assert.equal(prices.products[2].quoteRequired,true);
+    res=await fetch(url+'/api/commerce/catalog');
+    assert.equal(res.status,200);
+    assert.deepEqual(await res.json(),prices);
     res=await fetch(url+'/api/commerce/orders',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({email:'test@example.com',amount:1})});
     assert.equal(res.status,503); // Must not charge or retain email.

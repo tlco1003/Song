@@ -22,6 +22,21 @@ test('GET UI and GPT/Suno config without provider credentials',async()=>{
     res=await fetch(url+'/media/mother-song.mp4',{method:'HEAD'});
     assert.equal(res.status,200); // Uploaded video is now published in docs/media.
     assert.equal(res.headers.get('content-type'),'video/mp4');
+    res=await fetch(url+'/checkout.html');
+    assert.equal(res.status,200);
+    assert.match(await res.text(),/노래 선물 주문/);
+    res=await fetch(url+'/checkout.css');
+    assert.equal(res.status,200);
+    res=await fetch(url+'/checkout.js');
+    assert.equal(res.status,200);
+    res=await fetch(url+'/api/commerce/readiness');
+    assert.equal(res.status,200);
+    const commerce=await res.json();
+    assert.equal(commerce.canCharge,false);
+    assert.equal(commerce.licenseVerified,false);
+    res=await fetch(url+'/api/commerce/orders',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email:'test@example.com',amount:1})});
+    assert.equal(res.status,503); // Must not charge or retain email.
     res=await fetch(url+'/studio');
     assert.equal(res.status,200);
     assert.match(await res.text(),/내 이야기가/);

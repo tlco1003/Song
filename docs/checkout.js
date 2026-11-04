@@ -4,6 +4,39 @@ const $=id=>document.getElementById(id);
 const KEY='withu-order-draft-v1';
 const draftMaxAge=30*60*1000;
 let draft=null;
+let priceCatalog=null;
+const won=new Intl.NumberFormat('ko-KR',{style:'currency',currency:'KRW',maximumFractionDigits:0});
+function chosenProduct(){return document.querySelector('input[name="product"]:checked')?.value||'audio';}
+function selectedPrice(){return priceCatalog?.products.find(p=>p.id===chosenProduct())||null;}
+function priceText(product){return product?(won.format(product.amountKrw)+(product.priceKind==='starting_at'?'부터':'')):'가격 확인 중';}
+function showProductPrice(){
+ for(const node of document.querySelectorAll('[data-price-for]')){
+  const p=priceCatalog?.products.find(product=>product.id===node.dataset.priceFor);
+  node.textContent=priceText(p);
+ }
+ const current=selectedPrice();
+ $('order-price').textContent=priceText(current);
+ $('order-pricing-notice').textContent=current?.quoteRequired===true?
+  '뮤직비디오는 시작 가격입니다. 영상 길이·구성·수정 범위를 협의한 최종 견적이 별도로 필요하며 지금은 결제되지 않습니다.':
+  '결제창 시안의 판매 예정 가격입니다. PG 연동·정식 계약 전에는 결제가 진행되지 않습니다.';
+}
+async function loadPrices(){
+ try{
+  const result=await fetch('prices.json',{cache:'no-store'});
+  if(!result.ok)throw Error('price catalog unavailable');
+  const catalog=await result.json();
+  if(catalog.currency!=='KRW'||catalog.version!==1||!Array.isArray(catalog.products))throw Error('Invalid catalog');
+  const ids=['audio','audio_duo','audio_video'];
+  if(catalog.products.length!==ids.length||!ids.every(id=>catalog.products.some(p=>p.id===id&&Number.isSafeInteger(p.amountKrw)&&p.amountKrw>0)))throw Error('Incomplete catalog');
+  if(!catalog.products.some(p=>p.id==='audio_video'&&p.quoteRequired===true&&p.priceKind==='starting_at'))throw Error('Video quote required');
+  priceCatalog=catalog;
+ }catch(_){
+  priceCatalog=null;
+  $('checkout-message').textContent='가격표를 불러오지 못했어요. 새로고침해 주세요. 실제 결제는 진행되지 않습니다.';
+ }
+ showProductPrice();
+}
+
 function getDraft(){
  try{
   const parsed=JSON.parse(sessionStorage.getItem(KEY)||'null');
@@ -42,10 +75,10 @@ function showPaymentPreview(){
  const dialog=$('payment-preview-dialog'),method=chosenPayment();
  const product=document.querySelector('input[name="product"]:checked')?.value;
  const order=getDraft();
- $('demo-product').textContent=product==='audio_video'?'노래 + 뮤직비디오 (제작 연결 전)':'노래 선물 (MP3 + 가사)';
+ $('demo-product').textContent=product==='audio_video'?'노래 + 뮤직비디오 (사전 견적 필요)':product==='audio_duo'?'맞춤 노래 2곡 (같은 가사, 서로 다른 스타일)':'맞춤 노래 1곡 (MP3 + 가사)';
  $('demo-order').textContent=order?.title||'가사 작성 후 확정';
  $('demo-payment-method').textContent=method.title;
- $('demo-amount').textContent='가격 미확정 · 청구 불가';
+ $('demo-amount').textContent=priceCatalog?priceText(selectedPrice())+' · 청구 불가':'가격 확인 중 · 청구 불가';
  $('demo-method-detail').textContent=method.help;
  if(typeof dialog.showModal==='function')dialog.showModal();
  else dialog.setAttribute('open','');
@@ -69,8 +102,9 @@ function checkOrder(){
  if(!$('consent-delivery').checked||!$('consent-service').checked){
   $('checkout-message').textContent='이메일 처리 동의와 서비스 안내 확인이 필요합니다.';return;
  }
- const option=document.querySelector('input[name="product"]:checked')?.value;
- $('checkout-message').textContent=(option==='audio_video'?'노래와 뮤직비디오':'노래')+' 주문 내용을 확인했어요. 결제·자동 제작 연결이 완료되면 여기에서 실제 주문할 수 있어요.';
+ const option=chosenProduct();
+ const label=option==='audio_video'?'노래와 뮤직비디오':option==='audio_duo'?'노래 2곡':'노래 1곡';
+ $('checkout-message').textContent=label+' 주문 내용을 확인했어요. 결제·자동 제작 연결이 완료되면 여기에서 실제 주문할 수 있어요.';
 }
 async function readiness(){
  try{
@@ -106,10 +140,13 @@ showPaymentSelection();
 for(const radio of document.querySelectorAll('input[name="product"]')){
  radio.addEventListener('change',()=>{
   for(const label of document.querySelectorAll('.gift-choice'))label.classList.toggle('active',label.querySelector('input')?.checked===true);
+  showProductPrice();
   $('checkout-message').textContent='상품을 선택했어요. 실제 결제는 아직 시작되지 않습니다.';
  });
 }
 $('inspect-order').addEventListener('click',checkOrder);
 show();
+showProductPrice();
+void loadPrices();
 void readiness();
 })();

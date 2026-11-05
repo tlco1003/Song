@@ -14,6 +14,7 @@ function pending(overrides={}){
   id:orderId, state:ORDER_STATES.PAYMENT_PENDING, currency:'KRW',
   amountKrw:39000, productId:'audio_duo', customerEmail:'customer@example.test',
   songTitle:'엄마에게', confirmedLyrics:'테스트용 가사', musicStyle:'발라드',
+  genreSelection:{mode:'same',genres:['발라드']},mood:'따뜻한',sharedStyleNotes:'',
   issuedPaymentKey:paymentKey, ...overrides
  };
 }
@@ -35,15 +36,16 @@ function makePorts(overrides={}){
      issuedDepositSecret:providerSecret||current.issuedDepositSecret||null};
    return {status:'waiting_for_deposit'};
   },
-  async confirmPaidAndEnqueueAtomic({orderId,paymentKey,amountKrw,expectedState,nextState,route,jobKey}){
+  async confirmPaidAndEnqueueAtomic({orderId,paymentKey,amountKrw,expectedState,nextState,route,jobKey,songPlan}){
    assert.equal(orderId,current.id);
    assert.equal(paymentKey,providerPayment().paymentKey);
-   assert.equal(amountKrw,39000);
+   assert.equal(amountKrw,current.amountKrw);
+   assert.equal(songPlan.songs.length,current.productId==='audio_duo'?2:1);
    assert.equal(expectedState,ORDER_STATES.PAYMENT_PENDING);
    assert.equal(nextState,ORDER_STATES.PAID);
    if(current.state===ORDER_STATES.PAID)return {outcome:'duplicate',route:current.fulfillmentRoute};
    if(current.state!==ORDER_STATES.PAYMENT_PENDING)throw Error('Concurrent state change');
-   current={...current,state:nextState,paymentVerifiedAt:new Date().toISOString(),paymentKey,fulfillmentRoute:route};
+   current={...current,state:nextState,paymentVerifiedAt:new Date().toISOString(),paymentKey,fulfillmentRoute:route,paidSongPlan:structuredClone(songPlan)};
    jobs.push({key:jobKey,orderId,route,status:'claimed'});
    return {outcome:'created',route};
   }
@@ -153,7 +155,7 @@ test('operator and automatic workers reject unpaid orders and unapproved music A
  assert.equal(generated,0);
  const licensed={...auto.read(),commercialApiAgreementVerified:true};
  await executePaidJob({job:auto.jobs[0],order:licensed,operatorEmail,musicProvider});
- assert.equal(generated,1);
+ assert.equal(generated,2);
 });
 test('Resend adapter refuses unpaid alerts and sends verified orders with stable idempotency key',async()=>{
  const captured=[];
@@ -203,4 +205,84 @@ test('an already-paid order cannot be acknowledged with a different payment key'
   orderId,paymentKey:'DIFFERENT_PAYMENT_KEY',claimedAmountKrw:39000,...p
  }),/Payment key does not match/);
  assert.equal(p.jobs.length,1);
+});
+
+
+test('two-song same-genre plan produces TWO independent tracks in the selected genre',async()=>{
+ const p=makePorts({genreSelection:{mode:'same',genres:['재즈']},mood:'감동적인'});
+ const seen=[];
+ const musicProvider={async createLicensedSong({song,idempotencyKey}){
+  seen.push({genre:song.genre,index:song.index,key:idempotencyKey,style:song.stylePrompt});
+  return {jobId:'job-'+song.index};
+ }};
+ await confirmCheckoutAndQueue({orderId,paymentKey,claimedAmountKrw:39000,...p,
+  settings:{preference:'approved_music_api',commercialApiAgreementVerified:true,musicProviderReady:true}});
+ const paid={...p.read(),commercialApiAgreementVerified:true};
+ const result=await executePaidJob({job:p.jobs[0],order:paid,musicProvider});
+ assert.deepEqual(seen.map(x=>x.genre),['재즈','재즈']);
+ assert.notEqual(seen[0].key,seen[1].key);
+ assert.notEqual(seen[0].style,seen[1].style,'second track requires distinct interpretation');
+ assert.equal(result.providerResult.length,2);
+ assert.equal(p.jobs.length,1,'one paid order, two separate song requests');
+});
+test('two different genres create ONE independent music request per chosen genre',async()=>{
+ const p=makePorts({genreSelection:{mode:'different',genres:['발라드','트로트']}});
+ const seen=[];
+ const musicProvider={async createLicensedSong({song,idempotencyKey}){
+  seen.push({genre:song.genre,style:song.stylePrompt,idempotencyKey});
+  return {jobId:'test-'+song.index};
+ }};
+ await confirmCheckoutAndQueue({orderId,paymentKey,claimedAmountKrw:39000,...p,
+  settings:{preference:'approved_music_api',commercialApiAgreementVerified:true,musicProviderReady:true}});
+ await executePaidJob({job:p.jobs[0],order:{...p.read(),commercialApiAgreementVerified:true},musicProvider});
+ assert.deepEqual(seen.map(x=>x.genre),['발라드','트로트']);
+ assert.match(seen[0].style,/piano ballad/i);
+ assert.match(seen[1].style,/Korean trot/i);
+ assert.ok(seen[0].idempotencyKey.endsWith('-1'));
+ assert.ok(seen[1].idempotencyKey.endsWith('-2'));
+});
+test('invalid two-song selections never reach a payment confirmation or operator email',async()=>{
+ const invalid=[
+  {mode:'different',genres:['발라드','발라드']},
+  {mode:'different',genres:['재즈']},
+  {mode:'same',genres:['재즈','트로트']},
+  {mode:'same',genres:[]},
+  {mode:'same',genres:['존재하지않는장르']},
+  undefined
+ ];
+ for(const genreSelection of invalid){
+  const p=makePorts({genreSelection});
+  await assert.rejects(confirmCheckoutAndQueue({
+    orderId,paymentKey,claimedAmountKrw:39000,...p
+  }),/genre|Genre|장르|selected|Invalid|Missing|Two distinct/i);
+  assert.equal(p.getCalls(),0);
+  assert.equal(p.jobs.length,0);
+ }
+});
+test('paid operator email preserves both genres without sending on unpaid request',async()=>{
+ const p=makePorts({genreSelection:{mode:'different',genres:['R&B','인디팝']}});
+ const calls=[];
+ const email=makeResendOperatorEmail({
+  apiKey:'re_test_not_live',from:'orders@withu.example',to:'owner@example.test',
+  fetchImpl:async(_url,opts)=>{calls.push(JSON.parse(opts.body));return {ok:true,json:async()=>({id:'mail-test'})};}
+ });
+ const unverified=p.read();
+ await assert.rejects(email.sendPaidOrder({
+  order:unverified,idempotencyKey:'withu-operator-'+orderId
+ }),/unverified payment/);
+ assert.equal(calls.length,0);
+ await confirmCheckoutAndQueue({orderId,paymentKey,claimedAmountKrw:39000,...p});
+ const sent=await executePaidJob({job:p.jobs[0],order:p.read(),operatorEmail:email});
+ assert.equal(sent.providerResult.messageId,'mail-test');
+ assert.equal(calls.length,1);
+ assert.match(calls[0].text,/곡 1 \/ 2 — 선택 장르: R&B/);
+ assert.match(calls[0].text,/곡 2 \/ 2 — 선택 장르: 인디팝/);
+});
+test('paid order processing rejects a tampered stored genre request',async()=>{
+ const p=makePorts();
+ await confirmCheckoutAndQueue({orderId,paymentKey,claimedAmountKrw:39000,...p});
+ const tampered={...p.read(),genreSelection:{mode:'different',genres:['발라드','재즈']}};
+ await assert.rejects(executePaidJob({
+  job:p.jobs[0],order:tampered,operatorEmail:{async sendPaidOrder(){throw Error('must not send');}}
+ }),/Persisted paid song plan differs/);
 });

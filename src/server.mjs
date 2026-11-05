@@ -60,6 +60,7 @@ async function handle(req,res){
     if(pathname==='/api/commerce/orders'||pathname.startsWith('/api/commerce/orders/'))
       throw new AppError(503,'자동 음악 제작·결제·이메일 발송 서비스는 준비 중이며 현재 주문을 받지 않습니다.');
     if(pathname.startsWith('/api/delivery/'))throw new AppError(503,'인증된 고객 파일 전달 기능은 아직 준비 중입니다.');
+    if(pathname.startsWith('/api/customer/lyrics-revision'))throw new AppError(503,'결제 고객 가사 수정은 본인 인증과 주문 데이터 연결 후 제공됩니다.');
     auth(req);
     if(req.method==='POST'&&pathname==='/api/covers/generate'){
       // This is an owner-authenticated prototype route, not a public customer endpoint.
@@ -114,6 +115,8 @@ async function handle(req,res){
     '/checkout.html':'docs/checkout.html',
     '/payment.html':'docs/payment.html',
     '/payment.js':'docs/payment.js',
+    '/lyrics-revision.html':'docs/lyrics-revision.html',
+    '/lyrics-revision.js':'docs/lyrics-revision.js',
     '/checkout.css':'docs/checkout.css',
     '/checkout.js':'docs/checkout.js',
     '/checkout-media.js':'docs/checkout-media.js',

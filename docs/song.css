@@ -1,0 +1,63 @@
+
+.song-detail-body{background:linear-gradient(155deg,#251f2c,#3b293c 50%,#241c29);color:#f7eef2}
+.detail-layout{padding-top:44px;padding-bottom:90px}
+.detail-heading{display:flex;justify-content:space-between;align-items:end;gap:22px;margin-bottom:25px}
+.detail-kicker{font:600 12px "Cormorant Garamond",serif;letter-spacing:.19em;color:#e0bdc7;margin:8px 0 2px}
+.detail-heading h1{font:400 clamp(40px,5vw,72px)/1.14 "Nanum Brush Script","Gowun Batang",serif;margin:4px 0}
+.detail-genre{font-size:13px;color:#e0c1d1}
+.detail-actions{display:flex;gap:9px;flex-wrap:wrap}
+.detail-outline{border:1px solid #bda5b7;border-radius:8px;color:#f9ebf2;background:#ffffff13;padding:11px 15px;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;min-height:42px}
+.detail-outline:hover{background:#ffffff28}
+.detail-player{width:min(100%,790px);aspect-ratio:16/10;border-radius:19px;margin:0 auto;position:relative;background:#1b1520;overflow:hidden;box-shadow:0 30px 55px #130e1880;outline:0;touch-action:manipulation}
+.detail-backdrop{position:absolute;inset:0;background:radial-gradient(circle at 50% 25%,#765363,#261d2c 70%);filter:blur(0);opacity:1}
+.detail-art{position:absolute;inset:0;display:grid;place-items:center;overflow:hidden}
+.detail-art img{height:100%;aspect-ratio:1/1;max-width:100%;object-fit:contain;position:relative;z-index:1;box-shadow:0 10px 35px #0d091488}
+.detail-fallback{height:100%;aspect-ratio:1/1;max-width:100%;display:grid;place-content:center;gap:10px;text-align:center;color:#edd7e1;background:linear-gradient(135deg,#a787a3,#54384e,#312235)}
+.detail-fallback span{font:600 24px "Cormorant Garamond",serif;letter-spacing:.3em}.detail-fallback strong{font:400 80px "Cormorant Garamond",serif}
+.detail-player video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:1;background:#0f0b15}
+.detail-player-controls{position:absolute;inset:0;z-index:5;background:linear-gradient(0deg,#120d1ad9,transparent 41%,#120d1a29);opacity:1;visibility:visible;transition:opacity .28s ease,visibility .28s ease;display:flex;align-items:center;justify-content:center}
+.detail-player.controls-hidden .detail-player-controls{opacity:0;visibility:hidden;pointer-events:none}
+.detail-big-play{width:75px;height:75px;border-radius:50%;border:1px solid #ffffffbb;background:#180f25a6;backdrop-filter:blur(8px);color:#fff;font-size:30px;display:grid;place-items:center;cursor:pointer}
+.detail-big-play:hover{background:#6b5066cc}
+.detail-bottom-controls{position:absolute;bottom:0;left:0;right:0;padding:13px 19px 19px}
+.detail-timeline{display:flex;gap:12px;align-items:center;color:#fff;font:500 13px "Cormorant Garamond",serif;font-variant-numeric:tabular-nums}
+#detail-seek{flex:1;accent-color:#e1b8cb;cursor:pointer;min-width:0}
+.detail-control-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:5px}
+.detail-control-actions button{background:#ffffff16;color:#fff;border:1px solid #ffffff50;padding:7px 11px;border-radius:7px;cursor:pointer;font-size:12px}
+.detail-not-ready{position:absolute;inset:0;z-index:4;background:#281d2aee;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px}
+.detail-status{text-align:center;color:#d7c4d3;font-size:13px;min-height:25px;margin:18px 0 8px}
+.detail-tools{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;align-items:center;margin:15px auto 45px}
+.detail-private-note{width:100%;text-align:center;font-size:11px;color:#c7b2c0}
+.detail-lyrics{max-width:790px;margin:0 auto;background:#fffaf6;color:#3b303b;border-radius:16px;padding:30px}
+.detail-lyrics h2{font:400 43px "Nanum Brush Script","Gowun Batang",serif;margin:0 0 20px}
+.detail-lyrics-text{font-size:14px;line-height:2.1;white-space:pre-wrap;word-break:keep-all;max-height:420px;overflow:auto}
+.detail-backlink{text-align:center;margin-top:24px;text-decoration:underline;text-underline-offset:4px;font-size:13px}
+.detail-player:fullscreen,.detail-player:-webkit-full-screen{border-radius:0;width:100vw;height:100vh;aspect-ratio:auto;background:black}
+.detail-player:fullscreen .detail-art,.detail-player:-webkit-full-screen .detail-art{height:100%}
+.detail-player:fullscreen .detail-art img,.detail-player:-webkit-full-screen .detail-art img{object-fit:contain}
+.cover-dialog{border:1px solid #dfcdd9;border-radius:18px;color:#392a36;background:#fffbf8;width:min(90vw,680px);max-height:90vh;padding:0;box-shadow:0 22px 80px #100b108c}
+.cover-dialog::backdrop{background:#100e14bf}
+.cover-dialog-inner{padding:24px}
+.cover-dialog header{display:flex;justify-content:space-between;gap:15px;align-items:center}
+.cover-dialog h2{font:400 39px "Nanum Brush Script","Gowun Batang",serif;margin:0}
+.cover-dialog h3{font-size:14px;margin:2px 0 15px}
+.cover-dialog p{font-size:12px;line-height:1.8;color:#7e6a79}
+.close-dialog{font-size:20px;background:transparent;border:0;cursor:pointer}
+.cover-dialog-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:18px}
+.cover-choice-card{border:1px solid #e4d2db;border-radius:10px;padding:17px;min-width:0;background:#fff}
+.cover-choice-card label:not(.detail-outline){font-size:12px;display:block;margin:6px 0}
+.cover-choice-card textarea{width:100%;resize:vertical;font:12px/1.6 "Gowun Batang",serif;padding:8px;border:1px solid #d6c5d1;border-radius:7px;min-height:82px}
+.cover-dialog .detail-outline{color:#654b60;border-color:#c9aab9}
+.cover-help{display:block;font-size:11px;color:#8b7787;margin-top:8px;line-height:1.6}
+.cover-preview-box{min-height:175px;border:1px dashed #d4bcc8;border-radius:12px;display:grid;place-items:center;margin:17px 0;background:#faf5f7;overflow:hidden}
+.cover-preview-box img{max-width:200px;width:100%;aspect-ratio:1;object-fit:contain}
+#cover-preview-empty{font-size:12px;color:#867180;padding:20px;text-align:center}
+.cover-message{font-size:12px}
+.cover-dialog-actions{display:flex;justify-content:flex-end;gap:10px}
+.detail-main-button{background:#38283c;color:#fff;padding:12px 19px;border:0;border-radius:8px;cursor:pointer}
+.detail-main-button:disabled{opacity:.5;cursor:not-allowed}
+@media(max-width:690px){.detail-layout{padding-top:24px;padding-bottom:60px}.detail-heading{display:block}.detail-actions{margin-top:15px}.detail-heading h1{font-size:50px}
+.detail-player{aspect-ratio:1/1;border-radius:12px}.detail-big-play{width:61px;height:61px;font-size:26px}
+.detail-bottom-controls{padding:10px}.detail-timeline{gap:6px;font-size:11px}.detail-lyrics{padding:21px}.detail-lyrics h2{font-size:38px}
+.cover-dialog-grid{grid-template-columns:1fr}.cover-dialog-inner{padding:19px}.cover-dialog h2{font-size:34px}}
+@media(prefers-reduced-motion:reduce){.detail-player-controls{transition:none}}

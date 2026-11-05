@@ -78,14 +78,14 @@ test('six planned payment methods are informational, real enabled methods come f
  assert.match(payment,/id="confirm-checkout"[^>]*disabled/);
  assert.doesNotMatch(payment,/name="paymentMethod"|id="pay-(?:toss|kakao|naver|card|transfer|virtual)"/);
  assert.doesNotMatch(payment,/name="(?:cardNumber|cardCvv|cardPassword|accountPassword)"|autocomplete="cc-number"/i);
- assert.doesNotMatch(paymentJs,/requestPayment\\s*\\(|api\\/payments\\/confirm|fetch\\s*\\(\\s*['"]https?:\\/\\//);
- assert.doesNotMatch(paymentJs,/\\.addEventListener\\('click'[^\\n]*confirm-checkout/);
+ assert.doesNotMatch(paymentJs,/requestPayment\s*\(|api\/payments\/confirm|fetch\s*\(\s*['"]https?:\/\//);
+ assert.doesNotMatch(paymentJs,/\.addEventListener\('click'[^\n]*confirm-checkout/);
  assert.ok(styles.includes('.payment-methods'));
  const live=read('docs/payment-live.js');
- assert.match(live,/widgets\\.renderPaymentMethods/);
- assert.match(live,/widgets\\.requestPayment/);
+ assert.match(live,/widgets\.renderPaymentMethods/);
+ assert.match(live,/widgets\.requestPayment/);
  assert.match(live,/WITHU_PAYMENT_PUBLIC_CONFIG/);
- assert.doesNotMatch(live,/requestPayment\\(\\s*['"](?:toss_pay|kakao_pay|naver_pay)/);
+ assert.doesNotMatch(live,/requestPayment\(\s*['"](?:toss_pay|kakao_pay|naver_pay)/);
 });
 
 test('catalog prices and advance quote remain unchanged',()=>{

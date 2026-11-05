@@ -10,8 +10,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="create.css?v=20261105-stepflow-01">
-<script defer src="create.js?v=20261105-stepflow-01"></script>
+<link rel="stylesheet" href="create.css?v=20261105-private-style-01">
+<script defer src="create.js?v=20261105-private-style-01"></script>
 </head>
 <body>
 <header class="site-header"><div class="frame header-inner">
@@ -62,32 +62,69 @@
     <label for="speechStyle">평소 사용하는 말투</label><select id="speechStyle"><option value="auto">사연에 맞게 자연스럽게</option><option value="casual">친근한 반말</option><option value="polite">따뜻한 존댓말</option><option value="mixed">반말과 존댓말을 함께</option></select>
    </section>
    <section class="wizard-step creation-card" data-create-step="6" aria-labelledby="question-music" hidden>
-    <span class="wizard-eyebrow">06 · YOUR SOUND</span><h2 id="question-music">어떤 음악으로 <em>전할까요?</em></h2>
-    <p class="wizard-intro">결제 전 상품 설정에서도 곡별 장르를 다시 선택할 수 있어요.</p>
-    <label for="genre">기본 음악 장르</label><select id="genre"><option>발라드</option><option>어쿠스틱</option><option>재즈</option><option>트로트</option><option>R&B</option><option>K-POP</option><option>인디팝</option></select>
-    <label for="mood">음악 분위기</label><select id="mood"><option>따뜻한</option><option>감동적인</option><option value="애절한">아련한</option><option value="희망찬">밝은</option><option value="신나는">활기찬</option><option value="설레는">설레는</option></select>
+    <span class="wizard-eyebrow">06 · YOUR SOUND</span>
+    <h2 id="question-music">어떤 음악으로 <em>전할까요?</em></h2>
+    <p class="wizard-intro">원하는 장르와 분위기를 바로 눌러 선택하세요. 여러 후보가 만들어져도 주문한 수만큼만 완성곡을 받아요.</p>
+    <fieldset class="music-choice-fieldset" aria-label="기본 음악 장르">
+     <legend>음악 장르</legend>
+     <div id="create-genre-choices" class="music-choice-grid genre-tile-grid">
+       <label class="music-choice"><input type="radio" name="genreChoice" value="발라드" checked><span>발라드</span></label>
+       <label class="music-choice"><input type="radio" name="genreChoice" value="어쿠스틱" ><span>어쿠스틱</span></label>
+       <label class="music-choice"><input type="radio" name="genreChoice" value="재즈" ><span>재즈</span></label>
+       <label class="music-choice"><input type="radio" name="genreChoice" value="트로트" ><span>트로트</span></label>
+       <label class="music-choice"><input type="radio" name="genreChoice" value="R&B" ><span>R&B</span></label>
+       <label class="music-choice"><input type="radio" name="genreChoice" value="K-POP" ><span>K-POP</span></label>
+       <label class="music-choice"><input type="radio" name="genreChoice" value="인디팝" ><span>인디팝</span></label>
+     </div>
+    </fieldset>
+    <fieldset class="music-choice-fieldset" aria-label="노래 분위기">
+     <legend>곡 분위기</legend>
+     <div class="music-choice-grid mood-tile-grid">
+       <label class="music-choice"><input type="radio" name="moodChoice" value="따뜻한" checked><span>따뜻한</span></label>
+       <label class="music-choice"><input type="radio" name="moodChoice" value="감동적인" ><span>감동적인</span></label>
+       <label class="music-choice"><input type="radio" name="moodChoice" value="설레는" ><span>설레는</span></label>
+       <label class="music-choice"><input type="radio" name="moodChoice" value="애절한" ><span>아련한</span></label>
+       <label class="music-choice"><input type="radio" name="moodChoice" value="희망찬" ><span>희망찬</span></label>
+       <label class="music-choice"><input type="radio" name="moodChoice" value="신나는" ><span>신나는</span></label>
+     </div>
+    </fieldset>
+    <fieldset class="music-choice-fieldset" aria-label="좋아하는 음악 시대">
+     <legend>선호하는 시대</legend>
+     <p class="wizard-intro">나이대는 참고만 해요. 직접 고른 시대가 있다면 그 선택을 우선할게요.</p>
+     <div class="music-choice-grid era-tile-grid">
+       <label class="music-choice"><input type="radio" name="eraChoice" value="auto" checked><span>나이대에 맞게</span></label>
+       <label class="music-choice"><input type="radio" name="eraChoice" value="none" ><span>시대 상관없음</span></label>
+       <label class="music-choice"><input type="radio" name="eraChoice" value="1960s" ><span>1960년대</span></label>
+       <label class="music-choice"><input type="radio" name="eraChoice" value="1970s" ><span>1970년대</span></label>
+       <label class="music-choice"><input type="radio" name="eraChoice" value="1980s" ><span>1980년대</span></label>
+       <label class="music-choice"><input type="radio" name="eraChoice" value="1990s" ><span>1990년대</span></label>
+       <label class="music-choice"><input type="radio" name="eraChoice" value="2000s" ><span>2000년대</span></label>
+       <label class="music-choice"><input type="radio" name="eraChoice" value="2010s" ><span>2010년대</span></label>
+       <label class="music-choice"><input type="radio" name="eraChoice" value="2020s" ><span>2020년대</span></label>
+     </div>
+    </fieldset>
+    <input type="hidden" id="genre" value="발라드">
+    <input type="hidden" id="mood" value="따뜻한">
+    <input type="hidden" id="eraPreference" value="auto">
     <input type="hidden" id="lyricLength" value="full">
    </section>
-   <section class="wizard-step creation-card lyrics-editor-card" data-create-step="7" aria-labelledby="question-lyrics" hidden>
-    <span class="wizard-eyebrow">07 · YOUR SONG</span><h2 id="question-lyrics">가사를 마지막으로 <em>확인해 주세요.</em></h2>
-    <p class="wizard-intro">직접 작성하거나, 가사 작성 기능을 이용해 내용을 다듬을 수 있어요.</p>
-    <label for="song-title">노래 제목</label><input id="song-title" maxlength="100" placeholder="예: 엄마에게">
-    <label for="song-lyrics">가사</label><textarea id="song-lyrics" rows="12" maxlength="5500" placeholder="[Verse 1]&#10;...&#10;&#10;[Chorus]&#10;..."></textarea>
-    <button type="submit" id="generate-lyrics" class="outline-button">내 사연으로 가사 만들기</button>
-    <p id="generation-status" class="action-status" role="status">직접 가사를 입력해도 괜찮아요.</p>
-    <label for="song-style">음악 스타일 · 편곡 요청</label><textarea id="song-style" rows="5" maxlength="1200" placeholder="음악 장르와 분위기를 선택하면 기본 스타일이 채워져요."></textarea>
-    <button id="style-from-choices" type="button" class="outline-button">선택한 장르·분위기로 스타일 다시 만들기</button>
-    <div class="editor-buttons">
-     <button id="copy-lyrics" type="button" class="outline-button">가사 복사</button>
-     <button id="copy-style" type="button" class="outline-button">스타일 복사</button>
+   <section class="wizard-step creation-card lyrics-preview-card" data-create-step="7" aria-labelledby="question-lyrics" hidden>
+    <span class="wizard-eyebrow">07 · YOUR MUSIC LETTER</span>
+    <h2 id="question-lyrics">AI가 써 준 가사를 <em>확인해 주세요.</em></h2>
+    <p class="wizard-intro">전해주신 이야기를 바탕으로 가사를 만들어요. 노래가 완성된 후 수정이 필요하면 결제 확인된 고객 전용 페이지에서 요청할 수 있습니다.</p>
+    <div class="lyric-result">
+     <strong id="generated-song-title" class="generated-song-title">나의 노래</strong>
+     <div id="song-lyrics-preview" class="song-lyrics-preview" aria-live="polite" aria-label="AI가 작성한 가사">이전 질문을 마치면 AI가 가사를 작성해요.</div>
     </div>
-    <p id="handoff-status" class="action-status" role="status">선택한 내용은 주문 단계로 안전하게 이어집니다.</p>
+    <button type="submit" id="generate-lyrics" class="outline-button" hidden>가사 생성 다시 시도</button>
+    <p id="generation-status" class="action-status" role="status">가사를 준비하고 있어요.</p>
+    <p id="handoff-status" class="action-status" role="status">가사 수정 기능은 결제 완료 고객에게만 제공됩니다.</p>
    </section>
    <p id="step-error" class="action-status wizard-error" role="alert" hidden></p>
    <div class="wizard-actions">
     <button id="create-prev" type="button" class="wizard-prev" hidden>← 이전</button>
     <button id="create-next" type="button" class="main-create-button">다음으로 <span>→</span></button>
-    <a id="go-create" href="checkout.html" class="main-create-button" hidden>상품 선택하기 <span>→</span></a>
+    <a id="go-create" href="checkout.html" class="main-create-button" hidden aria-disabled="true">상품 선택하기 <span>→</span></a>
    </div>
   </form>
  </div>

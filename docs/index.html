@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=20261105-lyrics-inline-01">
-  <script type="module" src="player.js?v=20261106-papa-video-01"></script>
+  <script type="module" src="player.js?v=20261106-background-audio-01"></script>
 </head>
 <body>
 <header class="site-header">
@@ -51,8 +51,8 @@
             <p id="track-subtitle">마음을 담은 특별한 선물</p>
           </div>
           <div id="audio-zone" class="audio-zone">
-            <audio id="music-audio" controls preload="metadata" playsinline hidden aria-label="선택한 노래 재생"></audio>
-            <video id="music-video" controls playsinline preload="metadata" hidden aria-label="선택한 노래 영상 재생"></video>
+            <video id="music-video" muted playsinline preload="metadata" hidden aria-label="선택한 노래의 무음 영상"></video>
+            <audio id="music-audio" controls preload="metadata" playsinline hidden aria-label="선택한 노래의 오디오 재생"></audio>
             
             <p id="no-audio" hidden>음악 파일을 준비하고 있어요. 내 음악 불러오기로 기기에 저장된 곡을 들어볼 수 있어요.</p>
           </div>
@@ -66,8 +66,10 @@
             <button id="previous-track" class="circle-control" type="button" aria-label="이전 곡">‹</button>
             <span id="track-counter" class="track-counter">01 — 03</span>
             <button id="next-track" class="circle-control" type="button" aria-label="다음 곡">›</button>
+            <button id="repeat-mode" class="repeat-control" type="button" aria-label="반복 끔" title="반복 재생 설정">반복 끔</button>
           </div>
           <p id="playback-message" class="quiet-message" role="status">원하는 곡을 선택해 주세요.</p>
+          <p class="playback-hint">영상 노래도 오디오 재생 버튼으로 들을 수 있어요. 화면 잠금 재생은 기기·브라우저 설정에 따라 달라집니다.</p>
         </section>
 
       </div>
@@ -100,7 +102,8 @@
         <span class="featured-video-label">WITHU MUSIC LETTER · FAMILY</span>
       </div>
       <div class="featured-video-viewer">
-        <video id="mother-featured-video" playsinline preload="metadata" controls hidden aria-label="엄마에게 전하는 노래 영상"></video>
+        <video id="mother-featured-video" playsinline muted preload="metadata" hidden aria-label="엄마 노래 무음 영상"></video>
+        <audio id="mother-featured-audio" controls playsinline preload="metadata" hidden aria-label="엄마에게 전하는 노래 오디오 재생"></audio>
         <div id="mother-video-pending" class="featured-video-pending">
           <span aria-hidden="true">♫</span>
           <strong>엄마에게 전하는 노래</strong>

@@ -44,21 +44,21 @@
     <input id="delivery-email" type="email" inputmode="email" autocomplete="email" maxlength="254" placeholder="name@example.com" required>
     <label for="delivery-email-again" class="form-label">이메일 주소 확인</label>
     <input id="delivery-email-again" type="email" inputmode="email" autocomplete="off" maxlength="254" placeholder="이메일 주소를 다시 입력해 주세요" required>
-    <fieldset class="payment-methods" id="payment-methods">
-     <legend>결제수단 선택</legend>
-     <label class="payment-option" for="pay-toss"><input type="radio" id="pay-toss" name="paymentMethod" value="toss_pay" checked><span class="payment-option-copy"><strong>토스페이</strong><small>간편결제</small></span></label>
-     <label class="payment-option" for="pay-kakao"><input type="radio" id="pay-kakao" name="paymentMethod" value="kakao_pay"><span class="payment-option-copy"><strong>카카오페이</strong><small>간편결제</small></span></label>
-     <label class="payment-option" for="pay-naver"><input type="radio" id="pay-naver" name="paymentMethod" value="naver_pay"><span class="payment-option-copy"><strong>네이버페이</strong><small>간편결제</small></span></label>
-     <label class="payment-option" for="pay-card"><input type="radio" id="pay-card" name="paymentMethod" value="card"><span class="payment-option-copy"><strong>신용·체크카드</strong><small>카드 결제</small></span></label>
-     <label class="payment-option" for="pay-transfer"><input type="radio" id="pay-transfer" name="paymentMethod" value="transfer"><span class="payment-option-copy"><strong>실시간 계좌이체</strong><small>은행 계좌</small></span></label>
-     <label class="payment-option" for="pay-virtual"><input type="radio" id="pay-virtual" name="paymentMethod" value="virtual_account"><span class="payment-option-copy"><strong>가상계좌</strong><small>입금 확인 후 제작</small></span></label>
-    </fieldset>
-    <p id="payment-method-hint" class="small-explain">토스페이를 선택했어요.</p>
+    <section class="payment-methods" id="payment-methods" aria-labelledby="payment-options-heading">
+     <h3 id="payment-options-heading">이용 예정 결제수단</h3>
+     <p class="small-explain">아래는 연동 예정 수단입니다. 실제 결제 가능 여부는 토스페이먼츠 상점 계약과 활성화 설정에 따라 달라집니다.</p>
+     <div class="withu-payment-options-preview" aria-label="연동 예정 결제수단">
+      <span>토스페이</span><span>카카오페이</span><span>네이버페이</span>
+      <span>신용·체크카드</span><span>계좌이체</span><span>가상계좌</span>
+     </div>
+     <p class="small-explain">그 밖의 간편결제·휴대폰 등은 계약 후 토스페이먼츠 결제위젯에서 제공되는 경우에만 표시됩니다.</p>
+    </section>
+    <p id="payment-method-hint" class="small-explain">결제 준비 완료 후 토스페이먼츠가 실제 사용 가능한 결제수단을 보여줍니다.</p>
     <label class="consent-row"><input id="consent-delivery" type="checkbox"><span>완성곡 전달을 위한 이메일 이용에 동의합니다.</span></label>
     <label class="consent-row"><input id="consent-service" type="checkbox"><span>제작 조건과 결제·환불 안내를 확인하고 동의합니다. (정식 판매 전 안내 예정)</span></label>
     <button id="confirm-checkout" type="button" class="checkout-button" disabled>현재 결제를 이용할 수 없습니다</button>
     <p class="payment-unavailable" id="payment-unavailable" role="status">현재 주문 접수 전입니다. 결제가 가능해지면 이곳에서 안전하게 결제할 수 있어요.</p>
-    <p class="small-explain">입력한 이메일과 결제수단은 현재 서버로 전송되지 않습니다.</p>
+    <p class="small-explain">결제 기능이 비활성화된 동안 이메일은 서버로 전송되지 않습니다. 운영 결제가 활성화되면 구매자 인증·주문 보호를 위해 필요한 최소 정보만 안전하게 전송됩니다.</p>
    </section>
   </div>
  </div>

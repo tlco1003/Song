@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#251e29">
+<meta name="description" content="WITHU — 주문 내용을 확인하고 안전한 결제수단을 선택하세요.">
+<title>WITHU — 결제</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="checkout.css?v=20261105-payment-layout-01">
+<script defer src="payment.js?v=20261105-payment-layout-01"></script>
+</head>
+<body>
+<header class="site-header"><div class="frame header-inner">
+ <a class="brand" href="./" aria-label="WITHU 홈"><span class="brand-icon" aria-hidden="true">♪</span> WITHU</a>
+ <nav aria-label="사이트 메뉴"><a href="./">노래 감상</a><a href="create.html">나만의 노래</a></nav>
+</div></header>
+<main class="checkout-page">
+ <div class="frame payment-shell">
+  <header class="checkout-intro">
+   <span class="small-caps">SECURE PAYMENT</span>
+   <h1>마지막으로 <em>주문을 확인해 주세요.</em></h1>
+   <p>선물 받을 이메일과 결제수단을 선택해 주세요.</p>
+  </header>
+  <div class="payment-page-layout">
+   <section class="checkout-card payment-summary" aria-labelledby="payment-order-title">
+    <span class="small-caps">ORDER SUMMARY</span>
+    <h2 id="payment-order-title">주문한 노래</h2>
+    <div class="preview-group"><span class="preview-label">상품</span><strong id="payment-product">상품 확인 중</strong></div>
+    <div class="preview-group"><span class="preview-label">노래 제목</span><strong id="payment-song-title">제목 확인 중</strong></div>
+    <div class="preview-group"><span class="preview-label">완성곡별 장르</span><p id="payment-song-genres" class="order-song-genres">장르 선택 확인 중</p></div>
+    <div class="price-row"><span>결제 예정 금액</span><strong id="payment-price">금액 확인 중</strong></div>
+    <p id="payment-quote-notice" class="small-explain" hidden>뮤직비디오 상품은 제작 범위를 확정한 후 최종 금액을 안내해 드립니다.</p>
+    <a class="edit-link" href="checkout.html?stage=review">← 선택한 노래 다시 확인하기</a>
+   </section>
+   <section class="checkout-card payment-entry" aria-labelledby="payment-method-title">
+    <span class="small-caps">PAYMENT DETAILS</span>
+    <h2 id="payment-method-title">결제 정보</h2>
+    <label for="delivery-email" class="form-label">완성곡을 받을 이메일</label>
+    <input id="delivery-email" type="email" inputmode="email" autocomplete="email" maxlength="254" placeholder="name@example.com" required>
+    <label for="delivery-email-again" class="form-label">이메일 주소 확인</label>
+    <input id="delivery-email-again" type="email" inputmode="email" autocomplete="off" maxlength="254" placeholder="이메일 주소를 다시 입력해 주세요" required>
+    <fieldset class="payment-methods" id="payment-methods">
+     <legend>결제수단 선택</legend>
+     <label class="payment-option" for="pay-toss"><input type="radio" id="pay-toss" name="paymentMethod" value="toss_pay" checked><span class="payment-option-copy"><strong>토스페이</strong><small>간편결제</small></span></label>
+     <label class="payment-option" for="pay-kakao"><input type="radio" id="pay-kakao" name="paymentMethod" value="kakao_pay"><span class="payment-option-copy"><strong>카카오페이</strong><small>간편결제</small></span></label>
+     <label class="payment-option" for="pay-naver"><input type="radio" id="pay-naver" name="paymentMethod" value="naver_pay"><span class="payment-option-copy"><strong>네이버페이</strong><small>간편결제</small></span></label>
+     <label class="payment-option" for="pay-card"><input type="radio" id="pay-card" name="paymentMethod" value="card"><span class="payment-option-copy"><strong>신용·체크카드</strong><small>카드 결제</small></span></label>
+     <label class="payment-option" for="pay-transfer"><input type="radio" id="pay-transfer" name="paymentMethod" value="transfer"><span class="payment-option-copy"><strong>실시간 계좌이체</strong><small>은행 계좌</small></span></label>
+     <label class="payment-option" for="pay-virtual"><input type="radio" id="pay-virtual" name="paymentMethod" value="virtual_account"><span class="payment-option-copy"><strong>가상계좌</strong><small>입금 확인 후 제작</small></span></label>
+    </fieldset>
+    <p id="payment-method-hint" class="small-explain">토스페이를 선택했어요.</p>
+    <label class="consent-row"><input id="consent-delivery" type="checkbox"><span>완성곡 전달을 위한 이메일 이용에 동의합니다.</span></label>
+    <label class="consent-row"><input id="consent-service" type="checkbox"><span>제작 조건과 결제·환불 안내를 확인하고 동의합니다. (정식 판매 전 안내 예정)</span></label>
+    <button id="confirm-checkout" type="button" class="checkout-button" disabled>현재 결제를 이용할 수 없습니다</button>
+    <p class="payment-unavailable" id="payment-unavailable" role="status">현재 주문 접수 전입니다. 결제가 가능해지면 이곳에서 안전하게 결제할 수 있어요.</p>
+    <p class="small-explain">입력한 이메일과 결제수단은 현재 서버로 전송되지 않습니다.</p>
+   </section>
+  </div>
+ </div>
+</main>
+<footer class="site-footer"><div class="frame footer-inner"><span class="footer-brand">WITHU</span><p>전하고 싶은 마음이 노래가 되는 곳.</p><span class="copyright">© 2026 WITHU</span></div></footer>
+</body></html>

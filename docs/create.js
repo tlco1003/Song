@@ -83,6 +83,9 @@ $('go-create').addEventListener('click',event=>{
  const draft={
    version:1,title:title.slice(0,100),lyrics:lyrics.slice(0,5500),
    style:$('song-style').value.trim().slice(0,1200),
+   // Only customer-written edits become shared instructions. Auto-generated
+   // first-genre style must not leak into a different second-genre request.
+   styleOverrides:$('song-style').value.trim()===style()?'':$('song-style').value.trim().slice(0,500),
    genre:$('genre').value,mood:$('mood').value,
    savedAt:Date.now()
  };

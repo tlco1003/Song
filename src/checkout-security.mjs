@@ -5,6 +5,7 @@
 import {randomUUID} from 'node:crypto';
 import {publicPriceCatalog,ORDER_STATES} from './commerce.mjs';
 import {buildSongProductionPlan} from './song-production-plan.mjs';
+import {getWithuPaymentMethod,requiresDirectPayConsent} from '../docs/payment-methods.js';
 
 const emailPattern=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const orderIdPattern=/^[A-Za-z0-9_-]{6,64}$/;
@@ -12,7 +13,8 @@ const paymentKeyPattern=/^[^\s]{6,200}$/;
 const requestIdPattern=/^[0-9a-f]{8}-[0-9a-f-]{27,44}$/i;
 const inputFields=new Set([
   'requestId','productId','songTitle','confirmedLyrics','genreSelection',
-  'mood','sharedStyleNotes','deliveryEmail','consentDelivery','consentTerms'
+  'mood','sharedStyleNotes','deliveryEmail','consentDelivery','consentTerms',
+  'paymentChoice','directPaymentConsents'
 ]);
 
 export function requireVerifiedBuyer(auth){
@@ -40,6 +42,16 @@ export function createPendingOrder(input,auth){
   // A price "starting at" is not a quote, so never collect that amount.
   if(item.quoteRequired||item.priceKind!=='fixed')
     throw new Error('ADMIN_QUOTE_REQUIRED');
+  let selected;
+  try{selected=getWithuPaymentMethod(input.paymentChoice);}
+  catch(_){throw new Error('INVALID_PAYMENT_CHOICE');}
+  const direct=requiresDirectPayConsent(selected.id);
+  const directConsent=input.directPaymentConsents;
+  if(direct&&(!directConsent||typeof directConsent!=='object'
+    ||directConsent.financial!==true||directConsent.privacy!==true
+    ||directConsent.thirdParty!==true))
+    throw new Error('DIRECT_PAYMENT_CONSENTS_REQUIRED');
+  if(!direct&&directConsent!=null)throw new Error('UNEXPECTED_PAYMENT_CONSENTS');
   const order={
     id:'WITHU_'+randomUUID().replaceAll('-',''),
     ownerUid:buyer.uid,
@@ -56,6 +68,11 @@ export function createPendingOrder(input,auth){
     sharedStyleNotes:input.sharedStyleNotes??'',
     consentDelivery:true,
     consentTerms:true,
+    paymentChoice:selected.id,
+    directPaymentConsents:direct?{
+      financial:true,privacy:true,thirdParty:true,
+      policyVersion:'toss-payments-v2-direct-2026-11-05'
+    }:null,
     fulfillmentRoute:'manual_operator'
   };
   buildSongProductionPlan(order); // fail closed before persisting customer PII

@@ -159,7 +159,7 @@ function showDialog(){if(!track){notice('노래를 먼저 선택해 주세요.')
 function newCandidate(blob){if(candidateURL)URL.revokeObjectURL(candidateURL);candidateBlob=blob;candidateURL=URL.createObjectURL(blob);
  $('cover-preview').src=candidateURL;$('cover-preview').hidden=false;$('cover-preview-empty').hidden=true;$('save-cover').disabled=false;}
 $('cover-edit-button').addEventListener('click',showDialog);
-$('close-cover-dialog').addEventListener('click',()=>$('cover-dialog').close());
+$('close-cover-dialog').addEventListener('click',()=>{$('cover-operator-token').value='';$('cover-dialog').close()});
 $('cover-file').addEventListener('change',e=>{
  const f=e.target.files?.[0];if(!f)return;
  if(!['image/webp','image/jpeg','image/png'].includes(f.type)||f.size>10*1024*1024){$('cover-message').textContent='JPG·PNG·WebP 10MB 이하 파일을 선택해 주세요.';return}
@@ -187,7 +187,10 @@ $('generate-cover').addEventListener('click',async()=>{
  if(prompt.length<5){$('cover-message').textContent='원하는 이미지 느낌을 5자 이상 적어 주세요.';return}
  const btn=$('generate-cover');btn.disabled=true;$('cover-message').textContent='이미지 생성 서버 연결을 확인하고 있어요…';
  try{
-  const res=await fetch('api/covers/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:track?.title||'',genre:track?.genre||'',prompt})});
+  const operatorCode=$('cover-operator-token').value.trim();
+  const headers={'Content-Type':'application/json'};
+  if(operatorCode)headers['x-app-token']=operatorCode;
+  const res=await fetch('api/covers/generate',{method:'POST',headers,body:JSON.stringify({title:track?.title||'',genre:track?.genre||'',prompt})});
   if(!res.ok)throw Error(res.status===404||res.status===503?'AI 이미지 생성 서버가 아직 연결되지 않았어요.':'이미지 생성 인증이 필요하거나 요청을 처리할 수 없어요.');
   const d=await res.json();if(!/^data:image\/webp;base64,[A-Za-z0-9+/=]+$/.test(d.image||''))throw Error('이미지 응답을 확인할 수 없어요.');
   const f=await (await fetch(d.image)).blob();newCandidate(f);$('cover-message').textContent='이미지를 생성했어요. 마음에 들면 이 이미지를 사용해 주세요.';

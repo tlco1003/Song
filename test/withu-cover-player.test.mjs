@@ -43,14 +43,13 @@ test('home uses genuine square album images, per-track thumbnails and detail lin
  assert.match(player,/cover\.onerror=/);
 });
 
-test('checkout sample changes cover and detail link when track selection changes',()=>{
- for(const id of ['checkout-cover-image','checkout-cover-fallback','checkout-view-song']){
-  assert.ok(checkout.includes('id="'+id+'"'),id);
-  assert.ok(checkoutJS.includes("'"+id+"'"),id);
+test('checkout removes prepayment cover samples while song detail retains cover editor',()=>{
+ for(const id of ['checkout-cover-image','checkout-cover-fallback','checkout-view-song','prepay-demo']){
+  assert.ok(!checkout.includes('id="'+id+'"'),id);
  }
- assert.match(checkoutJS,/function updateExampleArt/);
- assert.match(checkoutJS,/option\.dataset\.trackId/);
- assert.match(checkoutJS,/updateExampleArt\(select\.selectedOptions\[0\]\)/);
+ assert.doesNotMatch(checkoutJS,/updateExampleArt|audio-preview-play/);
+ assert.match(song,/id="detail-cover"/);
+ assert.match(songJS,/coverStore|WithuCovers/);
 });
 
 test('song detail player has video and audio, auto-hide, seek, fullscreen and public demo gating',()=>{

@@ -112,6 +112,8 @@ async function handle(req,res){
     '/create.css':'docs/create.css',
     '/create.js':'docs/create.js',
     '/checkout.html':'docs/checkout.html',
+    '/payment.html':'docs/payment.html',
+    '/payment.js':'docs/payment.js',
     '/checkout.css':'docs/checkout.css',
     '/checkout.js':'docs/checkout.js',
     '/checkout-media.js':'docs/checkout-media.js',

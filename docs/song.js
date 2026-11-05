@@ -9,7 +9,48 @@ const $=id=>document.getElementById(id);
 const stage=$('player-stage'),cover=$('detail-cover'),coverFallback=$('detail-cover-fallback'),
  video=$('detail-video'),audio=$('detail-audio'),play=$('detail-play'),seek=$('detail-seek');
 let track=null,player=audio,coverURL=null,candidateURL=null,candidateBlob=null,hideTimer=null,playing=false,mediaReady=false;
-let isPrivate=false;
+let isPrivate=false,repeatOne=false;
+function syncVideo(){
+ if(video.hidden||!video.getAttribute('src'))return;
+ if(document.visibilityState==='hidden'||player.paused||player.ended){
+  if(!video.paused)video.pause();
+  return;
+ }
+ if(video.readyState>=1 && Math.abs(video.currentTime-player.currentTime)>0.65){
+  try{video.currentTime=player.currentTime}catch(_){}
+ }
+ if(video.paused)void video.play().catch(()=>{/* Audio continues independently. */});
+}
+function updateRepeat(){
+ player.loop=repeatOne;
+ const button=$('detail-repeat');
+ button.textContent=repeatOne?'한 곡 반복':'반복 끔';
+ button.setAttribute('aria-label',repeatOne?'한 곡 반복 끄기':'한 곡 반복 켜기');
+ button.setAttribute('aria-pressed',String(repeatOne));
+}
+function updateMediaSession(){
+ if(!('mediaSession' in navigator)||!track)return;
+ try{
+  const art=coverPath(track.coverImage)?new URL(track.coverImage,location.href).href:null;
+  navigator.mediaSession.metadata=new MediaMetadata({
+   title:track.title||'WITHU',artist:'WITHU',album:'WITHU Music Letters',
+   artwork:art?[{src:art,type:'image/webp',sizes:'512x512'}]:[]
+  });
+  navigator.mediaSession.playbackState=player.paused?'paused':'playing';
+ }catch(_){}
+}
+if('mediaSession' in navigator){
+ for(const [action,handler] of Object.entries({
+  play:()=>void player.play().catch(()=>{}),
+  pause:()=>player.pause(),
+  seekto:details=>{
+   if(Number.isFinite(details.seekTime)&&Number.isFinite(player.duration))
+    player.currentTime=Math.max(0,Math.min(details.seekTime,player.duration));
+  }
+ })){
+  try{navigator.mediaSession.setActionHandler(action,handler)}catch(_){}
+ }
+}
 const simpleName=s=>typeof s==='string'&&/^[a-z0-9_.-]{1,110}$/i.test(s);
 const coverPath=s=>typeof s==='string'&&/^covers\/[a-z0-9-]+\.webp$/i.test(s);
 function notice(text){$('detail-status').textContent=text}
@@ -17,7 +58,7 @@ function format(sec){if(!Number.isFinite(sec)||sec<0)return '0:00';const n=Math.
 function progress(){const duration=Number.isFinite(player.duration)?player.duration:Number(track?.durationSeconds)||0;const time=player.currentTime||0;$('detail-time').textContent=format(time);$('detail-duration').textContent=format(duration);seek.value=duration?Math.round(1000*time/duration):0;}
 function clearHideTimer(){if(hideTimer)clearTimeout(hideTimer);hideTimer=null;}
 function showControls(){stage.classList.remove('controls-hidden');clearHideTimer();if(playing)hideTimer=setTimeout(()=>stage.classList.add('controls-hidden'),2800);}
-function updatePlay(){playing=!player.paused&&!player.ended;play.textContent=playing?'Ⅱ':'▶';play.setAttribute('aria-label',playing?'일시정지':'재생');showControls()}
+function updatePlay(){playing=!player.paused&&!player.ended;play.textContent=playing?'Ⅱ':'▶';play.setAttribute('aria-label',playing?'일시정지':'재생');showControls();updateMediaSession();syncVideo()}
 async function togglePlay(){
  if(!mediaReady){notice('재생할 파일이 없습니다. 공개 예시를 선택하거나 전달 링크를 확인해 주세요.');return}
  try{if(player.paused)await player.play();else player.pause()}catch(_){notice('재생을 시작할 수 없어요. 다시 눌러 주세요.')}
@@ -52,9 +93,11 @@ function loadTrack(item,publicDemo){
  $('detail-kind').textContent=publicDemo?'WITHU 공개 예시곡':item.productType==='audio_video'?'나의 뮤직비디오 선물':'나의 음원 선물';
  $('detail-private-note').textContent=publicDemo?'공개된 WITHU 예시 작품입니다. 커버 수정은 내 기기에만 저장돼요.':'이 선물은 확인된 수령자만 감상할 수 있습니다.';
  const isVideo=item.mediaKind==='video'||(item.productType==='audio_video'&&!!item.videoFile);
- player=isVideo?video:audio;
- video.hidden=!isVideo;
- if(!isVideo){video.pause();video.removeAttribute('src');video.load();}
+ // Sound always comes from an audio element: lock-screen playback must never
+ // depend on continued video rendering.
+ audio.pause();video.pause();
+ player=audio;video.hidden=!isVideo;
+ if(!isVideo){video.removeAttribute('src');video.load();}
  if(!simpleName(item.file)){mediaReady=false;notice('음원 파일 정보가 올바르지 않습니다.');return}
  const mediaPath=publicDemo?'media/'+encodeURIComponent(item.file):item.privateMediaUrl;
  // Never trust media URL text supplied by public query parameters. A private URL
@@ -62,7 +105,20 @@ function loadTrack(item,publicDemo){
  if(!publicDemo && (!mediaPath||new URL(mediaPath,location.href).origin!==location.origin)){
   mediaReady=false;notice('개인 음원 인증이 필요합니다.');return;
  }
- player.src=mediaPath;mediaReady=true;
+ const privateAudio=item.privateAudioUrl?new URL(item.privateAudioUrl,location.href):null;
+ if(!publicDemo && privateAudio &&
+   (privateAudio.origin!==location.origin||!privateAudio.pathname.startsWith('/api/delivery-assets/'))){
+  mediaReady=false;notice('오디오 파일 접근 권한을 확인할 수 없어요.');return;
+ }
+ const audioPath=publicDemo&&simpleName(item.audioFile)?
+  'media/'+encodeURIComponent(item.audioFile):
+  (!publicDemo&&privateAudio?privateAudio.href:mediaPath);
+ if(isVideo){
+  video.muted=true;video.defaultMuted=true;video.controls=false;video.loop=true;video.playsInline=true;
+  video.src=mediaPath;
+ }
+ player.src=audioPath;player.loop=repeatOne;mediaReady=true;
+ updateRepeat();updateMediaSession();
  const art=publicDemo&&coverPath(item.coverImage)?item.coverImage:null;
  setArt(art);
  void applyStoredCover();
@@ -127,18 +183,24 @@ play.addEventListener('click',event=>{event.stopPropagation();void togglePlay()}
 stage.addEventListener('pointermove',showControls);
 stage.addEventListener('pointerdown',event=>{if(!event.target.closest('button,input'))showControls()});
 stage.addEventListener('keydown',event=>{if((event.key===' '||event.key==='Enter')&&event.target===stage){event.preventDefault();void togglePlay()}});
-for(const p of [audio,video]){
- p.addEventListener('play',updatePlay);p.addEventListener('pause',updatePlay);p.addEventListener('ended',updatePlay);
- p.addEventListener('timeupdate',progress);p.addEventListener('loadedmetadata',progress);
- p.addEventListener('error',()=>{if(p===player)notice('파일 재생에 실패했어요. 공개 경로 또는 접근 권한을 확인해 주세요.')});
-}
+audio.addEventListener('play',updatePlay);
+audio.addEventListener('pause',updatePlay);
+audio.addEventListener('ended',updatePlay);
+audio.addEventListener('timeupdate',()=>{progress();syncVideo()});
+audio.addEventListener('loadedmetadata',progress);
+audio.addEventListener('seeking',syncVideo);
+audio.addEventListener('error',()=>notice('오디오 재생에 실패했어요. MP4에 소리가 있는지 또는 별도 MP3가 있는지 확인해 주세요.'));
+video.addEventListener('loadedmetadata',syncVideo);
+video.addEventListener('error',()=>{if(!video.hidden)notice('영상 화면에 오류가 있어요. 오디오 재생은 계속 이용할 수 있어요.')});
+document.addEventListener('visibilitychange',syncVideo);
+$('detail-repeat').addEventListener('click',()=>{repeatOne=!repeatOne;updateRepeat()});
 seek.addEventListener('input',()=>{if(Number.isFinite(player.duration)&&player.duration>0)player.currentTime=player.duration*Number(seek.value)/1000;showControls()});
 $('detail-mute').addEventListener('click',()=>{player.muted=!player.muted;$('detail-mute').textContent=player.muted?'소리 켜기':'음소거';showControls()});
 $('detail-fullscreen').addEventListener('click',async()=>{
  try{
   if(document.fullscreenElement)await document.exitFullscreen();
   else if(stage.requestFullscreen)await stage.requestFullscreen();
-  else if(player===video&&typeof video.webkitEnterFullscreen==='function')video.webkitEnterFullscreen();
+  else if(!video.hidden&&typeof video.webkitEnterFullscreen==='function')video.webkitEnterFullscreen();
   else notice('이 기기에서는 전체화면 전환을 지원하지 않을 수 있어요.');
  }catch(_){notice('전체화면 전환이 제한됐어요.')}
  showControls();
@@ -208,5 +270,5 @@ $('download-cover').addEventListener('click',async()=>{
  }catch(_){notice('커버를 받을 수 없어요.')}
 });
 window.addEventListener('pagehide',()=>{if(coverURL)URL.revokeObjectURL(coverURL);if(candidateURL)URL.revokeObjectURL(candidateURL);clearHideTimer()});
-void init();
+updateRepeat();void init();
 })();

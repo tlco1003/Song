@@ -131,6 +131,7 @@ async function handle(req,res){
     '/payment.html':'docs/payment.html',
     '/payment.js':'docs/payment.js',
     '/payment-live.js':'docs/payment-live.js',
+    '/payment-methods.js':'docs/payment-methods.js',
     '/withu-payment-public-config.js':'docs/withu-payment-public-config.js',
     '/payment-success.html':'docs/payment-success.html',
     '/payment-success.js':'docs/payment-success.js',

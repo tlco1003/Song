@@ -16,6 +16,7 @@ import {createPendingOrder,requireVerifiedBuyer,assertOwnedOrder,
 import {makeFirestoreOrderStore} from '../src/firestore-order-store.mjs';
 import {makeTossPaymentAdapter} from '../src/toss-payment-adapter.mjs';
 import {confirmCheckoutAndQueue} from '../src/paid-order-pipeline.mjs';
+import {makeWithuFulfillmentHandlers} from './outbox-worker.mjs';
 
 if(!getApps().length)initializeApp();
 const db=getFirestore();
@@ -23,12 +24,14 @@ const orders=makeFirestoreOrderStore({db,FieldValue});
 const tossSecret=defineSecret('TOSS_SECRET_KEY');
 const tossClientKey=defineString('TOSS_CLIENT_KEY',{default:''});
 const paymentActivated=defineString('WITHU_PAYMENT_ACTIVATED',{default:'no'});
+const outboxVerified=defineString('WITHU_OUTBOX_WORKER_VERIFIED',{default:'no'});
 const REVIEWED_FOR_LIVE_CHARGES=false; // TODO: explicit audited code change at launch
 const options={region:'asia-northeast3',enforceAppCheck:true,maxInstances:10};
 
 function releaseCheck(){
   if(!REVIEWED_FOR_LIVE_CHARGES
     ||paymentActivated.value()!=='yes'
+    ||outboxVerified.value()!=='yes'
     ||!tossClientKey.value())
     throw new HttpsError('failed-precondition','WITHU_PAYMENT_NOT_RELEASED');
 }
@@ -55,9 +58,9 @@ function dataObject(request){
   return request.data;
 }
 export const withuCheckoutReadiness=onCall(options,async()=>{
-  return {canCharge:REVIEWED_FOR_LIVE_CHARGES&&paymentActivated.value()==='yes'
-    &&!!tossClientKey.value(),requiresVerifiedEmail:true,
-    clientKey:REVIEWED_FOR_LIVE_CHARGES&&paymentActivated.value()==='yes'?tossClientKey.value():null};
+  const enabled=REVIEWED_FOR_LIVE_CHARGES&&paymentActivated.value()==='yes'
+    &&outboxVerified.value()==='yes'&&!!tossClientKey.value();
+  return {canCharge:enabled,requiresVerifiedEmail:true,clientKey:enabled?tossClientKey.value():null};
 });
 
 export const createWithuOrder=onCall(options,async request=>{
@@ -124,4 +127,9 @@ export const getWithuOrderStatus=onCall(options,async request=>{
     const order=await orders.getById(orderId);
     return safeOrderStatus(order,request.auth);
   }catch(error){throw safeFailure(error);}
+});
+
+// Firestore trigger and scheduled retry are server-only and gated independently.
+export const {notifyPaidWithuOrder,retryWithuOutbox}=makeWithuFulfillmentHandlers({
+  db,FieldValue,approved:()=>REVIEWED_FOR_LIVE_CHARGES
 });

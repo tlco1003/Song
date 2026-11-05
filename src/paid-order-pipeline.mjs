@@ -9,6 +9,7 @@
  */
 
 import {ORDER_STATES,publicPriceCatalog} from './commerce.mjs';
+import {buildSongProductionPlan,verifyPaidSongPlan} from './song-production-plan.mjs';
 
 export const FULFILLMENT_ROUTE=Object.freeze({
   HUMAN:'manual_operator',
@@ -81,13 +82,17 @@ async function finalizeVerifiedPayment({orders,order,payment,paymentKey,settings
   if(!paymentMatches(order,payment,paymentKey))
     throw new Error('PG status, order ID, key, currency or amount did not match');
   const route=chooseFulfillmentRoute(settings);
+  // Validate and freeze the customer's approved per-track genres BEFORE recording payment.
+  // The order store must persist this songPlan in the SAME transaction as PAID + outbox.
+  const songPlan=buildSongProductionPlan(order);
   // REQUIRED ADAPTER CONTRACT: the payment transition and job-outbox insertion
   // must happen in ONE DATABASE TRANSACTION with unique (orderId, 'fulfillment')
   // to survive retries, webhook duplication, concurrent requests and crashes.
   const result=await orders.confirmPaidAndEnqueueAtomic({
     orderId:order.id, paymentKey, amountKrw:order.amountKrw,
     expectedState:ORDER_STATES.PAYMENT_PENDING,
-    nextState:ORDER_STATES.PAID, route, jobKey:'fulfill:'+order.id
+    nextState:ORDER_STATES.PAID, route, jobKey:'fulfill:'+order.id,
+    songPlan
   });
   if(!result||!['created','duplicate'].includes(result.outcome))
     throw new Error('Durable paid/outbox transaction did not complete');
@@ -117,6 +122,7 @@ export async function confirmCheckoutAndQueue({
   if(order.state!==ORDER_STATES.PAYMENT_PENDING)
     throw new Error('Order not awaiting payment');
   const amount=serverAmount(order);
+  buildSongProductionPlan(order);
   if(claimedAmountKrw!==amount)throw new Error('Client and server amount mismatch');
   // A payment gateway adapter must call the official confirm endpoint with
   // the server-owned amount and keep its secret key server-side.
@@ -143,6 +149,7 @@ export async function reconcileDepositAndQueue({
     throw new Error('Order not awaiting deposit');
   if(order.issuedPaymentKey!==paymentKey)
     throw new Error('Unknown payment key for deposit');
+  buildSongProductionPlan(order);
   const payment=await payments.retrieve({paymentKey,orderId});
   return finalizeVerifiedPayment({orders,order,payment,paymentKey,settings});
 }
@@ -161,13 +168,14 @@ function verifiedJob(job,order){
  */
 export async function executePaidJob({job,order,operatorEmail,musicProvider}){
   verifiedJob(job,order);
+  const songPlan=verifyPaidSongPlan(order);
   if(job.route===FULFILLMENT_ROUTE.HUMAN){
     if(typeof operatorEmail?.sendPaidOrder!=='function')
       throw new Error('Operator email provider missing');
     return Object.freeze({
       route:job.route,
       providerResult:await operatorEmail.sendPaidOrder({
-        order, idempotencyKey:'withu-operator-'+order.id
+        order,songPlan, idempotencyKey:'withu-operator-'+order.id
       })
     });
   }
@@ -175,12 +183,17 @@ export async function executePaidJob({job,order,operatorEmail,musicProvider}){
     if(order.commercialApiAgreementVerified!==true
       ||typeof musicProvider?.createLicensedSong!=='function')
       throw new Error('Unapproved automatic music generation');
-    return Object.freeze({
-      route:job.route,
-      providerResult:await musicProvider.createLicensedSong({
-        order, idempotencyKey:'withu-music-'+order.id
-      })
-    });
+    // Each intended song is an independent production request even when
+    // the customer chose the SAME genre twice. Stable per-track idempotency
+    // keys prevent a retry of track #2 from duplicating track #1.
+    const results=[];
+    for(const song of songPlan.songs){
+      const output=await musicProvider.createLicensedSong({
+        order,song, idempotencyKey:'withu-music-'+order.id+'-'+song.index
+      });
+      results.push({index:song.index,genre:song.genre,output});
+    }
+    return Object.freeze({route:job.route,providerResult:Object.freeze(results)});
   }
   throw new Error('Unknown fulfillment route');
 }

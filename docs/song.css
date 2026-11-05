@@ -65,3 +65,8 @@
 .operator-test-settings{margin-top:11px;border-top:1px solid #e8d9e1;padding-top:8px}
 .operator-test-settings summary{color:#7d6472;font-size:11px;cursor:pointer}
 .operator-test-settings input{display:block;width:100%;margin-top:6px;min-height:36px;padding:7px;border:1px solid #ddcbd6;border-radius:6px;font-size:12px}
+
+/* Dedicated audio playback keeps sound independent of the muted film image. */
+.detail-player video[hidden],.detail-player audio[hidden]{display:none!important}
+#detail-repeat[aria-pressed="true"]{background:#8f637f;border-color:#f0c6dd}
+.detail-background-hint{max-width:790px;margin:0 auto 15px;text-align:center;color:#cbb5c7;font-size:11px;line-height:1.65}

@@ -1,0 +1,75 @@
+name: Publish audio-only tracks for public MP4 demos
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/publish-demo-audio.yml"
+      - "docs/media/mother-song.mp4"
+      - "docs/media/Papa.mp4"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: withu-demo-audio-main
+  cancel-in-progress: false
+
+jobs:
+  extract-audio:
+    if: github.repository == 'tlco1003/Song'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Extract AAC audio into M4A, keeping original MP4 videos intact
+        shell: bash
+        run: |
+          set -euo pipefail
+          ffmpeg -version | head -n 1
+          for pair in "mother-song.mp4:mother-song.m4a" "Papa.mp4:Papa.m4a"; do
+            source="${pair%%:*}"
+            target="${pair#*:}"
+            if [[ ! -s "docs/media/$source" ]]; then
+              echo "::error::Missing source video: $source"
+              exit 1
+            fi
+            ffmpeg -nostdin -hide_banner -loglevel error -y \
+              -i "docs/media/$source" -map 0:a:0 -vn \
+              -c:a aac -b:a 192k -movflags +faststart \
+              "docs/media/$target"
+            test -s "docs/media/$target"
+            ffprobe -v error -select_streams a:0 -show_entries stream=codec_name \
+              -of default=noprint_wrappers=1 "docs/media/$target"
+          done
+      - name: Connect published audio to the public track manifest
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          path=Path('docs/media/tracks.json')
+          manifest=json.loads(path.read_text(encoding='utf-8'))
+          mapping={'song-mother':'mother-song.m4a','song-papa':'Papa.m4a'}
+          for track in manifest['tracks']:
+              audio=mapping.get(track.get('id'))
+              if audio:
+                  if not Path('docs/media',audio).is_file():
+                      raise SystemExit(f'Missing extracted audio: {audio}')
+                  track['audioFile']=audio
+          path.write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          PY
+      - name: Publish only extracted demo audio and matching manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- docs/media/mother-song.m4a docs/media/Papa.m4a docs/media/tracks.json
+          if git diff --cached --quiet; then
+            echo "Demo audio is already up to date."
+          else
+            git commit -m "media: publish separate AAC audio for public family videos [skip ci]"
+            git push origin HEAD:main
+          fi

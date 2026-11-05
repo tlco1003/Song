@@ -44,15 +44,29 @@
     <input id="delivery-email" type="email" inputmode="email" autocomplete="email" maxlength="254" placeholder="name@example.com" required>
     <label for="delivery-email-again" class="form-label">이메일 주소 확인</label>
     <input id="delivery-email-again" type="email" inputmode="email" autocomplete="off" maxlength="254" placeholder="이메일 주소를 다시 입력해 주세요" required>
-    <section class="payment-methods" id="payment-methods" aria-labelledby="payment-options-heading">
-     <h3 id="payment-options-heading">이용 예정 결제수단</h3>
-     <p class="small-explain">아래는 연동 예정 수단입니다. 실제 결제 가능 여부는 토스페이먼츠 상점 계약과 활성화 설정에 따라 달라집니다.</p>
-     <div class="withu-payment-options-preview" aria-label="연동 예정 결제수단">
-      <span>토스페이</span><span>카카오페이</span><span>네이버페이</span>
-      <span>신용·체크카드</span><span>계좌이체</span><span>가상계좌</span>
-     </div>
-     <p class="small-explain">그 밖의 간편결제·휴대폰 등은 계약 후 토스페이먼츠 결제위젯에서 제공되는 경우에만 표시됩니다.</p>
-    </section>
+    <fieldset class="payment-methods withu-payment-choice-group" id="payment-methods">
+     <legend>결제수단 직접 선택</legend>
+     <p class="small-explain payment-choice-guide">원하는 결제수단을 누르세요. 선택한 수단으로 결제 요청을 시작합니다. 실제 이용 여부는 가맹 계약과 기기·브라우저 환경에 따라 달라집니다.</p>
+     <div class="withu-payment-choice-chips">     <label class="payment-option payment-choice-chip" for="pay-toss_pay"><input type="radio" id="pay-toss_pay" name="paymentMethod" value="toss_pay" checked><span class="payment-option-copy"><strong>토스페이</strong><small>간편결제</small></span></label>
+     <label class="payment-option payment-choice-chip" for="pay-naver_pay"><input type="radio" id="pay-naver_pay" name="paymentMethod" value="naver_pay"><span class="payment-option-copy"><strong>네이버페이</strong><small>간편결제</small></span></label>
+     <label class="payment-option payment-choice-chip" for="pay-kakao_pay"><input type="radio" id="pay-kakao_pay" name="paymentMethod" value="kakao_pay"><span class="payment-option-copy"><strong>카카오페이</strong><small>간편결제</small></span></label>
+     <label class="payment-option payment-choice-chip" for="pay-payco"><input type="radio" id="pay-payco" name="paymentMethod" value="payco"><span class="payment-option-copy"><strong>페이코</strong><small>간편결제</small></span></label>
+     <label class="payment-option payment-choice-chip" for="pay-samsung_pay"><input type="radio" id="pay-samsung_pay" name="paymentMethod" value="samsung_pay"><span class="payment-option-copy"><strong>삼성페이</strong><small>지원 기기</small></span></label>
+     <label class="payment-option payment-choice-chip" for="pay-apple_pay"><input type="radio" id="pay-apple_pay" name="paymentMethod" value="apple_pay"><span class="payment-option-copy"><strong>애플페이</strong><small>지원 기기</small></span></label>
+     <label class="payment-option payment-choice-chip" for="pay-card"><input type="radio" id="pay-card" name="paymentMethod" value="card"><span class="payment-option-copy"><strong>신용·체크카드</strong><small>일반 카드 결제</small></span></label>
+     <label class="payment-option payment-choice-chip" for="pay-transfer"><input type="radio" id="pay-transfer" name="paymentMethod" value="transfer"><span class="payment-option-copy"><strong>실시간 계좌이체</strong><small>계좌이체</small></span></label>
+     <label class="payment-option payment-choice-chip" for="pay-virtual_account"><input type="radio" id="pay-virtual_account" name="paymentMethod" value="virtual_account"><span class="payment-option-copy"><strong>가상계좌</strong><small>입금 확인 후 제작</small></span></label>
+     <label class="payment-option payment-choice-chip" for="pay-mobile_phone"><input type="radio" id="pay-mobile_phone" name="paymentMethod" value="mobile_phone"><span class="payment-option-copy"><strong>휴대폰 결제</strong><small>통신사 결제</small></span></label>
+     <label class="payment-option payment-choice-chip" for="pay-culture_gift"><input type="radio" id="pay-culture_gift" name="paymentMethod" value="culture_gift"><span class="payment-option-copy"><strong>문화상품권</strong><small>계약 시 사용</small></span></label>
+     <label class="payment-option payment-choice-chip" for="pay-book_gift"><input type="radio" id="pay-book_gift" name="paymentMethod" value="book_gift"><span class="payment-option-copy"><strong>도서문화상품권</strong><small>계약 시 사용</small></span></label>
+     <label class="payment-option payment-choice-chip" for="pay-game_gift"><input type="radio" id="pay-game_gift" name="paymentMethod" value="game_gift"><span class="payment-option-copy"><strong>게임문화상품권</strong><small>계약 시 사용</small></span></label></div>
+    </fieldset>
+    <fieldset id="withu-direct-pay-consent" class="withu-direct-pay-consent" hidden>
+     <legend>간편결제 직접 연결을 위한 필수 동의</legend>
+     <label class="consent-row"><input id="withu-direct-financial-terms" type="checkbox"><span><a href="https://pages.tosspayments.com/terms/user" target="_blank" rel="noopener noreferrer">전자금융거래 이용약관</a> 동의 (필수)</span></label>
+     <label class="consent-row"><input id="withu-direct-privacy-terms" type="checkbox"><span><a href="https://pages.tosspayments.com/terms/privacy/consent1" target="_blank" rel="noopener noreferrer">개인정보 수집 및 이용</a> 동의 (필수)</span></label>
+     <label class="consent-row"><input id="withu-direct-third-party-terms" type="checkbox"><span><a href="https://pages.tosspayments.com/terms/privacy/consent2" target="_blank" rel="noopener noreferrer">개인정보 제3자 제공</a> 동의 (필수)</span></label>
+    </fieldset>
     <p id="payment-method-hint" class="small-explain">결제 준비 완료 후 토스페이먼츠가 실제 사용 가능한 결제수단을 보여줍니다.</p>
     <label class="consent-row"><input id="consent-delivery" type="checkbox"><span>완성곡 전달을 위한 이메일 이용에 동의합니다.</span></label>
     <label class="consent-row"><input id="consent-service" type="checkbox"><span>제작 조건과 결제·환불 안내를 확인하고 동의합니다. (정식 판매 전 안내 예정)</span></label>

@@ -100,8 +100,8 @@ function renderGenrePlan(){
  try{
   const selection=getGenreSelection(),lines=genreLabels(selection);
   $('genre-plan-preview').classList.remove('invalid');
-  $('genre-plan-preview').textContent=lines.join('\\n')+'\\n같은 최종 가사를 바탕으로 각각 독립적으로 제작합니다.';
-  $('order-song-genres').textContent=lines.join('\\n');
+  $('genre-plan-preview').textContent=lines.join('\n')+'\n같은 최종 가사를 바탕으로 각각 독립적으로 제작합니다.';
+  $('order-song-genres').textContent=lines.join('\n');
  }catch(error){
   $('genre-plan-preview').classList.add('invalid');
   $('genre-plan-preview').textContent=error.message;

@@ -1,152 +1,27 @@
-/* WITHU browser-only media previews. Nothing is uploaded or retained.
- * No actual face swap, payment, order, or song generation occurs here. */
-(() => {
-  'use strict';
-
-  const $ = id => document.getElementById(id);
-  const audio = $('audio-preview-element');
-  const LIMIT = 30;
-  const state = {audioUrl:null,photoUrl:null,videoUrl:null,stream:null,recorder:null,
-    recordTimer:null,recordStart:0,audioTimer:null,recordChunks:[]};
-
-  const format = seconds => {
-    const whole = Math.max(0,Math.min(LIMIT,Math.floor(Number(seconds)||0)));
-    return String(Math.floor(whole/60)).padStart(2,'0')+':'+String(whole%60).padStart(2,'0');
-  };
-  const audioNotice = message => { $('audio-preview-message').textContent=message; };
-  const cameraNotice = message => { $('camera-feedback').textContent=message; };
-  const selectedProduct = () => document.querySelector('input[name="product"]:checked')?.value;
-  function requireConsent() {
-    if($('media-consent').checked)return true;
-    cameraNotice('사진과 영상에 등장하는 인물의 사용 동의를 먼저 확인해 주세요.');
-    $('media-consent').focus();return false;
-  }
-  function revoke(name) {
-    if(state[name])URL.revokeObjectURL(state[name]);
-    state[name]=null;
-  }
-  function refreshAudioClock() {
-    const elapsed=Math.min(LIMIT,Number(audio.currentTime)||0);
-    $('audio-preview-time').textContent=format(elapsed)+' / 00:30';
-    $('audio-preview-fill').style.width=(elapsed/LIMIT*100).toFixed(2)+'%';
-    if(elapsed>=LIMIT-0.07){
-      audio.pause();
-      $('audio-preview-play').textContent='▶ 30초 다시 듣기';
-      audioNotice('30초 미리 듣기가 끝났어요. 처음부터 다시 들을 수 있어요.');
-    }
-  }
-  function pauseAudio() {
-    audio.pause();
-    $('audio-preview-play').textContent='▶ 30초 듣기';
-  }
-  function setAudio(url) {
-    pauseAudio();audio.removeAttribute('src');audio.load();
-    if(url){audio.src=url;audio.load();}
-    $('audio-preview-time').textContent='00:00 / 00:30';
-    $('audio-preview-fill').style.width='0%';
-  }
-  function updateExampleArt(option){
-    const img=$('checkout-cover-image'),fallback=$('checkout-cover-fallback'),link=$('checkout-view-song');
-    img.hidden=true;fallback.hidden=false;img.removeAttribute('src');
-    const id=option?.dataset.trackId,cover=option?.dataset.cover;
-    if(id&&/^song-[a-z0-9-]+$/i.test(id)){
-      link.hidden=false;link.href='song.html?demo='+encodeURIComponent(id);
-    }else link.hidden=true;
-    if(cover&&/^covers\/[a-z0-9-]+\.webp$/i.test(cover)){
-      img.onload=()=>{img.hidden=false;fallback.hidden=true};
-      img.onerror=()=>{img.hidden=true;fallback.hidden=false};
-      img.src=cover;
-    }
-  }
-  async function loadExamples() {
-    const select=$('audio-example');
-    select.replaceChildren();
-    try {
-      const result=await fetch('media/tracks.json',{cache:'no-store'});
-      if(!result.ok)throw Error('missing tracks');
-      const data=await result.json();
-      const tracks=(Array.isArray(data.tracks)?data.tracks:[])
-        // MP4 with AAC audio (e.g. the mother's gift video) can be previewed
-        // with the HTML audio element as well as ordinary MP3 examples.
-        .filter(t=>typeof t.title==='string'&&/^[a-zA-Z0-9가-힣_.-]+\.(?:mp3|mp4)$/i.test(t.file));
-      if(!tracks.length)throw Error('no samples');
-      for(const track of tracks){
-        const option=document.createElement('option');
-        option.value=track.file;
-        option.dataset.trackId=track.id||'';
-        option.dataset.cover=track.coverImage||'';
-        option.dataset.genre=typeof track.genre==='string'&&track.genre.trim()?track.genre.trim():'장르 정보 준비 중';
-        option.textContent=track.title+' · '+option.dataset.genre;
-        select.append(option);
-      }
-      select.selectedIndex=0;
-      updateExampleArt(select.selectedOptions[0]);
-      $('audio-example-genre').textContent='장르 · '+(select.selectedOptions[0]?.dataset.genre||'장르 정보 준비 중');
-      setAudio('media/'+encodeURIComponent(select.value));
-      audioNotice('기존에 공개된 예시곡을 선택했어요. 재생을 누르면 30초만 들려줍니다.');
-    }catch(_){
-      const option=document.createElement('option');
-      option.value='';option.textContent='지금은 예시곡 목록을 불러올 수 없어요';
-      select.append(option);
-      updateExampleArt(null);
-      $('audio-example-genre').textContent='장르 정보를 불러오지 못했어요.';
-      audioNotice('예시곡을 불러오지 못했어요. 직접 음악 파일을 선택하면 30초 미리 듣기가 가능해요.');
-    }
-  }
-  $('audio-example').addEventListener('change',()=>{
-    revoke('audioUrl');
-    const file=$('audio-example').value;
-    if(file)setAudio('media/'+encodeURIComponent(file));
-    else setAudio('');
-    updateExampleArt($('audio-example').selectedOptions[0]);
-    $('audio-example-genre').textContent=file?'장르 · '+($('audio-example').selectedOptions[0]?.dataset.genre||'장르 정보 준비 중'):'예시곡을 선택해 주세요.';
-    audioNotice('예시곡을 변경했어요. 재생 버튼을 눌러보세요.');
-  });
-  $('audio-file-choice').addEventListener('change',event=>{
-    const file=event.target.files?.[0];
-    if(!file)return;
-    if(file.size>100*1024*1024||!/\.(mp3|m4a|wav|ogg)$/i.test(file.name)){
-      audioNotice('100MB 이하 MP3·M4A·WAV·OGG 파일만 선택할 수 있어요.');return;
-    }
-    revoke('audioUrl');
-    state.audioUrl=URL.createObjectURL(file);
-    setAudio(state.audioUrl);
-    updateExampleArt(null);
-    $('audio-example-genre').textContent='내 음악 · 장르 미분류';
-    audioNotice('선택한 내 음악을 이 브라우저에서 30초만 미리 들어요. 업로드되지 않습니다.');
-    event.target.value='';
-  });
-  $('audio-preview-play').addEventListener('click',async()=>{
-    if(!audio.src){audioNotice('예시곡이나 내 음악 파일을 먼저 선택해 주세요.');return;}
-    if(!audio.paused){pauseAudio();return;}
-    if(Number(audio.currentTime)>=LIMIT-0.07){
-      try{audio.currentTime=0;}catch(_){}
-    }
-    try{
-      await audio.play();
-      $('audio-preview-play').textContent='Ⅱ 일시정지';
-      audioNotice('30초 미리 듣는 중이에요.');
-    }catch(_){
-      audioNotice('음악을 재생할 수 없어요. 파일 형식이나 Safari의 소리 설정을 확인해 주세요.');
-    }
-  });
-  $('audio-preview-reset').addEventListener('click',()=>{
-    pauseAudio();try{audio.currentTime=0;}catch(_){}
-    refreshAudioClock();audioNotice('처음으로 돌아왔어요.');
-  });
-  audio.addEventListener('timeupdate',refreshAudioClock);
-  audio.addEventListener('seeking',()=>{
-    if(audio.currentTime>LIMIT){try{audio.currentTime=LIMIT;}catch(_){}}
-  });
-  audio.addEventListener('ended',()=>{pauseAudio();audioNotice('미리 듣기가 끝났어요.');});
-  audio.addEventListener('error',()=>{pauseAudio();audioNotice('이 예시곡을 불러오지 못했어요. 다른 곡이나 로컬 파일을 선택해 주세요.');});
-  // timeupdate can be throttled when a device sleeps; use a second guard.
-  state.audioTimer=setInterval(()=>{
-    if(!audio.paused&&audio.currentTime>=LIMIT){
-      audio.pause();refreshAudioClock();
-    }
-  },200);
-
+/* WITHU optional photo/video consent and device-only previews.
+ * There is NO pre-purchase audio listening or payment execution in this file.
+ * The customer's selected media are never uploaded by this script. */
+(()=>{
+ 'use strict';
+ const $=id=>document.getElementById(id);
+ const LIMIT=30;
+ const state={photoUrl:null,videoUrl:null,stream:null,recorder:null,
+  recordTimer:null,recordStart:0,recordChunks:[]};
+ const format=seconds=>{
+  const whole=Math.max(0,Math.min(LIMIT,Math.floor(Number(seconds)||0)));
+  return String(Math.floor(whole/60)).padStart(2,'0')+':'+String(whole%60).padStart(2,'0');
+ };
+ const cameraNotice=message=>{$('camera-feedback').textContent=message;};
+ const selectedProduct=()=>document.querySelector('input[name="product"]:checked')?.value;
+ function requireConsent(){
+  if($('media-consent').checked)return true;
+  cameraNotice('사진과 영상에 등장하는 인물의 사용 동의를 먼저 확인해 주세요.');
+  $('media-consent').focus();return false;
+ }
+ function revoke(name){
+  if(state[name])URL.revokeObjectURL(state[name]);
+  state[name]=null;
+ }
   function showPhoto(file) {
     if(!file||file.size>15*1024*1024||!(/image\//.test(file.type)||/\.(jpg|jpeg|png|webp|heic)$/i.test(file.name))){
       $('photo-feedback').textContent='15MB 이하 이미지 파일을 선택해 주세요.';return;
@@ -317,9 +192,8 @@
     if(!$('media-consent').checked&&state.stream)closeCamera(true);
   });
   window.addEventListener('pagehide',()=>{
-    closeCamera(true);audio.pause();
-    clearInterval(state.audioTimer);
-    for(const name of ['audioUrl','photoUrl','videoUrl'])revoke(name);
+    closeCamera(true);
+    for(const name of ['photoUrl','videoUrl'])revoke(name);
   });
   // Test links can open the matching product without any customer data in the URL.
   const requestedProduct=new URLSearchParams(window.location.search).get('product');
@@ -328,5 +202,7 @@
     if(radio){radio.checked=true;radio.dispatchEvent(new Event('change',{bubbles:true}));}
   }
   switchProduct();
-  void loadExamples();
+  window.addEventListener('withu:checkout-stage',event=>{
+    if(event.detail?.stage!=='video'&&state.stream)closeCamera(true);
+  });
 })();

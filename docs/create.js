@@ -83,6 +83,7 @@ $('go-create').addEventListener('click',event=>{
  const draft={
    version:1,title:title.slice(0,100),lyrics:lyrics.slice(0,5500),
    style:$('song-style').value.trim().slice(0,1200),
+   genre:$('genre').value,mood:$('mood').value,
    savedAt:Date.now()
  };
  try{

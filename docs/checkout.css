@@ -249,3 +249,19 @@
 @media(max-width:520px){
  .payment-page-layout .withu-payment-options-preview span{font-size:12px;padding:11px 6px}
 }
+
+
+/* Every provider is a real selectable radio choice chip. No chip claims live
+   availability until the merchant gateway and approved product accept it. */
+.payment-page-layout .withu-payment-choice-group{border:0;background:transparent;padding:0;margin:22px 0 12px;min-width:0}
+.payment-page-layout .withu-payment-choice-group legend{font-size:15px;font-weight:700;color:#5b4553;margin-bottom:9px}
+.payment-page-layout .payment-choice-guide{margin:0 0 15px;line-height:1.75}
+.payment-page-layout .withu-payment-choice-chips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.payment-page-layout .payment-choice-chip{position:relative;cursor:pointer;min-height:76px}
+.payment-page-layout .payment-choice-chip:has(input:checked){border-color:#926f82;background:#f9eff4;box-shadow:inset 0 0 0 1px #926f82}
+.payment-page-layout .payment-choice-chip:focus-within{outline:2px solid #87647a;outline-offset:2px}
+.payment-page-layout .withu-direct-pay-consent{border:1px solid #e1d6dc;border-radius:12px;background:#fcfafc;margin:18px 0;padding:13px}
+.payment-page-layout .withu-direct-pay-consent legend{font-size:13px;font-weight:700;color:#5b4553}
+.payment-page-layout .withu-direct-pay-consent a{color:#755168;text-decoration:underline;text-underline-offset:3px}
+.payment-page-layout #withu-direct-pay-consent[hidden]{display:none}
+@media(max-width:520px){.payment-page-layout .payment-choice-chip{min-height:70px}}

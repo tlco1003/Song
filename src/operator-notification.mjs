@@ -4,6 +4,7 @@
  * after the durable order is marked PAID by verified PG confirmation.
  */
 import {ORDER_STATES} from './commerce.mjs';
+import {verifyPaidSongPlan} from './song-production-plan.mjs';
 
 function requiredEmail(value,label){
   if(typeof value!=='string'||value.length>254||!/^\S+@\S+\.\S+$/.test(value)||/[\r\n]/.test(value))
@@ -24,13 +25,20 @@ export function makeResendOperatorEmail({
   requiredEmail(from,'from');requiredEmail(to,'operator');
   if(typeof fetchImpl!=='function')throw new Error('Resend HTTP transport missing');
   return Object.freeze({
-    async sendPaidOrder({order,idempotencyKey}){
+    async sendPaidOrder({order,songPlan,idempotencyKey}){
       if(order?.state!==ORDER_STATES.PAID||!order.paymentVerifiedAt
         ||typeof order.paymentKey!=='string'||!Number.isSafeInteger(order.amountKrw))
         throw new Error('Operator alert prohibited for unverified payment');
       if(idempotencyKey!=='withu-operator-'+order.id)
         throw new Error('Invalid operator email idempotency key');
       const recipient=requiredEmail(order.customerEmail,'customer');
+      const validatedPlan=verifyPaidSongPlan(order);
+      if(songPlan&&JSON.stringify(songPlan)!==JSON.stringify(validatedPlan))
+        throw new Error('Unapproved genre selection in operator notification');
+      const trackLines=validatedPlan.songs.flatMap(track=>[
+        '곡 '+track.index+' / '+validatedPlan.songs.length+' — 선택 장르: '+track.genre,
+        '곡별 음악 스타일 요청: '+safeText(track.stylePrompt,1200)
+      ]);
       const lines=[
         'WITHU — 결제 검증 완료 / 운영자 직접 제작 주문',
         '주문번호: '+safeText(order.id,64),
@@ -39,7 +47,9 @@ export function makeResendOperatorEmail({
         '금액: '+order.amountKrw.toLocaleString('ko-KR')+'원',
         '고객 이메일: '+recipient,
         '곡 제목: '+safeText(order.songTitle,100),
-        '음악 스타일: '+safeText(order.musicStyle,1200),
+        '공통 음악 요청: '+safeText(order.sharedStyleNotes||order.musicStyle,500),
+        '장르 선택 방식: '+validatedPlan.mode,
+        ...trackLines,
         '확정 가사:',
         safeText(order.confirmedLyrics,5500),
         '사연/특이사항:',

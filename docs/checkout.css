@@ -236,3 +236,16 @@
 @media(max-width:850px){.payment-page-layout{grid-template-columns:1fr;max-width:650px;margin:auto}.payment-page-layout .payment-summary{position:static}}
 @media(max-width:520px){.checkout-flow .checkout-stage{padding:22px 17px}.checkout-flow .gift-choice{padding:15px 12px}.checkout-flow .wizard-actions .checkout-button{font-size:12px}.payment-page-layout .checkout-card{padding:24px 19px}}
 @media(prefers-reduced-motion:reduce){.checkout-flow .checkout-stage{animation:none}.checkout-flow .wizard-progress-bar span{transition:none}}
+
+
+/* Planned payment options are informational; the approved Toss widget owns the
+   real clickable choices after verified buyer and server readiness. */
+.payment-page-layout #payment-methods{display:block;border:1px solid #e8dce3;border-radius:14px;background:#fcfafb;padding:17px;margin-top:25px}
+.payment-page-layout #payment-methods h3{font-size:16px;color:#4f3c4b;margin:0 0 12px;font-weight:700}
+.payment-page-layout .withu-payment-options-preview{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:15px 0}
+.payment-page-layout .withu-payment-options-preview span{display:block;min-width:0;border-radius:10px;border:1px solid #e3dce0;background:#f7f4f6;color:#645660;font-size:13px;line-height:1.5;padding:12px 9px;text-align:center;cursor:default}
+.payment-page-layout #withu-live-payment-widget,
+.payment-page-layout #withu-live-payment-agreement{width:100%;min-width:0;margin:14px 0}
+@media(max-width:520px){
+ .payment-page-layout .withu-payment-options-preview span{font-size:12px;padding:11px 6px}
+}

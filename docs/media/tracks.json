@@ -41,6 +41,17 @@
       "coverTheme": "장난스럽고 낭만적인 동전 세탁소의 신데렐라"
     },
     {
+      "id": "song-summer-80s",
+      "title": "우리의 첫 번째 여름",
+      "subtitle": "일본에서 울고 웃던 첫 여행, 백조 호수의 추억",
+      "file": "80s-citypop.mp3",
+      "lyricsFile": "lyrics-80s-citypop.txt",
+      "genre": "80s 일본 시티팝",
+      "genreSource": "prompt",
+      "productType": "audio_with_cover",
+      "coverTheme": "여름의 일본 여행, 백조가 있는 호수, 디즈니랜드의 불빛과 레트로 시티팝"
+    },
+    {
       "id": "song-nara",
       "title": "나라는 사람",
       "subtitle": "나를 알아가는 마음 · 인생 이야기",

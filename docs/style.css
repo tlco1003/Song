@@ -196,3 +196,6 @@ button:focus-visible,a:focus-visible,label:focus-visible,.lyrics-scroll:focus-vi
 .inline-lyrics .lyric-line.is-active{color:#fff7f0;opacity:1;font-weight:700;text-shadow:0 1px 10px #120d1aa6}
 @media(max-width:690px){.inline-lyrics{margin:18px auto 8px}.inline-lyrics .lyrics-scroll{height:130px;min-height:130px;max-height:130px;padding:7px 4px}.inline-lyrics .lyric-line{font-size:15px;min-height:37px}}
 @media(prefers-reduced-motion:reduce){.inline-lyrics .lyrics-scroll{scroll-behavior:auto}.inline-lyrics .lyric-line{transition:none}}
+
+/* Honest timing state: a song without verified line cues remains manually scrollable. */
+.lyrics-sync-hint{max-width:95%;margin:7px auto 2px;font:400 11px/1.6 "Gowun Batang",sans-serif;color:#c3b2c3;text-align:center;word-break:keep-all}

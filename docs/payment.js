@@ -3,10 +3,6 @@
 const $=id=>document.getElementById(id);
 const KEY='withu-order-draft-v1',MAX_AGE=30*60*1000;
 const won=new Intl.NumberFormat('ko-KR',{style:'currency',currency:'KRW',maximumFractionDigits:0});
-const methods=Object.freeze({
- toss_pay:'토스페이',kakao_pay:'카카오페이',naver_pay:'네이버페이',
- card:'신용·체크카드',transfer:'실시간 계좌이체',virtual_account:'가상계좌'
-});
 function readDraft(){
  try{
   const draft=JSON.parse(sessionStorage.getItem(KEY)||'null');
@@ -70,20 +66,13 @@ async function init(){
   window.dispatchEvent(new Event('withu:payment-preview-ready'));
  }
 }
-for(const item of document.querySelectorAll('input[name="paymentMethod"]')){
- item.addEventListener('change',()=>{
-  const selected=document.querySelector('input[name="paymentMethod"]:checked')?.value;
-  $('payment-method-hint').textContent=(methods[selected]||'결제수단')+'를 선택했어요.';
- });
-}
 for(const id of ['delivery-email','delivery-email-again']){
  $(id).addEventListener('blur',()=>{
   const first=$('delivery-email').value.trim(),second=$('delivery-email-again').value.trim();
   if(first&&second&&first.toLowerCase()!==second.toLowerCase()){
    $('payment-method-hint').textContent='두 이메일 주소가 일치하지 않습니다.';
   }else{
-   const selected=document.querySelector('input[name="paymentMethod"]:checked')?.value;
-   $('payment-method-hint').textContent=(methods[selected]||'결제수단')+'를 선택했어요.';
+   $('payment-method-hint').textContent='결제 가능 수단은 인증된 결제위젯에서 확인해 주세요.';
   }
  });
 }

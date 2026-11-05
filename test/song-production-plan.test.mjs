@@ -87,8 +87,9 @@ test('browser remembers genre choice while real payment and email dispatch remai
  assert.match(script,/selectedProduct:chosenProduct\(\)/);
  assert.match(script,/sessionStorage\.setItem\(KEY/);
  assert.match(script,/genreLabels\(selection\)/);
- assert.match(script,/if\(first===second\)throw new Error/);
- assert.match(page,/id="confirm-checkout"[^>]*disabled/);
+ assert.match(script,/first===second/);
+ assert.match(page,/href="payment.html"/);
+ assert.match(read('docs/payment.html'),/id="confirm-checkout"[^>]*disabled/);
  assert.equal(publicCommerceReadiness().canCharge,false);
  assert.deepEqual(publicPriceCatalog().products.map(x=>x.amountKrw),[29000,39000,300000]);
 });

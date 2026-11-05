@@ -33,7 +33,7 @@ function releaseCheck(){
   if(!REVIEWED_FOR_LIVE_CHARGES
     ||paymentActivated.value()!=='yes'
     ||outboxVerified.value()!=='yes'
-    ||!tossClientKey.value())
+    ||!/^((test|live)_ck_)/.test(tossClientKey.value()))
     throw new HttpsError('failed-precondition','WITHU_PAYMENT_NOT_RELEASED');
 }
 function safeFailure(error){
@@ -60,7 +60,8 @@ function dataObject(request){
 }
 export const withuCheckoutReadiness=onCall(options,async()=>{
   const enabled=REVIEWED_FOR_LIVE_CHARGES&&paymentActivated.value()==='yes'
-    &&outboxVerified.value()==='yes'&&!!tossClientKey.value();
+    &&outboxVerified.value()==='yes'
+    &&/^(test|live)_ck_/.test(tossClientKey.value());
   return {canCharge:enabled,requiresVerifiedEmail:true,clientKey:enabled?tossClientKey.value():null};
 });
 

@@ -4,94 +4,75 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#251e29">
-<meta name="description" content="WITHU 맞춤 음악 선물 주문 — 원하는 상품을 선택하고 이메일로 받으세요. 현재 서비스 준비 중입니다.">
-<title>WITHU — 노래 선물 주문</title>
+<meta name="description" content="WITHU — 맞춤 노래 구성과 장르를 선택하고 주문서를 확인하세요.">
+<title>WITHU — 노래 선물 선택</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="checkout.css?v=20261105-duo-genres-01">
-<script src="checkout.js?v=20261105-duo-genre-persist-v2" defer></script>
-<script src="checkout-media.js?v=20261105-genres-01" defer></script>
+<link rel="stylesheet" href="checkout.css?v=20261105-clean-flow-01">
+<script defer src="checkout.js?v=20261105-clean-flow-01"></script>
+<script defer src="checkout-media.js?v=20261105-video-only-01"></script>
 </head>
 <body>
 <header class="site-header"><div class="frame header-inner">
  <a class="brand" href="./" aria-label="WITHU 홈"><span class="brand-icon" aria-hidden="true">♪</span> WITHU</a>
- <nav aria-label="사이트 메뉴"><a href="./">노래 감상</a><a href="create.html">가사 수정</a><a href="checkout.html" aria-current="page">주문 확인</a></nav>
- <span class="brand-caption">A meaningful gift, made with love.</span>
+ <nav aria-label="사이트 메뉴"><a href="./">노래 감상</a><a href="create.html">나만의 노래</a></nav>
 </div></header>
 <main class="checkout-page">
- <div class="frame">
+ <div class="frame checkout-flow">
   <header class="checkout-intro">
-   <span class="small-caps">A GIFT IN A SONG</span>
-   <h1>마음을 담아, <em>선물할 준비.</em></h1>
-   <p>완성된 가사와 선물 옵션을 확인하고 받을 이메일을 입력해 주세요.</p>
+   <span class="small-caps">THE PERFECT MUSIC GIFT</span>
+   <h1>소중한 마음에 맞는 <em>노래를 골라요.</em></h1>
+   <p id="checkout-progress-label">1 / 3 · 선물 종류</p>
+   <div class="wizard-progress-bar" id="checkout-progress" role="progressbar" aria-label="주문 구성 진행률" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1"><span id="checkout-progress-fill"></span></div>
   </header>
-  <div class="checkout-status" role="status" id="commerce-status">
-   <strong>결제수단 미리보기 · 실제 결제 비활성화</strong>
-   <p>토스페이먼츠 통합 결제 도입을 전제로 6가지 수단의 화면을 미리 확인할 수 있어요. 현재는 결제 요청·입금계좌 발급·이메일 전송이 실행되지 않습니다.</p>
-  </div>
-  <section class="fulfillment-preview" aria-label="결제 완료 후 주문 처리 흐름">
-    <h2>결제 확인 후 제작이 시작됩니다</h2>
-    <p>아래는 출시 후 운영할 예정인 두 가지 제작 방식입니다. <strong>현재 실제 결제·주문 접수·이메일 발송은 비활성화</strong>되어 있어요.</p>
-    <div class="fulfillment-paths">
-      <div class="fulfillment-path"><span class="path-kicker">NOW · 준비 중</span><strong>운영자가 직접 제작</strong><p>결제사의 실제 승인·입금 완료 확인 → WITHU 운영자에게 주문 알림 → 직접 음악 제작 및 검수 → 완성곡 이메일 전달</p></div>
-      <div class="fulfillment-path"><span class="path-kicker">FUTURE · API 승인 후</span><strong>자동 음악 제작</strong><p>결제사의 실제 승인·입금 완료 확인 → 계약된 음악 API로 제작 요청 → 결과 검수 → 완성곡 이메일 전달</p></div>
-    </div>
-    <p class="fulfillment-note">고객이 보내는 결제 완료 메시지만으로 제작되거나 운영자에게 주문서가 전달되지는 않습니다. 결제사 서버의 검증 결과를 기준으로 처리합니다.</p>
+  <section class="checkout-stage checkout-card" data-checkout-step="product" aria-labelledby="product-title">
+   <span class="small-caps">01 · THE GIFT</span>
+   <h2 id="product-title">어떤 노래를 선물할까요?</h2>
+   <fieldset class="gift-options">
+    <legend class="screen-reader-only">선물 종류</legend>
+    <label class="gift-choice active" for="product-audio">
+     <input type="radio" id="product-audio" name="product" value="audio" checked>
+     <span class="choice-body"><strong>맞춤 노래 1곡</strong><small>최종 완성곡 1개 + 가사</small></span>
+     <span class="choice-side" data-price-for="audio">가격 확인 중</span>
+    </label>
+    <label class="gift-choice" for="product-audio-duo">
+     <input type="radio" id="product-audio-duo" name="product" value="audio_duo">
+     <span class="choice-body"><strong>맞춤 노래 2곡 <em class="choice-highlight">추천</em></strong><small>같은 가사로 2개의 서로 다른 완성곡 · 19,000원 할인</small></span>
+     <span class="choice-side" data-price-for="audio_duo">가격 확인 중</span>
+    </label>
+    <label class="gift-choice" for="product-video">
+     <input type="radio" id="product-video" name="product" value="audio_video">
+     <span class="choice-body"><strong>노래 + 뮤직비디오</strong><small>노래 1곡 + 협의된 분량의 영상 · 별도 견적</small></span>
+     <span class="choice-side" data-price-for="audio_video">가격 확인 중</span>
+    </label>
+   </fieldset>
+   <p class="small-explain">한 곡 상품에는 최종 선택된 완성곡 1개만 제공돼요. 뮤직비디오 가격은 제작 범위에 따라 별도로 확정됩니다.</p>
   </section>
-  <div class="checkout-layout">
-   <section class="checkout-card">
-    <span class="small-caps">01 · SELECT YOUR GIFT</span>
-    <h2>어떤 선물을 준비할까요?</h2>
-    <fieldset class="gift-options">
-     <legend class="screen-reader-only">선물 상품</legend>
-     <label class="gift-choice active" for="product-audio">
-      <input type="radio" id="product-audio" name="product" value="audio" checked>
-      <span class="choice-body"><strong>맞춤 노래 1곡</strong><small>MP3 1곡 · 가사 · 이메일 전달</small></span>
-      <span class="choice-side" data-price-for="audio">가격 확인 중</span>
-     </label>
-     <label class="gift-choice" for="product-audio-duo">
-      <input type="radio" id="product-audio-duo" name="product" value="audio_duo">
-      <span class="choice-body"><strong>맞춤 노래 2곡 <em class="choice-highlight">추천</em></strong><small>같은 가사 · 한 장르 2곡 또는 두 장르 각 1곡 · 19,000원 할인</small></span>
-      <span class="choice-side" data-price-for="audio_duo">가격 확인 중</span>
-     </label>
-     <label class="gift-choice" for="product-video">
-      <input type="radio" id="product-video" name="product" value="audio_video">
-      <span class="choice-body"><strong>노래 + 뮤직비디오</strong><small>노래 1곡 + 협의된 분량의 뮤직비디오 · 개별 견적</small></span>
-      <span class="choice-side" data-price-for="audio_video">가격 확인 중</span>
-     </label>
-    </fieldset>
-    <section class="genre-configuration" id="genre-configuration" aria-labelledby="genre-config-heading">
-      <span class="small-caps">SONG-BY-SONG GENRES</span>
-      <h3 id="genre-config-heading">노래 장르를 골라주세요</h3>
-      <p class="small-explain">먼저 고른 장르를 기본값으로 보여주고, 여기서 변경한 선택도 주문에 보관합니다.</p>
-      <fieldset class="duo-genre-modes" id="duo-genre-modes" hidden>
-        <legend>2곡을 어떤 장르로 만들까요?</legend>
-        <label for="duo-mode-same"><input type="radio" name="duoGenreMode" id="duo-mode-same" value="same" checked><span><strong>한 장르로 2곡</strong><small>선택한 장르 안에서 멜로디·편곡이 다른 두 곡</small></span></label>
-        <label for="duo-mode-different"><input type="radio" name="duoGenreMode" id="duo-mode-different" value="different"><span><strong>두 장르로 각각 1곡</strong><small>첫 번째 장르 1곡, 두 번째 장르 1곡</small></span></label>
-      </fieldset>
-      <div class="song-genre-grid">
-        <div>
-          <label class="form-label" for="song-genre-first">첫 번째 노래 장르</label>
-          <select class="song-genre-select" id="song-genre-first" disabled required><option value="">장르 불러오는 중…</option></select>
-        </div>
-        <div id="song-genre-second-wrap" hidden>
-          <label class="form-label" for="song-genre-second">두 번째 노래 장르</label>
-          <select class="song-genre-select" id="song-genre-second" disabled><option value="">장르 불러오는 중…</option></select>
-        </div>
-      </div>
-      <label class="form-label" for="song-shared-notes">음악 요청사항 (선택 · 2곡이면 모두 적용)</label>
-      <textarea id="song-shared-notes" class="song-shared-notes" rows="2" maxlength="500" placeholder="예: 맑은 여성 보컬, 첫 소절은 피아노만, 후렴에서 현악기 확장"></textarea>
-      <div id="genre-plan-preview" class="genre-plan-preview" role="status" aria-live="polite">장르 목록을 준비하고 있어요.</div>
-      <p class="small-explain">2곡 상품은 같은 최종 가사를 사용해 서로 독립적으로 제작합니다. 두 장르를 선택하면 곡마다 서로 다른 음악 스타일 요청이 적용됩니다.</p>
-    </section>
-    <p class="small-explain">뮤직비디오 30만 원은 <strong>시작 기준 가격</strong>으로, 전체 길이·영상 장면 수·인물 사용·해상도·수정횟수에 따라 사전 견적이 달라질 수 있어요. 현재 영상 제작 API와 인물·이미지 사용 권한 확인 전에는 구매할 수 없습니다.</p>
-
-    <section id="video-media-section" class="video-media-section" hidden aria-labelledby="video-media-title">
+  <section class="checkout-stage checkout-card" data-checkout-step="genre" aria-labelledby="genre-config-heading" hidden>
+   <span class="small-caps">02 · YOUR SOUND</span>
+   <h2 id="genre-config-heading">어떤 장르로 만들까요?</h2>
+   <p class="small-explain">선택한 장르는 완성곡마다 적용돼요.</p>
+   <fieldset class="duo-genre-modes" id="duo-genre-modes" hidden>
+    <legend>두 곡의 장르 선택</legend>
+    <label for="duo-mode-same"><input type="radio" name="duoGenreMode" id="duo-mode-same" value="same" checked><span><strong>한 장르로 2곡</strong><small>같은 장르, 서로 다른 멜로디·편곡</small></span></label>
+    <label for="duo-mode-different"><input type="radio" name="duoGenreMode" id="duo-mode-different" value="different"><span><strong>두 장르로 각각 1곡</strong><small>첫 번째 장르 1곡 + 두 번째 장르 1곡</small></span></label>
+   </fieldset>
+   <div class="song-genre-grid">
+    <div><label class="form-label" for="song-genre-first">첫 번째 완성곡 장르</label><select id="song-genre-first" class="song-genre-select" disabled required><option value="">장르를 불러오는 중…</option></select></div>
+    <div id="song-genre-second-wrap" hidden><label class="form-label" for="song-genre-second">두 번째 완성곡 장르</label><select id="song-genre-second" class="song-genre-select" disabled><option value="">장르를 불러오는 중…</option></select></div>
+   </div>
+   <label class="form-label" for="song-shared-notes">추가 음악 요청사항 (선택)</label>
+   <textarea id="song-shared-notes" class="song-shared-notes" rows="3" maxlength="500" placeholder="예: 맑은 여성 보컬, 첫 소절은 피아노만, 후렴에서 현악기 확장"></textarea>
+   <div id="genre-plan-preview" class="genre-plan-preview" role="status" aria-live="polite">장르 선택을 불러오는 중이에요.</div>
+   <p class="small-explain">음악 생성 과정에서 여러 후보가 나오더라도, 구매한 곡 수만큼 최종 완성곡을 선택해 전달해요.</p>
+  </section>
+  <section class="checkout-stage checkout-card" data-checkout-step="video" aria-labelledby="video-media-title" hidden>
+   <section id="video-media-section" class="video-media-section" aria-labelledby="video-media-title">
       <span class="small-caps">YOUR FACE · YOUR STAGE</span>
       <h3 id="video-media-title">내 얼굴과 영상으로 준비하는 무대</h3>
-      <p class="small-explain">얼굴 사진과 얼굴 영상을 각각 선택하면 바로 아래 작은 미리보기에서 확인할 수 있어요. 휴대폰 카메라 촬영도 가능해요. <strong>실제 얼굴 교체와 립싱크 생성은 아직 연결 전</strong>이므로 영상 합성 결과로 표시하지 않습니다. 선택한 파일은 서버로 전송되지 않고 현재 브라우저에서만 사용됩니다. 파일을 미리 보는 데는 동의 체크가 필요하지 않으며, 실제 촬영·합성 신청에는 사용 동의가 필요해요.</p>
+      <p class="small-explain">뮤직비디오에 사용할 사진과 영상을 선택해 확인할 수 있어요. 선택한 파일은 지금 사용하는 기기에서만 보이고, 주문 서버로 전송되지 않습니다. 실제 제작 시 별도 안전한 파일 제출 안내가 제공됩니다.</p>
       <label class="consent-row"><input id="media-consent" type="checkbox"><span>본인 사진·영상이거나 출연자의 명시적 촬영·합성·사용 동의를 받았습니다.</span></label>
       <div class="media-preview-grid">
         <div class="media-preview-card">
@@ -129,115 +110,31 @@
         <div class="stage-beams" aria-hidden="true">✦　✦　✦</div>
         <div class="stage-portrait"><span id="stage-placeholder">♪</span><img id="stage-portrait-image" alt="무대 배경 위에 놓인 얼굴 사진" hidden></div>
         <strong>WITHU · MY STAGE</strong>
-        <p>내 얼굴 사진과 무대 배경을 함께 보는 시안</p>
+        <p>선택한 사진을 무대 배경에 배치한 모습</p>
       </div>
       <p class="small-explain">이 무대 화면은 사진을 배치한 디자인 미리보기예요. 사진의 얼굴을 움직이는 가수 영상에 자동으로 교체한 결과는 아닙니다.</p>
       <button id="clear-media-preview" class="media-btn" type="button">모든 얼굴·영상 미리보기 지우기</button>
     </section>
-
-    <section class="prepay-demo" id="prepay-demo" aria-labelledby="demo-audio-title">
-      <span class="small-caps">LISTEN FIRST · 30 SECONDS</span>
-      <h3 id="demo-audio-title">결제 전, 30초 먼저 들어보세요.</h3>
-      <p class="small-explain">WITHU <strong>기존 예시곡</strong> 또는 내 휴대폰 음악의 30초 미리보기입니다. 새로 주문할 고객 맞춤곡을 미리 생성하는 기능은 아닙니다.</p>
-      <label for="audio-example" class="form-label">예시곡 선택 · 장르별 감상</label>
-      <select id="audio-example" class="media-select"><option value="">예시곡을 불러오는 중이에요…</option></select>
-      <p id="audio-example-genre" class="audio-genre-caption" aria-live="polite">선택한 곡의 장르가 표시돼요.</p>
-      <div class="checkout-cover-sample">
-        <div class="checkout-cover-box">
-          <img id="checkout-cover-image" alt="선택한 예시곡 커버" hidden>
-          <span id="checkout-cover-fallback" aria-hidden="true">♪</span>
-        </div>
-        <div><p>음원 수령 화면에서는 이렇게 나만의 커버와 음악을 함께 감상할 수 있어요.</p>
-          <a id="checkout-view-song" href="song.html?demo=song-mother" class="detail-sample-link">전체화면 재생 페이지 미리보기 ↗</a>
-        </div>
-      </div>
-      <div class="preview-playbar">
-        <button id="audio-preview-play" type="button" class="media-btn primary">▶ 30초 듣기</button>
-        <button id="audio-preview-reset" type="button" class="media-btn">처음부터</button>
-        <output id="audio-preview-time" class="preview-clock">00:00 / 00:30</output>
-      </div>
-      <div class="preview-meter" aria-hidden="true"><div id="audio-preview-fill"></div></div>
-      <audio id="audio-preview-element" preload="none" playsinline></audio>
-      <label for="audio-file-choice" class="media-file-cta">＋ 내 음악 선택 · 30초 미리 듣기</label>
-      <input id="audio-file-choice" type="file" accept="audio/*,.mp3,.m4a,.wav,.ogg" hidden>
-      <p id="audio-preview-message" role="status" class="small-explain">재생 버튼을 눌러주세요. 30초가 지나면 자동으로 멈춰요.</p>
-    </section>
-
-
-    <label for="delivery-email" class="form-label">완성된 노래를 받을 이메일</label>
-    <input id="delivery-email" type="email" autocomplete="email" inputmode="email" placeholder="name@example.com" maxlength="254" required>
-    <label for="delivery-email-again" class="form-label">이메일 주소 다시 확인</label>
-    <input id="delivery-email-again" type="email" autocomplete="off" inputmode="email" placeholder="이메일 주소를 다시 입력해 주세요" maxlength="254" required>
-    <p class="small-explain">주문 기능 활성화 전에는 입력한 이메일을 서버에 전송하거나 저장하지 않습니다.</p>
-    <label class="consent-row"><input type="checkbox" id="consent-delivery"><span>선물 제작과 전달을 위한 이메일 처리에 동의합니다.</span></label>
-    <label class="consent-row"><input type="checkbox" id="consent-service"><span>제작 정책, 취소·환불 조건 및 예상 제공 범위 확인 후 결제하겠습니다.</span></label>
-    <section class="payment-selection" aria-labelledby="payment-title">
-      <span class="small-caps">02 · PAYMENT METHOD</span>
-      <h2 id="payment-title">어떤 방법으로 결제할까요?</h2>
-      <p class="small-explain">선택해도 돈이 빠져나가지 않아요. 결제사 계약 후 실제 사용 가능한 수단만 활성화됩니다.</p>
-      <fieldset class="payment-methods" id="payment-methods">
-        <legend class="screen-reader-only">결제 방법 선택 미리보기</legend>
-        <label class="payment-option" for="pay-toss"><input type="radio" id="pay-toss" name="paymentMethod" value="toss_pay" checked><span class="payment-option-copy"><strong>토스페이</strong><small>Toss Pay · 간편결제</small></span></label>
-        <label class="payment-option" for="pay-kakao"><input type="radio" id="pay-kakao" name="paymentMethod" value="kakao_pay"><span class="payment-option-copy"><strong>카카오페이</strong><small>Kakao Pay · 간편결제</small></span></label>
-        <label class="payment-option" for="pay-naver"><input type="radio" id="pay-naver" name="paymentMethod" value="naver_pay"><span class="payment-option-copy"><strong>네이버페이</strong><small>Naver Pay · 간편결제</small></span></label>
-        <label class="payment-option" for="pay-card"><input type="radio" id="pay-card" name="paymentMethod" value="card"><span class="payment-option-copy"><strong>신용·체크카드</strong><small>PG 보안 결제창</small></span></label>
-        <label class="payment-option" for="pay-transfer"><input type="radio" id="pay-transfer" name="paymentMethod" value="transfer"><span class="payment-option-copy"><strong>실시간 계좌이체</strong><small>은행 인증 후 결제</small></span></label>
-        <label class="payment-option" for="pay-virtual"><input type="radio" id="pay-virtual" name="paymentMethod" value="virtual_account"><span class="payment-option-copy"><strong>가상계좌 입금</strong><small>무통장입금 · 입금 확인형</small></span></label>
-      </fieldset>
-      <div class="method-explainer" aria-live="polite">
-        <strong id="payment-method-title">토스페이</strong>
-        <p id="payment-method-help">실제 결제 시 토스페이 앱 또는 제공된 인증창에서 승인합니다.</p>
-      </div>
-      <p class="small-explain">일반 계좌번호에 직접 송금받는 방식은 자동 대조가 어렵습니다. 무통장입금을 자동화하려면 PG 가상계좌와 입금 완료 알림을 연결해야 합니다.</p>
-    </section>
-   </section>
-   <aside class="checkout-card order-summary" aria-labelledby="summary-title">
-    <span class="small-caps">03 · YOUR MUSIC LETTER</span>
-    <h2 id="summary-title">주문 내용 확인</h2>
-    <div class="preview-group">
-     <span class="preview-label">노래 제목</span>
-     <strong id="order-title">아직 준비된 노래가 없어요.</strong>
-    </div>
-    <div class="preview-group">
-     <span class="preview-label">음악 스타일</span>
-     <p id="order-style">가사 작성 화면에서 음악 스타일을 확정해 주세요.</p>
-    </div>
-    <div class="preview-group">
-     <span class="preview-label">곡별 제작 장르</span>
-     <div id="order-song-genres" class="order-song-genres">장르 선택을 준비 중이에요.</div>
-    </div>
-    <div class="preview-group">
-     <span class="preview-label">가사 미리보기</span>
-     <div id="order-lyrics" class="lyric-preview">가사 작성 화면으로 돌아가 먼저 노랫말을 준비해 주세요.</div>
-    </div>
-    <div class="price-row"><span>상품 표시가격</span><strong id="order-price">가격 확인 중</strong></div>
-    <p id="order-pricing-notice" class="small-explain" role="status">이 화면은 가격표 미리보기이며 실제 결제가 진행되지 않습니다.</p>
-    <div class="method-summary"><span>선택한 결제수단</span><strong id="selected-payment-method">토스페이</strong></div>
-    <p class="small-explain">가격은 서버에서 확정한 금액만 사용하며, 주문·결제 단계에서 임의로 변경할 수 없습니다.</p>
-    <button id="inspect-order" type="button" class="checkout-button secondary">입력 내용 확인</button>
-    <button id="preview-payment" type="button" class="checkout-button preview">선택한 결제수단 미리보기</button>
-    <button id="confirm-checkout" type="button" class="checkout-button" disabled>결제 및 노래 제작 신청 준비 중</button>
-    <p id="checkout-message" class="checkout-message" role="status">현재는 실제 결제나 이메일 발송이 진행되지 않습니다.</p>
-    <a class="edit-link" href="create.html">← 가사 수정하러 돌아가기</a>
-   </aside>
+  </section>
+  <section class="checkout-stage checkout-card" data-checkout-step="review" aria-labelledby="summary-title" hidden>
+   <span class="small-caps">YOUR FINAL CHOICES</span>
+   <h2 id="summary-title">주문 내용을 확인해 주세요.</h2>
+   <div class="preview-group"><span class="preview-label">노래 제목</span><strong id="order-title">노래 제목</strong></div>
+   <div class="preview-group"><span class="preview-label">선택한 상품</span><strong id="order-product">맞춤 노래 1곡</strong></div>
+   <div class="preview-group"><span class="preview-label">완성곡별 장르</span><p id="order-song-genres" class="order-song-genres"></p></div>
+   <div class="preview-group"><span class="preview-label">스타일 요청사항</span><p id="order-style"></p></div>
+   <div class="preview-group"><span class="preview-label">확정 가사</span><div id="order-lyrics" class="lyric-preview"></div></div>
+   <div class="price-row"><span>상품 금액</span><strong id="order-price">가격 확인 중</strong></div>
+   <p id="order-pricing-notice" class="small-explain"></p>
+   <a class="edit-link" href="create.html?step=7">← 가사 다시 확인하기</a>
+  </section>
+  <p id="checkout-message" role="alert" class="checkout-message" hidden></p>
+  <div class="wizard-actions">
+   <button id="checkout-prev" type="button" class="checkout-button secondary" hidden>← 이전</button>
+   <button id="checkout-next" type="button" class="checkout-button">다음 →</button>
+   <a id="go-payment" href="payment.html" class="checkout-button" hidden>결제 페이지로 이동 →</a>
   </div>
-  <dialog id="payment-preview-dialog" class="payment-preview-dialog" aria-labelledby="demo-title" aria-describedby="demo-notice">
-    <div class="preview-dialog-head"><span class="small-caps">WITHU · PAYMENT PREVIEW</span><button id="close-payment-preview" type="button" class="preview-close" aria-label="미리보기 닫기">×</button></div>
-    <h2 id="demo-title">결제 화면 미리보기</h2>
-    <p id="demo-notice" class="demo-notice">실제 PG 결제창이 아닌 WITHU 화면 구성 시안입니다. 결제·청구·입금계좌 발급·이메일 발송은 발생하지 않습니다.</p>
-    <p id="demo-genre-plan" class="demo-genre-plan">선택한 장르를 확인하세요.</p>
-    <dl class="demo-detail">
-      <div><dt>상품</dt><dd id="demo-product">노래 선물</dd></div>
-      <div><dt>노래 제목</dt><dd id="demo-order">미확정</dd></div>
-      <div><dt>결제수단</dt><dd id="demo-payment-method">토스페이</dd></div>
-      <div><dt>표시가격</dt><dd id="demo-amount">가격 확인 중</dd></div>
-    </dl>
-    <p id="demo-method-detail" class="demo-method-detail"></p>
-    <button type="button" disabled class="checkout-button">실제 결제 준비 중 · 결제 불가</button>
-    <button type="button" id="finish-payment-preview" class="checkout-button secondary">미리보기 닫기</button>
-  </dialog>
  </div>
 </main>
 <footer class="site-footer"><div class="frame footer-inner"><span class="footer-brand">WITHU</span><p>전하고 싶은 마음이 노래가 되는 곳.</p><span class="copyright">© 2026 WITHU</span></div></footer>
-</body>
-</html>
+</body></html>

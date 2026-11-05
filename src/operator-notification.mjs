@@ -47,7 +47,7 @@ export function makeResendOperatorEmail({
         '금액: '+order.amountKrw.toLocaleString('ko-KR')+'원',
         '고객 이메일: '+recipient,
         '곡 제목: '+safeText(order.songTitle,100),
-        '공통 음악 요청: '+safeText(order.sharedStyleNotes||order.musicStyle,500),
+        '공통 음악 요청: '+safeText(order.sharedStyleNotes,500),
         '장르 선택 방식: '+validatedPlan.mode,
         ...trackLines,
         '확정 가사:',

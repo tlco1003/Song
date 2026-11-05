@@ -1,10 +1,11 @@
-/* WITHU public music letters. Only approved self-hosted audio is played. */
+/* WITHU public music letters. Line sync requires real timestamps. */
+import {filterLyricLines,parseLyricDocument,cueIndexAt} from './lyric-timing.mjs';
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id);
 const audio=$('music-audio'),videoPlayer=$('music-video');
 const musicVisual=$('music-visual'),musicVisualStage=$('music-visual-stage'),albumArt=$('album-art');
-let tracks=[],current=0,requestId=0,rawLyrics='',visibleLyrics=[],activeLine=-1;
+let tracks=[],current=0,requestId=0,rawLyrics='',visibleLyrics=[],activeLine=-1,lyricCueSeconds=null;
 const deviceAudio=[],deviceVideo=[];
 const fileOK=s=>typeof s==='string'&&/^[a-zA-Z0-9가-힣_.-]{1,110}$/.test(s);
 const fileURL=(root,s)=>root+encodeURIComponent(s);
@@ -40,25 +41,15 @@ async function available(url){
  return 'unchecked';
 }
 function status(text){$('playback-message').textContent=text}
-function filterLyricLines(text){
- return String(text||'').replace(/\r\n?/g,'\n').split('\n').map(s=>s.trim()).filter(s=>{
-  if(!s)return false;
-  // Arrangement commands, prompt labels and section headers are not lyrics.
-  if(/^\[[^\]]*\]$/u.test(s))return false;
-  if(/^(?:version|버전)\s*\d+\s*\]?$/iu.test(s))return false;
-  if(/^(?:verse(?:\s*\d+)?|chorus|pre[- ]?chorus(?:\s*\d+)?|bridge|intro|outro|finale|refrain|instrumental|interlude|repeat|반복|브릿지|인트로|아웃트로|간주)\s*\]?$/iu.test(s))return false;
-  if(/^(?:\/\/|#)\s*(?:version|verse|chorus|bridge|반복|브릿지)/iu.test(s))return false;
-  return true;
- });
-}
 function setActiveLine(index,force=false){
  if(!visibleLyrics.length)return;
- const next=Math.max(0,Math.min(visibleLyrics.length-1,index));
+ const next=index<0?-1:Math.max(0,Math.min(visibleLyrics.length-1,index));
  if(next===activeLine&&!force)return;
  const root=$('lyrics-content'),view=$('lyrics-scroll'),children=root.children;
  if(!children.length)return;
  if(activeLine>=0&&children[activeLine])children[activeLine].classList.remove('is-active');
  activeLine=next;
+ if(next<0){view.scrollTop=0;return}
  const el=children[activeLine];
  el.classList.add('is-active');
  // Keep the active lyric centered inside a 3-line viewport.
@@ -68,32 +59,25 @@ function setActiveLine(index,force=false){
 }
 function drawLyrics(text){
  const root=$('lyrics-content');root.replaceChildren();
- visibleLyrics=filterLyricLines(text);activeLine=-1;
- if(!visibleLyrics.length){root.textContent='표시할 가사가 아직 등록되지 않았어요.';return}
+ const parsed=parseLyricDocument(text);
+ visibleLyrics=parsed.lines;lyricCueSeconds=parsed.cues;activeLine=-1;
+ const hint=$('lyrics-sync-hint');
+ if(!visibleLyrics.length){
+  root.textContent='표시할 가사가 아직 등록되지 않았어요.';
+  if(hint)hint.textContent='';
+  return;
+ }
  for(const line of visibleLyrics){
   const p=document.createElement('p');p.className='lyric-line';p.textContent=line;root.appendChild(p);
  }
- setActiveLine(0,true);
+ if(hint)hint.textContent=lyricCueSeconds?'실제 구절 시작 시각에 맞춰 가사가 이동해요.':'가사 시간 정보가 없어 자동 이동하지 않아요. 위아래로 스크롤해 보세요.';
+ if(lyricCueSeconds)advanceLyrics();
 }
 function advanceLyrics(){
  const player=tracks[current]?.mediaKind==='video'?videoPlayer:audio;
- if(!visibleLyrics.length||player.hidden)return;
- const t=tracks[current];
- const duration=Number.isFinite(player.duration)&&player.duration>0?player.duration:t.durationSeconds;
- if(!duration||!Number.isFinite(duration))return;
- // True line-level synchronization needs confirmed per-line timestamps (.LRC or cues).
- // Until then the three-line window follows APPROXIMATE audio progress, not word timing.
- const intro=Math.min(14,Math.max(4,duration*0.035));
- const outro=Math.min(13,duration*0.025);
- const pos=Math.max(0,Math.min(1,(player.currentTime-intro)/Math.max(1,duration-intro-outro)));
- let target=Math.floor(pos*visibleLyrics.length);
- if(Array.isArray(t.lyricCueSeconds)&&t.lyricCueSeconds.length===visibleLyrics.length){
-  target=0;
-  for(let n=1;n<t.lyricCueSeconds.length;n++){
-   if(Number(t.lyricCueSeconds[n])<=player.currentTime)target=n;else break;
-  }
- }
- setActiveLine(target);
+ // Music sections and sung syllables vary. Only real start cues can drive lyrics.
+ if(!lyricCueSeconds||!visibleLyrics.length||player.hidden)return;
+ setActiveLine(cueIndexAt(lyricCueSeconds,player.currentTime));
 }
 function showPlayer(kind){
  audio.hidden=kind!=='audio';
@@ -128,7 +112,7 @@ async function select(index,autoPlay=false){
  if(track.lyricsText){rawLyrics=track.lyricsText;drawLyrics(rawLyrics)}
  else if(track.lyricsFile&&fileOK(track.lyricsFile)){
   readText(fileURL('media/',track.lyricsFile)).then(text=>{
-   if(token!==requestId)return;rawLyrics=text;drawLyrics(rawLyrics);
+   if(token!==requestId)return;rawLyrics=text;drawLyrics(rawLyrics);advanceLyrics();
   }).catch(()=>{if(token===requestId)drawLyrics('')});
  }
  // A short decorative video runs silently and loops independently of the full MP3.
@@ -145,7 +129,7 @@ async function select(index,autoPlay=false){
   const player=isVideo?videoPlayer:audio;
   player.src=track.deviceURL||fileURL('media/',track.file);
   showPlayer(isVideo?'video':'audio');
-  status(isVideo?'재생 버튼으로 엄마 노래 영상을 감상할 수 있어요.':track.visualMode==='silent-loop'?'영상은 무음으로 반복되고, 아래 재생 버튼으로 원곡을 들을 수 있어요.':'노래를 재생하면 가사가 함께 이동해요.');
+  status(isVideo?'재생 버튼으로 엄마 노래 영상을 감상할 수 있어요.':track.visualMode==='silent-loop'?'영상은 무음으로 반복되고, 아래 재생 버튼으로 원곡을 들을 수 있어요.':'노래를 재생하고 아래에서 가사를 확인해 주세요.');
   if(autoPlay)player.play().catch(()=>status('재생 버튼을 눌러 다음 곡을 감상해 주세요.'));
  }else{
   showPlayer('none');

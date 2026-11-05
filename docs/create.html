@@ -1,67 +1,96 @@
 <!doctype html>
 <html lang="ko">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1,viewport-fit=cover">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#231d29">
-<meta name="description" content="WITHU — 전하고 싶은 마음을 노래로. 나만의 가사와 음악 분위기를 준비하세요.">
+<meta name="description" content="WITHU — 소중한 마음을 담은 맞춤 노래를 한 단계씩 완성하세요.">
 <title>WITHU — 나만의 노래 만들기</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="create.css">
-<script defer src="create.js?v=20261105-duo-genre-draft"></script>
+<link rel="stylesheet" href="create.css?v=20261105-stepflow-01">
+<script defer src="create.js?v=20261105-stepflow-01"></script>
 </head>
 <body>
 <header class="site-header"><div class="frame header-inner">
  <a class="brand" href="./" aria-label="WITHU 홈"><span class="brand-icon">♪</span> WITHU</a>
- <nav aria-label="사이트 메뉴"><a href="./">음악 감상</a><a href="create.html" aria-current="page">노래 만들기</a></nav>
+ <nav aria-label="사이트 메뉴"><a href="./">노래 감상</a><a href="create.html" aria-current="page">나만의 노래</a></nav>
  <span class="brand-caption">Your story becomes a song.</span>
 </div></header>
 <main class="create-page">
-<section class="frame creation-intro">
- <span class="small-caps">CREATE YOUR OWN MUSIC LETTER</span>
- <h1>전하고 싶은 마음을 <em>노래로.</em></h1>
- <p>누군가에게 전하고 싶은 이야기와 음악을 골라주세요. 가사를 수정한 뒤 선물 옵션과 받을 이메일을 확인할 수 있어요.</p>
-</section>
-<div class="frame creation-layout">
- <section class="creation-card" aria-label="사연 입력">
-  <div class="card-heading"><span class="step-indicator">01</span><div><h2>어떤 마음을 전하고 싶나요?</h2><p>짧게 적어도 괜찮아요.</p></div></div>
-  <form id="story-form">
-   <label for="recipient">상대방을 어떻게 부르나요?</label><input id="recipient" name="recipient" maxlength="80" placeholder="예: 엄마, 자기야, 친구야" required>
-   <label for="memory">그 사람과의 추억이나 기억에 남는 장면이 있나요?</label><textarea id="memory" rows="3" maxlength="1500" placeholder="함께 웃었던 일, 기억에 남는 순간"></textarea>
-   <label for="message">가장 전하고 싶은 말이 무엇인가요?</label><textarea id="message" rows="3" maxlength="1000" placeholder="꼭 전하고 싶었던 진심"></textarea>
-   <label for="gratitudeApology">고맙거나 미안했던 일이 있나요?</label><textarea id="gratitudeApology" rows="3" maxlength="1500" placeholder="마음속에 남아 있는 말"></textarea>
-   <label for="occasion">어떤 때 선물할 노래인가요?</label><select id="occasion"><option>감사</option><option value="사랑·고백">사랑</option><option>생일</option><option>결혼</option><option value="추억·그리움">기념일·추억</option><option value="위로·응원">위로</option><option>축하</option><option value="사과·화해">사과</option><option>기타</option></select>
-   <div class="choice-grid">
-    <div><label for="recipientAgeGroup">받는 사람의 나이대</label><select id="recipientAgeGroup"><option value="unknown">선택 안 함</option><option value="under20">10대 이하</option><option value="20s">20대</option><option value="30s">30대</option><option value="40s">40대</option><option value="50s">50대</option><option value="60s">60대</option><option value="70plus">70대 이상</option></select></div>
-    <div><label for="relativePosition">상대방과 나의 관계</label><select id="relativePosition"><option value="unknown">자연스럽게</option><option value="older">윗사람</option><option value="peer">친구·동등한 사이</option><option value="younger">아랫사람</option></select></div>
-   </div>
-   <label for="speechStyle">평소 그 사람에게 쓰는 말투</label><select id="speechStyle"><option value="auto">내 사연의 말투에 맞게</option><option value="casual">친근한 반말</option><option value="polite">따뜻한 존댓말</option><option value="mixed">반말과 존댓말을 함께</option></select>
-   <div class="choice-grid">
-    <div><label for="genre">음악 장르</label><select id="genre"><option>발라드</option><option>어쿠스틱</option><option>재즈</option><option>트로트</option><option>R&B</option><option>K-POP</option><option>인디팝</option></select></div>
-    <div><label for="mood">음악 분위기</label><select id="mood"><option>따뜻한</option><option>감동적인</option><option value="애절한">아련한</option><option value="희망찬">밝은</option><option value="신나는">활기찬</option><option value="설레는">설레는</option></select></div>
-   </div>
-   <input type="hidden" id="lyricLength" value="full">
-   <button type="submit" id="generate-lyrics" class="main-create-button">내 이야기로 가사 만들기 <span>✦</span></button>
-   <p id="generation-status" class="action-status" role="status">가사 제작 기능을 준비하고 있어요. 아래에 직접 가사를 적어 노래를 만들 수도 있습니다.</p>
-  </form>
- </section>
- <section class="creation-card lyrics-editor-card" aria-label="가사와 음악 스타일 편집">
-  <div class="card-heading"><span class="step-indicator">02</span><div><h2>가사를 다듬고, 음악을 고르세요.</h2><p>내 마음에 드는 표현으로 자유롭게 고칠 수 있어요.</p></div></div>
-  <label for="song-title">노래 제목</label><input id="song-title" maxlength="100" placeholder="예: 엄마에게">
-  <label for="song-lyrics">가사</label><textarea id="song-lyrics" rows="15" maxlength="5500" placeholder="[Verse 1]&#10;...&#10;&#10;[Chorus]&#10;..."></textarea>
-  <label for="song-style">음악 스타일</label><textarea id="song-style" rows="7" maxlength="1200" placeholder="음악 장르와 분위기를 선택하면 기본 스타일을 준비할 수 있어요."></textarea>
-  <button id="style-from-choices" type="button" class="outline-button">선택한 음악 분위기 적용</button>
-  <p class="editor-hint">가사와 음악 스타일이 마음에 들면 다음 화면에서 선물 옵션과 이메일 주소를 확인하세요.</p>
-  <div class="editor-buttons">
-   <button id="copy-lyrics" type="button" class="outline-button">가사 복사</button>
-   <button id="copy-style" type="button" class="outline-button">음악 스타일 복사</button>
+ <div class="frame wizard-shell">
+  <div class="wizard-header">
+   <span class="small-caps">MAKE YOUR MUSIC LETTER</span>
+   <p id="create-progress-label" class="wizard-progress-text">1 / 7 · 누구에게 전할까요?</p>
+   <div class="wizard-progress-bar" role="progressbar" aria-label="노래 만들기 진행" aria-valuemin="1" aria-valuemax="7" aria-valuenow="1" id="create-progress"><span id="create-progress-fill"></span></div>
   </div>
-  <a id="go-create" href="checkout.html" class="main-create-button">선물 주문 확인하기 <span>↗</span></a>
-  <p id="handoff-status" class="action-status" role="status">실제 결제 및 자동 제작은 준비 중이며 아직 금액이 청구되지 않습니다.</p>
- </section>
-</div>
+  <form id="story-form" novalidate>
+   <section class="wizard-step creation-card" data-create-step="1" aria-labelledby="question-recipient">
+    <span class="wizard-eyebrow">01 · FOR SOMEONE SPECIAL</span>
+    <h1 id="question-recipient">누구에게 노래를 <em>선물하나요?</em></h1>
+    <p class="wizard-intro">가장 먼저 마음을 전할 사람을 떠올려 주세요.</p>
+    <label for="recipient">그 사람을 어떻게 부르나요?</label>
+    <input id="recipient" name="recipient" maxlength="80" placeholder="예: 엄마, 친구야, 자기야" autocomplete="off" required>
+    <label for="occasion">어떤 날을 위한 노래인가요?</label>
+    <select id="occasion"><option>감사</option><option value="사랑·고백">사랑</option><option>생일</option><option>결혼</option><option value="추억·그리움">기념일·추억</option><option value="위로·응원">위로</option><option>축하</option><option value="사과·화해">사과</option><option>기타</option></select>
+   </section>
+   <section class="wizard-step creation-card" data-create-step="2" aria-labelledby="question-memory" hidden>
+    <span class="wizard-eyebrow">02 · MEMORIES</span><h2 id="question-memory">기억에 남는 <em>순간은?</em></h2>
+    <p class="wizard-intro">함께 웃었던 일, 특별한 장소, 아직 기억나는 장면을 들려주세요.</p>
+    <label for="memory">추억이나 장면</label>
+    <textarea id="memory" rows="6" maxlength="1500" placeholder="예: 늦은 밤 엄마가 기다려 주시던 모습"></textarea>
+   </section>
+   <section class="wizard-step creation-card" data-create-step="3" aria-labelledby="question-message" hidden>
+    <span class="wizard-eyebrow">03 · YOUR WORDS</span><h2 id="question-message">꼭 전하고 싶은 <em>말은?</em></h2>
+    <p class="wizard-intro">노래에서 가장 중요하게 들려주고 싶은 마음이에요.</p>
+    <label for="message">전하고 싶은 마음</label>
+    <textarea id="message" rows="6" maxlength="1000" placeholder="예: 말로는 못 했지만 정말 고마워요"></textarea>
+   </section>
+   <section class="wizard-step creation-card" data-create-step="4" aria-labelledby="question-gratitude" hidden>
+    <span class="wizard-eyebrow">04 · SOMETHING UNSAID</span><h2 id="question-gratitude">고맙거나 미안했던 <em>일은?</em></h2>
+    <p class="wizard-intro">생각나지 않는다면 비워두어도 괜찮아요.</p>
+    <label for="gratitudeApology">아직 하지 못한 이야기 (선택)</label>
+    <textarea id="gratitudeApology" rows="6" maxlength="1500" placeholder="예: 항상 곁에 있어 준 것에 감사해요"></textarea>
+   </section>
+   <section class="wizard-step creation-card" data-create-step="5" aria-labelledby="question-voice" hidden>
+    <span class="wizard-eyebrow">05 · HOW TO SAY IT</span><h2 id="question-voice">어떤 말투가 <em>자연스러울까요?</em></h2>
+    <p class="wizard-intro">받는 사람에 맞게 가사의 말투를 조절해요.</p>
+    <label for="recipientAgeGroup">받는 사람의 나이대</label><select id="recipientAgeGroup"><option value="unknown">선택 안 함</option><option value="under20">10대 이하</option><option value="20s">20대</option><option value="30s">30대</option><option value="40s">40대</option><option value="50s">50대</option><option value="60s">60대</option><option value="70plus">70대 이상</option></select>
+    <label for="relativePosition">상대방과 나의 관계</label><select id="relativePosition"><option value="unknown">자연스럽게</option><option value="older">윗사람</option><option value="peer">친구·동등한 사이</option><option value="younger">아랫사람</option></select>
+    <label for="speechStyle">평소 사용하는 말투</label><select id="speechStyle"><option value="auto">사연에 맞게 자연스럽게</option><option value="casual">친근한 반말</option><option value="polite">따뜻한 존댓말</option><option value="mixed">반말과 존댓말을 함께</option></select>
+   </section>
+   <section class="wizard-step creation-card" data-create-step="6" aria-labelledby="question-music" hidden>
+    <span class="wizard-eyebrow">06 · YOUR SOUND</span><h2 id="question-music">어떤 음악으로 <em>전할까요?</em></h2>
+    <p class="wizard-intro">결제 전 상품 설정에서도 곡별 장르를 다시 선택할 수 있어요.</p>
+    <label for="genre">기본 음악 장르</label><select id="genre"><option>발라드</option><option>어쿠스틱</option><option>재즈</option><option>트로트</option><option>R&B</option><option>K-POP</option><option>인디팝</option></select>
+    <label for="mood">음악 분위기</label><select id="mood"><option>따뜻한</option><option>감동적인</option><option value="애절한">아련한</option><option value="희망찬">밝은</option><option value="신나는">활기찬</option><option value="설레는">설레는</option></select>
+    <input type="hidden" id="lyricLength" value="full">
+   </section>
+   <section class="wizard-step creation-card lyrics-editor-card" data-create-step="7" aria-labelledby="question-lyrics" hidden>
+    <span class="wizard-eyebrow">07 · YOUR SONG</span><h2 id="question-lyrics">가사를 마지막으로 <em>확인해 주세요.</em></h2>
+    <p class="wizard-intro">직접 작성하거나, 가사 작성 기능을 이용해 내용을 다듬을 수 있어요.</p>
+    <label for="song-title">노래 제목</label><input id="song-title" maxlength="100" placeholder="예: 엄마에게">
+    <label for="song-lyrics">가사</label><textarea id="song-lyrics" rows="12" maxlength="5500" placeholder="[Verse 1]&#10;...&#10;&#10;[Chorus]&#10;..."></textarea>
+    <button type="submit" id="generate-lyrics" class="outline-button">내 사연으로 가사 만들기</button>
+    <p id="generation-status" class="action-status" role="status">직접 가사를 입력해도 괜찮아요.</p>
+    <label for="song-style">음악 스타일 · 편곡 요청</label><textarea id="song-style" rows="5" maxlength="1200" placeholder="음악 장르와 분위기를 선택하면 기본 스타일이 채워져요."></textarea>
+    <button id="style-from-choices" type="button" class="outline-button">선택한 장르·분위기로 스타일 다시 만들기</button>
+    <div class="editor-buttons">
+     <button id="copy-lyrics" type="button" class="outline-button">가사 복사</button>
+     <button id="copy-style" type="button" class="outline-button">스타일 복사</button>
+    </div>
+    <p id="handoff-status" class="action-status" role="status">선택한 내용은 주문 단계로 안전하게 이어집니다.</p>
+   </section>
+   <p id="step-error" class="action-status wizard-error" role="alert" hidden></p>
+   <div class="wizard-actions">
+    <button id="create-prev" type="button" class="wizard-prev" hidden>← 이전</button>
+    <button id="create-next" type="button" class="main-create-button">다음으로 <span>→</span></button>
+    <a id="go-create" href="checkout.html" class="main-create-button" hidden>상품 선택하기 <span>→</span></a>
+   </div>
+  </form>
+ </div>
 </main>
 <footer class="site-footer"><div class="frame footer-inner"><span class="footer-brand">WITHU</span><p>마음이 노래가 되는 순간.</p><span class="copyright">© 2026 WITHU</span></div></footer>
 </body></html>

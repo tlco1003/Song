@@ -160,13 +160,21 @@ async function start(){
             throw Error('결제 제공자 SDK가 연결되지 않았습니다.');
           const methods=document.createElement('div');methods.id='withu-live-payment-widget';
           const agreement=document.createElement('div');agreement.id='withu-live-payment-agreement';
-          $('payment-methods').hidden=true;
           $('payment-methods').after(methods,agreement);
-          widgets=window.TossPayments(readiness.clientKey).widgets({customerKey:verifiedUser.uid});
+          // Toss customerKey must be a non-PII 22–50 character stable identifier.
+          // A raw Firebase UID is not guaranteed to satisfy that length contract.
+          const digest=await crypto.subtle.digest('SHA-256',
+            new TextEncoder().encode('withu-toss-customer-v1:'+verifiedUser.uid));
+          const customerKey='WITHU_'+[...new Uint8Array(digest)]
+            .map(byte=>byte.toString(16).padStart(2,'0')).join('').slice(0,40);
+          widgets=window.TossPayments(readiness.clientKey).widgets({customerKey});
           await widgets.setAmount({currency:'KRW',value:created.amountKrw});
           await widgets.renderPaymentMethods({selector:'#withu-live-payment-widget',variantKey:'DEFAULT'});
-          await widgets.renderAgreement({selector:'#withu-live-payment-agreement',variantKey:'AGREEMENT'});
+          await widgets.renderAgreement({selector:'#withu-live-payment-agreement'});
           prepared=created;
+          $('payment-methods').hidden=true;
+          $('payment-method-hint').textContent=
+            '실제 이용 가능 수단은 위 토스페이먼츠 결제위젯에 표시됩니다. 상점 계약에 따라 다릅니다.';
           status('토스페이먼츠 결제수단을 선택한 뒤 결제하기 버튼을 눌러 주세요.');
           button.textContent='결제하기';
         }else{
@@ -178,6 +186,12 @@ async function start(){
           });
         }
       }catch(error){
+        if(!prepared){
+          widgets=null;
+          document.getElementById('withu-live-payment-widget')?.remove();
+          document.getElementById('withu-live-payment-agreement')?.remove();
+          $('payment-methods').hidden=false;
+        }
         status(error?.message||'결제 준비 중 오류가 발생했습니다.');
       }finally{busy=false;renderState();if(prepared&&widgets)button.textContent='결제하기';}
     });

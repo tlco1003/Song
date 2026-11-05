@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ko"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#251e29">
+<meta name="description" content="WITHU 결제 완료 고객의 가사 수정 요청">
+<title>WITHU — 내 노래 가사 수정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="checkout.css">
+<script defer src="lyrics-revision.js?v=20261105-1"></script>
+</head>
+<body>
+<header class="site-header"><div class="frame header-inner">
+<a class="brand" href="./" aria-label="WITHU 홈"><span class="brand-icon" aria-hidden="true">♪</span> WITHU</a>
+<nav aria-label="사이트 메뉴"><a href="./">노래 감상</a></nav>
+</div></header>
+<main class="checkout-page"><div class="frame" style="max-width:730px">
+<header class="checkout-intro"><span class="small-caps">YOUR MUSIC LETTER</span>
+<h1>내 노래의 가사를 <em>다듬고 싶을 때</em></h1>
+<p>결제가 확인된 주문에서만 수정 요청을 받을 수 있어요.</p></header>
+<section class="checkout-card">
+<div id="revision-status" role="status" aria-live="polite">주문과 본인 인증을 확인하고 있어요.</div>
+<div id="revision-editor" hidden>
+ <h2 id="revision-title">내 노래 가사</h2>
+ <label class="form-label" for="revision-lyrics">수정할 가사</label>
+ <textarea id="revision-lyrics" rows="14" maxlength="5500" spellcheck="true" aria-describedby="revision-explain"></textarea>
+ <p id="revision-explain" class="small-explain">수정 요청은 별도로 검토됩니다. 이미 완성된 음원이 자동으로 변경되거나 즉시 재생성되는 것은 아니며, 재제작 범위와 수정 가능 횟수는 주문 조건을 따릅니다.</p>
+ <button type="button" id="request-revision" class="checkout-button" disabled>수정 검토 요청</button>
+</div>
+</section>
+<div class="detail-backlink"><a href="./">← WITHU 홈으로</a></div>
+</div></main>
+<footer class="site-footer"><div class="frame footer-inner"><span class="footer-brand">WITHU</span><p>마음이 노래가 되는 곳.</p></div></footer>
+</body></html>

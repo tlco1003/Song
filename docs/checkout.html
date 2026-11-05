@@ -142,6 +142,15 @@
       <label for="audio-example" class="form-label">예시곡 선택 · 장르별 감상</label>
       <select id="audio-example" class="media-select"><option value="">예시곡을 불러오는 중이에요…</option></select>
       <p id="audio-example-genre" class="audio-genre-caption" aria-live="polite">선택한 곡의 장르가 표시돼요.</p>
+      <div class="checkout-cover-sample">
+        <div class="checkout-cover-box">
+          <img id="checkout-cover-image" alt="선택한 예시곡 커버" hidden>
+          <span id="checkout-cover-fallback" aria-hidden="true">♪</span>
+        </div>
+        <div><p>음원 수령 화면에서는 이렇게 나만의 커버와 음악을 함께 감상할 수 있어요.</p>
+          <a id="checkout-view-song" href="song.html?demo=song-mother" class="detail-sample-link">전체화면 재생 페이지 미리보기 ↗</a>
+        </div>
+      </div>
       <div class="preview-playbar">
         <button id="audio-preview-play" type="button" class="media-btn primary">▶ 30초 듣기</button>
         <button id="audio-preview-reset" type="button" class="media-btn">처음부터</button>

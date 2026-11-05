@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {ORDER_STATES} from '../src/commerce.mjs';
 import {buildSongProductionPlan} from '../src/song-production-plan.mjs';
 import {prepareCustomerDeliverables} from '../src/song-delivery-selection.mjs';
+import {sendSelectedCustomerSongs} from '../src/customer-delivery.mjs';
 
 function paidOrder(productId='audio',selection={mode:'single',genres:['발라드']}){
  const order={
@@ -80,4 +81,43 @@ test('unpaid, missing, duplicated and unverified candidates cannot be delivered'
  const unsafe=[batch(1,['FIRST_TAKE'])];
  unsafe[0].candidates[0].privateAssetKey='https://public.example.test/music.mp3';
  assert.throws(()=>prepareCustomerDeliverables({...good,candidateBatches:unsafe}),/not verified and ready/);
+});
+
+
+test('paid customer delivery forwards only one chosen file even if generator returned two',async()=>{
+ const order={
+  ...paidOrder(),recipientVerified:true,customerEmail:'customer@example.test'
+ };
+ const calls=[];
+ const result=await sendSelectedCustomerSongs({
+  order,deliveryJob:{orderId:order.id,key:'deliver:'+order.id,status:'claimed'},
+  candidateBatches:[batch(1,['SONG_CHOICE_1','SONG_CHOICE_2'])],
+  selections:[{index:1,candidateId:'SONG_CHOICE_2'}],
+  deliveryAdapter:{async sendSelectedPrivateLinks(args){
+   calls.push(args);
+   return {messageId:'mock-delivery-123'};
+  }}
+ });
+ assert.equal(result.deliveredSongCount,1);
+ assert.equal(calls.length,1);
+ assert.equal(calls[0].selectedSongs.length,1);
+ assert.equal(calls[0].selectedSongs[0].candidateId,'SONG_CHOICE_2');
+ assert.ok(!JSON.stringify(calls).includes('SONG_CHOICE_1'));
+ assert.equal(calls[0].idempotencyKey,'withu-delivery-'+order.id);
+});
+test('no customer delivery occurs before verified recipient and full song selection',async()=>{
+ const order=paidOrder();
+ const calls=[];
+ const makeArgs=(o)=>({
+  order:o,deliveryJob:{orderId:o.id,key:'deliver:'+o.id,status:'claimed'},
+  candidateBatches:[batch(1,['SONG_CHOICE_1','SONG_CHOICE_2'])],
+  selections:[{index:1,candidateId:'SONG_CHOICE_1'}],
+  deliveryAdapter:{async sendSelectedPrivateLinks(args){calls.push(args);return {messageId:'mock'};}}
+ });
+ await assert.rejects(sendSelectedCustomerSongs(makeArgs(order)),/not authorized/);
+ const verified={...order,customerEmail:'customer@example.test',recipientVerified:true};
+ await assert.rejects(sendSelectedCustomerSongs({
+  ...makeArgs(verified),selections:[]
+ }),/Exactly one selection/);
+ assert.equal(calls.length,0);
 });

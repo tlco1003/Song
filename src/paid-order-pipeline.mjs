@@ -91,7 +91,10 @@ async function finalizeVerifiedPayment({orders,order,payment,paymentKey,settings
   const result=await orders.confirmPaidAndEnqueueAtomic({
     orderId:order.id, paymentKey, amountKrw:order.amountKrw,
     expectedState:ORDER_STATES.PAYMENT_PENDING,
+    // Durable adapter must commit one fulfillment job and one paid receipt
+    // job in the same PG-verified transaction, each with a unique key.
     nextState:ORDER_STATES.PAID, route, jobKey:'fulfill:'+order.id,
+    receiptJobKey:'receipt:'+order.id,
     songPlan
   });
   if(!result||!['created','duplicate'].includes(result.outcome))

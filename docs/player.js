@@ -114,7 +114,7 @@ async function select(index,autoPlay=false){
  cover.hidden=true;fallbackCover.hidden=false;
  cover.removeAttribute('src');
  if(coverPath)cover.src=coverPath;
- $('cover-detail-link').href='song.html?demo='+encodeURIComponent(track.id||'');
+ $('cover-detail-link').href='song.html';
  $('track-title').textContent=track.title;
  $('track-subtitle').textContent=track.subtitle||'소중한 이야기를 담은 노래';
  $('track-genre').textContent=track.genre||'장르 정보 준비 중';
@@ -175,8 +175,8 @@ function showTracks(){
     mini.appendChild(image);
   }else mini.textContent='♪';
   const more=document.createElement('a');more.className='track-detail-link';
-  more.href='song.html?demo='+encodeURIComponent(track.id||'');
-  more.textContent='자세히 보기';more.setAttribute('aria-label',track.title+' 상세 재생 페이지 열기');
+  more.href='song.html';
+  more.textContent='내 노래';more.setAttribute('aria-label','구매한 노래를 이메일 인증하고 확인하기');
   tile.append(mini,b,more);root.appendChild(tile);
  }
 }
@@ -239,14 +239,6 @@ $('local-lyrics').addEventListener('change',async event=>{
  drawLyrics(rawLyrics);advanceLyrics();
  $('local-file-notice').textContent='이 기기에서 가사 세 줄씩 감상할 수 있어요.';
  event.target.value='';
-});
-$('copy-lyrics').addEventListener('click',async()=>{
- if(!visibleLyrics.length)return;
- try{
-  await navigator.clipboard.writeText(visibleLyrics.join('\n'));
-  $('copy-lyrics').textContent='복사했어요';
-  setTimeout(()=>$('copy-lyrics').textContent='가사 복사',1800);
- }catch(_){$('local-file-notice').textContent='복사 권한을 확인해 주세요.'}
 });
 async function reviews(){
  try{

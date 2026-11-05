@@ -12,8 +12,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20261105-covers-02">
-  <script src="player.js?v=20261105-covers-02" defer></script>
+  <link rel="stylesheet" href="style.css?v=20261105-private-portal-01">
+  <script src="player.js?v=20261105-private-portal-01" defer></script>
 </head>
 <body>
 <header class="site-header">
@@ -38,7 +38,7 @@
           <div class="album-art cover-artwork" id="album-art">
             <div class="cover-fallback" id="cover-fallback" aria-hidden="true"><span>WITHU</span><strong>♪</strong></div>
             <img id="current-cover" alt="선택한 노래의 커버 이미지" width="560" height="560" hidden>
-            <a class="cover-view-link" id="cover-detail-link" href="song.html?demo=song-mother" aria-label="이 노래 상세 페이지 열기">곡 감상하기 ↗</a>
+            <a class="cover-view-link" id="cover-detail-link" href="song.html" aria-label="구매한 노래를 이메일 인증 후 확인하기">내 노래 확인하기 ↗</a>
           </div>
           <div class="music-visual-stage" id="music-visual-stage" hidden>
             <video id="music-visual" autoplay muted loop playsinline preload="metadata" aria-label="세탁소의 신데렐라 뮤직비디오 무음 반복 재생"></video>
@@ -50,6 +50,17 @@
             <p id="track-genre" class="current-track-genre">장르 정보 불러오는 중</p>
             <p id="track-subtitle">마음을 담은 특별한 선물</p>
           </div>
+        <section class="lyrics-panel" aria-labelledby="lyrics-heading">
+          <div class="lyrics-topline"><span class="small-caps">A LETTER IN EVERY LYRIC</span><span class="lyrics-note">THE WORDS</span></div>
+          <h2 id="lyrics-heading">가사</h2>
+          <p class="lyrics-subtitle" id="lyrics-track-title">한 줄 한 줄, 마음을 담아</p>
+          <div id="lyrics-scroll" class="lyrics-scroll" tabindex="0" aria-label="현재 재생 중인 가사 세 줄">
+            <div id="lyrics-content" class="lyrics-content">가사를 불러오는 중이에요.</div>
+          </div>
+          <div class="lyrics-footer">
+            <span>재생에 따라 가사가 자동 이동해요.</span>
+          </div>
+        </section>
           <div id="audio-zone" class="audio-zone">
             <audio id="music-audio" controls preload="metadata" playsinline hidden aria-label="선택한 노래 재생"></audio>
             <video id="music-video" controls playsinline preload="metadata" hidden aria-label="엄마에게 전하는 노래 영상 재생"></video>
@@ -64,18 +75,6 @@
           <p id="playback-message" class="quiet-message" role="status">원하는 곡을 선택해 주세요.</p>
         </section>
 
-        <section class="lyrics-panel" aria-labelledby="lyrics-heading">
-          <div class="lyrics-topline"><span class="small-caps">A LETTER IN EVERY LYRIC</span><span class="lyrics-note">THE WORDS</span></div>
-          <h2 id="lyrics-heading">가사</h2>
-          <p class="lyrics-subtitle" id="lyrics-track-title">한 줄 한 줄, 마음을 담아</p>
-          <div id="lyrics-scroll" class="lyrics-scroll" tabindex="0" aria-label="현재 재생 중인 가사 세 줄">
-            <div id="lyrics-content" class="lyrics-content">가사를 불러오는 중이에요.</div>
-          </div>
-          <div class="lyrics-footer">
-            <span>재생에 따라 가사가 자동 이동해요.</span>
-            <button id="copy-lyrics" type="button" class="text-link">가사 복사</button>
-          </div>
-        </section>
       </div>
 
       <div class="song-selector">

@@ -37,7 +37,8 @@ test('home uses genuine square album images, per-track thumbnails and detail lin
   assert.ok(home.includes('id="'+id+'"'),id);
  }
  assert.ok(!home.includes('class="record-ring"'));
- assert.match(home,/song.html\?demo=/);
+ assert.match(home,/href="song.html"/);
+ assert.doesNotMatch(home,/song\.html\?demo=/);
  assert.match(player,/coverFor\(track\)/);
  assert.match(player,/tile\.append\(mini,b,more\)/);
  assert.match(player,/cover\.onerror=/);
@@ -62,9 +63,9 @@ test('song detail player has video and audio, auto-hide, seek, fullscreen and pu
  assert.match(songJS,/requestFullscreen/);
  assert.match(songJS,/webkitEnterFullscreen/);
  assert.match(songJS,/duration\*Number\(seek\.value\)\/1000/);
- assert.match(songJS,/loadPrivate/);
- assert.match(songJS,/api\/delivery\//);
- assert.match(songJS,/media\/tracks\.json/);
+ assert.match(songJS,/restoreSession/);
+ assert.match(songJS,/api\/delivery\/session/);
+ assert.doesNotMatch(songJS,/media\/tracks\.json|loadDemo/);
  assert.match(songCSS,/\.detail-player:fullscreen/);
 });
 

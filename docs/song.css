@@ -65,3 +65,21 @@
 .operator-test-settings{margin-top:11px;border-top:1px solid #e8d9e1;padding-top:8px}
 .operator-test-settings summary{color:#7d6472;font-size:11px;cursor:pointer}
 .operator-test-settings input{display:block;width:100%;margin-top:6px;min-height:36px;padding:7px;border:1px solid #ddcbd6;border-radius:6px;font-size:12px}
+
+/* Purchased works stay hidden until an authenticated server session is available. */
+.customer-access{max-width:630px;margin:25px auto 55px;padding:36px 32px;border:1px solid #896b84;border-radius:17px;background:#ffffff0c;text-align:center}
+.customer-access h1{font:400 clamp(41px,6vw,66px)/1.2 "Nanum Brush Script","Gowun Batang",serif;margin:14px 0}
+.customer-access p{font-size:14px;line-height:1.8;color:#eadbe5}
+.customer-access-form{display:grid;gap:12px;max-width:400px;margin:23px auto 0;text-align:left}
+.customer-access-form label{font-size:13px}
+.customer-access-form input{box-sizing:border-box;width:100%;padding:12px 15px;min-height:45px;border:1px solid #bda8b9;border-radius:7px;font:15px "Gowun Batang",serif}
+.customer-auth-status{min-height:38px;margin-top:18px}
+.customer-library{max-width:790px;margin:0 auto 25px}
+.customer-library-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.customer-library h2{font:400 42px "Nanum Brush Script","Gowun Batang",serif;margin:6px 0}
+.customer-order-list{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.customer-song-button{max-width:100%;text-align:left}
+@media(max-width:690px){.customer-access{padding:25px 18px;margin-top:8px}.customer-library h2{font-size:34px}}
+
+/* Respect hidden authorization gates over layout display declarations. */
+.song-detail-body [hidden]{display:none!important}

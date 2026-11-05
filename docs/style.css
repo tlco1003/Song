@@ -211,3 +211,12 @@ button:focus-visible,a:focus-visible,label:focus-visible,.lyrics-scroll:focus-vi
  .track-tile .track-item{min-height:58px}
  .track-detail-link{font-size:10px}
 }
+
+/* Public sample lyrics: between track mood and media player, not a separate column. */
+.listening-grid{grid-template-columns:minmax(0,1fr);max-width:790px;margin-inline:auto}
+.album-panel .lyrics-panel{margin:18px 0 2px;padding:18px 22px 13px;min-height:0;max-height:none;background:#fffaf8}
+.album-panel .lyrics-panel h2{font-size:32px}
+.album-panel .lyrics-panel .lyrics-scroll{height:126px;min-height:126px;max-height:126px}
+.album-panel .lyrics-footer{justify-content:center}
+.album-panel .lyrics-content,.album-panel .lyrics-scroll{-webkit-user-select:none;user-select:none}
+@media(max-width:690px){.album-panel .lyrics-panel{padding:15px 13px 10px;margin-top:15px}}

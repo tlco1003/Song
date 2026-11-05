@@ -139,10 +139,14 @@ test('Cinderella short loops silently while its full MP3 drives playback and lyr
 });
 
 test('playlist controls and private local upload controls are connected to new JS',()=>{
-  for(const id of ['previous-track','next-track','music-audio','music-video','no-audio','track-list','local-song','local-lyrics','lyrics-scroll','copy-lyrics','local-review','review-gallery']){
+  for(const id of ['previous-track','next-track','music-audio','music-video','no-audio','track-list','local-song','local-lyrics','lyrics-scroll','local-review','review-gallery']){
     assert.ok(html.includes('id="'+id+'"'),id);
     assert.ok(js.includes("'"+id+"'"),id+' not used by JS');
   }
+  assert.ok(!html.includes('id="copy-lyrics"'));
+  assert.ok(!js.includes('navigator.clipboard.writeText'));
+  assert.ok(html.indexOf('id="track-subtitle"')<html.indexOf('id="lyrics-content"'));
+  assert.ok(html.indexOf('id="lyrics-content"')<html.indexOf('id="audio-zone"'));
   assert.match(html,/기기에서만/);
   assert.doesNotMatch(html,/embedded-player|embedded-zone|suno.com\/embed/);
   assert.doesNotMatch(js,/suno.com\/embed/);

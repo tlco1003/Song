@@ -17,6 +17,9 @@ async function confirm(){
     ||typeof paymentKey!=='string'||paymentKey.length<6||paymentKey.length>200
     ||!/^\d+$/.test(amountText||'')||!Number.isSafeInteger(amount)||amount<1)
     throw Error('결제 결과 주소가 올바르지 않습니다.');
+  // The server independently verifies the payment; do not retain paymentKey
+  // in browser history or subsequent referrers.
+  history.replaceState(null,'',new URL('payment-success.html',location.href).pathname);
   const [{initializeApp},{getAuth,onAuthStateChanged},
     {getFunctions,httpsCallable},{initializeAppCheck,ReCaptchaEnterpriseProvider}]=
     await Promise.all([

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#281e2c">
+<title>WITHU | 공개 예시곡 가사 싱크 작업실</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Apple SD Gothic Neo",sans-serif;background:#211b27;color:#f5edf4;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;padding:24px 15px 70px}main{width:min(100%,920px);margin:auto}h1{font-size:clamp(22px,4vw,31px);margin:12px 0}p{line-height:1.7}a{color:#f6c9df}
+.header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.label{color:#cdb7ca;font-size:12px;letter-spacing:.12em}
+.intro{font-size:13px;color:#d4c1d2}
+.panel{border:1px solid #72596f;border-radius:15px;background:#33283b;padding:18px;margin:18px 0}
+.controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+button,select,input{font:inherit}button{border:1px solid #bba6b5;background:#4b384d;color:#fff;border-radius:9px;padding:11px 14px;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #f6c9df;outline-offset:2px}
+button:disabled{opacity:.45;cursor:not-allowed}.primary{background:#eac9d8;color:#312235;font-weight:800;border-color:#eac9d8}
+select{background:#281f2d;color:white;border:1px solid #947d94;border-radius:8px;padding:12px;max-width:100%;min-width:250px}
+video,audio{display:block;width:min(100%,720px);margin:15px auto}video{max-height:420px;background:#100e15}
+.marks{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+#clock{font-size:27px;font-variant-numeric:tabular-nums;font-weight:700}#progress{font-size:13px;color:#d4c1d2}
+#status{min-height:26px;font-size:13px;color:#efc7da}
+ol{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;border:1px solid #6f576f;border-radius:11px;padding:10px;background:#302536}
+li.current{border-color:#eed4e0;background:#4b394d}li.done{border-left:3px solid #e0b4d0}
+.line-text{font-size:14px;line-height:1.7;word-break:keep-all}
+.line-number{font-size:11px;color:#c5a7bf;display:block;margin-bottom:3px}
+.time-edit{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.time-edit input{width:83px;border:1px solid #857086;border-radius:7px;padding:8px;background:#211b27;color:#fff;font-size:13px;font-variant-numeric:tabular-nums}
+.time-edit button{font-size:11px;padding:8px}
+.hint{font-size:12px;color:#cbb8cc}
+@media(max-width:530px){li{grid-template-columns:1fr}.time-edit{justify-content:flex-start}.marks>button{flex:1}select{min-width:0;width:100%}}
+</style>
+<script type="module" src="lyric-timer.js?v=20261105-01"></script>
+</head>
+<body>
+<main>
+ <div class="header"><span class="label">WITHU • PUBLIC SONG LYRIC CUE EDITOR</span><a href="index.html">메인으로 돌아가기</a></div>
+ <h1>가사 시간 맞추기</h1>
+ <p class="intro">공개 예시곡의 <strong>실제로 노래하는 순간</strong>에 맞춰 한 줄씩 시간을 기록해요. 이 페이지의 기록은 현재 기기에만 저장되며 서버에 자동 게시되지 않습니다.</p>
+ <div class="panel">
+  <div class="controls"><label for="track-select">곡 선택</label><select id="track-select"><option>곡 목록을 불러오는 중…</option></select></div>
+  <div id="video-wrap" hidden><video id="timer-video" controls playsinline preload="metadata"></video></div>
+  <audio id="timer-audio" controls preload="metadata"></audio>
+  <div class="marks">
+   <span id="clock" aria-live="off">00:00.00</span>
+   <button class="primary" id="mark-next" type="button">현재 구절 시작 시각 기록</button>
+   <button id="undo" type="button">마지막 기록 취소</button>
+  </div>
+  <p class="hint">음악을 들으며 해당 가사를 부르기 시작하는 시점에 <strong>현재 구절 시작 시각 기록</strong>을 눌러요. 개별 줄의 「지금 기록」이나 초 단위 수정도 가능해요. PC에서는 스페이스바로 빠르게 기록할 수 있어요.</p>
+  <div class="controls"><span id="progress">0 / 0줄 기록됨</span><button id="minus" type="button">마지막 기록 -0.1초</button><button id="plus" type="button">마지막 기록 +0.1초</button></div>
+  <p id="status" role="status">곡을 선택해 주세요.</p>
+  <button class="primary" id="export" type="button" disabled>시간 맞춘 가사 TXT 다운로드</button>
+  <p class="hint">모든 가사 줄에 실제 시간을 기록하고 시간이 순서대로 증가해야 다운로드할 수 있어요. 다운로드한 TXT를 GitHub의 <code>docs/media/</code> 폴더에 <strong>같은 파일명으로 덮어쓰기</strong>하면 메인화면에서 정확한 타임스탬프 방식이 활성화돼요.</p>
+ </div>
+ <section class="panel"><h2>가사 줄별 시작 시각</h2><ol id="cue-lines"><li>가사를 불러오는 중…</li></ol></section>
+</main>
+</body>
+</html>

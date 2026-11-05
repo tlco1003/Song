@@ -10,8 +10,8 @@ const coverStore=read('docs/cover-store.js');
 const checkout=read('docs/checkout.html'),checkoutJS=read('docs/checkout-media.js');
 const server=read('src/server.mjs'),manifest=JSON.parse(read('docs/media/tracks.json'));
 
-test('all eight existing original cover illustrations are mapped uniquely to their songs',()=>{
- assert.equal(manifest.tracks.length,8);
+test('all original eight cover illustrations stay unique when father video is added',()=>{
+ assert.equal(manifest.tracks.length,9);
  const expected={
   'song-mother':'mother-thanks.webp',
   'song-cinderella-laundry':'cinderella-laundry.webp',
@@ -24,6 +24,13 @@ test('all eight existing original cover illustrations are mapped uniquely to the
  };
  const paths=new Set();
  for(const t of manifest.tracks){
+  if(t.id==='song-papa'){
+   assert.equal(t.mediaKind,'video');
+   assert.equal(t.file,'Papa.mp4');
+   assert.equal(t.coverImage,undefined,'do not reuse another song cover');
+   assert.equal(t.productType,'audio_video');
+   continue;
+  }
   assert.equal(t.coverImage,'covers/'+expected[t.id]);
   assert.match(t.coverImage,/^covers\/[a-z0-9-]+\.webp$/);
   assert.ok(!paths.has(t.coverImage));paths.add(t.coverImage);

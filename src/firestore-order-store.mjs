@@ -88,7 +88,7 @@ export function makeFirestoreOrderStore({db,FieldValue,now=()=>Date.now()}){
         return {status:'waiting_for_deposit'};
       });
     },
-    async confirmPaidAndEnqueueAtomic({orderId,paymentKey,amountKrw,expectedState,nextState,route,jobKey,songPlan}){
+    async confirmPaidAndEnqueueAtomic({orderId,paymentKey,amountKrw,expectedState,nextState,route,jobKey,songPlan,providerMethod}){
       if(expectedState!==ORDER_STATES.PAYMENT_PENDING||nextState!==ORDER_STATES.PAID
         ||jobKey!=='fulfill:'+orderId||!songPlan?.songs?.length)
         throw new Error('Invalid payment transaction');
@@ -108,6 +108,7 @@ export function makeFirestoreOrderStore({db,FieldValue,now=()=>Date.now()}){
         tx.update(ref,{
           state:ORDER_STATES.PAID,paymentKey,paymentVerifiedAt:FieldValue.serverTimestamp(),
           fulfillmentRoute:route,paidSongPlan:JSON.parse(JSON.stringify(songPlan)),
+          providerMethod:providerMethod||null,
           paymentConfirmation:{paymentKey,status:'verified',leaseUntil:0}
         });
         tx.create(outbox,{

@@ -10,7 +10,7 @@ const valid={
   requestId:'0a1b2c3d-aaaa-4bbb-8ccc-123456789012',
   productId:'audio',songTitle:'엄마에게',confirmedLyrics:'엄마 고마워',
   genreSelection:{mode:'single',genres:['발라드']},mood:'따뜻한',
-  sharedStyleNotes:'피아노',deliveryEmail:'buyer@example.test',
+  sharedStyleNotes:'피아노',deliveryEmail:'buyer@example.test',paymentChoice:'card',
   consentDelivery:true,consentTerms:true
 };
 const pending=(overrides={})=>({...createPendingOrder(valid,auth).order,...overrides});
@@ -46,6 +46,35 @@ test('server catalog sets fixed price; browser paid/amount fields are rejected',
   assert.throws(()=>createPendingOrder({...valid,genreSelection:{mode:'same',genres:['발라드']}},auth),
     /Single-song product/);
 });
+test('each payment choice is validated server-side and direct-pay consent is mandatory',()=>{
+ const card=createPendingOrder(valid,auth).order;
+ assert.equal(card.paymentChoice,'card');
+ assert.equal(card.directPaymentConsents,null);
+ assert.throws(()=>createPendingOrder({...valid,paymentChoice:'unknown_bank'},auth),
+   /INVALID_PAYMENT_CHOICE/);
+ for(const choice of ['toss_pay','naver_pay','kakao_pay','payco','apple_pay','samsung_pay']){
+  assert.throws(()=>createPendingOrder({...valid,paymentChoice:choice},auth),
+    /DIRECT_PAYMENT_CONSENTS_REQUIRED/);
+  const order=createPendingOrder({
+    ...valid,paymentChoice:choice,directPaymentConsents:{
+      financial:true,privacy:true,thirdParty:true
+    }
+  },auth).order;
+  assert.equal(order.paymentChoice,choice);
+  assert.equal(order.directPaymentConsents.policyVersion,
+    'toss-payments-v2-direct-2026-11-05');
+  assert.ok(order.directPaymentConsents.financial);
+ }
+ assert.throws(()=>createPendingOrder({
+  ...valid,paymentChoice:'naver_pay',
+  directPaymentConsents:{financial:true,privacy:true,thirdParty:false}
+ },auth),/DIRECT_PAYMENT_CONSENTS_REQUIRED/);
+ assert.throws(()=>createPendingOrder({
+  ...valid,paymentChoice:'card',
+  directPaymentConsents:{financial:true,privacy:true,thirdParty:true}
+ },auth),/UNEXPECTED_PAYMENT_CONSENTS/);
+});
+
 test('two-song order retains selected genre and server-owned 39,000 KRW',()=>{
   const {order}=createPendingOrder({...valid,productId:'audio_duo',
     genreSelection:{mode:'different',genres:['발라드','재즈']}},auth);

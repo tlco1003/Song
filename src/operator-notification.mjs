@@ -49,6 +49,7 @@ export function makeResendOperatorEmail({
         '곡 제목: '+safeText(order.songTitle,100),
         '공통 음악 요청: '+safeText(order.sharedStyleNotes,500),
         '장르 선택 방식: '+validatedPlan.mode,
+        '고객 제공 완성곡 수: '+validatedPlan.songs.length+'곡 (각 곡당 최종 검수된 1개만 전달)',
         ...trackLines,
         '확정 가사:',
         safeText(order.confirmedLyrics,5500),

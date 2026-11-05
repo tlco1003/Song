@@ -199,3 +199,40 @@
 .checkout-cover-box img{height:100%;width:100%;object-fit:cover}
 .checkout-cover-sample p{margin:0 0 6px;font-size:12px;line-height:1.7;color:#776675;word-break:keep-all}
 .detail-sample-link{font-size:12px;color:#805a73;text-decoration:underline;text-underline-offset:4px}
+
+/* Multi-screen checkout with a distinct payment route. */
+.checkout-page{padding:34px 0 80px;min-height:calc(100dvh - 155px)}
+.checkout-flow{width:min(720px,calc(100% - 32px));margin:auto}
+.checkout-flow .checkout-intro{margin-bottom:22px}
+.checkout-flow .checkout-intro h1{font-size:clamp(38px,5vw,52px);margin:7px 0 14px}
+.checkout-flow .checkout-intro p{font-size:12px;color:#8b7585;margin-bottom:14px}
+.checkout-flow .wizard-progress-bar{height:5px;background:#e9dae4;border-radius:5px;overflow:hidden}
+.checkout-flow .wizard-progress-bar span{display:block;width:33%;height:100%;background:linear-gradient(90deg,#9c758a,#d6aaae);transition:width .2s ease}
+.checkout-flow .checkout-stage{animation:checkout-enter .22s ease-out;min-height:330px}
+.checkout-flow .checkout-stage>h2{font-size:clamp(34px,5vw,43px)}
+.checkout-flow .song-genre-grid{margin:18px 0}
+.checkout-flow .duo-genre-modes{margin:16px 0}
+.checkout-flow .gift-choice{min-height:85px}
+.checkout-flow .wizard-actions{display:flex;gap:12px;margin:18px 0 0}
+.checkout-flow .wizard-actions .checkout-button{width:auto;flex:1;text-align:center;margin:0;display:flex;align-items:center;justify-content:center;min-height:54px}
+.checkout-flow .checkout-message:not([hidden]){background:#fff1f3;border:1px solid #e5b7c9;color:#a23b5e;border-radius:9px;padding:13px;margin:12px 0}
+.checkout-flow .checkout-stage .video-media-section{border:0;padding:0;margin:0;background:transparent}
+.checkout-flow .checkout-stage .video-media-section h3{font-size:30px}
+.checkout-flow .checkout-stage .genre-plan-preview{white-space:pre-wrap}
+.checkout-flow .checkout-stage .lyric-preview{max-height:180px}
+.payment-shell{width:min(1030px,calc(100% - 32px));margin:auto}
+.payment-shell .checkout-intro{margin-bottom:24px}
+.payment-page-layout{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:22px;align-items:start}
+.payment-page-layout .checkout-card{padding:29px}
+.payment-page-layout .checkout-card h2{font-size:36px;margin:8px 0 19px}
+.payment-page-layout .payment-summary{position:sticky;top:20px}
+.payment-page-layout .payment-methods{margin-top:25px}
+.payment-page-layout .payment-methods legend{font-size:13px;font-weight:700;color:#5f4a5b;margin-bottom:11px}
+.payment-page-layout .payment-unavailable{font-size:12px;line-height:1.8;text-align:center;color:#8a6f80;margin:8px 0 18px}
+.payment-page-layout .payment-option{min-height:68px}
+.payment-page-layout #confirm-checkout:disabled{background:#c1b1bc;color:#fff;opacity:1}
+.payment-page-layout .order-song-genres{white-space:pre-wrap}
+@keyframes checkout-enter{from{opacity:.65;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:850px){.payment-page-layout{grid-template-columns:1fr;max-width:650px;margin:auto}.payment-page-layout .payment-summary{position:static}}
+@media(max-width:520px){.checkout-flow .checkout-stage{padding:22px 17px}.checkout-flow .gift-choice{padding:15px 12px}.checkout-flow .wizard-actions .checkout-button{font-size:12px}.payment-page-layout .checkout-card{padding:24px 19px}}
+@media(prefers-reduced-motion:reduce){.checkout-flow .checkout-stage{animation:none}.checkout-flow .wizard-progress-bar span{transition:none}}

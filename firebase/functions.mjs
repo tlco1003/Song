@@ -7,7 +7,8 @@
  * A real launch must include passing sandbox tests, legal/merchant approval,
  * authenticated refunds, deposit webhook and outbox worker review.
  */
-import {onCall,HttpsError} from 'firebase-functions/v2/https';
+import {onCall,onRequest,HttpsError} from 'firebase-functions/v2/https';
+import {timingSafeEqual} from 'node:crypto';
 import {defineSecret,defineString} from 'firebase-functions/params';
 import {initializeApp,getApps} from 'firebase-admin/app';
 import {getFirestore,FieldValue} from 'firebase-admin/firestore';
@@ -15,7 +16,7 @@ import {createPendingOrder,requireVerifiedBuyer,assertOwnedOrder,
   validateConfirmation,safeOrderStatus} from '../src/checkout-security.mjs';
 import {makeFirestoreOrderStore} from '../src/firestore-order-store.mjs';
 import {makeTossPaymentAdapter} from '../src/toss-payment-adapter.mjs';
-import {confirmCheckoutAndQueue} from '../src/paid-order-pipeline.mjs';
+import {confirmCheckoutAndQueue,reconcileDepositAndQueue} from '../src/paid-order-pipeline.mjs';
 import {makeWithuFulfillmentHandlers} from './outbox-worker.mjs';
 
 if(!getApps().length)initializeApp();
@@ -132,4 +133,47 @@ export const getWithuOrderStatus=onCall(options,async request=>{
 // Firestore trigger and scheduled retry are server-only and gated independently.
 export const {notifyPaidWithuOrder,retryWithuOutbox}=makeWithuFulfillmentHandlers({
   db,FieldValue,approved:()=>REVIEWED_FOR_LIVE_CHARGES
+});
+
+/**
+ * Official DEPOSIT_CALLBACK: client cannot invoke paid status. Verify the
+ * per-payment issuance secret AND independently re-query Toss for DONE.
+ * Register this HTTPS URL in Toss dashboard only after sandbox validation.
+ */
+export const withuTossDepositWebhook=onRequest({
+  region:'asia-northeast3',secrets:[tossSecret],
+  timeoutSeconds:60,maxInstances:5
+},async(req,res)=>{
+  if(req.method!=='POST'){res.status(405).end();return;}
+  try{
+    releaseCheck();
+    if(!req.is('application/json')||req.rawBody?.length>16_384){
+      res.status(415).end();return;
+    }
+    const body=req.body;
+    if(!body||typeof body!=='object'||typeof body.orderId!=='string'
+      ||typeof body.secret!=='string'||body.secret.length<8
+      ||!/^WITHU_[A-Za-z0-9_-]{16,58}$/.test(body.orderId)){
+      res.status(400).end();return;
+    }
+    const order=await orders.getById(body.orderId);
+    const expected=order?.issuedDepositSecret;
+    if(typeof expected!=='string'||!order?.issuedPaymentKey
+      ||Buffer.byteLength(expected)!==Buffer.byteLength(body.secret)
+      ||!timingSafeEqual(Buffer.from(expected),Buffer.from(body.secret))){
+      res.status(401).end();return;
+    }
+    // A status in the notification body is never sufficient evidence.
+    if(body.status!=='DONE'){res.status(204).end();return;}
+    const result=await reconcileDepositAndQueue({
+      orderId:order.id,paymentKey:order.issuedPaymentKey,orders,
+      payments:makeTossPaymentAdapter({secretKey:tossSecret.value()}),
+      settings:{preference:'manual_operator'}
+    });
+    res.status(result.status==='paid_verified'||result.status==='already_processed'
+      ?200:202).json({accepted:true});
+  }catch(error){
+    // Do not leak original payment keys, customer identity or provider secret.
+    res.status(error instanceof HttpsError?503:500).json({accepted:false});
+  }
 });

@@ -8,7 +8,7 @@ const musicVisual=$('music-visual'),musicVisualStage=$('music-visual-stage'),alb
 let tracks=[],current=0,requestId=0,rawLyrics='',visibleLyrics=[],activeLine=-1,lyricCueSeconds=null;
 let repeatMode='off';
 const featuredAudio=$('mother-featured-audio'),featuredVideo=$('mother-featured-video');
-let mediaSessionAudio=audio;
+let mediaSessionAudio=audio,playbackPlayer=audio;
 const deviceAudio=[],deviceVideo=[];
 const fileOK=s=>typeof s==='string'&&/^[a-zA-Z0-9가-힣_.-]{1,110}$/.test(s);
 const fileURL=(root,s)=>root+encodeURIComponent(s);
@@ -91,7 +91,9 @@ function updateRepeat(){
  button.setAttribute('aria-label',names[repeatMode]);
  button.setAttribute('aria-pressed',String(repeatMode!=='off'));
  audio.loop=repeatMode==='one';
+ videoPlayer.loop=playbackPlayer===videoPlayer?repeatMode==='one':true;
  featuredAudio.loop=repeatMode!=='off';
+ featuredVideo.loop=repeatMode!=='off';
 }
 $('repeat-mode').addEventListener('click',()=>{
  repeatMode=repeatMode==='off'?'one':repeatMode==='one'?'all':'off';
@@ -131,11 +133,11 @@ function drawLyrics(text){
 }
 function advanceLyrics(){
  // Audio is the master clock for both MP3 and MP4 songs.
- if(!lyricCueSeconds||!visibleLyrics.length||audio.hidden)return;
- setActiveLine(cueIndexAt(lyricCueSeconds,audio.currentTime));
+ if(!lyricCueSeconds||!visibleLyrics.length||playbackPlayer.hidden)return;
+ setActiveLine(cueIndexAt(lyricCueSeconds,playbackPlayer.currentTime));
 }
-function showPlayer(kind){
- audio.hidden=kind==='none';
+function showPlayer(kind,hasSeparateAudio=false){
+ audio.hidden=kind==='none'||(kind==='video'&&!hasSeparateAudio);
  videoPlayer.hidden=kind!=='video';
  $('no-audio').hidden=kind!=='none';
 }
@@ -184,18 +186,22 @@ async function select(index,autoPlay=false){
   const isVideo=track.mediaKind==='video'||/\.mp4$/i.test(track.file||'');
   const mediaURL=track.deviceURL||fileURL('media/',track.file);
   // Audio owns the sound and lock-screen controls, even when the source is MP4.
-  const soundName=fileOK(track.audioFile||'')?track.audioFile:track.file;
-  audio.src=track.deviceURL||fileURL('media/',soundName);
-  audio.loop=repeatMode==='one';
+  const hasSeparateAudio=isVideo&&fileOK(track.audioFile||'')&&track.audioAvailability!=='missing';
+  playbackPlayer=hasSeparateAudio||!isVideo?audio:videoPlayer;
+  audio.src=track.deviceURL||fileURL('media/',hasSeparateAudio?track.audioFile:track.file);
   if(isVideo){
-   videoPlayer.muted=true;videoPlayer.defaultMuted=true;
-   videoPlayer.controls=false;videoPlayer.loop=true;videoPlayer.playsInline=true;
-   videoPlayer.src=mediaURL;
+   // Never mute the only source of sound. When a separate M4A/MP3 exists,
+   // the video is silent and follows the audio element.
+   videoPlayer.muted=hasSeparateAudio;videoPlayer.defaultMuted=hasSeparateAudio;
+   videoPlayer.controls=!hasSeparateAudio;
+   videoPlayer.loop=hasSeparateAudio||repeatMode==='one';
+   videoPlayer.playsInline=true;videoPlayer.src=mediaURL;
   }
-  showPlayer(isVideo?'video':'audio');
-  setMediaSession(track,audio);
-  status(isVideo?'영상과 노래를 함께 감상하세요. 소리는 아래 오디오 플레이어에서 재생돼요.':track.visualMode==='silent-loop'?'영상은 무음으로 반복되고, 아래 재생 버튼으로 원곡을 들을 수 있어요.':'노래를 재생하고 아래에서 가사를 확인해 주세요.');
-  if(autoPlay)void audio.play().catch(()=>status('재생 버튼을 눌러 노래를 감상해 주세요.'));
+  showPlayer(isVideo?'video':'audio',hasSeparateAudio);
+  updateRepeat();
+  setMediaSession(track,playbackPlayer);
+  status(isVideo?(hasSeparateAudio?'영상은 무음으로 표시되고 노래는 오디오 플레이어로 재생돼요.':'현재는 MP4 영상의 재생 버튼으로 소리와 영상을 함께 감상할 수 있어요. 별도 음원이 연결되면 화면 잠금 재생을 지원해요.'):track.visualMode==='silent-loop'?'영상은 무음으로 반복되고, 아래 재생 버튼으로 원곡을 들을 수 있어요.':'노래를 재생하고 아래에서 가사를 확인해 주세요.');
+  if(autoPlay)void playbackPlayer.play().catch(()=>status('재생 버튼을 눌러 노래를 감상해 주세요.'));
  }else{
   showPlayer('none');
   status('이 곡은 아직 MP3가 업로드되지 않았어요. 노래 파일을 등록하면 직접 재생할 수 있어요.');
@@ -239,7 +245,10 @@ async function start(){
   usingFallback=true;
   tracks=fallback.map(t=>({...t}));
  }
- await Promise.all(tracks.map(async track=>{track.availability=await available(fileURL('media/',track.file))}));
+ await Promise.all(tracks.map(async track=>{
+  track.availability=await available(fileURL('media/',track.file));
+  if(fileOK(track.audioFile||''))track.audioAvailability=await available(fileURL('media/',track.audioFile));
+ }));
  // Keep approved manifest entries visible; show unavailable audio as "준비 중".
  // Otherwise a temporary HEAD failure can silently remove a song and its lyrics.
  showTracks();await select(0);
@@ -252,21 +261,36 @@ audio.addEventListener('play',()=>{
  featuredAudio.pause();
  setMediaSession(tracks[current],audio);
  if(!musicVisualStage.hidden)void musicVisual.play().catch(()=>{});
- syncSilentVideo(videoPlayer,audio);
+ if(playbackPlayer===audio)syncSilentVideo(videoPlayer,audio);
 });
-audio.addEventListener('pause',()=>syncSilentVideo(videoPlayer,audio));
-audio.addEventListener('seeking',()=>syncSilentVideo(videoPlayer,audio));
-videoPlayer.addEventListener('loadedmetadata',()=>syncSilentVideo(videoPlayer,audio));
+audio.addEventListener('pause',()=>{if(playbackPlayer===audio)syncSilentVideo(videoPlayer,audio)});
+audio.addEventListener('seeking',()=>{if(playbackPlayer===audio)syncSilentVideo(videoPlayer,audio)});
+videoPlayer.addEventListener('loadedmetadata',()=>{if(playbackPlayer===audio)syncSilentVideo(videoPlayer,audio)});
+videoPlayer.addEventListener('play',()=>{
+ if(playbackPlayer!==videoPlayer)return;
+ featuredAudio.pause();
+ setMediaSession(tracks[current],videoPlayer);
+});
+videoPlayer.addEventListener('timeupdate',()=>{
+ if(playbackPlayer===videoPlayer)advanceLyrics();
+});
+videoPlayer.addEventListener('ended',()=>{
+ if(playbackPlayer!==videoPlayer)return;
+ if(repeatMode==='all')void select(current+1,true);
+});
+videoPlayer.addEventListener('error',()=>{
+ if(!videoPlayer.hidden)status('영상을 불러오지 못했어요. 영상 파일을 다시 확인해 주세요.');
+});
 document.addEventListener('visibilitychange',()=>{
- syncSilentVideo(videoPlayer,audio);
- syncSilentVideo(featuredVideo,featuredAudio);
+ if(playbackPlayer===audio)syncSilentVideo(videoPlayer,audio);
+ if(!featuredAudio.hidden)syncSilentVideo(featuredVideo,featuredAudio);
 });
 musicVisual.addEventListener('error',()=>{
  if(!musicVisualStage.hidden)status('노래는 계속 재생할 수 있어요. 반복 영상만 불러오지 못했어요.');
 });
 audio.addEventListener('timeupdate',()=>{
  advanceLyrics();
- syncSilentVideo(videoPlayer,audio);
+ if(playbackPlayer===audio)syncSilentVideo(videoPlayer,audio);
 });
 audio.addEventListener('seeking',advanceLyrics);
 audio.addEventListener('loadedmetadata',advanceLyrics);
@@ -280,9 +304,7 @@ audio.addEventListener('error',()=>{
  if(audio.hidden||!audio.currentSrc)return;
  status('오디오를 재생할 수 없어요. MP4에 소리가 있는지 확인하거나 별도 MP3를 연결해 주세요.');
 });
-videoPlayer.addEventListener('error',()=>{
- if(!videoPlayer.hidden)status('영상 화면을 불러오지 못했지만 오디오는 아래에서 재생할 수 있어요.');
-});
+
 $('local-song').addEventListener('change',async event=>{
  const files=[...(event.target.files||[])],initial=tracks.length;
  for(const f of files){
@@ -338,20 +360,27 @@ $('local-review').addEventListener('change',event=>{
 function featured(){
  const video=featuredVideo,sound=featuredAudio,placeholder=$('mother-video-pending');
  video.src='media/mother-song.mp4';
- video.muted=true;video.defaultMuted=true;video.controls=false;video.loop=true;
- sound.src='media/mother-song.mp4';
- video.hidden=false;sound.hidden=false;placeholder.hidden=true;
- sound.loop=repeatMode!=='off';
+ video.muted=false;video.defaultMuted=false;video.controls=true;video.loop=repeatMode!=='off';
+ video.hidden=false;sound.hidden=true;placeholder.hidden=true;
+ // An MP4-only public sample must remain audible, even if audio extraction
+ // has not completed yet. Upgrade to separate M4A only after confirmed HEAD.
+ void available('media/mother-song.m4a').then(state=>{
+  if(state!=='ready')return;
+  sound.src='media/mother-song.m4a';sound.hidden=false;
+  video.pause();video.muted=true;video.defaultMuted=true;video.controls=false;video.loop=true;
+  sound.loop=repeatMode!=='off';
+ });
+ video.addEventListener('play',()=>{
+  if(!sound.hidden)return;
+  audio.pause();setMediaSession(fallback[0],video);
+ });
  sound.addEventListener('play',()=>{
-  audio.pause();
-  setMediaSession(fallback[0],sound);
-  syncSilentVideo(video,sound);
+  audio.pause();setMediaSession(fallback[0],sound);syncSilentVideo(video,sound);
  });
  sound.addEventListener('pause',()=>syncSilentVideo(video,sound));
  sound.addEventListener('timeupdate',()=>syncSilentVideo(video,sound));
  sound.addEventListener('seeking',()=>syncSilentVideo(video,sound));
- video.addEventListener('loadedmetadata',()=>syncSilentVideo(video,sound));
- video.addEventListener('click',()=>{if(sound.paused)void sound.play().catch(()=>{});else sound.pause()});
+ video.addEventListener('loadedmetadata',()=>{if(!sound.hidden)syncSilentVideo(video,sound)});
  video.addEventListener('error',()=>{
   video.hidden=true;placeholder.hidden=false;
   const explanation=placeholder.querySelector('p');

@@ -15,6 +15,17 @@
       "productType": "audio_video"
     },
     {
+      "id": "song-papa",
+      "title": "아빠의 계절",
+      "subtitle": "아빠에게 전하는 사랑과 위로",
+      "file": "Papa.mp4",
+      "mediaKind": "video",
+      "lyricsFile": "lyrics-papa.txt",
+      "genre": "어쿠스틱 감성 발라드",
+      "genreSource": "editorial",
+      "productType": "audio_video"
+    },
+    {
       "id": "song-cinderella-laundry",
       "title": "세탁소의 신데렐라",
       "subtitle": "동전 하나만 더!",

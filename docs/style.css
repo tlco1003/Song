@@ -189,3 +189,25 @@ button:focus-visible,a:focus-visible,label:focus-visible,.lyrics-scroll:focus-vi
 .track-name .track-subtitle{display:block;color:#cdbfca;font-size:11px;line-height:1.45;margin-top:3px;word-break:keep-all}
 .genre-disclaimer{text-align:right;margin:10px 0 0;color:#d5c3d0;font-size:11px;line-height:1.6}
 @media(max-width:690px){.current-track-genre{font-size:12px}.genre-disclaimer{text-align:center}.track-name .track-genre{font-size:11px}}
+
+/* WITHU square cover art, shared track thumbnails and graceful art fallback. */
+.album-art.cover-artwork{position:relative;overflow:hidden;width:min(100%,300px);height:auto;aspect-ratio:1/1;max-height:none;border-radius:14px;background:linear-gradient(140deg,#bc91a4,#4c334b 58%,#292032);box-shadow:0 18px 32px #160d1d78}
+.cover-artwork img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+.cover-fallback{display:flex;align-items:center;justify-content:center;flex-direction:column;width:100%;height:100%;color:#f7ecf1}
+.cover-fallback span{font:600 17px "Cormorant Garamond",serif;letter-spacing:.3em}
+.cover-fallback strong{font:400 65px "Cormorant Garamond",serif;color:#eacbd9}
+.cover-view-link{position:absolute;bottom:10px;right:10px;z-index:2;background:#221825c9;color:white;border:1px solid #ffffff44;border-radius:18px;padding:6px 11px;font-size:11px}
+.track-tile{display:flex;align-items:stretch;gap:10px;background:#ffffff09;border:1px solid #796777;border-radius:12px;padding:7px;min-width:0}
+.track-tile .track-item{border:0;background:transparent;min-width:0;flex:1;padding:8px 2px;border-radius:8px}
+.track-tile .track-item:hover,.track-tile .track-item.active{background:#ffffff13}
+.track-tile:has(.track-item.active){border-color:#d4aabb;background:#a87a9036}
+.track-tile-cover{width:59px;min-width:59px;height:59px;display:grid;place-items:center;overflow:hidden;background:linear-gradient(135deg,#826783,#3b2c43);border-radius:9px;color:#f8eaf0;font-size:23px}
+.track-tile-cover img{width:100%;height:100%;object-fit:cover}
+.track-detail-link{align-self:center;max-width:62px;text-align:center;font-size:10px;line-height:1.7;color:#ead0dc;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:690px){
+ .album-art.cover-artwork{width:190px;height:190px;margin:7px auto 15px}
+ .track-tile{gap:7px}
+ .track-tile-cover{width:55px;min-width:55px;height:55px}
+ .track-tile .track-item{min-height:58px}
+ .track-detail-link{font-size:10px}
+}

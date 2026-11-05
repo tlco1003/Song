@@ -142,7 +142,8 @@ async function loadGenreChoices(){
   const second=previous&&isAllowedGenre(previous.second)?previous.second:chooseAlternateGenre(initial);
   $('song-genre-second').value=second;
   $('song-shared-notes').value=typeof saved?.sharedStyleNotes==='string'?
-    saved.sharedStyleNotes.slice(0,500):'';
+    saved.sharedStyleNotes.slice(0,500):
+    typeof saved?.styleOverrides==='string'?saved.styleOverrides.slice(0,500):'';
   const mode=previous?.mode==='different'?'different':'same';
   document.querySelector('input[name="duoGenreMode"][value="'+mode+'"]').checked=true;
   renderGenrePlan();

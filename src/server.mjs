@@ -5,6 +5,7 @@ import {stat} from 'node:fs/promises';
 import {createReadStream} from 'node:fs';
 import {AppError,validateLyricInput,buildSunoPackage} from './lib.mjs';
 import {makeLyrics,createSunoSong,SUNO_MCP_URL} from './providers.mjs';
+import {generateCoverImage} from './cover-image.mjs';
 import {publicCommerceReadiness,publicPriceCatalog} from './commerce.mjs';
 
 // Single-operator local MVP. Public multi-user deployment requires an
@@ -58,7 +59,17 @@ async function handle(req,res){
       return json(res,200,publicPriceCatalog());
     if(pathname==='/api/commerce/orders'||pathname.startsWith('/api/commerce/orders/'))
       throw new AppError(503,'자동 음악 제작·결제·이메일 발송 서비스는 준비 중이며 현재 주문을 받지 않습니다.');
+    if(pathname.startsWith('/api/delivery/'))throw new AppError(503,'인증된 고객 파일 전달 기능은 아직 준비 중입니다.');
     auth(req);
+    if(req.method==='POST'&&pathname==='/api/covers/generate'){
+      // This is an owner-authenticated prototype route, not a public customer endpoint.
+      if(!accessToken)throw new AppError(503,'이미지 생성 기능은 서버 인증 설정 후 사용할 수 있습니다.');
+      if(!process.env.OPENAI_API_KEY)throw new AppError(503,'서버에 이미지 생성 API 키가 연결되지 않았습니다.');
+      limited(req,3);
+      const input=await jsonBody(req,5000);
+      try{return json(res,200,await generateCoverImage(input));}
+      catch(error){throw new AppError(502,error instanceof TypeError?error.message:'이미지 생성 서비스 응답을 확인해 주세요.');}
+    }
     if(req.method==='GET'&&pathname==='/api/config')
       return json(res,200,{
         lyricsProvider:'openai',lyricsReady:!!process.env.OPENAI_API_KEY,
@@ -107,6 +118,10 @@ async function handle(req,res){
     '/prices.json':'docs/prices.json',
     '/music-genres.json':'docs/music-genres.json',
     '/player.js':'docs/player.js',
+    '/song.html':'docs/song.html',
+    '/song.css':'docs/song.css',
+    '/song.js':'docs/song.js',
+    '/cover-store.js':'docs/cover-store.js',
     '/media/tracks.json':'docs/media/tracks.json',
     '/reviews/reviews.json':'docs/reviews/reviews.json',
     '/studio':'public/index.html',
@@ -117,6 +132,8 @@ async function handle(req,res){
   };
   let relative=routes[pathname];
   if(!relative && /^\/media\/[a-zA-Z0-9가-힣_.-]+\.(?:mp3|m4a|wav|ogg|txt|mp4)$/i.test(pathname))
+    relative='docs'+pathname;
+  if(!relative && /^\/covers\/[a-z0-9-]+\.webp$/i.test(pathname))
     relative='docs'+pathname;
   if(!relative && /^\/reviews\/[a-zA-Z0-9가-힣_.-]+\.(?:mp4|webm)$/i.test(pathname))
     relative='docs'+pathname;
@@ -131,6 +148,7 @@ async function handle(req,res){
     '.js':'text/javascript; charset=utf-8',
     '.css':'text/css; charset=utf-8',
     '.svg':'image/svg+xml',
+    '.webp':'image/webp',
     '.json':'application/json; charset=utf-8',
     '.txt':'text/plain; charset=utf-8',
     '.mp3':'audio/mpeg','.m4a':'audio/mp4','.wav':'audio/wav','.ogg':'audio/ogg',

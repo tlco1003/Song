@@ -1,33 +1,33 @@
 {
-  "version": 1,
+  "version": 2,
   "genres": [
     {
       "id": "발라드",
-      "style": "Gentle piano ballad, warm strings, expressive Korean solo vocal."
+      "label": "발라드"
     },
     {
       "id": "어쿠스틱",
-      "style": "Soft acoustic guitar, warm piano, intimate expressive storytelling."
+      "label": "어쿠스틱"
     },
     {
       "id": "재즈",
-      "style": "Warm vocal jazz, mellow piano, upright bass and brushed drums."
+      "label": "재즈"
     },
     {
       "id": "트로트",
-      "style": "Modern Korean trot with heartfelt melodic vocals, gentle rhythmic accompaniment."
+      "label": "트로트"
     },
     {
       "id": "R&B",
-      "style": "Soulful Korean R&B, warm electric piano, soft bass and laid-back groove."
+      "label": "R&B"
     },
     {
       "id": "K-POP",
-      "style": "Contemporary melodic Korean pop with an intimate verse and expansive chorus."
+      "label": "K-POP"
     },
     {
       "id": "인디팝",
-      "style": "Emotional indie pop with acoustic guitar, delicate keys and subtle drums."
+      "label": "인디팝"
     }
   ]
 }

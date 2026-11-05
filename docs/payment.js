@@ -34,6 +34,8 @@ async function init(){
  if(!draft){
   $('payment-product').textContent='노래 선택이 필요해요.';
   disableCheckout('먼저 가사를 완성하고 상품과 장르를 선택해 주세요.');
+  window.WITHU_PAYMENT_PREVIEW_READY=true;
+  window.dispatchEvent(new Event('withu:payment-preview-ready'));
   return;
  }
  try{
@@ -63,6 +65,9 @@ async function init(){
   }
  }catch(_){
   disableCheckout('주문 정보를 확인할 수 없어요. 이전 화면에서 상품을 다시 선택해 주세요.');
+ }finally{
+  window.WITHU_PAYMENT_PREVIEW_READY=true;
+  window.dispatchEvent(new Event('withu:payment-preview-ready'));
  }
 }
 for(const item of document.querySelectorAll('input[name="paymentMethod"]')){

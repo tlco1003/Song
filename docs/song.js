@@ -11,7 +11,7 @@ const stage=$('player-stage'),cover=$('detail-cover'),coverFallback=$('detail-co
 let track=null,player=audio,coverURL=null,candidateURL=null,candidateBlob=null,hideTimer=null,playing=false,mediaReady=false;
 let isPrivate=false,repeatOne=false;
 function syncVideo(){
- if(video.hidden||!video.getAttribute('src'))return;
+ if(player===video||video.hidden||!video.getAttribute('src'))return;
  if(document.visibilityState==='hidden'||player.paused||player.ended){
   if(!video.paused)video.pause();
   return;
@@ -110,15 +110,26 @@ function loadTrack(item,publicDemo){
    (privateAudio.origin!==location.origin||!privateAudio.pathname.startsWith('/api/delivery-assets/'))){
   mediaReady=false;notice('오디오 파일 접근 권한을 확인할 수 없어요.');return;
  }
+ const hasSeparateAudio=isVideo&&(
+  (publicDemo&&simpleName(item.audioFile))||
+  (!publicDemo&&privateAudio)
+ );
  const audioPath=publicDemo&&simpleName(item.audioFile)?
   'media/'+encodeURIComponent(item.audioFile):
   (!publicDemo&&privateAudio?privateAudio.href:mediaPath);
  if(isVideo){
-  video.muted=true;video.defaultMuted=true;video.controls=false;video.loop=true;video.playsInline=true;
-  video.src=mediaPath;
+  video.src=mediaPath;video.playsInline=true;
+  video.muted=hasSeparateAudio;video.defaultMuted=hasSeparateAudio;
+  video.controls=false;video.loop=hasSeparateAudio||repeatOne;
  }
- player.src=audioPath;player.loop=repeatOne;mediaReady=true;
+ player=hasSeparateAudio||!isVideo?audio:video;
+ player.src=player===video?mediaPath:audioPath;
+ // An MP4 without separate audio must stay audible, and may not continue
+ // playing when the screen locks. Do not claim background audio support.
+ player.loop=repeatOne;
+ mediaReady=true;
  updateRepeat();updateMediaSession();
+ if(isVideo&&!hasSeparateAudio)notice('영상과 소리를 함께 재생할 수 있어요. 화면 잠금 재생에는 별도 오디오 파일이 필요합니다.');
  const art=publicDemo&&coverPath(item.coverImage)?item.coverImage:null;
  setArt(art);
  void applyStoredCover();
@@ -183,13 +194,25 @@ play.addEventListener('click',event=>{event.stopPropagation();void togglePlay()}
 stage.addEventListener('pointermove',showControls);
 stage.addEventListener('pointerdown',event=>{if(!event.target.closest('button,input'))showControls()});
 stage.addEventListener('keydown',event=>{if((event.key===' '||event.key==='Enter')&&event.target===stage){event.preventDefault();void togglePlay()}});
-audio.addEventListener('play',updatePlay);
-audio.addEventListener('pause',updatePlay);
-audio.addEventListener('ended',updatePlay);
-audio.addEventListener('timeupdate',()=>{progress();syncVideo()});
-audio.addEventListener('loadedmetadata',progress);
-audio.addEventListener('seeking',syncVideo);
-audio.addEventListener('error',()=>notice('오디오 재생에 실패했어요. MP4에 소리가 있는지 또는 별도 MP3가 있는지 확인해 주세요.'));
+for(const p of [audio,video]){
+ p.addEventListener('play',()=>{if(p===player)updatePlay()});
+ p.addEventListener('pause',()=>{if(p===player)updatePlay()});
+ p.addEventListener('ended',()=>{if(p===player)updatePlay()});
+ p.addEventListener('timeupdate',()=>{if(p===player){progress();syncVideo()}});
+ p.addEventListener('loadedmetadata',()=>{if(p===player)progress()});
+ p.addEventListener('seeking',()=>{if(p===player)syncVideo()});
+}
+audio.addEventListener('error',()=>{
+ if(player!==audio)return;
+ if(!isPrivate&&track?.mediaKind==='video'&&video.getAttribute('src')){
+  // Unsupported MP4 inside audio: recover with its original audible video.
+  player=video;video.muted=false;video.defaultMuted=false;video.loop=repeatOne;
+  updateRepeat();updatePlay();
+  notice('별도 음원을 재생할 수 없어 MP4 영상으로 전환했어요.');
+  return;
+ }
+ notice('오디오 재생에 실패했어요. 음원 파일을 확인해 주세요.');
+});
 video.addEventListener('loadedmetadata',syncVideo);
 video.addEventListener('error',()=>{if(!video.hidden)notice('영상 화면에 오류가 있어요. 오디오 재생은 계속 이용할 수 있어요.')});
 document.addEventListener('visibilitychange',syncVideo);

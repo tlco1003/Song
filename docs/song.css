@@ -61,3 +61,7 @@
 .detail-bottom-controls{padding:10px}.detail-timeline{gap:6px;font-size:11px}.detail-lyrics{padding:21px}.detail-lyrics h2{font-size:38px}
 .cover-dialog-grid{grid-template-columns:1fr}.cover-dialog-inner{padding:19px}.cover-dialog h2{font-size:34px}}
 @media(prefers-reduced-motion:reduce){.detail-player-controls{transition:none}}
+
+.operator-test-settings{margin-top:11px;border-top:1px solid #e8d9e1;padding-top:8px}
+.operator-test-settings summary{color:#7d6472;font-size:11px;cursor:pointer}
+.operator-test-settings input{display:block;width:100%;margin-top:6px;min-height:36px;padding:7px;border:1px solid #ddcbd6;border-radius:6px;font-size:12px}

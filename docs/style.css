@@ -199,3 +199,14 @@ button:focus-visible,a:focus-visible,label:focus-visible,.lyrics-scroll:focus-vi
 
 /* Honest timing state: a song without verified line cues remains manually scrollable. */
 .lyrics-sync-hint{max-width:95%;margin:7px auto 2px;font:400 11px/1.6 "Gowun Batang",sans-serif;color:#c3b2c3;text-align:center;word-break:keep-all}
+
+/* Audio-first playback: visual MP4 is muted and always follows the audible audio element. */
+#audio-zone{display:flex;flex-direction:column;align-items:stretch;gap:9px}
+#audio-zone #music-video{width:100%;max-height:320px;object-fit:contain}
+#audio-zone #music-audio{display:block;width:100%;min-height:44px}
+#audio-zone #music-audio[hidden],#audio-zone #music-video[hidden],#mother-featured-video[hidden],#mother-featured-audio[hidden]{display:none!important}
+#mother-featured-audio{width:100%;margin-top:10px;min-height:44px}
+.repeat-control{border:1px solid #c9a6be;border-radius:22px;background:#ffffff0e;color:#f4dce8;padding:8px 13px;font-size:12px;min-height:38px;cursor:pointer;white-space:nowrap}
+.repeat-control:hover,.repeat-control[aria-pressed="true"]{background:#a8759670;border-color:#f6d2e4}
+.playback-hint{color:#d6c0cf;text-align:center;font-size:11px;line-height:1.7;margin:6px 0 10px}
+@media(max-width:690px){.repeat-control{font-size:11px;padding:7px 9px}}

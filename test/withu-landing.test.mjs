@@ -26,8 +26,8 @@ test('no proprietary process, provider name, source code links or five questions
   assert.ok(js.includes('advanceLyrics'));
   assert.ok(js.includes('filterLyricLines'));
 });
-test('all eight music letters display genre from the shared public track manifest',()=>{
-  assert.equal(tracks.tracks.length,8);
+test('all nine music letters display genre from the shared public track manifest',()=>{
+  assert.equal(tracks.tracks.length,9);
   assert.equal(tracks.tracks.filter(t=>t.genreSource==='prompt').length,1);
   for(const t of tracks.tracks){
     assert.ok(typeof t.genre==='string'&&t.genre.trim().length>0,t.title+' missing genre');
@@ -47,6 +47,11 @@ test('published songs retain unique IDs and wedding music and lyrics are paired'
   assert.equal(byId.size,tracks.tracks.length,'duplicate track id');
   assert.equal(byId.get('song-mother').file,'mother-song.mp4');
   assert.equal(byId.get('song-mother').mediaKind,'video');
+  assert.equal(tracks.tracks[1].id,'song-papa');
+  assert.equal(byId.get('song-papa').title,'아빠의 계절');
+  assert.equal(byId.get('song-papa').file,'Papa.mp4');
+  assert.equal(byId.get('song-papa').mediaKind,'video');
+  assert.equal(byId.get('song-papa').lyricsFile,'lyrics-papa.txt');
   assert.equal(byId.get('song-nara').file,'nara.mp3');
   assert.equal(byId.get('song-taehwan').file,'taehwan.mp3');
 
@@ -75,6 +80,7 @@ test('mother video and nara song load the uploaded lyrics with the exact lyricsF
   const byId=new Map(tracks.tracks.map(track=>[track.id,track]));
   for(const [id,expected] of [
     ['song-mother','lyrics-mother-song.txt'],
+    ['song-papa','lyrics-papa.txt'],
     ['song-nara','lyrics-nara.txt']
   ]){
     const track=byId.get(id);

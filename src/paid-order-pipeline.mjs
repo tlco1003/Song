@@ -193,7 +193,15 @@ export async function executePaidJob({job,order,operatorEmail,musicProvider}){
       });
       results.push({index:song.index,genre:song.genre,output});
     }
-    return Object.freeze({route:job.route,providerResult:Object.freeze(results)});
+    // Provider results (possibly two candidates per request) remain INTERNAL.
+    // Customer delivery requires prepareCustomerDeliverables() to choose exactly
+    // one stored, quality-approved candidate per purchased song slot.
+    return Object.freeze({
+      route:job.route,
+      purchasedSongCount:songPlan.songs.length,
+      deliverySelectionRequired:true,
+      providerResult:Object.freeze(results)
+    });
   }
   throw new Error('Unknown fulfillment route');
 }

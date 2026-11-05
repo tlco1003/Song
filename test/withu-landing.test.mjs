@@ -140,7 +140,7 @@ test('80s city pop summer song has playable MP3 and its complete published lyric
   for(const phrase of ['백조가 헤엄치던','디즈니랜드','해리포터','클럽','Oh, our summer night']){
     assert.ok(lyrics.includes(phrase),'lyrics are missing '+phrase);
   }
-  assert.doesNotMatch(lyrics,/\\[(?:Intro|Verse|Chorus|Bridge|Outro|Final)/);
+  assert.doesNotMatch(lyrics,/\[(?:Intro|Verse|Chorus|Bridge|Outro|Final)/);
 });
 
 test('Cinderella short loops silently while its full MP3 drives playback and lyrics',()=>{

@@ -65,27 +65,46 @@ test('commercial music generation and delivery require separately verified proof
  }));
 });
 
-test('six planned payment methods are informational, real enabled methods come from Toss widget',()=>{
- const planned=['토스페이','카카오페이','네이버페이','신용·체크카드','계좌이체','가상계좌'];
- for(const label of planned){
-  assert.ok(payment.includes(label),'missing planned method: '+label);
+test('all payment methods remain clickable choice chips and use the direct/standard Toss gateway',()=>{
+ const choices=[
+  ['toss_pay','토스페이'],['naver_pay','네이버페이'],
+  ['kakao_pay','카카오페이'],['payco','페이코'],
+  ['samsung_pay','삼성페이'],['apple_pay','애플페이'],
+  ['card','신용·체크카드'],['transfer','실시간 계좌이체'],
+  ['virtual_account','가상계좌'],['mobile_phone','휴대폰 결제'],
+  ['culture_gift','문화상품권'],['book_gift','도서문화상품권'],
+  ['game_gift','게임문화상품권']
+ ];
+ for(const [id,label] of choices){
+  assert.match(payment,new RegExp('id="pay-'+id+'"[^>]*name="paymentMethod"[^>]*value="'+id+'"'));
+  assert.ok(payment.includes(label),'missing payment label: '+label);
+  assert.match(paymentJs,new RegExp('(?:'+id+')'));
  }
+ assert.match(payment,/class="payment-option payment-choice-chip"/);
+ assert.match(payment,/id="withu-direct-pay-consent"/);
+ assert.match(payment,/id="withu-direct-financial-terms"/);
+ assert.match(payment,/id="withu-direct-privacy-terms"/);
+ assert.match(payment,/id="withu-direct-third-party-terms"/);
  for(const id of ['payment-methods','delivery-email','delivery-email-again',
    'consent-delivery','consent-service','payment-price']){
   assert.ok(payment.includes('id="'+id+'"'),id);
  }
- assert.match(payment,/결제 가능 여부는 토스페이먼츠 상점 계약/);
  assert.match(payment,/id="confirm-checkout"[^>]*disabled/);
- assert.doesNotMatch(payment,/name="paymentMethod"|id="pay-(?:toss|kakao|naver|card|transfer|virtual)"/);
  assert.doesNotMatch(payment,/name="(?:cardNumber|cardCvv|cardPassword|accountPassword)"|autocomplete="cc-number"/i);
  assert.doesNotMatch(paymentJs,/requestPayment\s*\(|api\/payments\/confirm|fetch\s*\(\s*['"]https?:\/\//);
- assert.doesNotMatch(paymentJs,/\.addEventListener\('click'[^\n]*confirm-checkout/);
- assert.ok(styles.includes('.payment-methods'));
  const live=read('docs/payment-live.js');
- assert.match(live,/widgets\.renderPaymentMethods/);
- assert.match(live,/widgets\.requestPayment/);
- assert.match(live,/WITHU_PAYMENT_PUBLIC_CONFIG/);
- assert.doesNotMatch(live,/requestPayment\(\s*['"](?:toss_pay|kakao_pay|naver_pay)/);
+ const mapping=read('docs/payment-methods.js');
+ assert.match(live,/\.payment\(\{customerKey\}\)/);
+ assert.match(live,/payment\.requestPayment\(pgRequest\)/);
+ assert.match(live,/buildTossPaymentWindowRequest/);
+ assert.match(mapping,/flowMode:'DIRECT'/);
+ assert.match(mapping,/flowMode:'DEFAULT'/);
+ assert.match(mapping,/VIRTUAL_ACCOUNT/);
+ assert.match(live,/directPayConsentGranted/);
+ assert.match(live,/withuCheckoutReadiness/);
+ assert.match(live,/createWithuOrder/);
+ assert.match(styles,/payment-choice-chip/);
+ assert.match(server,/['"]\/payment-methods\.js['"]:/);
 });
 
 test('catalog prices and advance quote remain unchanged',()=>{

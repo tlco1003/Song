@@ -122,3 +122,47 @@
 - Firebase 이메일 링크 로그인: https://firebase.google.com/docs/auth/web/email-link-auth
 - Firebase App Check: https://firebase.google.com/docs/app-check/web/recaptcha-provider
 - Firebase Hosting 배포: https://firebase.google.com/docs/hosting/full-config
+
+
+## 8. 2026-11-05 통합 결제수단 (6개 선택지 → 공식 위젯 1개)
+
+**토스페이·카카오페이·네이버페이·신용/체크카드·계좌이체·가상계좌**를 한 가지 TossPayments **주문서형 결제위젯(V2)**에서 처리하도록 설계했다.
+기존에 단순 HTML 라디오로만 보이던 여섯 수단은 **결제 전 참고용 비활성 안내**로 교체했다.
+이메일 인증 및 서버 출시 준비가 끝났을 때만 해당 안내를 숨기고 실제 `widgets.renderPaymentMethods()`와 `widgets.renderAgreement()`를 표시한다.
+구매자가 최종 선택하는 결제수단은 **토스페이먼츠가 해당 가맹점에 허용한 수단**으로만 결정된다.
+고객이 UI에서 수단을 골랐다고 서버가 수단을 믿거나 결제 성공으로 처리하지 않는다.
+
+**실제 PG 승인 결과**의 `method`, `easyPay.provider`, `virtualAccount.bankCode` 중 필요한 최소값만 PAID 전환 트랜잭션에 저장한다.
+카드번호·계좌번호·인증번호 및 원본 전체 PG 응답은 서버 주문 문서에 저장하지 않는다.
+이러한 값은 내부 운영자가 실제 결제방법을 조회하기 위한 최소 거래 메타데이터이며, 고객 공개 주문 조회 API에는 반환되지 않는다.
+
+### 결제기관별 개별 비밀키가 필요한가?
+
+**이 여섯 수단을 TossPayments 통합 PG로 운영하는 한 각 간편결제사별 시크릿 키가 필요하지 않다.**
+필요한 것은 **같은 상점(MID)의 TossPayments 주문서형 클라이언트 키와 시크릿 키** 한 쌍이며,
+가맹 심사와 결제수단별 계약·활성화가 완료되어야 결제 UI에 실제로 표시된다.
+
+- 카드/간편결제/계좌이체/가상계좌의 계약 가능 여부는 TossPayments 관리자에서 결정된다.
+- 애플페이는 지원하는 기기·브라우저에서만 표시되는 등 수단별 조건이 있다.
+- 가상계좌는 발급 뒤 아직 `WAITING_FOR_DEPOSIT`이면 제작·납품 금지. 공식 `DEPOSIT_CALLBACK` secret 검증 + PG 재조회 `DONE`이 필요하다.
+- **카카오페이/네이버페이에 독자적으로 직접 연동하거나 다른 PG(PG사 다중 계약)로 확대하려면 별도 계약 및 API 키·어댑터 구현이 추가로 필요**하며 이번 변경의 범위가 아니다.
+- 현재 `REVIEWED_FOR_LIVE_CHARGES=false`, `WITHU_PAYMENT_ACTIVATED=no`, `WITHU_OUTBOX_WORKER_VERIFIED=no`, 공개 설정 `enabled:false`로 결제 차단 상태 유지.
+- **키 입력만으로 자동 결제 개통되지 않음.** Firebase Auth·App Check·Firestore·PG 심사·고객 약관·환불/취소·테스트 거래 검증이 모두 필요하다.
+- 결제 수단이 준비되지 않았으면 고객에게 결제 가능하다고 표기하거나 강제로 다른 수단으로 우회하지 않는다.
+
+### 코드 경로와 회귀 검사
+
+| 역할 | 코드 |
+|---|---|
+| 6종 예정 수단 안내(비결제) | `docs/payment.html`, `docs/payment.js`, `docs/checkout.css` |
+| 실제 활성 수단 표시 및 결제 요청 | `docs/payment-live.js` → TossPayments V2 widget |
+| 서버 비밀키 결제 확인 | `firebase/functions.mjs` → `src/toss-payment-adapter.mjs` |
+| 서버 승인 결과의 실제 결제수단 기록 | `src/paid-order-pipeline.mjs` → `src/firestore-order-store.mjs` |
+| 가상계좌 상태 확인 | `firebase/functions.mjs`의 `withuTossDepositWebhook` |
+| React/FlutterFlow 없이 Node 호스팅으로 전환 시 정적 경로·제한적 CSP | `src/server.mjs` |
+| 자동 테스트 | `test/commerce.test.mjs`, `test/paid-order-pipeline.test.mjs`, `test/firestore-checkout.test.mjs` |
+
+실제 결제위젯 문서: https://docs.tosspayments.com/guides/v2/payment-widget/integration
+결제수단 활성화/정책: https://docs.tosspayments.com/guides/v2/payment-widget/admin
+가상계좌 입금 확인: https://docs.tosspayments.com/guides/v2/payment-window/integration-virtual-account
+

@@ -46,7 +46,8 @@ async function start(){
   if(!permitted())return; // Existing preview checkout remains disabled.
   try{
     await previewLoaded();
-    draftFromSession();
+    // Email-link return may open in a new tab without the original order draft.
+    // Complete authentication first; validate the draft when charging.
     const [
       {initializeApp},{getAuth,sendSignInLinkToEmail,isSignInWithEmailLink,
         signInWithEmailLink,onAuthStateChanged,reload},
@@ -154,7 +155,6 @@ async function start(){
           if(created.productId!==draft.selectedProduct||created.currency!=='KRW'
             ||!Number.isSafeInteger(created.amountKrw))
             throw Error('서버 상품·금액과 선택한 주문이 다릅니다.');
-          prepared=created;
           await script('https://js.tosspayments.com/v2/standard');
           if(typeof window.TossPayments!=='function')
             throw Error('결제 제공자 SDK가 연결되지 않았습니다.');
@@ -166,6 +166,7 @@ async function start(){
           await widgets.setAmount({currency:'KRW',value:created.amountKrw});
           await widgets.renderPaymentMethods({selector:'#withu-live-payment-widget',variantKey:'DEFAULT'});
           await widgets.renderAgreement({selector:'#withu-live-payment-agreement',variantKey:'AGREEMENT'});
+          prepared=created;
           status('토스페이먼츠 결제수단을 선택한 뒤 결제하기 버튼을 눌러 주세요.');
           button.textContent='결제하기';
         }else{

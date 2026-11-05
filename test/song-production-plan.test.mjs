@@ -7,6 +7,7 @@ const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const page=read('docs/checkout.html');
 const script=read('docs/checkout.js');
 const create=read('docs/create.js');
+const creationPage=read('docs/create.html');
 const server=read('src/server.mjs');
 function order(productId,mode,genres){
  return {productId,genreSelection:{mode,genres},songTitle:'엄마에게',
@@ -18,7 +19,8 @@ test('shared seven-genre catalog matches creation page options and checkout sele
  const data=JSON.parse(read('docs/music-genres.json'));
  assert.deepEqual(genres,data.genres);
  for(const g of genres){
-  assert.ok(create.includes("'"+g.id+"'"),g.id+' missing from creation styles');
+  assert.ok(creationPage.includes('value="'+g.id+'"'),g.id+' missing from visible genre choices');
+  assert.equal(Object.hasOwn(g,'style'),false,'public genre must not leak a private music style');
  }
  assert.ok(page.includes('id="duo-mode-same"'));
  assert.ok(page.includes('id="duo-mode-different"'));
@@ -46,7 +48,7 @@ test('two songs in one genre remain two distinct creative requests',()=>{
  assert.deepEqual(plan.songs.map(s=>s.index),[1,2]);
  assert.equal(plan.songs[0].lyrics,plan.songs[1].lyrics);
  assert.notEqual(plan.songs[0].stylePrompt,plan.songs[1].stylePrompt);
- assert.match(plan.songs[1].stylePrompt,/independent second musical interpretation/i);
+ assert.match(plan.songs[1].stylePrompt,/independently composed melody and arrangement/i);
 });
 test('two different user genres yield correctly distinct style prompts',()=>{
  const plan=buildSongProductionPlan(order('audio_duo','different',['트로트','R&B']));
@@ -80,7 +82,7 @@ test('paid immutable song plan must match original approved genre choice',()=>{
  }),/differs/);
 });
 test('browser remembers genre choice while real payment and email dispatch remain disabled',()=>{
- assert.match(create,/genre:\$\('genre'\)\.value,mood:\$\('mood'\)\.value/);
+ assert.match(create,/genre:v\.genre,mood:v\.mood/);
  assert.match(script,/duoGenreChoice:/);
  assert.match(script,/genreSelection/);
  assert.match(script,/sharedStyleNotes/);

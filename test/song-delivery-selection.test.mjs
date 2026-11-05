@@ -84,40 +84,48 @@ test('unpaid, missing, duplicated and unverified candidates cannot be delivered'
 });
 
 
-test('paid customer delivery forwards only one chosen file even if generator returned two',async()=>{
- const order={
-  ...paidOrder(),recipientVerified:true,customerEmail:'customer@example.test'
- };
- const calls=[];
+test('ready notice sends only titles while private store saves the one chosen asset',async()=>{
+ const order={...paidOrder(),recipientVerified:true,customerEmail:'customer@example.test'};
+ const notices=[],persisted=[];
  const result=await sendSelectedCustomerSongs({
   order,deliveryJob:{orderId:order.id,key:'deliver:'+order.id,status:'claimed'},
   candidateBatches:[batch(1,['SONG_CHOICE_1','SONG_CHOICE_2'])],
   selections:[{index:1,candidateId:'SONG_CHOICE_2'}],
-  deliveryAdapter:{async sendSelectedPrivateLinks(args){
-   calls.push(args);
-   return {messageId:'mock-delivery-123'};
-  }}
+  deliveryStore:{
+   async publishSelectionAtomic(args){persisted.push(args);return {outcome:'published'};},
+   async markDeliveredAtomic(args){persisted.push({marked:args});return {outcome:'completed'};}
+  },
+  deliveryAdapter:{async sendReadyNotice(args){notices.push(args);return {messageId:'mock-ready-123'};}}
  });
  assert.equal(result.deliveredSongCount,1);
- assert.equal(calls.length,1);
- assert.equal(calls[0].selectedSongs.length,1);
- assert.equal(calls[0].selectedSongs[0].candidateId,'SONG_CHOICE_2');
- assert.ok(!JSON.stringify(calls).includes('SONG_CHOICE_1'));
- assert.equal(calls[0].idempotencyKey,'withu-delivery-'+order.id);
+ assert.equal(notices.length,1);
+ assert.equal(persisted.length,2);
+ assert.equal(persisted[1].marked.nextState,ORDER_STATES.DELIVERED);
+ assert.equal(persisted[0].selectedSongs[0].candidateId,'SONG_CHOICE_2');
+ assert.equal(persisted[0].selectedSongs[0].privateAssetKey,'private/music/SONG_CHOICE_2.mp3');
+ assert.equal(notices[0].selectedSongs.length,1);
+ assert.equal(notices[0].selectedSongs[0].candidateId,undefined);
+ assert.equal(notices[0].selectedSongs[0].privateAssetKey,undefined);
+ assert.ok(!JSON.stringify(notices).includes('SONG_CHOICE_1'));
+ assert.ok(!JSON.stringify(notices).includes('SONG_CHOICE_2'));
+ assert.equal(notices[0].idempotencyKey,'withu-delivery-'+order.id);
 });
-test('no customer delivery occurs before verified recipient and full song selection',async()=>{
- const order=paidOrder();
- const calls=[];
- const makeArgs=(o)=>({
+test('unpaid, unverified or incomplete selections never publish or email',async()=>{
+ const order=paidOrder(),notices=[],persisted=[];
+ const makeArgs=o=>({
   order:o,deliveryJob:{orderId:o.id,key:'deliver:'+o.id,status:'claimed'},
   candidateBatches:[batch(1,['SONG_CHOICE_1','SONG_CHOICE_2'])],
   selections:[{index:1,candidateId:'SONG_CHOICE_1'}],
-  deliveryAdapter:{async sendSelectedPrivateLinks(args){calls.push(args);return {messageId:'mock'};}}
+  deliveryStore:{
+   async publishSelectionAtomic(args){persisted.push(args);return {outcome:'published'};},
+   async markDeliveredAtomic(args){persisted.push({marked:args});return {outcome:'completed'};}
+  },
+  deliveryAdapter:{async sendReadyNotice(args){notices.push(args);return {messageId:'mock'};}}
  });
  await assert.rejects(sendSelectedCustomerSongs(makeArgs(order)),/not authorized/);
  const verified={...order,customerEmail:'customer@example.test',recipientVerified:true};
- await assert.rejects(sendSelectedCustomerSongs({
-  ...makeArgs(verified),selections:[]
- }),/Exactly one selection/);
- assert.equal(calls.length,0);
+ await assert.rejects(sendSelectedCustomerSongs({...makeArgs(verified),selections:[]}),/Exactly one selection/);
+ await assert.rejects(sendSelectedCustomerSongs({...makeArgs(verified),deliveryStore:null}),/Durable private delivery/);
+ assert.equal(notices.length,0);
+ assert.equal(persisted.length,0);
 });

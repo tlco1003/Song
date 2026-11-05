@@ -44,7 +44,7 @@ function limited(req,max=15){
   if(++item.count>max)throw new AppError(429,'시간당 생성 요청 한도를 초과했습니다.');
   requests.set(ip,item);
 }
-async function handle(req,res){
+async function handle(req,res,{customerPortal=null}={}){
   harden(res);
   const u=new URL(req.url,'http://'+host+':'+port);
   const pathname=u.pathname;
@@ -59,7 +59,45 @@ async function handle(req,res){
       return json(res,200,publicPriceCatalog());
     if(pathname==='/api/commerce/orders'||pathname.startsWith('/api/commerce/orders/'))
       throw new AppError(503,'자동 음악 제작·결제·이메일 발송 서비스는 준비 중이며 현재 주문을 받지 않습니다.');
-    if(pathname.startsWith('/api/delivery/'))throw new AppError(503,'인증된 고객 파일 전달 기능은 아직 준비 중입니다.');
+    // The portal is not enabled until verified payment, transactional OTP/session
+    // storage, transactional song selection and private asset streaming all exist.
+    if(pathname.startsWith('/api/delivery/')||pathname.startsWith('/api/delivery-assets/')){
+      if(!customerPortal)throw new AppError(503,'인증된 고객 파일 전달 기능은 아직 준비 중입니다.');
+      const cookie=typeof req.headers.cookie==='string'?req.headers.cookie:'';
+      if(pathname.startsWith('/api/delivery-assets/')){
+        if(typeof customerPortal.servePrivateAsset!=='function')
+          throw new AppError(503,'보호된 음원 저장소가 아직 연결되지 않았습니다.');
+        return customerPortal.servePrivateAsset({req,res,pathname,cookie});
+      }
+      if(req.method==='GET'&&pathname==='/api/delivery/session'){
+        const identity=await customerPortal.session(cookie);
+        if(!identity)throw new AppError(401,'이메일 인증이 필요합니다.');
+        return json(res,200,{authenticated:true,emailVerified:true,email:identity.email});
+      }
+      if(req.method==='POST'&&pathname==='/api/delivery/access/request'){
+        limited(req,10);
+        const input=await jsonBody(req,1000);
+        await customerPortal.requestCode({email:input.email,clientIp:req.socket.remoteAddress||''});
+        return json(res,200,{accepted:true});
+      }
+      if(req.method==='POST'&&pathname==='/api/delivery/access/verify'){
+        limited(req,20);
+        const input=await jsonBody(req,1000);
+        const result=await customerPortal.verifyCode({email:input.email,code:input.code});
+        res.setHeader('Set-Cookie',result.cookie);
+        return json(res,200,{authenticated:true,emailVerified:true});
+      }
+      if(req.method==='POST'&&pathname==='/api/delivery/logout'){
+        res.setHeader('Set-Cookie',await customerPortal.logout(cookie));
+        return json(res,200,{authenticated:false});
+      }
+      if(req.method==='GET'&&pathname==='/api/delivery/orders')
+        return json(res,200,await customerPortal.listCustomerOrders(cookie));
+      const chosen=/^\/api\/delivery\/orders\/([A-Za-z0-9_-]{6,64})\/tracks\/([1-9][0-9]?)$/.exec(pathname);
+      if(req.method==='GET'&&chosen)
+        return json(res,200,await customerPortal.getCustomerTrack(cookie,chosen[1],Number(chosen[2])));
+      throw new AppError(404,'요청하신 고객 자료가 없습니다.');
+    }
     auth(req);
     if(req.method==='POST'&&pathname==='/api/covers/generate'){
       // This is an owner-authenticated prototype route, not a public customer endpoint.
@@ -185,10 +223,10 @@ async function handle(req,res){
   createReadStream(full).on('error',()=>res.destroy()).pipe(res);
   return;
 }
-export function createApp(){
-  return http.createServer((req,res)=>{void handle(req,res).catch(error=>{
-    if(!res.headersSent)json(res,error instanceof AppError?error.status:500,{
-      error:error instanceof AppError?error.message:'서버 처리 오류가 발생했습니다.'
+export function createApp({customerPortal=null}={}){
+  return http.createServer((req,res)=>{void handle(req,res,{customerPortal}).catch(error=>{
+    if(!res.headersSent)json(res,error instanceof AppError?error.status:(Number.isInteger(error?.status)&&[400,401,403,404,429].includes(error.status)?error.status:500),{
+      error:error instanceof AppError?error.message:'요청을 확인할 수 없습니다.'
     });else res.destroy();
   });});
 }

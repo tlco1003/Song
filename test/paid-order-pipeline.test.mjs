@@ -236,7 +236,7 @@ test('two different genres create ONE independent music request per chosen genre
   settings:{preference:'approved_music_api',commercialApiAgreementVerified:true,musicProviderReady:true}});
  await executePaidJob({job:p.jobs[0],order:{...p.read(),commercialApiAgreementVerified:true},musicProvider});
  assert.deepEqual(seen.map(x=>x.genre),['발라드','트로트']);
- assert.match(seen[0].style,/piano ballad/i);
+ assert.match(seen[0].style,/narrative ballad; expressive lead vocal; piano foundation/i);
  assert.match(seen[1].style,/Korean trot/i);
  assert.ok(seen[0].idempotencyKey.endsWith('-1'));
  assert.ok(seen[1].idempotencyKey.endsWith('-2'));

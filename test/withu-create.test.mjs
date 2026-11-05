@@ -21,10 +21,9 @@ test('public creation collects the original five answers and speech choices',()=
   for(const id of ['recipient','memory','message','gratitudeApology','occasion','recipientAgeGroup','relativePosition','speechStyle','genre','mood','lyricLength']){
     assert.ok(create.includes('id="'+id+'"'),id);
   }
-  assert.match(create,/id="song-lyrics"/);
-  assert.match(create,/id="song-style"/);
-  assert.match(create,/id="copy-lyrics"/);
-  assert.match(create,/id="copy-style"/);
+  assert.match(create,/id="song-lyrics-preview"/);
+  assert.match(create,/data-create-step="7"/);
+  assert.doesNotMatch(create,/id="copy-lyrics"|id="copy-style"/);
   assert.match(create,/id="go-create"/);
   assert.match(css,/creation-layout/);
 });
@@ -33,10 +32,10 @@ test('creation routes to WITHU checkout, keeps lyric authoring and avoids extern
   assert.doesNotMatch(create,/href="https:\/\/suno\.com\/create"/);
   assert.match(createScript,/withu-order-draft-v1/);
   assert.match(createScript,/sessionStorage\.setItem/);
-  assert.match(createScript,/navigator\.clipboard\.writeText/);
+  assert.doesNotMatch(createScript,/navigator\.clipboard\.writeText/);
   assert.match(createScript,/fetch\('api\/lyrics'/);
   assert.ok(!/\?lyrics=|\?prompt=|\?style=/.test(create+createScript));
-  assert.match(createScript,/lyrics-service-pending/);
+  assert.match(createScript,/markUnavailable/);
 });
 test('HTTPS backend serves landing, lyric creation and opt-in mother video routes',()=>{
   for(const line of ["'/create.html':'docs/create.html'","'/create.js':'docs/create.js'","'/create.css':'docs/create.css'"]){

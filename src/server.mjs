@@ -105,6 +105,7 @@ async function handle(req,res){
     '/checkout.js':'docs/checkout.js',
     '/checkout-media.js':'docs/checkout-media.js',
     '/prices.json':'docs/prices.json',
+    '/music-genres.json':'docs/music-genres.json',
     '/player.js':'docs/player.js',
     '/media/tracks.json':'docs/media/tracks.json',
     '/reviews/reviews.json':'docs/reviews/reviews.json',

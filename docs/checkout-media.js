@@ -45,6 +45,19 @@
     $('audio-preview-time').textContent='00:00 / 00:30';
     $('audio-preview-fill').style.width='0%';
   }
+  function updateExampleArt(option){
+    const img=$('checkout-cover-image'),fallback=$('checkout-cover-fallback'),link=$('checkout-view-song');
+    img.hidden=true;fallback.hidden=false;img.removeAttribute('src');
+    const id=option?.dataset.trackId,cover=option?.dataset.cover;
+    if(id&&/^song-[a-z0-9-]+$/i.test(id)){
+      link.hidden=false;link.href='song.html?demo='+encodeURIComponent(id);
+    }else link.hidden=true;
+    if(cover&&/^covers\/[a-z0-9-]+\.webp$/i.test(cover)){
+      img.onload=()=>{img.hidden=false;fallback.hidden=true};
+      img.onerror=()=>{img.hidden=true;fallback.hidden=false};
+      img.src=cover;
+    }
+  }
   async function loadExamples() {
     const select=$('audio-example');
     select.replaceChildren();
@@ -60,11 +73,14 @@
       for(const track of tracks){
         const option=document.createElement('option');
         option.value=track.file;
+        option.dataset.trackId=track.id||'';
+        option.dataset.cover=track.coverImage||'';
         option.dataset.genre=typeof track.genre==='string'&&track.genre.trim()?track.genre.trim():'장르 정보 준비 중';
         option.textContent=track.title+' · '+option.dataset.genre;
         select.append(option);
       }
       select.selectedIndex=0;
+      updateExampleArt(select.selectedOptions[0]);
       $('audio-example-genre').textContent='장르 · '+(select.selectedOptions[0]?.dataset.genre||'장르 정보 준비 중');
       setAudio('media/'+encodeURIComponent(select.value));
       audioNotice('기존에 공개된 예시곡을 선택했어요. 재생을 누르면 30초만 들려줍니다.');
@@ -72,6 +88,7 @@
       const option=document.createElement('option');
       option.value='';option.textContent='지금은 예시곡 목록을 불러올 수 없어요';
       select.append(option);
+      updateExampleArt(null);
       $('audio-example-genre').textContent='장르 정보를 불러오지 못했어요.';
       audioNotice('예시곡을 불러오지 못했어요. 직접 음악 파일을 선택하면 30초 미리 듣기가 가능해요.');
     }
@@ -81,6 +98,7 @@
     const file=$('audio-example').value;
     if(file)setAudio('media/'+encodeURIComponent(file));
     else setAudio('');
+    updateExampleArt($('audio-example').selectedOptions[0]);
     $('audio-example-genre').textContent=file?'장르 · '+($('audio-example').selectedOptions[0]?.dataset.genre||'장르 정보 준비 중'):'예시곡을 선택해 주세요.';
     audioNotice('예시곡을 변경했어요. 재생 버튼을 눌러보세요.');
   });
@@ -93,6 +111,7 @@
     revoke('audioUrl');
     state.audioUrl=URL.createObjectURL(file);
     setAudio(state.audioUrl);
+    updateExampleArt(null);
     $('audio-example-genre').textContent='내 음악 · 장르 미분류';
     audioNotice('선택한 내 음악을 이 브라우저에서 30초만 미리 들어요. 업로드되지 않습니다.');
     event.target.value='';

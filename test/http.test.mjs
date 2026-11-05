@@ -24,7 +24,16 @@ test('GET UI and GPT/Suno config without provider credentials',async()=>{
     assert.equal(res.headers.get('content-type'),'video/mp4');
     res=await fetch(url+'/checkout.html');
     assert.equal(res.status,200);
-    assert.match(await res.text(),/노래 선물 주문/);
+    assert.match(await res.text(),/노래 선물 선택/);
+    res=await fetch(url+'/payment.html');
+    assert.equal(res.status,200);
+    assert.match(await res.text(),/WITHU — 결제/);
+    res=await fetch(url+'/payment.js');
+    assert.equal(res.status,200);
+    assert.match(await res.text(),/confirm-checkout/);
+    res=await fetch(url+'/music-genres.json');
+    assert.equal(res.status,200);
+    assert.equal((await res.json()).genres.length,7);
     res=await fetch(url+'/checkout.css');
     assert.equal(res.status,200);
     res=await fetch(url+'/checkout.js');

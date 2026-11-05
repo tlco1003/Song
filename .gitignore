@@ -6,3 +6,7 @@ node_modules/
 .DS_Store
 *.log
 *.zip
+
+# Proprietary WITHU music recipes: store only in server private volume.
+.withu-private-styles/
+private-style-library/

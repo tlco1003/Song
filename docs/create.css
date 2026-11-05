@@ -55,3 +55,27 @@
 @keyframes wizard-enter{from{opacity:.65;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:650px){.create-page{padding-top:22px}.wizard-shell{width:calc(100% - 28px)}.create-page .creation-card{padding:25px 22px;min-height:330px}.create-page .wizard-prev{padding:11px 17px}.create-page .wizard-step h1,.create-page .wizard-step h2{font-size:38px}}
 @media(prefers-reduced-motion:reduce){.create-page .creation-card{animation:none}.wizard-progress-bar span{transition:none}}
+
+/* Direct-choice music controls: no free-text style prompt is customer-visible. */
+.music-choice-fieldset{border:0;margin:18px 0 25px;padding:0;min-width:0}
+.music-choice-fieldset legend{font-size:13px;color:#5f485a;font-weight:700;margin:0 0 12px}
+.music-choice-fieldset .wizard-intro{margin:0 0 12px}
+.music-choice-grid{display:grid;gap:9px;width:100%}
+.genre-tile-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.mood-tile-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.era-tile-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.music-choice{display:block!important;margin:0!important;cursor:pointer;position:relative;min-width:0}
+.music-choice input{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
+.music-choice span{display:flex;align-items:center;justify-content:center;text-align:center;min-height:50px;padding:9px 8px;border:1px solid #e1d4dc;border-radius:10px;background:#fff;color:#645461;font-size:12px;font-weight:700;line-height:1.4;transition:background .15s,border-color .15s}
+.music-choice:has(input:checked) span{background:#f1e0e8;border:2px solid #9c7187;color:#533a4b;box-shadow:0 4px 13px #976b8721}
+.music-choice input:focus-visible+span{outline:3px solid #86617a;outline-offset:3px}
+.music-choice:hover span{border-color:#b797a9}
+.create-page .lyrics-preview-card .lyric-result{border:1px solid #eadce2;background:#fffefa;border-radius:12px;padding:19px;margin:10px 0}
+.generated-song-title{display:block;font-size:16px;margin-bottom:12px;color:#5b4255}
+.song-lyrics-preview{white-space:pre-wrap;min-height:165px;max-height:350px;overflow-y:auto;font-size:13px;line-height:2;color:#665667;word-break:keep-all}
+@media(max-width:600px){
+ .genre-tile-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .music-choice span{min-height:48px;padding:8px 4px;font-size:11px}
+ .create-page .lyrics-preview-card .lyric-result{padding:15px}
+}
+@media(max-width:355px){.genre-tile-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}

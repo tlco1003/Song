@@ -8,6 +8,9 @@ let tracks=[],current=0,requestId=0,rawLyrics='',visibleLyrics=[],activeLine=-1;
 const deviceAudio=[],deviceVideo=[];
 const fileOK=s=>typeof s==='string'&&/^[a-zA-Z0-9가-힣_.-]{1,110}$/.test(s);
 const fileURL=(root,s)=>root+encodeURIComponent(s);
+const coverOK=s=>typeof s==='string'&&/^covers\/[a-z0-9-]+\.webp$/i.test(s);
+const coversById={'song-mother':'mother-thanks.webp','song-cinderella-laundry':'cinderella-laundry.webp','song-nara':'self-lantern.webp','song-taehwan':'taehwan-main.webp','song-jeongmi':'friend-memory.webp','song-romantic-wedding':'romantic-wedding.webp','song-sprout':'sprout.webp','song-am630':'am630.webp'};
+const coverFor=t=>coverOK(t.coverImage)?t.coverImage:(coversById[t.id]?'covers/'+coversById[t.id]:null);
 const shortName=s=>s.replace(/\.[^.]+$/,'').replace(/[_-]+/g,' ').slice(0,95);
 const fallback=[
  {id:'song-mother',title:'엄마에게 전하는 노래',genre:'감성 발라드',subtitle:'사랑과 감사를 담은 영상 편지',file:'mother-song.mp4',mediaKind:'video',durationSeconds:436.8,lyricsFile:'lyrics-mother-song.txt'},
@@ -105,6 +108,13 @@ async function select(index,autoPlay=false){
  videoPlayer.pause();videoPlayer.removeAttribute('src');videoPlayer.load();
  musicVisual.pause();musicVisual.removeAttribute('src');musicVisual.load();
  musicVisualStage.hidden=true;albumArt.hidden=false;
+ const cover=$('current-cover'),fallbackCover=$('cover-fallback'),coverPath=coverFor(track);
+ cover.onload=()=>{cover.hidden=false;fallbackCover.hidden=true};
+ cover.onerror=()=>{cover.hidden=true;fallbackCover.hidden=false};
+ cover.hidden=true;fallbackCover.hidden=false;
+ cover.removeAttribute('src');
+ if(coverPath)cover.src=coverPath;
+ $('cover-detail-link').href='song.html?demo='+encodeURIComponent(track.id||'');
  $('track-title').textContent=track.title;
  $('track-subtitle').textContent=track.subtitle||'소중한 이야기를 담은 노래';
  $('track-genre').textContent=track.genre||'장르 정보 준비 중';
@@ -155,7 +165,19 @@ function showTracks(){
   const duration=document.createElement('span');duration.className='track-length';
   duration.textContent=track.availability==='missing'&&!track.deviceURL?'준비 중':(track.durationSeconds?Math.floor(track.durationSeconds/60)+':'+String(Math.round(track.durationSeconds)%60).padStart(2,'0'):'▶');
   info.append(title,genre,subtitle);b.append(num,info,duration);
-  b.addEventListener('click',()=>select(idx,true));root.appendChild(b);
+  b.addEventListener('click',()=>select(idx,true));
+  const tile=document.createElement('div');tile.className='track-tile';
+  const mini=document.createElement('span');mini.className='track-tile-cover';
+  const coverPath=coverFor(track);
+  if(coverPath){
+    const image=document.createElement('img');image.alt='';image.loading='lazy';image.src=coverPath;
+    image.onerror=()=>{image.remove();mini.textContent='♪'};
+    mini.appendChild(image);
+  }else mini.textContent='♪';
+  const more=document.createElement('a');more.className='track-detail-link';
+  more.href='song.html?demo='+encodeURIComponent(track.id||'');
+  more.textContent='자세히 보기';more.setAttribute('aria-label',track.title+' 상세 재생 페이지 열기');
+  tile.append(mini,b,more);root.appendChild(tile);
  }
 }
 async function start(){

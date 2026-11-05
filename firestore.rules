@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Customer personal details, song drafts, payment tokens and fulfillment
+    // outbox are accessible ONLY to Firebase Admin SDK in server functions.
+    // All consumer queries go through verified-auth callable endpoints.
+    match /withuOrders/{id} {
+      allow read, write: if false;
+    }
+    match /withuCheckoutRequests/{id} {
+      allow read, write: if false;
+    }
+    match /withuCheckoutLimits/{id} {
+      allow read, write: if false;
+    }
+    match /withuFulfillmentOutbox/{id} {
+      allow read, write: if false;
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -98,7 +98,7 @@ function updateReview(){
  catch(e){$('order-song-genres').textContent=e.message;}
  showPrices();
 }
-function show(stage,{push=false}={}){
+function show(stage,{push=false,focus=false}={}){
  const active=stages();
  currentStage=active.includes(stage)?stage:active[0];
  const idx=active.indexOf(currentStage);
@@ -120,13 +120,19 @@ function show(stage,{push=false}={}){
   // Stage names only in the URL; customer stories and genres stay private.
   history.pushState({stage:currentStage},'',url.pathname+url.search);
  }
- window.scrollTo({top:0,behavior:'instant'});
+ window.scrollTo({top:0,behavior:'auto'});
+ if(focus||push){
+  const heading=document.querySelector('[data-checkout-step="'+currentStage+'"] h2');
+  if(heading){heading.setAttribute('tabindex','-1');heading.focus({preventScroll:true});}
+ }
  window.dispatchEvent(new CustomEvent('withu:checkout-stage',{detail:{stage:currentStage}}));
 }
 function canAdvance(){
  if(!draft){error('먼저 노래를 만들고 가사를 확정해 주세요. 가사 작성 화면으로 돌아가세요.');return false;}
  if(!prices){error('현재 가격을 불러올 수 없어요. 새로고침해 주세요.');return false;}
- if(currentStage==='genre'){
+ // A direct ?stage=review link must never bypass genre validation.
+ // Re-validate at every final handoff, including browser history navigation.
+ if(currentStage==='genre'||currentStage==='review'){
   try{genreSelection();}
   catch(e){error(e.message);return false;}
  }
@@ -168,7 +174,7 @@ for(const id of ['song-genre-first','song-genre-second'])
 $('song-shared-notes').addEventListener('input',saveChoices);
 window.addEventListener('popstate',()=>{
  const stage=new URLSearchParams(location.search).get('stage');
- show(stage||'product');
+ show(stage||'product',{focus:true});
 });
 async function loadPrices(){
  try{

@@ -133,7 +133,13 @@ const initialStep=Number(new URLSearchParams(location.search).get('step'))||1;
 setStep(initialStep,{focus:false});
 $('story-form').addEventListener('submit',async event=>{
  event.preventDefault();
- if(step!==7){setStep(7,{push:true});return;}
+ if(step!==7){
+  // Pressing Enter in a question must never jump straight to the final page.
+  if(!validStep(step))return;
+  saveAnswers();
+  setStep(step+1,{push:true});
+  return;
+ }
  const v=story(),status=$('generation-status'),button=$('generate-lyrics');
  if(!v.recipient.trim()||(v.memory+v.message+v.gratitudeApology).trim().length<10){
   status.textContent='이름과 10자 이상의 추억 또는 전할 말을 작성해 주세요.';return;
@@ -178,12 +184,33 @@ $('go-create').addEventListener('click',event=>{
  if(!$('song-style').value.trim())updateStyle(true);
  const lyrics=$('song-lyrics').value.trim();
  const title=$('song-title').value.trim()||'WITHU 노래 선물';
+ // Returning from order review to edit lyrics must not erase a customer's
+ // selected product or 1-/2-genre configuration.
+ let previous=null;
+ try{
+  const stored=JSON.parse(sessionStorage.getItem(ORDER_KEY)||'null');
+  if(stored?.version===1&&Number.isFinite(stored.savedAt)
+    &&Date.now()-stored.savedAt>=0&&Date.now()-stored.savedAt<MAX_AGE
+    &&stored.title&&stored.lyrics)
+    previous=stored;
+ }catch(_){/* No prior checkout selection. */}
+ const selectedProduct=['audio','audio_duo','audio_video'].includes(previous?.selectedProduct)
+  ?previous.selectedProduct:undefined;
+ const savedGenreChoice=previous?.duoGenreChoice&&
+  ['same','different'].includes(previous.duoGenreChoice.mode)&&
+  typeof previous.duoGenreChoice.first==='string'&&
+  typeof previous.duoGenreChoice.second==='string'
+  ?previous.duoGenreChoice:undefined;
  const draft={
   version:1,title:title.slice(0,100),lyrics:lyrics.slice(0,5500),
   style:$('song-style').value.trim().slice(0,1200),
   styleOverrides:$('song-style').value.trim()===currentAutoStyle?'':$('song-style').value.trim().slice(0,500),
   genre:$('genre').value,mood:$('mood').value,
-  // Privately retained only in this tab for the later order workflow.
+  ...(selectedProduct?{selectedProduct}:{}),
+  ...(savedGenreChoice?{duoGenreChoice:savedGenreChoice}:{}),
+  ...(previous?.genreSelection?{genreSelection:previous.genreSelection}:{}),
+  ...(typeof previous?.sharedStyleNotes==='string'?{sharedStyleNotes:previous.sharedStyleNotes.slice(0,500)}:{}),
+  // Privately retained in this tab for the order workflow, not a payment.
   story:story(),savedAt:Date.now()
  };
  try{

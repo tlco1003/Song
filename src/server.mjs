@@ -129,6 +129,9 @@ async function handle(req,res){
     '/prices.json':'docs/prices.json',
     '/music-genres.json':'docs/music-genres.json',
     '/player.js':'docs/player.js',
+    '/lyric-timing.mjs':'docs/lyric-timing.mjs',
+    '/lyric-timer.html':'docs/lyric-timer.html',
+    '/lyric-timer.js':'docs/lyric-timer.js',
     '/song.html':'docs/song.html',
     '/song.css':'docs/song.css',
     '/song.js':'docs/song.js',
@@ -157,6 +160,7 @@ async function handle(req,res){
   const mime={
     '.html':'text/html; charset=utf-8',
     '.js':'text/javascript; charset=utf-8',
+    '.mjs':'text/javascript; charset=utf-8',
     '.css':'text/css; charset=utf-8',
     '.svg':'image/svg+xml',
     '.webp':'image/webp',

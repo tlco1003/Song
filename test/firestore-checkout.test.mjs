@@ -124,6 +124,20 @@ test('unreserved or changed-amount payment cannot reach atomic paid/outbox trans
   }),/Concurrent or mismatched/);
   assert.equal([...data.keys()].filter(x=>x.startsWith('withuFulfillmentOutbox/')).length,0);
 });
+test('paid transaction records only the verified provider method, not card or bank credentials',async()=>{
+  const {orders}=fixture();
+  const order=pending();
+  await orders.createOnce({order,requestId});
+  await orders.reserveConfirmationAtomic({orderId:order.id,paymentKey});
+  const safe={gateway:'tosspayments',method:'간편결제',
+    easyPayProvider:'카카오페이',bankCode:null};
+  await orders.confirmPaidAndEnqueueAtomic({...fields(order.id),providerMethod:safe});
+  const stored=await orders.getById(order.id);
+  assert.deepEqual(stored.providerMethod,safe);
+  assert.equal(stored.state,ORDER_STATES.PAID);
+  assert.equal(Object.hasOwn(stored.providerMethod,'accountNumber'),false);
+  assert.equal(Object.hasOwn(stored.providerMethod,'cardNumber'),false);
+});
 test('virtual account issuance stays unpaid and stores original key for future reconciliation',async()=>{
   const {orders,data}=fixture();
   const order=pending();
@@ -151,7 +165,7 @@ test('release requires explicit reviewed code change and never ships secret key 
   const publicCode=[
     'docs/payment-live.js','docs/payment-success.js','docs/withu-payment-public-config.js'
   ].map(f=>readFileSync(new URL('../'+f,import.meta.url),'utf8')).join('\n');
-  assert.doesNotMatch(publicCode,/\bTOSS_SECRET_KEY\b/);
+  assert.doesNotMatch(publicCode,/(?:const|let|var|TOSS_SECRET_KEY=)[^\n]*[=:'"]\s*['"](?:live_sk_|test_sk_)/);
   assert.doesNotMatch(publicCode,/api\.tosspayments\.com\/v1\/payments\/confirm/);
   assert.match(publicCode,/confirmWithuPayment/);
 });

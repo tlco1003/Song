@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#211c26">
+<meta name="description" content="WITHU — 소중한 노래를 듣고 간직하는 특별한 음악 선물 페이지">
+<title>WITHU · 나의 음악 선물</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="song.css">
+<script src="cover-store.js" defer></script><script src="song.js" defer></script>
+</head>
+<body class="song-detail-body">
+<header class="site-header"><div class="frame header-inner">
+<a class="brand" href="./" aria-label="WITHU 홈"><span class="brand-icon" aria-hidden="true">♪</span> WITHU</a>
+<nav aria-label="사이트 메뉴"><a href="./">음악 감상</a><a href="create.html">노래 만들기</a></nav>
+</div></header>
+<main class="detail-layout frame">
+  <div class="detail-heading">
+    <div><span class="small-caps">WITHU · MUSIC LETTER</span><p class="detail-kicker" id="detail-kind">노래 선물 감상</p>
+      <h1 id="detail-title">노래를 불러오는 중</h1><p id="detail-genre" class="detail-genre">장르 정보 확인 중</p></div>
+    <div class="detail-actions">
+      <button id="cover-edit-button" type="button" class="detail-outline">✎ 커버 바꾸기</button>
+      <button id="share-button" type="button" class="detail-outline">공유</button>
+    </div>
+  </div>
+
+  <div id="player-stage" class="detail-player" tabindex="0" aria-label="WITHU 음악 영상 플레이어">
+    <div id="player-backdrop" class="detail-backdrop"></div>
+    <div class="detail-art" id="detail-art">
+      <img id="detail-cover" alt="선택한 노래의 커버 이미지" hidden>
+      <div id="detail-cover-fallback" class="detail-fallback"><span>WITHU</span><strong>♪</strong></div>
+    </div>
+    <video id="detail-video" preload="metadata" playsinline webkit-playsinline hidden></video>
+    <audio id="detail-audio" preload="metadata" hidden></audio>
+    <div class="detail-player-controls" id="detail-controls">
+      <button type="button" id="detail-play" class="detail-big-play" aria-label="재생">▶</button>
+      <div class="detail-bottom-controls">
+        <div class="detail-timeline">
+          <span id="detail-time">0:00</span>
+          <input id="detail-seek" type="range" min="0" max="1000" value="0" step="1" aria-label="재생 위치">
+          <span id="detail-duration">0:00</span>
+        </div>
+        <div class="detail-control-actions">
+          <button type="button" id="detail-mute" aria-label="음소거">음소거</button>
+          <button type="button" id="detail-fullscreen" aria-label="전체화면">⛶ 전체화면</button>
+        </div>
+      </div>
+    </div>
+    <div id="detail-not-ready" class="detail-not-ready" hidden>아직 감상할 파일이 준비되지 않았어요.</div>
+  </div>
+  <p class="detail-status" id="detail-status" role="status">재생 버튼을 누르면 감상할 수 있어요.</p>
+  <div class="detail-tools">
+    <a id="download-track" class="detail-outline" download hidden>원본 파일 받기</a>
+    <button id="download-cover" class="detail-outline" type="button">커버 이미지 받기</button>
+    <span class="detail-private-note" id="detail-private-note">공개된 WITHU 예시 작품입니다.</span>
+  </div>
+  <section class="detail-lyrics" aria-labelledby="detail-lyrics-title"><h2 id="detail-lyrics-title">노래에 담긴 이야기</h2>
+    <div id="detail-lyrics-text" class="detail-lyrics-text">가사를 불러오는 중이에요.</div>
+  </section>
+  <div class="detail-backlink"><a href="./">← 다른 노래 감상하기</a></div>
+</main>
+
+<dialog id="cover-dialog" class="cover-dialog" aria-labelledby="cover-dialog-title">
+  <div class="cover-dialog-inner">
+    <header><h2 id="cover-dialog-title">나의 노래 커버 꾸미기</h2><button id="close-cover-dialog" type="button" class="close-dialog" aria-label="닫기">✕</button></header>
+    <p>사진을 직접 선택하거나, 원하는 분위기를 적어 나만의 정사각형 커버를 만들어 보세요.</p>
+    <div class="cover-dialog-grid">
+      <div class="cover-choice-card">
+        <h3>내 사진 사용하기</h3>
+        <label for="cover-file" class="detail-outline">이미지 파일 선택</label>
+        <input id="cover-file" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+        <span class="cover-help">JPG · PNG · WebP, 최대 10MB. 정사각형으로 자동 잘라요.</span>
+      </div>
+      <div class="cover-choice-card">
+        <h3>AI 이미지 만들기</h3>
+        <label for="cover-prompt">커버에 담고 싶은 장면이나 느낌</label>
+        <textarea id="cover-prompt" maxlength="700" rows="3" placeholder="예: 밤의 세탁소, 동전을 들고 미소 짓는 두 사람, 따뜻하고 동화적인 분위기"></textarea>
+        <button id="generate-cover" type="button" class="detail-outline">AI 커버 생성</button>
+        <span class="cover-help">별도 서버와 이미지 API 연결이 필요합니다. 미연결 상태에서는 비용이 청구되지 않아요.</span>
+      </div>
+    </div>
+    <div class="cover-preview-box">
+      <img id="cover-preview" alt="선택한 새 커버 미리보기" hidden>
+      <div id="cover-preview-empty">새 커버를 선택하면 여기서 미리 볼 수 있어요.</div>
+    </div>
+    <p class="cover-message" id="cover-message" role="status">변경한 커버는 현재 기기에만 저장됩니다. 다른 사람에게 공개되지 않아요.</p>
+    <div class="cover-dialog-actions">
+      <button id="reset-cover" type="button" class="detail-outline">기본 커버로</button>
+      <button id="save-cover" type="button" class="detail-main-button" disabled>이 이미지 사용하기</button>
+    </div>
+  </div>
+</dialog>
+<footer class="site-footer"><div class="frame footer-inner"><span class="footer-brand">WITHU</span><p>당신의 마음이 노래가 되는 순간.</p><span class="copyright">© 2026 WITHU</span></div></footer>
+</body></html>

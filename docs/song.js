@@ -24,7 +24,6 @@ async function togglePlay(){
  updatePlay();
 }
 function setArt(url){
- if(coverURL){URL.revokeObjectURL(coverURL);coverURL=null}
  cover.hidden=true;coverFallback.hidden=false;
  if(!url){cover.removeAttribute('src');return}
  cover.onload=()=>{cover.hidden=false;coverFallback.hidden=true};
@@ -34,7 +33,7 @@ function setArt(url){
 async function applyStoredCover(){
  if(!track||!window.WithuCovers)return;
  try{const blob=await window.WithuCovers.get(track.id);
- if(blob){coverURL=URL.createObjectURL(blob);setArt(coverURL);}
+ if(blob){if(coverURL)URL.revokeObjectURL(coverURL);coverURL=URL.createObjectURL(blob);setArt(coverURL);}
  }catch(_){}
 }
 async function fetchLyrics(url){
@@ -60,7 +59,7 @@ function loadTrack(item,publicDemo){
  const mediaPath=publicDemo?'media/'+encodeURIComponent(item.file):item.privateMediaUrl;
  // Never trust media URL text supplied by public query parameters. A private URL
  // must originate from the authenticated delivery API and be same-origin.
- if(!publicDemo && (!mediaPath||!new URL(mediaPath,location.href).origin===location.origin)){
+ if(!publicDemo && (!mediaPath||new URL(mediaPath,location.href).origin!==location.origin)){
   mediaReady=false;notice('개인 음원 인증이 필요합니다.');return;
  }
  player.src=mediaPath;mediaReady=true;

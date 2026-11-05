@@ -192,3 +192,10 @@
 .order-song-genres{font-size:12px;color:#71566c;line-height:1.85;white-space:pre-wrap}
 .demo-genre-plan{border-radius:8px;background:#f8f1f5;padding:10px 12px;white-space:pre-wrap;color:#72556b;font-size:12px;line-height:1.8}
 @media(max-width:480px){.genre-configuration{padding:16px 13px}.duo-genre-modes{grid-template-columns:1fr}.song-genre-grid{grid-template-columns:1fr}}
+
+/* Example art stays attached to the selected 30-second audio demonstration. */
+.checkout-cover-sample{display:flex;align-items:center;gap:14px;margin:12px 0 20px;background:#fffafc;border:1px solid #eadfe6;border-radius:10px;padding:12px}
+.checkout-cover-box{width:92px;min-width:92px;aspect-ratio:1;display:grid;place-items:center;overflow:hidden;border-radius:9px;background:linear-gradient(140deg,#b797b0,#593b56);color:#fff;font-size:40px}
+.checkout-cover-box img{height:100%;width:100%;object-fit:cover}
+.checkout-cover-sample p{margin:0 0 6px;font-size:12px;line-height:1.7;color:#776675;word-break:keep-all}
+.detail-sample-link{font-size:12px;color:#805a73;text-decoration:underline;text-underline-offset:4px}

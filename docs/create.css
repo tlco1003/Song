@@ -27,3 +27,31 @@
 .editor-buttons .outline-button{width:100%;color:#624f61;background:#fefdfc;border-color:#d6c6d0}
 @media(max-width:840px){.creation-layout{grid-template-columns:1fr;max-width:650px}.creation-card{padding:25px}.create-page{padding:30px 0 70px}}
 @media(max-width:410px){.choice-grid{grid-template-columns:1fr}.creation-intro h1{font-size:53px}}
+
+/* Focused page-like question flow. A single active question replaces long scrolling. */
+.create-page{padding:34px 0 80px;min-height:calc(100dvh - 156px)}
+.wizard-shell{width:min(690px,calc(100% - 32px));margin:auto}
+.wizard-header{margin:0 0 19px}
+.wizard-header .small-caps{color:#a0798c}
+.wizard-progress-text{font-size:12px;color:#857180;margin:12px 0}
+.wizard-progress-bar{height:5px;background:#eadfe6;border-radius:7px;overflow:hidden}
+.wizard-progress-bar span{display:block;background:linear-gradient(90deg,#9a7587,#cfaaaf);height:100%;width:14.2857%;border-radius:7px;transition:width .2s ease}
+.create-page .creation-card{padding:38px 39px;border-radius:18px;min-height:390px;animation:wizard-enter .23s ease-out}
+.create-page .wizard-step h1,.create-page .wizard-step h2{font:400 clamp(34px,5vw,48px)/1.25 "Nanum Brush Script","Gowun Batang",serif;margin:12px 0}
+.create-page .wizard-step h1 em,.create-page .wizard-step h2 em{font-style:normal;color:#af7b92}
+.create-page .wizard-intro{font-size:13px;color:#877583;line-height:1.8;margin:10px 0 26px}
+.create-page .wizard-eyebrow{display:block;letter-spacing:.16em;font-size:10px;color:#a27f91}
+.create-page .wizard-step label{margin-top:18px}
+.create-page .wizard-step textarea{min-height:115px}
+.create-page #song-lyrics{min-height:285px}
+.create-page #song-style{min-height:118px}
+.create-page .outline-button{padding:12px 14px;border:1px solid #d8c5d1;border-radius:9px;background:#fff;color:#60485b;font-size:12px;cursor:pointer}
+.create-page .outline-button:hover{background:#f8f0f5}
+.create-page .wizard-actions{display:flex;gap:12px;justify-content:space-between;margin:16px 0 0}
+.create-page .wizard-actions .main-create-button{width:auto;flex:1;margin:0;min-height:53px}
+.create-page .wizard-prev{padding:12px 24px;border-radius:9px;background:#fff;border:1px solid #dacbd3;color:#624d5d}
+.create-page .wizard-error{background:#fff1f3;color:#a1365b;border:1px solid #eac3d2;border-radius:9px;padding:13px}
+.create-page .action-status{margin:12px 0}
+@keyframes wizard-enter{from{opacity:.65;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:650px){.create-page{padding-top:22px}.wizard-shell{width:calc(100% - 28px)}.create-page .creation-card{padding:25px 22px;min-height:330px}.create-page .wizard-prev{padding:11px 17px}.create-page .wizard-step h1,.create-page .wizard-step h2{font-size:38px}}
+@media(prefers-reduced-motion:reduce){.create-page .creation-card{animation:none}.wizard-progress-bar span{transition:none}}

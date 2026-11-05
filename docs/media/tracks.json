@@ -10,7 +10,9 @@
       "durationSeconds": 436.8,
       "lyricsFile": "lyrics-mother-song.txt",
       "genre": "감성 발라드",
-      "genreSource": "editorial"
+      "genreSource": "editorial",
+      "coverImage": "covers/mother-thanks.webp",
+      "productType": "audio_video"
     },
     {
       "id": "song-cinderella-laundry",
@@ -22,7 +24,10 @@
       "visualFile": "cinderella-laundry-loop.mp4",
       "visualMode": "silent-loop",
       "genre": "뮤지컬 팝 · 재즈 스윙",
-      "genreSource": "prompt"
+      "genreSource": "prompt",
+      "coverImage": "covers/cinderella-laundry.webp",
+      "productType": "audio_with_cover",
+      "coverTheme": "장난스럽고 낭만적인 동전 세탁소의 신데렐라"
     },
     {
       "id": "song-nara",
@@ -32,7 +37,9 @@
       "durationSeconds": 257.544,
       "lyricsFile": "lyrics-nara.txt",
       "genre": "어쿠스틱 팝",
-      "genreSource": "editorial"
+      "genreSource": "editorial",
+      "coverImage": "covers/self-lantern.webp",
+      "productType": "audio_with_cover"
     },
     {
       "id": "song-taehwan",
@@ -42,7 +49,9 @@
       "durationSeconds": 320.04,
       "lyricsFile": "lyrics-taehwan.txt",
       "genre": "로맨틱 발라드",
-      "genreSource": "editorial"
+      "genreSource": "editorial",
+      "coverImage": "covers/taehwan-main.webp",
+      "productType": "audio_with_cover"
     },
     {
       "id": "song-jeongmi",
@@ -52,7 +61,9 @@
       "durationSeconds": 350.04,
       "lyricsFile": "lyrics-jeongmi.txt",
       "genre": "감성 발라드",
-      "genreSource": "editorial"
+      "genreSource": "editorial",
+      "coverImage": "covers/friend-memory.webp",
+      "productType": "audio_with_cover"
     },
     {
       "id": "song-romantic-wedding",
@@ -61,7 +72,9 @@
       "file": "romantic-wedding.mp3",
       "lyricsFile": "lyrics-wedding.txt",
       "genre": "웨딩 발라드 · 듀엣",
-      "genreSource": "editorial"
+      "genreSource": "editorial",
+      "coverImage": "covers/romantic-wedding.webp",
+      "productType": "audio_with_cover"
     },
     {
       "id": "song-sprout",
@@ -71,7 +84,9 @@
       "lyricsFile": "lyrics-sprout.txt",
       "durationSeconds": 274.944,
       "genre": "희망 팝 발라드",
-      "genreSource": "editorial"
+      "genreSource": "editorial",
+      "coverImage": "covers/sprout.webp",
+      "productType": "audio_with_cover"
     },
     {
       "id": "song-am630",
@@ -81,7 +96,9 @@
       "lyricsFile": "lyrics-am630.txt",
       "durationSeconds": 428.04,
       "genre": "새벽 감성 발라드",
-      "genreSource": "editorial"
+      "genreSource": "editorial",
+      "coverImage": "covers/am630.webp",
+      "productType": "audio_with_cover"
     }
   ]
 }

@@ -66,13 +66,37 @@ async function init(){
   window.dispatchEvent(new Event('withu:payment-preview-ready'));
  }
 }
+const methodHints=Object.freeze({
+  toss_pay:'토스페이',naver_pay:'네이버페이',kakao_pay:'카카오페이',
+  payco:'페이코',samsung_pay:'삼성페이',apple_pay:'애플페이',
+  card:'신용·체크카드',transfer:'실시간 계좌이체',
+  virtual_account:'가상계좌',mobile_phone:'휴대폰 결제',
+  culture_gift:'문화상품권',book_gift:'도서문화상품권',
+  game_gift:'게임문화상품권'
+});
+function updateSelectedMethod(){
+  const selected=document.querySelector('input[name="paymentMethod"]:checked')?.value;
+  const label=methodHints[selected];
+  if(!label){
+    $('payment-method-hint').textContent='결제수단을 선택해 주세요.';
+    return;
+  }
+  const direct=['toss_pay','naver_pay','kakao_pay','payco','samsung_pay','apple_pay'].includes(selected);
+  $('withu-direct-pay-consent').hidden=!direct;
+  $('payment-method-hint').textContent=label+' 선택됨 · 실제 결제 지원 여부는 계약 및 기기 환경에 따라 확인됩니다.';
+}
+for(const item of document.querySelectorAll('input[name="paymentMethod"]')){
+  item.addEventListener('change',updateSelectedMethod);
+}
+updateSelectedMethod();
+
 for(const id of ['delivery-email','delivery-email-again']){
  $(id).addEventListener('blur',()=>{
   const first=$('delivery-email').value.trim(),second=$('delivery-email-again').value.trim();
   if(first&&second&&first.toLowerCase()!==second.toLowerCase()){
    $('payment-method-hint').textContent='두 이메일 주소가 일치하지 않습니다.';
   }else{
-   $('payment-method-hint').textContent='결제 가능 수단은 인증된 결제위젯에서 확인해 주세요.';
+   updateSelectedMethod();
   }
  });
 }

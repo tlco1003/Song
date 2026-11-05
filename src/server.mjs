@@ -21,11 +21,27 @@ function json(res,status,body){
   res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});
   res.end(JSON.stringify(body));
 }
-function harden(res){
+function harden(res,pathname){
   res.setHeader('X-Content-Type-Options','nosniff');
   res.setHeader('Referrer-Policy','no-referrer');
   res.setHeader('X-Frame-Options','DENY');
   res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; frame-src https://suno.com https://*.suno.com; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'");
+  // Payment pages use official Firebase Authentication/App Check and the
+  // official TossPayments widget. Keep the rest of the site on stricter CSP.
+  if(['/payment.html','/payment-success.html','/payment-fail.html'].includes(pathname)){
+    res.setHeader('Content-Security-Policy',[
+      "default-src 'self'",
+      "script-src 'self' https://www.gstatic.com https://js.tosspayments.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.recaptcha.net/recaptcha/",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      "font-src 'self' data: https://fonts.gstatic.com",
+      "img-src 'self' data: blob: https://*.toss.im https://*.tosspayments.com https://www.gstatic.com",
+      "frame-src https://*.tosspayments.com https://*.toss.im https://www.google.com https://www.recaptcha.net https://*.firebaseapp.com",
+      "connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.tosspayments.com https://*.toss.im https://www.google.com https://www.recaptcha.net",
+      "form-action 'self' https://*.tosspayments.com",
+      "object-src 'none'",
+      "base-uri 'none'"
+    ].join('; '));
+  }
   res.setHeader('Permissions-Policy','camera=(self), microphone=(self)');
 }
 async function jsonBody(req,limit=50000){
@@ -45,9 +61,9 @@ function limited(req,max=15){
   requests.set(ip,item);
 }
 async function handle(req,res){
-  harden(res);
   const u=new URL(req.url,'http://'+host+':'+port);
   const pathname=u.pathname;
+  harden(res,pathname);
   // Public health check: no user data, credentials, providers, or capability claims.
   if(req.method==='GET'&&pathname==='/healthz')return json(res,200,{status:'ok',service:'withu-api'});
   if(pathname.startsWith('/api/')){
@@ -114,6 +130,11 @@ async function handle(req,res){
     '/checkout.html':'docs/checkout.html',
     '/payment.html':'docs/payment.html',
     '/payment.js':'docs/payment.js',
+    '/payment-live.js':'docs/payment-live.js',
+    '/withu-payment-public-config.js':'docs/withu-payment-public-config.js',
+    '/payment-success.html':'docs/payment-success.html',
+    '/payment-success.js':'docs/payment-success.js',
+    '/payment-fail.html':'docs/payment-fail.html',
     '/checkout.css':'docs/checkout.css',
     '/checkout.js':'docs/checkout.js',
     '/checkout-media.js':'docs/checkout-media.js',

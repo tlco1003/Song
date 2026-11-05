@@ -45,6 +45,18 @@ function ensurePorts(orders,payments){
     ||typeof payments?.confirm!=='function'||typeof payments?.retrieve!=='function')
     throw new Error('Durable order/PG adapters are required');
 }
+// Payment method is read from the VERIFIED provider response, never from
+// the browser's preview selection. Store no PAN, account number or raw PG body.
+function verifiedPaymentMethod(payment){
+  const clean=(value,limit)=>typeof value==='string'&&value.length>0&&value.length<=limit
+    ?value:null;
+  return Object.freeze({
+    gateway:'tosspayments',
+    method:clean(payment.method,60),
+    easyPayProvider:clean(payment.easyPay?.provider,80),
+    bankCode:clean(payment.virtualAccount?.bankCode,20)
+  });
+}
 function paymentMatches(order,providerPayment,paymentKey){
   return providerPayment?.status==='DONE'
     &&providerPayment.orderId===order.id
@@ -92,7 +104,7 @@ async function finalizeVerifiedPayment({orders,order,payment,paymentKey,settings
     orderId:order.id, paymentKey, amountKrw:order.amountKrw,
     expectedState:ORDER_STATES.PAYMENT_PENDING,
     nextState:ORDER_STATES.PAID, route, jobKey:'fulfill:'+order.id,
-    songPlan
+    providerMethod:verifiedPaymentMethod(payment),songPlan
   });
   if(!result||!['created','duplicate'].includes(result.outcome))
     throw new Error('Durable paid/outbox transaction did not complete');

@@ -10,7 +10,7 @@ const methods=Object.freeze({
 function readDraft(){
  try{
   const draft=JSON.parse(sessionStorage.getItem(KEY)||'null');
-  if(!draft||draft.version!==1||!Number.isFinite(draft.savedAt)
+  if(!draft||draft.version!==2||!Number.isFinite(draft.savedAt)
     ||Date.now()-draft.savedAt<0||Date.now()-draft.savedAt>MAX_AGE
     ||!draft.lyrics?.trim()||!draft.title?.trim()
     ||!['audio','audio_duo','audio_video'].includes(draft.selectedProduct)
@@ -44,9 +44,9 @@ async function init(){
   if(!catalogResult.ok||!genreResult.ok)throw Error('catalog not loaded');
   const catalog=await catalogResult.json();
   const genreCatalog=await genreResult.json();
-  if(catalog.version!==1||catalog.currency!=='KRW'||genreCatalog.version!==1)throw Error('catalog invalid');
+  if(catalog.version!==1||catalog.currency!=='KRW'||genreCatalog.version!==2)throw Error('catalog invalid');
   const chosen=catalog.products.find(p=>p.id===draft.selectedProduct);
-  const allowed=new Set(genreCatalog.genres.map(g=>g.id));
+  const allowed=new Set(genreCatalog.genres.filter(g=>g.label===g.id&&!Object.hasOwn(g,'style')).map(g=>g.id));
   const lines=genreLabels(draft.genreSelection);
   const expectedCount=draft.selectedProduct==='audio_duo'?2:1;
   if(!chosen||!Number.isSafeInteger(chosen.amountKrw)||!lines||lines.length!==expectedCount

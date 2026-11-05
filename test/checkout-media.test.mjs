@@ -3,57 +3,40 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {publicPriceCatalog,publicCommerceReadiness} from '../src/commerce.mjs';
 
-const read=filename=>readFileSync(new URL('../'+filename,import.meta.url),'utf8');
+const read=path=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
 const page=read('docs/checkout.html');
 const script=read('docs/checkout-media.js');
 const styles=read('docs/checkout.css');
+const payment=read('docs/payment.html');
 const server=read('src/server.mjs');
 
-test('three documented prices and no unexpected charge',()=>{
- const products=publicPriceCatalog().products;
- assert.deepEqual(products.map(x=>[x.id,x.amountKrw]),[
+test('three unchanged prices and a non-chargeable payment page',()=>{
+ assert.deepEqual(publicPriceCatalog().products.map(x=>[x.id,x.amountKrw]),[
   ['audio',29000],['audio_duo',39000],['audio_video',300000]
  ]);
- assert.equal(products[2].priceKind,'starting_at');
- assert.equal(products[2].quoteRequired,true);
+ assert.equal(publicPriceCatalog().products[2].quoteRequired,true);
  assert.equal(publicCommerceReadiness().canCharge,false);
- assert.match(page,/id="confirm-checkout"[^>]*disabled/);
+ assert.match(payment,/id="confirm-checkout"[^>]*disabled/);
+ assert.match(page,/href="payment.html"/);
 });
 
-test('published audio examples and device audio preview are capped at thirty seconds in the UI',()=>{
- const ids=['prepay-demo','audio-example','audio-file-choice','audio-preview-play','audio-preview-reset',
-  'audio-preview-time','audio-preview-fill','audio-preview-element','audio-preview-message'];
- for(const id of ids)assert.ok(page.includes('id="'+id+'"'),id);
- assert.match(script,/const LIMIT = 30/);
- assert.match(script,/audio\.currentTime>=LIMIT/);
- assert.match(script,/audio\.currentTime>LIMIT/);
- assert.match(script,/audio\.pause\(\)/);
- assert.match(script,/audio\.addEventListener\('timeupdate',refreshAudioClock\)/);
- assert.match(script,/media\/tracks\.json/);
- assert.match(script,/URL\.createObjectURL/);
- assert.match(page,/기존 예시곡/);
- assert.match(page,/고객 맞춤곡을 미리 생성하는 기능은 아닙니다/);
+test('all pre-purchase listening widgets and their audio script were removed',()=>{
+ for(const id of ['prepay-demo','audio-example','audio-file-choice','audio-preview-play',
+  'audio-preview-reset','audio-preview-time','audio-preview-fill',
+  'audio-preview-element','audio-preview-message','checkout-cover-image']){
+  assert.ok(!page.includes('id="'+id+'"'),id);
+ }
+ assert.doesNotMatch(script,/loadExamples|setAudio\(|audio\.play\(|audio\.currentTime|audio-preview|audio-example/);
+ assert.ok(!page.includes('LISTEN FIRST'));
+ assert.ok(!page.includes('30초 먼저 들어보세요'));
 });
 
-test('checkout example selector displays genre for every published song including MP4 audio',()=>{
-  const manifest=JSON.parse(read('docs/media/tracks.json'));
-  assert.equal(manifest.tracks.length,8);
-  assert.equal(manifest.tracks.filter(t=>typeof t.genre==='string'&&t.genre.trim()).length,8);
-  assert.ok(page.includes('id="audio-example-genre"'));
-  assert.match(page,/예시곡 선택 · 장르별 감상/);
-  assert.match(script,/option\.dataset\.genre/);
-  assert.match(script,/option\.textContent=track\.title\+' · '\+option\.dataset\.genre/);
-  assert.ok(script.includes('(?:mp3|mp4)'), 'MP3 and MP4 examples are listed');
-  assert.match(script,/\$\('audio-example-genre'\)\.textContent/);
-  assert.match(styles,/\.audio-genre-caption/);
-});
-
-test('video package includes photo, video, iPhone native camera fallback and self camera recorder',()=>{
+test('video package retains device-only photo, video, and native camera controls',()=>{
  const ids=['video-media-section','media-consent','face-photo','face-video','native-camera-capture',
   'photo-preview','video-preview','stage-portrait-image','camera-live','open-camera',
   'start-camera-record','stop-camera-record','close-camera','record-timer','camera-feedback','clear-media-preview'];
  for(const id of ids)assert.ok(page.includes('id="'+id+'"'),id);
- assert.match(page,/id="video-media-section"[^>]*hidden/);
+ assert.match(page,/data-checkout-step="video"[^>]*hidden/);
  assert.match(page,/capture="user"/);
  assert.match(page,/playsinline/);
  assert.match(script,/selectedProduct\(\)==='audio_video'/);
@@ -68,24 +51,22 @@ test('video package includes photo, video, iPhone native camera fallback and sel
  assert.match(styles,/\.stage-concept/);
 });
 
-test('selecting video product reveals separate photo and video previews directly below the product',()=>{
- assert.ok(page.indexOf('id="video-media-section"')<page.indexOf('class="prepay-demo"'));
- assert.match(page,/id="video-media-section"[^>]*hidden/);
- assert.match(script,/selectedProduct\(\)==='audio_video'/);
+test('video capture is a dedicated optional stage, not part of the payment form',()=>{
+ assert.ok(page.includes('data-checkout-step="video"'));
+ assert.ok(!payment.includes('id="face-photo"'));
  assert.match(script,/\$\('video-media-section'\)\.hidden=!show/);
- for(const id of ['photo-preview','video-preview','photo-filename','video-filename','clear-face-photo','clear-face-video']){
-   assert.ok(page.includes('id="'+id+'"'),id);
+ assert.match(script,/withu:checkout-stage/);
+ for(const id of ['photo-filename','video-filename','clear-face-photo','clear-face-video']){
+  assert.ok(page.includes('id="'+id+'"'),id);
  }
  assert.match(page,/id="video-preview"[^>]*controls[^>]*playsinline/);
  assert.match(styles,/\.video-media-section \.compact-preview\{height:156px/);
- assert.match(styles,/\.video-media-section \.media-preview-card \.compact-preview\{height:158px/);
 });
 
-test('photo and video selection immediately preview locally and can be independently removed',()=>{
+test('user photo/video previews can be independently removed',()=>{
  assert.match(script,/function showPhoto\(file\)/);
  assert.match(script,/function showVideoBlob\(file\)/);
  assert.doesNotMatch(script,/function showPhoto\(file\)\s*\{\s*if\(!requireConsent\(\)\)return/);
- assert.doesNotMatch(script,/function showVideoBlob\(file\)\s*\{\s*if\(!requireConsent\(\)\)return/);
  assert.match(script,/URL\.createObjectURL\(file\)/);
  assert.match(script,/\$\('photo-preview'\)/);
  assert.match(script,/\$\('video-preview'\)/);
@@ -94,16 +75,16 @@ test('photo and video selection immediately preview locally and can be independe
  assert.match(script,/\$\('clear-face-photo'\)\.addEventListener\('click',clearPhoto\)/);
  assert.match(script,/\$\('clear-face-video'\)\.addEventListener\('click',clearVideo\)/);
  assert.match(script,/if\(!show\)clearMedia\(\)/);
- assert.match(page,/서버로 전송되지 않고 현재 브라우저에서만 사용됩니다/);
+ assert.match(page,/주문 서버로 전송되지 않습니다/);
 });
 
-test('camera and photo previews stay on device without a client upload or fake face-swap result',()=>{
- assert.doesNotMatch(script,/fetch\([^\n]*method\s*:\s*['"]POST/);
+test('camera and photo previews cannot upload files or synthesize a fake video',()=>{
+ assert.doesNotMatch(script,/fetch\([\s\S]*method\s*:\s*['"]POST/);
  assert.doesNotMatch(script,/localStorage|sessionStorage|indexedDB/);
  assert.match(script,/URL\.revokeObjectURL/);
  assert.match(script,/window\.addEventListener\('pagehide'/);
- assert.match(page,/실제 얼굴 교체와 립싱크 생성은 아직 연결 전/);
- assert.match(page,/서버로 전송되지 않고/);
+ assert.match(page,/사진의 얼굴을 움직이는 가수 영상에 자동으로 교체한 결과는 아닙니다/);
+ assert.match(page,/기기에서만 보이고/);
  assert.match(server,/camera=\(self\), microphone=\(self\)/);
  assert.match(server,/img-src 'self' data: blob:/);
  assert.ok(server.includes("'/checkout-media.js':'docs/checkout-media.js'"));

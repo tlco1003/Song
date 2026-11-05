@@ -26,9 +26,9 @@ test('no proprietary process, provider name, source code links or five questions
   assert.ok(js.includes('advanceLyrics'));
   assert.ok(js.includes('filterLyricLines'));
 });
-test('all nine music letters display genre from the shared public track manifest',()=>{
-  assert.equal(tracks.tracks.length,9);
-  assert.equal(tracks.tracks.filter(t=>t.genreSource==='prompt').length,1);
+test('all ten music letters display genre from the shared public track manifest',()=>{
+  assert.equal(tracks.tracks.length,10);
+  assert.equal(tracks.tracks.filter(t=>t.genreSource==='prompt').length,2);
   for(const t of tracks.tracks){
     assert.ok(typeof t.genre==='string'&&t.genre.trim().length>0,t.title+' missing genre');
     assert.ok(['prompt','editorial'].includes(t.genreSource),t.title+' missing genre source');
@@ -124,6 +124,23 @@ test('세탁소의 신데렐라 is listed with complete lyrics and verified MP3 
   assert.match(lyrics,/짝짝이 양말에 구겨진 셔츠/);
   assert.match(lyrics,/그거요\? 내일 찾으러 올게요!/);
   assert.doesNotMatch(lyrics,/\[(?:Verse|Chorus|Pre-Chorus|Bridge|Outro|Final)/);
+});
+
+test('80s city pop summer song has playable MP3 and its complete published lyrics',()=>{
+  const song=tracks.tracks.find(t=>t.id==='song-summer-80s');
+  assert.ok(song);
+  assert.equal(song.title,'우리의 첫 번째 여름');
+  assert.equal(song.genre,'80s 일본 시티팝');
+  assert.equal(song.file,'80s-citypop.mp3');
+  assert.equal(song.lyricsFile,'lyrics-80s-citypop.txt');
+  assert.equal(song.productType,'audio_with_cover');
+  assert.equal(Object.hasOwn(song,'coverImage'),false,'new music should use fallback until its own cover exists');
+  assert.ok(statSync(new URL('../docs/media/'+song.file,import.meta.url)).size>1024);
+  const lyrics=read('docs/media/'+song.lyricsFile);
+  for(const phrase of ['백조가 헤엄치던','디즈니랜드','해리포터','클럽','Oh, our summer night']){
+    assert.ok(lyrics.includes(phrase),'lyrics are missing '+phrase);
+  }
+  assert.doesNotMatch(lyrics,/\\[(?:Intro|Verse|Chorus|Bridge|Outro|Final)/);
 });
 
 test('Cinderella short loops silently while its full MP3 drives playback and lyrics',()=>{

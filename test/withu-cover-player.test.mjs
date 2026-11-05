@@ -10,8 +10,8 @@ const coverStore=read('docs/cover-store.js');
 const checkout=read('docs/checkout.html'),checkoutJS=read('docs/checkout-media.js');
 const server=read('src/server.mjs'),manifest=JSON.parse(read('docs/media/tracks.json'));
 
-test('all original eight cover illustrations stay unique when father video is added',()=>{
- assert.equal(manifest.tracks.length,9);
+test('original eight cover illustrations remain unique with father video and 80s audio added',()=>{
+ assert.equal(manifest.tracks.length,10);
  const expected={
   'song-mother':'mother-thanks.webp',
   'song-cinderella-laundry':'cinderella-laundry.webp',
@@ -29,6 +29,13 @@ test('all original eight cover illustrations stay unique when father video is ad
    assert.equal(t.file,'Papa.mp4');
    assert.equal(t.coverImage,undefined,'do not reuse another song cover');
    assert.equal(t.productType,'audio_video');
+   continue;
+  }
+  if(t.id==='song-summer-80s'){
+   assert.equal(t.file,'80s-citypop.mp3');
+   assert.equal(t.lyricsFile,'lyrics-80s-citypop.txt');
+   assert.equal(t.coverImage,undefined,'use the existing artwork fallback until a unique cover is uploaded');
+   assert.equal(t.productType,'audio_with_cover');
    continue;
   }
   assert.equal(t.coverImage,'covers/'+expected[t.id]);

@@ -11,7 +11,7 @@
     "start": "node src/server.mjs",
     "dev": "node --watch src/server.mjs",
     "test": "node --test",
-    "check": "node --check src/server.mjs && node --check src/providers.mjs && node --check src/lib.mjs && node --check public/app.js && node --check docs/player.js && node --check docs/create.js && node --check src/commerce.mjs && node --check docs/checkout.js && node --check docs/checkout-media.js && node --check src/cover-image.mjs && node --check docs/song.js && node --check docs/cover-store.js && node --check src/checkout-security.mjs && node --check src/firestore-order-store.mjs && node --check firebase/functions.mjs && node --check firebase/outbox-worker.mjs && node --check docs/payment-live.js && node --check docs/payment-success.js && node --check docs/withu-payment-public-config.js"
+    "check": "node --check src/server.mjs && node --check src/providers.mjs && node --check src/lib.mjs && node --check public/app.js && node --check docs/player.js && node --check docs/create.js && node --check src/commerce.mjs && node --check docs/checkout.js && node --check docs/checkout-media.js && node --check src/cover-image.mjs && node --check docs/song.js && node --check docs/cover-store.js && node --check src/checkout-security.mjs && node --check src/firestore-order-store.mjs && node --check firebase/functions.mjs && node --check firebase/outbox-worker.mjs && node --check docs/payment-methods.js && node --check docs/payment-live.js && node --check docs/payment-success.js && node --check docs/withu-payment-public-config.js"
   },
   "main": "firebase/functions.mjs",
   "dependencies": {

@@ -70,6 +70,7 @@ function saveGenreChoice(){
  try{
   const genreSelection=getGenreSelection();
   const updated={...original,genreSelection,sharedStyleNotes:$('song-shared-notes').value.trim().slice(0,500),
+   selectedProduct:chosenProduct(),
    duoGenreChoice:{mode:document.querySelector('input[name="duoGenreMode"]:checked')?.value||'same',
      first:$('song-genre-first').value,second:$('song-genre-second').value}};
   // This session-only draft is NOT an order or a payment request.
@@ -120,6 +121,12 @@ async function loadGenreChoices(){
   genreCatalog=catalog;
   const saved=getDraft();
   const previous=saved?.duoGenreChoice;
+  // A product link (?product=...) takes precedence over a stored user selection.
+  const requestedProduct=new URLSearchParams(window.location.search).get('product');
+  if(!requestedProduct&&['audio','audio_duo','audio_video'].includes(saved?.selectedProduct)){
+    const storedRadio=document.querySelector('input[name="product"][value="'+saved.selectedProduct+'"]');
+    if(storedRadio){storedRadio.checked=true;storedRadio.dispatchEvent(new Event('change',{bubbles:true}));}
+  }
   for(const id of ['song-genre-first','song-genre-second']){
    const select=$(id);
    select.replaceChildren();

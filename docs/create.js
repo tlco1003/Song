@@ -22,8 +22,10 @@ function restore(){
   for(const id of INPUTS){
    if(typeof parsed.answers?.[id]==='string'){
     const el=$(id);
-    if(el&&el.tagName!=='INPUT')el.value=parsed.answers[id];
-    else if(el?.type==='hidden')el.value=parsed.answers[id];
+    if(el&&(el.tagName==='TEXTAREA'||el.tagName==='SELECT'||el.tagName==='INPUT')){
+     const max=Number(el.maxLength)||6000;
+     el.value=parsed.answers[id].slice(0,max>0?max:6000);
+    }
    }
   }
   for(const [name,id] of [['genreChoice','genre'],['moodChoice','mood'],['eraChoice','eraPreference']]){

@@ -36,7 +36,7 @@ function makePorts(overrides={}){
      issuedDepositSecret:providerSecret||current.issuedDepositSecret||null};
    return {status:'waiting_for_deposit'};
   },
-  async confirmPaidAndEnqueueAtomic({orderId,paymentKey,amountKrw,expectedState,nextState,route,jobKey,songPlan}){
+  async confirmPaidAndEnqueueAtomic({orderId,paymentKey,amountKrw,expectedState,nextState,route,jobKey,songPlan,providerMethod}){
    assert.equal(orderId,current.id);
    assert.equal(paymentKey,providerPayment().paymentKey);
    assert.equal(amountKrw,current.amountKrw);
@@ -45,7 +45,7 @@ function makePorts(overrides={}){
    assert.equal(nextState,ORDER_STATES.PAID);
    if(current.state===ORDER_STATES.PAID)return {outcome:'duplicate',route:current.fulfillmentRoute};
    if(current.state!==ORDER_STATES.PAYMENT_PENDING)throw Error('Concurrent state change');
-   current={...current,state:nextState,paymentVerifiedAt:new Date().toISOString(),paymentKey,fulfillmentRoute:route,paidSongPlan:structuredClone(songPlan)};
+   current={...current,state:nextState,paymentVerifiedAt:new Date().toISOString(),paymentKey,fulfillmentRoute:route,paidSongPlan:structuredClone(songPlan),providerMethod};
    jobs.push({key:jobKey,orderId,route,status:'claimed'});
    return {outcome:'created',route};
   }
@@ -76,6 +76,38 @@ test('verified PG DONE atomically creates one PAID job in manual queue',async()=
  assert.equal(p.getCalls(),1,'Duplicate callback must not call PG confirm twice');
  assert.equal(p.jobs.length,1,'Must not add duplicate outbox jobs');
 });
+test('all six planned methods use the SAME verified Toss confirmation, never a browser provider claim',async()=>{
+ const cases=[
+  {method:'간편결제',easyPay:{provider:'토스페이'}},
+  {method:'간편결제',easyPay:{provider:'카카오페이'}},
+  {method:'간편결제',easyPay:{provider:'네이버페이'}},
+  {method:'카드'},
+  {method:'계좌이체'},
+  {method:'가상계좌',virtualAccount:{bankCode:'88'}}
+ ];
+ for(const receipt of cases){
+  const p=makePorts();
+  p.payments.confirm=async()=>providerPayment('DONE',receipt);
+  const result=await confirmCheckoutAndQueue({
+   orderId,paymentKey,claimedAmountKrw:39000,...p
+  });
+  assert.equal(result.status,'paid_verified');
+  assert.equal(p.jobs.length,1);
+  assert.equal(p.read().providerMethod.gateway,'tosspayments');
+  assert.equal(p.read().providerMethod.method,receipt.method);
+  assert.equal(p.read().providerMethod.easyPayProvider,receipt.easyPay?.provider||null);
+  assert.equal(p.read().providerMethod.bankCode,receipt.virtualAccount?.bankCode||null);
+  assert.ok(!JSON.stringify(p.read().providerMethod).includes('cardNumber'));
+ }
+});
+test('PG payment method is never inferred from client payment method flags',async()=>{
+ const p=makePorts();
+ p.payments.confirm=async()=>providerPayment('DONE',{method:'카드'});
+ await confirmCheckoutAndQueue({orderId,paymentKey,claimedAmountKrw:39000,...p});
+ assert.equal(p.read().providerMethod.method,'카드');
+ assert.equal(p.read().providerMethod.easyPayProvider,null);
+});
+
 test('false/changed browser amounts never reach the PG',async()=>{
  const p=makePorts();
  await assert.rejects(confirmCheckoutAndQueue({

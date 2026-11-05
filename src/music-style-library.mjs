@@ -50,7 +50,8 @@ const SAFE_SLUGS=Object.freeze({
 });
 function privateRecipe(type,key,dir){
  if(!dir)return null;
- const name=type==='genre'?SAFE_SLUGS[key]:key;
+ const moodSlugs={'따뜻한':'warm','감동적인':'moving','설레는':'hopeful-excited','애절한':'wistful','희망찬':'uplifting','신나는':'energetic'};
+ const name=type==='genre'?SAFE_SLUGS[key]:type==='mood'?moodSlugs[key]:key;
  if(!name||!/^[a-z0-9-]+$/.test(name))throw new AppError(500,'Invalid private music recipe key');
  const root=resolve(dir);
  const file=join(root,type,name+'.md');

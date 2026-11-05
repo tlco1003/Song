@@ -58,3 +58,19 @@ test('timestamp writer creates parseable files with no invented timings',()=>{
  assert.equal(cueIndexAt(null,3),-1);
  assert.equal(cueIndexAt([1,5],Number.NaN),-1);
 });
+
+test('a malformed unclosed Verse heading is not shown as spoken lyrics',()=>{
+ const doc=parseLyricDocument('Verse 1]\\n[00:03.20]첫 노래\\n[Chorus]\\n[00:12.40]후렴');
+ assert.deepEqual(doc.lines,['첫 노래','후렴']);
+ assert.deepEqual(doc.cues,[3.2,12.4]);
+});
+test('the public timing workbench supports AI draft import but never publishes guessed times',()=>{
+ const editor=read('docs/lyric-timer.js');
+ const page=read('docs/lyric-timer.html');
+ assert.match(editor,/importTimingFile/);
+ assert.match(editor,/draft\\.matched\\?\\.\\[i\\]===false\\?null:v/);
+ assert.match(editor,/supplied\\.some\\(\\(text,i\\)=>text!==lines\\[i\\]\\)/);
+ assert.match(page,/id="import-timing"/);
+ assert.match(page,/실제 음악으로 교정/);
+ assert.doesNotMatch(editor,/fetch\\(.+POST.*github/);
+});

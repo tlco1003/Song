@@ -1,0 +1,31 @@
+name: Draft lyric synchronization
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/draft-lyric-sync.yml'
+      - 'scripts/draft-lyric-sync.py'
+permissions:
+  contents: read
+jobs:
+  draft-all-public-tracks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install audio-to-lyric alignment tool
+        run: python -m pip install "lyric-align[asr]==0.4.2"
+      - name: Analyze all public songs without publishing unreviewed times
+        run: python scripts/draft-lyric-sync.py
+      - name: Save review-only per-track draft timings
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-lyric-sync-drafts
+          path: lyric-sync-drafts/
+          if-no-files-found: warn
+          retention-days: 30

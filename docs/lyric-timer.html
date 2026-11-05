@@ -52,6 +52,8 @@ li.current{border-color:#eed4e0;background:#4b394d}li.done{border-left:3px solid
   <div class="controls"><span id="progress">0 / 0줄 기록됨</span><button id="minus" type="button">마지막 기록 -0.1초</button><button id="plus" type="button">마지막 기록 +0.1초</button></div>
   <p id="status" role="status">곡을 선택해 주세요.</p>
   <button class="primary" id="export" type="button" disabled>시간 맞춘 가사 TXT 다운로드</button>
+  <div class="controls"><label class="outline-button" for="import-timing">싱크 초안 불러오기 (JSON·LRC·TXT)</label><input id="import-timing" type="file" accept=".json,.lrc,.txt,application/json,text/plain" aria-label="현재 곡의 가사 시간 정보 불러오기"></div>
+  <p class="hint">GitHub Actions 자동 분석에서 받은 <strong>song-id.json</strong>을 불러오면 인식한 줄만 시간표에 채워지고, 인식하지 못한 줄은 비워둡니다. 빈 줄과 잘못된 후렴 구간을 실제 음악으로 교정해야 합니다.</p>
   <p class="hint">모든 가사 줄에 실제 시간을 기록하고 시간이 순서대로 증가해야 다운로드할 수 있어요. 다운로드한 TXT를 GitHub의 <code>docs/media/</code> 폴더에 <strong>같은 파일명으로 덮어쓰기</strong>하면 메인화면에서 정확한 타임스탬프 방식이 활성화돼요.</p>
  </div>
  <section class="panel"><h2>가사 줄별 시작 시각</h2><ol id="cue-lines"><li>가사를 불러오는 중…</li></ol></section>

@@ -27,6 +27,32 @@ function restore(){
  }catch(_){}
  return new Array(lines.length).fill(null);
 }
+function importTimingFile(source,name){
+ if(!currentTrack||!lines.length)throw Error('먼저 곡과 가사를 불러와 주세요.');
+ const isJson=/\.json$/i.test(name);
+ let supplied=[],incoming=[];
+ if(isJson){
+  const draft=JSON.parse(source);
+  if(draft.id!==currentTrack.id||draft.file!==currentTrack.file||draft.lyricsFile!==currentTrack.lyricsFile)
+   throw Error('현재 곡과 다른 싱크 초안입니다. 곡 ID·음원·가사 파일을 확인해 주세요.');
+  if(!Array.isArray(draft.lines)||!Array.isArray(draft.times)||draft.lines.length!==lines.length||draft.times.length!==lines.length)
+   throw Error('가사 줄 수가 원본과 달라 초안을 적용할 수 없어요.');
+  supplied=draft.lines;
+  incoming=draft.times.map((v,i)=>draft.matched?.[i]===false?null:v);
+ }else{
+  const parsed=parseLyricDocument(source);
+  if(!parsed.cues)throw Error('전체 줄에 올바른 시간코드가 있어야 TXT/LRC 파일을 가져올 수 있어요. 부분 자동 분석 결과는 JSON 초안으로 가져오세요.');
+  supplied=parsed.lines;incoming=parsed.cues;
+ }
+ if(supplied.length!==lines.length||supplied.some((text,i)=>text!==lines[i]))
+  throw Error('가사 내용 또는 줄 순서가 다릅니다. 원곡 가사와 동일한 줄만 가져올 수 있어요.');
+ const parsedTimes=incoming.map(v=>typeof v==='number'&&Number.isFinite(v)&&v>=0?Math.round(v*100)/100:null);
+ if(parsedTimes.some((v,i)=>v!==null&&i>0&&parsedTimes.slice(0,i).some((p,j)=>p!==null&&p>=v)))
+  throw Error('앞뒤 줄의 시작 시간이 역순이거나 중복돼 있어요. 먼저 초안을 교정해 주세요.');
+ times=parsedTimes;history=[];index=nextUnmarked();lastEdited=-1;remember();update();
+ const count=times.filter(Number.isFinite).length;
+ announce((isJson?'자동 분석 초안':'시간 정보 파일')+'을 가져왔어요 ('+count+'/'+lines.length+'줄). 실제 음원을 듣고 후렴 반복·간주·가사 시작을 검토한 다음 다운로드해 주세요.');
+}
 function nextUnmarked(){
  const found=times.findIndex(t=>!Number.isFinite(t));
  return found<0?lines.length:found;
@@ -80,7 +106,13 @@ function renderLines(){
    record(i,value);
   });
   const mark=document.createElement('button');mark.type='button';mark.textContent='지금 기록';mark.addEventListener('click',()=>record(i,activePlayer().currentTime));
-  controls.append(field,mark);row.append(desc,controls);root.appendChild(row);
+  const replay=document.createElement('button');replay.type='button';replay.textContent='앞에서 다시 듣기';
+  replay.addEventListener('click',()=>{
+   const t=Number.isFinite(times[i])?times[i]:activePlayer().currentTime;
+   const p=activePlayer();p.currentTime=Math.max(0,t-1.5);
+   void p.play().catch(()=>announce('재생 버튼으로 노래를 시작해 주세요.'));
+  });
+  controls.append(field,mark,replay);row.append(desc,controls);root.appendChild(row);
  }
  lastScrollIndex=-1;
 }
@@ -121,6 +153,14 @@ async function start(){
   if(tracks.length)await loadTrack(tracks[0]);
  }catch(err){announce('곡 목록 오류: '+err.message)}
 }
+$('import-timing').addEventListener('change',async event=>{
+ const f=event.target.files?.[0];if(!f)return;
+ try{
+  if(f.size>500000)throw Error('싱크 파일은 500KB 이하여야 해요.');
+  importTimingFile(await f.text(),f.name);
+ }catch(error){announce('싱크 가져오기 실패: '+error.message)}
+ finally{event.target.value=''}
+});
 $('mark-next').addEventListener('click',()=>record(index,activePlayer().currentTime));
 $('undo').addEventListener('click',()=>{
  const last=history.pop();

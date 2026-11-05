@@ -7,6 +7,7 @@ export function filterLyricLines(text){
   // A timestamp with no lyric text is invalid sync data, not a section heading.
   if(/^\[[^\]]*\]$/u.test(s)&&!/^\[\d{1,3}:\d{2}(?:\.\d{1,3})?\]$/u.test(s))return false;
   if(/^(?:version|버전)\s*\d+\s*\]?$/iu.test(s))return false;
+  if(/^verse\s*\d+\]$/iu.test(s))return false; // Source typo: 'Verse 1]' without an opening bracket.
   if(/^(?:verse(?:\s*\d+)?|chorus|pre[- ]?chorus(?:\s*\d+)?|bridge|intro|outro|finale|refrain|instrumental|interlude|repeat|반복|브릿지|인트로|아웃트로|간주)\s*\]?$/iu.test(s))return false;
   if(/^(?:\/\/|#)\s*(?:version|verse|chorus|bridge|반복|브릿지)/iu.test(s))return false;
   return true;

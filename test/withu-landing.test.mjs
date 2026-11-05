@@ -22,7 +22,7 @@ test('no proprietary process, provider name, source code links or five questions
   assert.doesNotMatch(html,/상대방을 어떻게 부르나요/);
   assert.match(html,/세상에서 하나뿐인 당신의 노래로,/);
   assert.match(html,/마음을 담은 감동을 선물해요/);
-  assert.ok(css.includes('height:126px'));
+  assert.match(css,/\.album-art\.cover-artwork\{/);
   assert.ok(js.includes('advanceLyrics'));
   assert.ok(js.includes('filterLyricLines'));
 });
@@ -139,10 +139,12 @@ test('Cinderella short loops silently while its full MP3 drives playback and lyr
 });
 
 test('playlist controls and private local upload controls are connected to new JS',()=>{
-  for(const id of ['previous-track','next-track','music-audio','music-video','no-audio','track-list','local-song','local-lyrics','lyrics-scroll','copy-lyrics','local-review','review-gallery']){
+  for(const id of ['previous-track','next-track','music-audio','music-video','no-audio','track-list','local-song','local-lyrics','lyrics-scroll','local-review','review-gallery']){
     assert.ok(html.includes('id="'+id+'"'),id);
     assert.ok(js.includes("'"+id+"'"),id+' not used by JS');
   }
+  assert.ok(!html.includes('id="copy-lyrics"'),'Public home must not expose lyric copying');
+  assert.ok(!js.includes("copy-lyrics"),'Public home JS must not access lyric copy controls');
   assert.match(html,/기기에서만/);
   assert.doesNotMatch(html,/embedded-player|embedded-zone|suno.com\/embed/);
   assert.doesNotMatch(js,/suno.com\/embed/);

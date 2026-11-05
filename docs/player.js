@@ -15,6 +15,7 @@ const coverFor=t=>coverOK(t.coverImage)?t.coverImage:(coversById[t.id]?'covers/'
 const shortName=s=>s.replace(/\.[^.]+$/,'').replace(/[_-]+/g,' ').slice(0,95);
 const fallback=[
  {id:'song-mother',title:'엄마에게 전하는 노래',genre:'감성 발라드',subtitle:'사랑과 감사를 담은 영상 편지',file:'mother-song.mp4',mediaKind:'video',durationSeconds:436.8,lyricsFile:'lyrics-mother-song.txt'},
+ {id:'song-papa',title:'아빠의 계절',genre:'어쿠스틱 감성 발라드',subtitle:'아빠에게 전하는 사랑과 위로',file:'Papa.mp4',mediaKind:'video',lyricsFile:'lyrics-papa.txt'},
  {id:'song-cinderella-laundry',title:'세탁소의 신데렐라',genre:'뮤지컬 팝 · 재즈 스윙',subtitle:'동전 하나만 더!',file:'cinderella-laundry.mp3',visualFile:'cinderella-laundry-loop.mp4',visualMode:'silent-loop',durationSeconds:221.64,lyricsFile:'lyrics-cinderella-laundry.txt'},
  {id:'song-nara',title:'나라는 사람',genre:'어쿠스틱 팝',subtitle:'삶과 사랑을 돌아보는 노래',file:'nara.mp3',lyricsFile:'lyrics-nara.txt',durationSeconds:257.544},
  {id:'song-taehwan',title:'구태환에게',genre:'로맨틱 발라드',subtitle:'연인에게 보내는 편지 같은 노래',file:'taehwan.mp3',lyricsFile:'lyrics-taehwan.txt',durationSeconds:320.04},
@@ -129,7 +130,7 @@ async function select(index,autoPlay=false){
   const player=isVideo?videoPlayer:audio;
   player.src=track.deviceURL||fileURL('media/',track.file);
   showPlayer(isVideo?'video':'audio');
-  status(isVideo?'재생 버튼으로 엄마 노래 영상을 감상할 수 있어요.':track.visualMode==='silent-loop'?'영상은 무음으로 반복되고, 아래 재생 버튼으로 원곡을 들을 수 있어요.':'노래를 재생하고 아래에서 가사를 확인해 주세요.');
+  status(isVideo?'재생 버튼으로 영상과 노래를 감상할 수 있어요.':track.visualMode==='silent-loop'?'영상은 무음으로 반복되고, 아래 재생 버튼으로 원곡을 들을 수 있어요.':'노래를 재생하고 아래에서 가사를 확인해 주세요.');
   if(autoPlay)player.play().catch(()=>status('재생 버튼을 눌러 다음 곡을 감상해 주세요.'));
  }else{
   showPlayer('none');

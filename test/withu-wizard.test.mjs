@@ -17,7 +17,7 @@ test('seven questions act as separate progressive screens instead of one long vi
  assert.ok(create.includes('id="create-prev"'));
  assert.match(createJs,/history\.pushState/);
  assert.match(createJs,/window\.addEventListener\('popstate'/);
- assert.match(createJs,/const STEP_COUNT=7/);
+ assert.match(createJs,/(?:^|,)STEP_COUNT=7/);
  assert.match(createJs,/sessionStorage\.setItem\(STORY_KEY/);
  assert.match(createJs,/url\.searchParams\.set\('step'/);
  assert.doesNotMatch(createJs,/url\.searchParams\.set\('(recipient|memory|message|gratitudeApology|lyrics|email)'/);

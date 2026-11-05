@@ -10,7 +10,7 @@ const allowedProducts=['audio','audio_duo','audio_video'];
 function getDraft(){
  try{
   const value=JSON.parse(sessionStorage.getItem(KEY)||'null');
-  if(!value||value.version!==1||!Number.isFinite(value.savedAt)
+  if(!value||value.version!==2||!Number.isFinite(value.savedAt)
     ||Date.now()-value.savedAt<0||Date.now()-value.savedAt>MAX_AGE
     ||typeof value.lyrics!=='string'||!value.lyrics.trim()
     ||typeof value.title!=='string'||!value.title.trim())return null;
@@ -57,7 +57,7 @@ function saveChoices(){
  try{selected=genreSelection();}
  catch(_){/* Invalid selection is not persisted as a valid production request. */}
  const next={...draft,selectedProduct:chosenProduct(),genreSelection:selected,
-   sharedStyleNotes:$('song-shared-notes').value.trim().slice(0,500),
+   sharedStyleNotes:'',
    duoGenreChoice:{
      mode:document.querySelector('input[name="duoGenreMode"]:checked')?.value||'same',
      first:$('song-genre-first').value,second:$('song-genre-second').value
@@ -75,6 +75,10 @@ function renderGenres(){
  $('duo-genre-modes').hidden=!duo;
  $('song-genre-second-wrap').hidden=!different;
  $('song-genre-second').disabled=!different||!genres;
+ for(const [id,tilesId] of [['song-genre-first','song-genre-first-tiles'],['song-genre-second','song-genre-second-tiles']]){
+  for(const radio of $(tilesId).querySelectorAll('input[type="radio"]'))
+   radio.checked=radio.value===$(id).value;
+ }
  try{
   const selection=genreSelection();
   $('genre-plan-preview').classList.remove('invalid');
@@ -92,7 +96,7 @@ function updateReview(){
  draft=getDraft();
  $('order-title').textContent=draft?.title||'제목 없음';
  $('order-product').textContent=selectedPrice()?.name||'상품 선택';
- $('order-style').textContent=$('song-shared-notes').value.trim()||'선택한 장르·분위기에 맞추어 제작';
+ $('order-style').textContent='';
  $('order-lyrics').textContent=draft?.lyrics||'가사 없음';
  try{$('order-song-genres').textContent=genreLabels(genreSelection()).join('\n');}
  catch(e){$('order-song-genres').textContent=e.message;}
@@ -171,7 +175,7 @@ for(const control of document.querySelectorAll('input[name="duoGenreMode"]'))
  control.addEventListener('change',renderGenres);
 for(const id of ['song-genre-first','song-genre-second'])
  $(id).addEventListener('change',renderGenres);
-$('song-shared-notes').addEventListener('input',saveChoices);
+
 window.addEventListener('popstate',()=>{
  const stage=new URLSearchParams(location.search).get('stage');
  show(stage||'product',{focus:true});
@@ -193,16 +197,27 @@ async function loadGenres(){
   const response=await fetch('music-genres.json',{cache:'no-store'});
   if(!response.ok)throw Error('Genres unavailable');
   const result=await response.json();
-  if(result.version!==1||!Array.isArray(result.genres)||result.genres.length<2
+  if(result.version!==2||!Array.isArray(result.genres)||result.genres.length<2
     ||new Set(result.genres.map(x=>x.id)).size!==result.genres.length
-    ||result.genres.some(x=>typeof x.id!=='string'||typeof x.style!=='string'))
+    ||result.genres.some(x=>typeof x.id!=='string'||x.label!==x.id||Object.hasOwn(x,'style')||Object.hasOwn(x,'prompt')))
     throw Error('Invalid genres');
   genres=result;
-  for(const id of ['song-genre-first','song-genre-second']){
-   const select=$(id);select.replaceChildren();
+  for(const [id,tilesId] of [['song-genre-first','song-genre-first-tiles'],['song-genre-second','song-genre-second-tiles']]){
+   const select=$(id),tiles=$(tilesId);
+   select.replaceChildren();tiles.replaceChildren();
    for(const item of result.genres){
     const option=document.createElement('option');
-    option.value=item.id;option.textContent=item.id;select.append(option);
+    option.value=item.id;option.textContent=item.label;select.append(option);
+    const label=document.createElement('label');label.className='music-choice';
+    const radio=document.createElement('input');
+    radio.type='radio';radio.name=id+'-choice';radio.value=item.id;
+    const display=document.createElement('span');display.textContent=item.label;
+    label.append(radio,display);tiles.append(label);
+    radio.addEventListener('change',()=>{
+     if(!radio.checked)return;
+     select.value=radio.value;
+     select.dispatchEvent(new Event('change',{bubbles:true}));
+    });
    }
    select.disabled=false;
   }
@@ -212,9 +227,7 @@ async function loadGenres(){
   $('song-genre-second').value=validGenre(old?.second)?old.second:
    result.genres.find(g=>g.id!==first).id;
   if(old?.mode==='different')$('duo-mode-different').checked=true;
-  $('song-shared-notes').value=typeof draft?.sharedStyleNotes==='string'?
-   draft.sharedStyleNotes.slice(0,500):typeof draft?.styleOverrides==='string'?
-   draft.styleOverrides.slice(0,500):'';
+  $('song-shared-notes').value='';
   renderGenres();
  }catch(_){
   genres=null;$('genre-plan-preview').textContent='장르 목록을 불러오지 못했어요. 다시 접속해 주세요.';

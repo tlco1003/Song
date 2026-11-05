@@ -118,7 +118,6 @@ async function select(index,autoPlay=false){
  $('track-title').textContent=track.title;
  $('track-subtitle').textContent=track.subtitle||'소중한 이야기를 담은 노래';
  $('track-genre').textContent=track.genre||'장르 정보 준비 중';
- $('lyrics-track-title').textContent=track.title;
  $('track-position').textContent=String(current+1).padStart(2,'0')+' / '+String(tracks.length).padStart(2,'0');
  $('track-counter').textContent=String(current+1).padStart(2,'0')+' — '+String(tracks.length).padStart(2,'0');
  document.querySelectorAll('[data-position]').forEach(el=>{
@@ -240,14 +239,7 @@ $('local-lyrics').addEventListener('change',async event=>{
  $('local-file-notice').textContent='이 기기에서 가사 세 줄씩 감상할 수 있어요.';
  event.target.value='';
 });
-$('copy-lyrics').addEventListener('click',async()=>{
- if(!visibleLyrics.length)return;
- try{
-  await navigator.clipboard.writeText(visibleLyrics.join('\n'));
-  $('copy-lyrics').textContent='복사했어요';
-  setTimeout(()=>$('copy-lyrics').textContent='가사 복사',1800);
- }catch(_){$('local-file-notice').textContent='복사 권한을 확인해 주세요.'}
-});
+
 async function reviews(){
  try{
   const data=JSON.parse(await readText('reviews/reviews.json'));

@@ -12,8 +12,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20261105-covers-02">
-  <script src="player.js?v=20261105-covers-02" defer></script>
+  <link rel="stylesheet" href="style.css?v=20261105-lyrics-inline-01">
+  <script src="player.js?v=20261105-lyrics-inline-01" defer></script>
 </head>
 <body>
 <header class="site-header">
@@ -56,6 +56,11 @@
             
             <p id="no-audio" hidden>음악 파일을 준비하고 있어요. 내 음악 불러오기로 기기에 저장된 곡을 들어볼 수 있어요.</p>
           </div>
+          <section class="inline-lyrics" aria-label="재생 중인 노래 가사">
+            <div id="lyrics-scroll" class="lyrics-scroll" tabindex="0" aria-label="재생에 맞춰 자동 이동하는 노래 가사">
+              <div id="lyrics-content" class="lyrics-content">가사를 불러오는 중이에요.</div>
+            </div>
+          </section>
           <div class="playback-row">
             <button id="previous-track" class="circle-control" type="button" aria-label="이전 곡">‹</button>
             <span id="track-counter" class="track-counter">01 — 03</span>
@@ -64,18 +69,6 @@
           <p id="playback-message" class="quiet-message" role="status">원하는 곡을 선택해 주세요.</p>
         </section>
 
-        <section class="lyrics-panel" aria-labelledby="lyrics-heading">
-          <div class="lyrics-topline"><span class="small-caps">A LETTER IN EVERY LYRIC</span><span class="lyrics-note">THE WORDS</span></div>
-          <h2 id="lyrics-heading">가사</h2>
-          <p class="lyrics-subtitle" id="lyrics-track-title">한 줄 한 줄, 마음을 담아</p>
-          <div id="lyrics-scroll" class="lyrics-scroll" tabindex="0" aria-label="현재 재생 중인 가사 세 줄">
-            <div id="lyrics-content" class="lyrics-content">가사를 불러오는 중이에요.</div>
-          </div>
-          <div class="lyrics-footer">
-            <span>재생에 따라 가사가 자동 이동해요.</span>
-            <button id="copy-lyrics" type="button" class="text-link">가사 복사</button>
-          </div>
-        </section>
       </div>
 
       <div class="song-selector">

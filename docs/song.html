@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css"><link rel="stylesheet" href="song.css">
-<script src="cover-store.js" defer></script><script src="song.js" defer></script>
+<script src="cover-store.js" defer></script><script src="song.js?v=20261106-background-audio-01" defer></script>
 </head>
 <body class="song-detail-body">
 <header class="site-header"><div class="frame header-inner">
@@ -31,7 +31,7 @@
       <img id="detail-cover" alt="선택한 노래의 커버 이미지" hidden>
       <div id="detail-cover-fallback" class="detail-fallback"><span>WITHU</span><strong>♪</strong></div>
     </div>
-    <video id="detail-video" preload="metadata" playsinline webkit-playsinline hidden></video>
+    <video id="detail-video" preload="metadata" playsinline webkit-playsinline muted hidden aria-label="선택한 노래의 무음 영상"></video>
     <audio id="detail-audio" preload="metadata" hidden></audio>
     <div class="detail-player-controls" id="detail-controls">
       <button type="button" id="detail-play" class="detail-big-play" aria-label="재생">▶</button>
@@ -43,6 +43,7 @@
         </div>
         <div class="detail-control-actions">
           <button type="button" id="detail-mute" aria-label="음소거">음소거</button>
+          <button type="button" id="detail-repeat" aria-label="한 곡 반복 켜기" aria-pressed="false">반복 끔</button>
           <button type="button" id="detail-fullscreen" aria-label="전체화면">⛶ 전체화면</button>
         </div>
       </div>
@@ -50,6 +51,7 @@
     <div id="detail-not-ready" class="detail-not-ready" hidden>아직 감상할 파일이 준비되지 않았어요.</div>
   </div>
   <p class="detail-status" id="detail-status" role="status">재생 버튼을 누르면 감상할 수 있어요.</p>
+  <p class="detail-background-hint">화면을 잠가도 노래가 계속 재생되도록 오디오 중심으로 구성했어요. 실제 동작은 브라우저 환경에 따라 달라질 수 있습니다.</p>
   <div class="detail-tools">
     <a id="download-track" class="detail-outline" download hidden>원본 파일 받기</a>
     <button id="download-cover" class="detail-outline" type="button">커버 이미지 받기</button>

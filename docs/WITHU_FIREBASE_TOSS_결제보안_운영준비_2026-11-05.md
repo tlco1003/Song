@@ -12,8 +12,8 @@
 | Firebase Console → 프로젝트 설정 → 일반 → 웹 앱 | 앱의 `apiKey`, `authDomain`, `projectId`, `appId` | 공개 설정, PG 비밀키 아님 |
 | Firebase Console → App Check → 웹 앱 | reCAPTCHA Enterprise 사이트 키 | 공개 사이트 키 |
 | `docs/withu-payment-public-config.js` | Firebase 웹앱 설정, App Check 사이트 키, `enabled:false` | 공개 코드에 들어감 |
-| TossPayments 개발자센터 → API 키 | **주문서형 클라이언트 키** → Firebase Functions 문자열 매개변수 `TOSS_CLIENT_KEY` | 공개 가능 |
-| TossPayments 개발자센터 → API 키 | **주문서형 시크릿 키** → Google Cloud Secret Manager `TOSS_SECRET_KEY` | **절대 GitHub/HTML/JS에 입력 금지** |
+| TossPayments 개발자센터 → API 키 | **API 개별 연동 결제창 클라이언트 키** → Firebase Functions 문자열 매개변수 `TOSS_CLIENT_KEY` | 공개 가능 |
+| TossPayments 개발자센터 → API 키 | **API 개별 연동 결제창 시크릿 키** → Google Cloud Secret Manager `TOSS_SECRET_KEY` | **절대 GitHub/HTML/JS에 입력 금지** |
 | `src/toss-payment-adapter.mjs` | 실제 서버가 `POST /v1/payments/confirm` 호출하는 승인 코드 | 서버 전용, 이미 구현 |
 | `firebase/functions.mjs` | 인증·주문 생성·금액 대조·PG 승인·가상계좌 웹훅 | 서버 전용 |
 | `src/checkout-security.mjs` | 상품/서버가격 검증, 인증된 고객과 주문 소유권 검사 | 서버 전용 |
@@ -68,7 +68,7 @@
 | `WITHU_OUTBOX_WORKER_VERIFIED` | `no` | 운영자 이메일·실패/재시도 시험 후 `yes` |
 | `docs/withu-payment-public-config.js`의 `enabled` | `false` | 실제 도메인·Auth·App Check 연동 확인 후 `true` |
 
-위 값들은 안전 게이트이지 라이선스·법률 준수의 자동 증명이 아니다. 토스 상점 키는 **동일 MID의 호환되는 클라이언트/시크릿 쌍**을 사용해야 한다.
+위 값들은 안전 게이트이지 라이선스·법률 준수의 자동 증명이 아니다. 토스 상점 키는 **동일 결제창(구버전) 일반결제 MID의 API 개별 연동 키(test_ck/live_ck)·시크릿 키(test_sk/live_sk) 쌍**을 사용해야 한다.
 
 **출시 전 별도 작업 필요:** Suno 직접 제작·재판매 권리의 서면 확인, 사업자·PG 계약 및 심사, 개인정보 처리방침·서비스 약관·환불/청약철회 정책 게시, 실제 주문 후 자동 메일을 받는 운영 인력 확인, 주문 취소·전액/부분 환불 관리자 절차와 PG 취소 API, 납품/재다운로드와 파일 보존·삭제 기간, 관제 및 장애 시 대응. 특히 환불 관리자 도구와 최종 음원 배송 시스템은 이번 코드에서 완결되지 않았다.
 
@@ -115,7 +115,7 @@
 
 - Toss 요청/인증/승인과 데이터 검증: https://docs.tosspayments.com/guides/v2/get-started/payment-flow
 - Toss 공식 승인 API: https://docs.tosspayments.com/reference
-- Toss 주문서형 결제: https://docs.tosspayments.com/guides/v2/payment-widget/integration
+- Toss 결제창(구버전) 직접 선택형: https://docs.tosspayments.com/guides/v2/payment-widget/integration
 - Toss 가상계좌 입금 웹훅: https://docs.tosspayments.com/guides/v2/payment-window/integration-virtual-account
 - Toss 웹훅 이벤트: https://docs.tosspayments.com/reference/using-api/webhook-events
 - Firebase Secret Manager: https://firebase.google.com/docs/functions/config-env
@@ -124,45 +124,75 @@
 - Firebase Hosting 배포: https://firebase.google.com/docs/hosting/full-config
 
 
-## 8. 2026-11-05 통합 결제수단 (6개 선택지 → 공식 위젯 1개)
 
-**토스페이·카카오페이·네이버페이·신용/체크카드·계좌이체·가상계좌**를 한 가지 TossPayments **주문서형 결제위젯(V2)**에서 처리하도록 설계했다.
-기존에 단순 HTML 라디오로만 보이던 여섯 수단은 **결제 전 참고용 비활성 안내**로 교체했다.
-이메일 인증 및 서버 출시 준비가 끝났을 때만 해당 안내를 숨기고 실제 `widgets.renderPaymentMethods()`와 `widgets.renderAgreement()`를 표시한다.
-구매자가 최종 선택하는 결제수단은 **토스페이먼츠가 해당 가맹점에 허용한 수단**으로만 결정된다.
-고객이 UI에서 수단을 골랐다고 서버가 수단을 믿거나 결제 성공으로 처리하지 않는다.
+## 8. 최종 정정: 결제기관별 클릭 가능한 Choice Chip 13종
 
-**실제 PG 승인 결과**의 `method`, `easyPay.provider`, `virtualAccount.bankCode` 중 필요한 최소값만 PAID 전환 트랜잭션에 저장한다.
-카드번호·계좌번호·인증번호 및 원본 전체 PG 응답은 서버 주문 문서에 저장하지 않는다.
-이러한 값은 내부 운영자가 실제 결제방법을 조회하기 위한 최소 거래 메타데이터이며, 고객 공개 주문 조회 API에는 반환되지 않는다.
+**고객이 반드시 클릭해서 선택하는 자체 Choice Chip**으로 구현한다. 이전의 "비활성 안내문 + Toss 주문서형 위젯" 설명은 **이 절로 폐기**한다.
 
-### 결제기관별 개별 비밀키가 필요한가?
+### 표시되는 선택지
 
-**이 여섯 수단을 TossPayments 통합 PG로 운영하는 한 각 간편결제사별 시크릿 키가 필요하지 않다.**
-필요한 것은 **같은 상점(MID)의 TossPayments 주문서형 클라이언트 키와 시크릿 키** 한 쌍이며,
-가맹 심사와 결제수단별 계약·활성화가 완료되어야 결제 UI에 실제로 표시된다.
+| 칩 ID | 고객 화면 | 공식 결제창 V2 SDK 요청 | 사전 조건 |
+|---|---|---|---|
+| `toss_pay` | 토스페이 | `CARD`, `card:{flowMode:'DIRECT',easyPay:'TOSSPAY'}` | 간편결제 직연동 계약·필수 3동의 |
+| `naver_pay` | 네이버페이 | `CARD`, `card:{flowMode:'DIRECT',easyPay:'NAVERPAY'}` | 동일 |
+| `kakao_pay` | 카카오페이 | `CARD`, `card:{flowMode:'DIRECT',easyPay:'KAKAOPAY'}` | 동일 |
+| `payco` | 페이코 | `CARD`, `card:{flowMode:'DIRECT',easyPay:'PAYCO'}` | 동일 |
+| `samsung_pay` | 삼성페이 | `CARD`, `card:{flowMode:'DIRECT',easyPay:'SAMSUNGPAY'}` | 지원 기기·계약·3동의 |
+| `apple_pay` | 애플페이 | `CARD`, `card:{flowMode:'DIRECT',easyPay:'APPLEPAY'}` | 지원 기기·계약·3동의 |
+| `card` | 신용·체크카드 | `CARD`, `card:{flowMode:'DEFAULT'}` | 일반 카드 결제 MID; PG창에서 수단 재선택 가능 |
+| `transfer` | 실시간 계좌이체 | `TRANSFER` | 계좌이체 계약 |
+| `virtual_account` | 가상계좌 | `VIRTUAL_ACCOUNT`, `virtualAccount:{validHours:24}` | 계약·입금 웹훅 검증 필요 |
+| `mobile_phone` | 휴대폰 결제 | `MOBILE_PHONE` | 휴대폰 결제 계약 |
+| `culture_gift` | 문화상품권 | `CULTURE_GIFT_CERTIFICATE` | 상품권 결제 계약 |
+| `book_gift` | 도서문화상품권 | `BOOK_GIFT_CERTIFICATE` | 상품권 결제 계약 |
+| `game_gift` | 게임문화상품권 | `GAME_GIFT_CERTIFICATE` | 상품권 결제 계약 |
 
-- 카드/간편결제/계좌이체/가상계좌의 계약 가능 여부는 TossPayments 관리자에서 결정된다.
-- 애플페이는 지원하는 기기·브라우저에서만 표시되는 등 수단별 조건이 있다.
-- 가상계좌는 발급 뒤 아직 `WAITING_FOR_DEPOSIT`이면 제작·납품 금지. 공식 `DEPOSIT_CALLBACK` secret 검증 + PG 재조회 `DONE`이 필요하다.
-- **카카오페이/네이버페이에 독자적으로 직접 연동하거나 다른 PG(PG사 다중 계약)로 확대하려면 별도 계약 및 API 키·어댑터 구현이 추가로 필요**하며 이번 변경의 범위가 아니다.
-- 현재 `REVIEWED_FOR_LIVE_CHARGES=false`, `WITHU_PAYMENT_ACTIVATED=no`, `WITHU_OUTBOX_WORKER_VERIFIED=no`, 공개 설정 `enabled:false`로 결제 차단 상태 유지.
-- **키 입력만으로 자동 결제 개통되지 않음.** Firebase Auth·App Check·Firestore·PG 심사·고객 약관·환불/취소·테스트 거래 검증이 모두 필요하다.
-- 결제 수단이 준비되지 않았으면 고객에게 결제 가능하다고 표기하거나 강제로 다른 수단으로 우회하지 않는다.
+13개 칩 모두 클릭/라디오 선택 가능하다. `docs/payment.js`가 선택 스타일과 해당 기관 이름을 표시하고, 간편결제 직접 연결을 선택한 경우 토스페이먼츠 3개 필수 약관 링크/동의를 노출한다. 계약/기기 제한 여부를 런타임에 사전에 모두 조회하는 기능은 **아직 없다**. 계약되지 않은 칩을 선택해도 유효한 결제가 된다고 보장하거나, 실패 시 결제가 성공한 것으로 처리해서는 안 된다.
 
-### 코드 경로와 회귀 검사
+### 키 종류: 중요
 
-| 역할 | 코드 |
-|---|---|
-| 6종 예정 수단 안내(비결제) | `docs/payment.html`, `docs/payment.js`, `docs/checkout.css` |
-| 실제 활성 수단 표시 및 결제 요청 | `docs/payment-live.js` → TossPayments V2 widget |
-| 서버 비밀키 결제 확인 | `firebase/functions.mjs` → `src/toss-payment-adapter.mjs` |
-| 서버 승인 결과의 실제 결제수단 기록 | `src/paid-order-pipeline.mjs` → `src/firestore-order-store.mjs` |
-| 가상계좌 상태 확인 | `firebase/functions.mjs`의 `withuTossDepositWebhook` |
-| React/FlutterFlow 없이 Node 호스팅으로 전환 시 정적 경로·제한적 CSP | `src/server.mjs` |
-| 자동 테스트 | `test/commerce.test.mjs`, `test/paid-order-pipeline.test.mjs`, `test/firestore-checkout.test.mjs` |
+현재 구현은 Toss `widgets()` 주문서형 결제 제품이 아니라 `payment()` **결제창(구버전) SDK v2 직접 선택형**이다.
 
-실제 결제위젯 문서: https://docs.tosspayments.com/guides/v2/payment-widget/integration
-결제수단 활성화/정책: https://docs.tosspayments.com/guides/v2/payment-widget/admin
-가상계좌 입금 확인: https://docs.tosspayments.com/guides/v2/payment-window/integration-virtual-account
+- `TOSS_CLIENT_KEY`: 토스페이먼츠 개발자센터의 **API 개별 연동 키** 중 결제창(구버전)·일반결제 MID의 **`test_ck_...` 또는 `live_ck_...`** (브라우저에 전달 가능한 값)
+- `TOSS_SECRET_KEY`: **동일 MID**의 짝이 되는 **`test_sk_...` 또는 `live_sk_...`**. Firebase Secret Manager에만 보관.
+- **`test_gck_...` / `live_gck_...` 키는 이 결제창 SDK에 입력하면 안 됨**. 이 키는 주문서형/결제창형 제품용으로 별개이다.
+- 간편결제사별 직접 상점 키를 13개 다 입력하는 구조가 아니며, Toss PG를 통한 수단 이용은 **각 방법의 계약/지원 여부에 좌우된다**.
+- 네이버페이·카카오페이를 Toss 밖에서 자체 계약해 직접 호출하는 별도 PG 연동은 이번 범위에 포함되지 않는다.
 
+### 고객 주문부터 승인까지
+
+1. 고객이 한 개의 Choice Chip을 직접 선택한다.
+2. Firebase Authentication 이메일 인증, 주문/수신 이메일 비교, 서비스 이용 동의를 확인한다. DIRECT 간편결제면 토스 전자금융거래/개인정보 수집/제3자 제공 3동의 확인.
+3. `src/checkout-security.mjs`가 선택된 `paymentChoice`가 허용 목록에 있는지 확인, DIRECT 동의 기록 및 서버 가격 고정.
+4. `docs/payment-live.js`가 `docs/payment-methods.js`의 정확한 스펙으로 `TossPayments(clientKey).payment({customerKey}).requestPayment(...)`를 실행한다.
+5. 성공 URL에서 서버가 원본 주문 ID·원화 금액·결제키를 조회하고 서버에서 Toss 공식 confirm/retrieve를 호출한다. **리디렉트만 믿어 결제완료 처리하지 않음**.
+6. PG 응답의 실제 결제수단 `method`, `easyPay.provider`, `virtualAccount.bankCode`만 주문에 기록한다. 선택 칩과 실제 PG 응답이 다르면 PG 응답이 사실의 출처이며 추가 운영자 대조가 필요하다.
+7. 가상계좌는 `WAITING_FOR_DEPOSIT` 시 제작·메일 금지. 최초 발급 secret을 보존한 웹훅 검증과 PG 재조회 `DONE`을 거쳐야 PAID 전환한다.
+
+**중요:** 브라우저 결제 시도 중단, 승인 후 네트워크 장애 등에서 중복 청구 위험을 줄이도록 같은 주문을 무조건 다시 결제하지 못하게 잠금을 두었다. 다만 운영용 취소·재시도·PG 조회/대사·환불 처리 전체는 **미완성**. 실제 결제 활성화 전 반드시 완성할 것.
+
+### 코드 및 테스트 경로
+
+- UI 칩: `docs/payment.html`, `docs/payment.js`, `docs/checkout.css`
+- 공식 칩 → 결제 API 대응표: `docs/payment-methods.js`
+- Firebase 인증/선택 결제창: `docs/payment-live.js`
+- 서버 가격·고객권한·동의 저장: `src/checkout-security.mjs`
+- PG 승인/입금: `firebase/functions.mjs`, `src/toss-payment-adapter.mjs`, `src/paid-order-pipeline.mjs`
+- 원자적 주문 기록: `src/firestore-order-store.mjs`
+- Node 배포 정적 경로 및 제한적 CSP: `src/server.mjs`
+- 13개 칩 매핑 테스트: `test/payment-methods.test.mjs`
+- 클릭칩/정적 통합 검사: `test/commerce.test.mjs`
+- 서버 consent 검증 테스트: `test/checkout-security.test.mjs`
+
+### 공식 자료
+
+- https://docs.tosspayments.com/guides/v2/payment-window/integration-direct
+- https://docs.tosspayments.com/sdk/v2/js/payment-direct
+- https://docs.tosspayments.com/guides/v2/payment-window/integration-virtual-account
+- https://docs.tosspayments.com/reference/using-api/api-keys
+- https://docs.tosspayments.com/codes/enum-codes
+- https://pages.tosspayments.com/terms/user/
+- https://pages.tosspayments.com/terms/privacy/consent1
+- https://pages.tosspayments.com/terms/privacy/consent2
+
+**출시 잠금 현황은 그대로 유지**: `REVIEWED_FOR_LIVE_CHARGES=false`, `WITHU_PAYMENT_ACTIVATED=no`, `WITHU_OUTBOX_WORKER_VERIFIED=no`, 공개 웹앱 `enabled:false`. 실제 PG 결제·발송·환불은 계약과 통합 테스트 후에만 개통.

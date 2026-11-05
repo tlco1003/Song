@@ -302,7 +302,18 @@ audio.addEventListener('ended',()=>{
 });
 audio.addEventListener('error',()=>{
  if(audio.hidden||!audio.currentSrc)return;
- status('오디오를 재생할 수 없어요. MP4에 소리가 있는지 확인하거나 별도 MP3를 연결해 주세요.');
+ if(tracks[current]?.mediaKind==='video'&&!videoPlayer.hidden&&playbackPlayer===audio){
+  // A separate audio asset may be missing or unsupported on this device.
+  // Recover the audible MP4 instead of leaving the film permanently silent.
+  playbackPlayer=videoPlayer;
+  videoPlayer.muted=false;videoPlayer.defaultMuted=false;
+  videoPlayer.controls=true;videoPlayer.loop=repeatMode==='one';
+  audio.hidden=true;
+  setMediaSession(tracks[current],videoPlayer);
+  status('오디오 파일 재생에 실패해 원본 MP4 영상으로 전환했어요. 영상의 재생 버튼을 눌러 주세요.');
+  return;
+ }
+ status('오디오를 재생할 수 없어요. 음원 파일을 확인해 주세요.');
 });
 
 $('local-song').addEventListener('change',async event=>{

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#251e29">
+<meta name="robots" content="noindex,nofollow">
+<meta name="description" content="WITHU 결제 완료 고객 전용 가사 수정 요청">
+<title>WITHU · 내 노래 가사 수정</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="checkout.css?v=20261105-paid-revision-01">
+<script defer src="revise-lyrics.js?v=20261105-paid-revision-01"></script>
+</head>
+<body>
+<header class="site-header"><div class="frame header-inner">
+<a class="brand" href="./" aria-label="WITHU 홈"><span class="brand-icon">♪</span> WITHU</a>
+<nav aria-label="사이트 메뉴"><a href="./">홈</a></nav>
+</div></header>
+<main class="checkout-page">
+<div class="frame payment-shell">
+ <header class="checkout-intro"><span class="small-caps">YOUR MUSIC · PRIVATE</span>
+ <h1>내 노래 가사 <em>수정 요청</em></h1>
+ <p>결제를 완료한 주문자만 가사를 확인하고 수정 요청할 수 있어요.</p></header>
+ <section class="checkout-card" aria-labelledby="revision-title">
+  <h2 id="revision-title">가사 확인</h2>
+  <p id="revision-status" role="status" class="small-explain">결제 및 본인 인증 상태를 확인하고 있어요.</p>
+  <div id="revision-editor" hidden>
+   <p id="revision-song-title" class="generated-song-title"></p>
+   <label for="revised-lyrics" class="form-label">수정할 가사</label>
+   <textarea id="revised-lyrics" maxlength="5500" rows="18" spellcheck="true" placeholder="수정할 가사를 적어주세요."></textarea>
+   <p class="small-explain">요청한 수정은 원본을 바로 덮어쓰지 않아요. 제작 상태와 수정 정책을 검토한 뒤 반영 여부를 안내합니다.</p>
+   <button id="submit-revision" type="button" class="checkout-button" disabled>가사 수정 요청 보내기</button>
+  </div>
+  <a href="./" class="edit-link">← 홈으로 돌아가기</a>
+ </section>
+</div>
+</main>
+<footer class="site-footer"><div class="frame footer-inner"><span class="footer-brand">WITHU</span><p>당신의 마음이 노래가 되는 순간.</p></div></footer>
+</body></html>

@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=20261105-lyrics-inline-01">
-  <script src="player.js?v=20261105-lyrics-inline-01" defer></script>
+  <script type="module" src="player.js?v=20261105-precise-lyrics-01"></script>
 </head>
 <body>
 <header class="site-header">
@@ -57,9 +57,10 @@
             <p id="no-audio" hidden>음악 파일을 준비하고 있어요. 내 음악 불러오기로 기기에 저장된 곡을 들어볼 수 있어요.</p>
           </div>
           <section class="inline-lyrics" aria-label="재생 중인 노래 가사">
-            <div id="lyrics-scroll" class="lyrics-scroll" tabindex="0" aria-label="재생에 맞춰 자동 이동하는 노래 가사">
+            <div id="lyrics-scroll" class="lyrics-scroll" tabindex="0" aria-label="노래 가사">
               <div id="lyrics-content" class="lyrics-content">가사를 불러오는 중이에요.</div>
             </div>
+            <p id="lyrics-sync-hint" class="lyrics-sync-hint" role="status"></p>
           </section>
           <div class="playback-row">
             <button id="previous-track" class="circle-control" type="button" aria-label="이전 곡">‹</button>

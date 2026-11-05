@@ -2,283 +2,232 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const KEY='withu-order-draft-v1';
-const draftMaxAge=30*60*1000;
-let draft=null;
-let priceCatalog=null;
-let genreCatalog=null;
-const genreChoiceState={duoMode:'same',first:'',second:'',sharedNotes:''};
+const MAX_AGE=30*60*1000;
 const won=new Intl.NumberFormat('ko-KR',{style:'currency',currency:'KRW',maximumFractionDigits:0});
-function chosenProduct(){return document.querySelector('input[name="product"]:checked')?.value||'audio';}
-function selectedPrice(){return priceCatalog?.products.find(p=>p.id===chosenProduct())||null;}
-function priceText(product){return product?(won.format(product.amountKrw)+(product.priceKind==='starting_at'?'부터':'')):'가격 확인 중';}
-function showProductPrice(){
- for(const node of document.querySelectorAll('[data-price-for]')){
-  const p=priceCatalog?.products.find(product=>product.id===node.dataset.priceFor);
-  node.textContent=priceText(p);
- }
- const current=selectedPrice();
- $('order-price').textContent=priceText(current);
- $('order-pricing-notice').textContent=current?.quoteRequired===true?
-  '뮤직비디오는 시작 가격입니다. 영상 길이·구성·수정 범위를 협의한 최종 견적이 별도로 필요하며 지금은 결제되지 않습니다.':
-  '결제창 시안의 판매 예정 가격입니다. PG 연동·정식 계약 전에는 결제가 진행되지 않습니다.';
-}
-async function loadPrices(){
+let prices=null,genres=null,draft=null,currentStage='product';
+const titleOf={product:'선물 종류',genre:'장르 선택',video:'영상 자료',review:'주문 확인'};
+const allowedProducts=['audio','audio_duo','audio_video'];
+function getDraft(){
  try{
-  const result=await fetch('prices.json',{cache:'no-store'});
-  if(!result.ok)throw Error('price catalog unavailable');
-  const catalog=await result.json();
-  if(catalog.currency!=='KRW'||catalog.version!==1||!Array.isArray(catalog.products))throw Error('Invalid catalog');
-  const ids=['audio','audio_duo','audio_video'];
-  if(catalog.products.length!==ids.length||!ids.every(id=>catalog.products.some(p=>p.id===id&&Number.isSafeInteger(p.amountKrw)&&p.amountKrw>0)))throw Error('Incomplete catalog');
-  if(!catalog.products.some(p=>p.id==='audio_video'&&p.quoteRequired===true&&p.priceKind==='starting_at'))throw Error('Video quote required');
-  priceCatalog=catalog;
- }catch(_){
-  priceCatalog=null;
-  $('checkout-message').textContent='가격표를 불러오지 못했어요. 새로고침해 주세요. 실제 결제는 진행되지 않습니다.';
+  const value=JSON.parse(sessionStorage.getItem(KEY)||'null');
+  if(!value||value.version!==1||!Number.isFinite(value.savedAt)
+    ||Date.now()-value.savedAt<0||Date.now()-value.savedAt>MAX_AGE
+    ||typeof value.lyrics!=='string'||!value.lyrics.trim()
+    ||typeof value.title!=='string'||!value.title.trim())return null;
+  return value;
+ }catch(_){return null;}
+}
+function chosenProduct(){return document.querySelector('input[name="product"]:checked')?.value||'audio';}
+function selectedPrice(){return prices?.products.find(p=>p.id===chosenProduct())||null;}
+function priceText(product){return product?(won.format(product.amountKrw)+(product.priceKind==='starting_at'?'부터':'')):'가격 확인 중';}
+function showPrices(){
+ for(const node of document.querySelectorAll('[data-price-for]')){
+  node.textContent=priceText(prices?.products.find(p=>p.id===node.dataset.priceFor));
  }
- showProductPrice();
+ $('order-price').textContent=priceText(selectedPrice());
+ $('order-pricing-notice').textContent=selectedPrice()?.quoteRequired?
+  '뮤직비디오는 시작가입니다. 길이와 편집·수정 범위에 따라 개별 견적을 먼저 확정합니다.':
+  '선택한 완성곡과 가사가 함께 제공됩니다.';
 }
-
-
-function isAllowedGenre(value){
- return !!genreCatalog?.genres.some(entry=>entry.id===value);
+function error(message){
+ $('checkout-message').textContent=message;
+ $('checkout-message').hidden=!message;
 }
-function chooseAlternateGenre(first){
- return genreCatalog?.genres.find(entry=>entry.id!==first)?.id||'';
-}
-function getGenreSelection(){
- if(!genreCatalog)throw new Error('장르 목록을 불러오지 못했어요.');
+function validGenre(g){return !!genres?.genres.some(x=>x.id===g);}
+function genreSelection(){
+ if(!genres)throw Error('음악 장르를 아직 불러오지 못했어요.');
  const first=$('song-genre-first').value;
- if(!isAllowedGenre(first))throw new Error('첫 번째 장르를 선택해 주세요.');
+ if(!validGenre(first))throw Error('첫 번째 장르를 선택해 주세요.');
  if(chosenProduct()!=='audio_duo')return {mode:'single',genres:[first]};
  const mode=document.querySelector('input[name="duoGenreMode"]:checked')?.value;
  if(mode==='same')return {mode:'same',genres:[first]};
- if(mode!=='different')throw new Error('2곡 제작 방식을 선택해 주세요.');
  const second=$('song-genre-second').value;
- if(!isAllowedGenre(second))throw new Error('두 번째 장르를 선택해 주세요.');
- if(first===second)throw new Error('다른 장르로 각각 1곡을 받으려면 두 장르가 달라야 해요. 같은 장르 두 곡은 「한 장르로 2곡」을 선택해 주세요.');
+ if(mode!=='different'||!validGenre(second)||first===second)
+  throw Error('두 장르로 각각 제작하려면 서로 다른 장르 2개를 선택해 주세요.');
  return {mode:'different',genres:[first,second]};
 }
-function genreLabels(selection){
- if(selection.mode==='single')return ['1곡 · '+selection.genres[0]];
- if(selection.mode==='same')return ['1곡 · '+selection.genres[0],'2곡 · '+selection.genres[0]+' (다른 멜로디·편곡)'];
- return ['1곡 · '+selection.genres[0],'2곡 · '+selection.genres[1]];
+function genreLabels(s){
+ if(s.mode==='single')return ['1곡 · '+s.genres[0]];
+ if(s.mode==='same')return ['1곡 · '+s.genres[0],'2곡 · '+s.genres[0]+' (다른 멜로디·편곡)'];
+ return ['1곡 · '+s.genres[0],'2곡 · '+s.genres[1]];
 }
-function saveGenreChoice(){
- const original=getDraft();
- if(!original)return;
+function saveChoices(){
+ if(!draft)return false;
+ let selected=null;
+ try{selected=genreSelection();}
+ catch(_){/* Invalid selection is not persisted as a valid production request. */}
+ const next={...draft,selectedProduct:chosenProduct(),genreSelection:selected,
+   sharedStyleNotes:$('song-shared-notes').value.trim().slice(0,500),
+   duoGenreChoice:{
+     mode:document.querySelector('input[name="duoGenreMode"]:checked')?.value||'same',
+     first:$('song-genre-first').value,second:$('song-genre-second').value
+   },
+   savedAt:Date.now()
+ };
  try{
-  const genreSelection=getGenreSelection();
-  const updated={...original,genreSelection,sharedStyleNotes:$('song-shared-notes').value.trim().slice(0,500),
-   selectedProduct:chosenProduct(),
-   duoGenreChoice:{mode:document.querySelector('input[name="duoGenreMode"]:checked')?.value||'same',
-     first:$('song-genre-first').value,second:$('song-genre-second').value}};
-  // This session-only draft is NOT an order or a payment request.
-  sessionStorage.setItem(KEY,JSON.stringify(updated));
-  draft=updated;
- }catch(_){
-  // A stale selection must never be treated as a validated, purchasable order.
-  try{
-   const invalid={...original,genreSelection:null};
-   sessionStorage.setItem(KEY,JSON.stringify(invalid));
-   draft=invalid;
-  }catch(_storage){}
- }
+  sessionStorage.setItem(KEY,JSON.stringify(next));
+  draft=next;return true;
+ }catch(_){error('현재 브라우저에서 주문 내용 임시 저장을 할 수 없어요.');return false;}
 }
-function renderGenrePlan(){
- const isDuo=chosenProduct()==='audio_duo';
- const mode=document.querySelector('input[name="duoGenreMode"]:checked')?.value||'same';
- $('duo-genre-modes').hidden=!isDuo;
- const distinct=isDuo&&mode==='different';
- $('song-genre-second-wrap').hidden=!distinct;
- $('song-genre-second').disabled=!distinct||!genreCatalog;
- if(!genreCatalog){
-  $('genre-plan-preview').textContent='장르 목록을 불러오는 중이에요.';
-  $('order-song-genres').textContent='장르 선택을 준비 중이에요.';
+function renderGenres(){
+ const duo=chosenProduct()==='audio_duo';
+ const different=duo&&document.querySelector('input[name="duoGenreMode"]:checked')?.value==='different';
+ $('duo-genre-modes').hidden=!duo;
+ $('song-genre-second-wrap').hidden=!different;
+ $('song-genre-second').disabled=!different||!genres;
+ try{
+  const selection=genreSelection();
+  $('genre-plan-preview').classList.remove('invalid');
+  $('genre-plan-preview').textContent=genreLabels(selection).join('\n')+'\n각 완성곡마다 별도의 스타일로 제작됩니다.';
+ }catch(e){
+  $('genre-plan-preview').classList.add('invalid');
+  $('genre-plan-preview').textContent=e.message;
+ }
+ saveChoices();
+}
+function stages(){
+ return chosenProduct()==='audio_video'?['product','genre','video','review']:['product','genre','review'];
+}
+function updateReview(){
+ draft=getDraft();
+ $('order-title').textContent=draft?.title||'제목 없음';
+ $('order-product').textContent=selectedPrice()?.name||'상품 선택';
+ $('order-style').textContent=$('song-shared-notes').value.trim()||'선택한 장르·분위기에 맞추어 제작';
+ $('order-lyrics').textContent=draft?.lyrics||'가사 없음';
+ try{$('order-song-genres').textContent=genreLabels(genreSelection()).join('\n');}
+ catch(e){$('order-song-genres').textContent=e.message;}
+ showPrices();
+}
+function show(stage,{push=false}={}){
+ const active=stages();
+ currentStage=active.includes(stage)?stage:active[0];
+ const idx=active.indexOf(currentStage);
+ for(const section of document.querySelectorAll('[data-checkout-step]')){
+  section.hidden=section.dataset.checkoutStep!==currentStage;
+ }
+ $('checkout-prev').hidden=idx===0;
+ $('checkout-next').hidden=idx===active.length-1;
+ $('go-payment').hidden=idx!==active.length-1;
+ $('checkout-progress-label').textContent=(idx+1)+' / '+active.length+' · '+titleOf[currentStage];
+ $('checkout-progress').setAttribute('aria-valuemax',String(active.length));
+ $('checkout-progress').setAttribute('aria-valuenow',String(idx+1));
+ $('checkout-progress-fill').style.width=((idx+1)/active.length*100)+'%';
+ if(currentStage==='review')updateReview();
+ error('');
+ if(push){
+  const url=new URL(location.href);
+  url.searchParams.set('stage',currentStage);
+  // Stage names only in the URL; customer stories and genres stay private.
+  history.pushState({stage:currentStage},'',url.pathname+url.search);
+ }
+ window.scrollTo({top:0,behavior:'instant'});
+ window.dispatchEvent(new CustomEvent('withu:checkout-stage',{detail:{stage:currentStage}}));
+}
+function canAdvance(){
+ if(!draft){error('먼저 노래를 만들고 가사를 확정해 주세요. 가사 작성 화면으로 돌아가세요.');return false;}
+ if(!prices){error('현재 가격을 불러올 수 없어요. 새로고침해 주세요.');return false;}
+ if(currentStage==='genre'){
+  try{genreSelection();}
+  catch(e){error(e.message);return false;}
+ }
+ if(!saveChoices())return false;
+ return true;
+}
+$('checkout-next').addEventListener('click',()=>{
+ if(!canAdvance())return;
+ const steps=stages();
+ show(steps[steps.indexOf(currentStage)+1],{push:true});
+});
+$('checkout-prev').addEventListener('click',()=>{
+ const steps=stages();
+ const previous=steps[steps.indexOf(currentStage)-1];
+ if(previous)show(previous,{push:true});
+});
+$('go-payment').addEventListener('click',event=>{
+ if(!canAdvance()){event.preventDefault();return;}
+ if(selectedPrice()?.quoteRequired){
+  event.preventDefault();
+  error('뮤직비디오 제작 금액은 개별 견적 확정 후 결제할 수 있어요. 현재는 결제 단계로 진행할 수 없습니다.');
   return;
  }
- try{
-  const selection=getGenreSelection(),lines=genreLabels(selection);
-  $('genre-plan-preview').classList.remove('invalid');
-  $('genre-plan-preview').textContent=lines.join('\n')+'\n같은 최종 가사를 바탕으로 각각 독립적으로 제작합니다.';
-  $('order-song-genres').textContent=lines.join('\n');
- }catch(error){
-  $('genre-plan-preview').classList.add('invalid');
-  $('genre-plan-preview').textContent=error.message;
-  $('order-song-genres').textContent='장르 선택을 확인해 주세요.';
- }
- saveGenreChoice();
-}
-async function loadGenreChoices(){
- try{
-  const r=await fetch('music-genres.json',{cache:'no-store'});
-  if(!r.ok)throw Error('Unable to load music genres');
-  const catalog=await r.json();
-  if(catalog.version!==1||!Array.isArray(catalog.genres)||catalog.genres.length<2
-    ||new Set(catalog.genres.map(g=>g.id)).size!==catalog.genres.length
-    ||catalog.genres.some(g=>typeof g.id!=='string'||!g.id||typeof g.style!=='string'))
-    throw Error('Invalid music genres');
-  genreCatalog=catalog;
-  const saved=getDraft();
-  const previous=saved?.duoGenreChoice;
-  // A product link (?product=...) takes precedence over a stored user selection.
-  const requestedProduct=new URLSearchParams(window.location.search).get('product');
-  if(!requestedProduct&&['audio','audio_duo','audio_video'].includes(saved?.selectedProduct)){
-    const storedRadio=document.querySelector('input[name="product"][value="'+saved.selectedProduct+'"]');
-    if(storedRadio){storedRadio.checked=true;storedRadio.dispatchEvent(new Event('change',{bubbles:true}));}
+ // The separate payment page validates this saved draft once more.
+});
+for(const radio of document.querySelectorAll('input[name="product"]')){
+ radio.addEventListener('change',()=>{
+  for(const label of document.querySelectorAll('.gift-choice')){
+   label.classList.toggle('active',label.querySelector('input')?.checked===true);
   }
+  showPrices();renderGenres();
+  if(!stages().includes(currentStage))show('product');
+ });
+}
+for(const control of document.querySelectorAll('input[name="duoGenreMode"]'))
+ control.addEventListener('change',renderGenres);
+for(const id of ['song-genre-first','song-genre-second'])
+ $(id).addEventListener('change',renderGenres);
+$('song-shared-notes').addEventListener('input',saveChoices);
+window.addEventListener('popstate',()=>{
+ const stage=new URLSearchParams(location.search).get('stage');
+ show(stage||'product');
+});
+async function loadPrices(){
+ try{
+  const response=await fetch('prices.json',{cache:'no-store'});
+  if(!response.ok)throw Error('Prices unavailable');
+  const result=await response.json();
+  if(result.version!==1||result.currency!=='KRW'||!Array.isArray(result.products)
+    ||!['audio','audio_duo','audio_video'].every(id=>result.products.some(x=>x.id===id&&Number.isSafeInteger(x.amountKrw)&&x.amountKrw>0)))
+    throw Error('Incomplete price list');
+  prices=result;
+ }catch(_){error('현재 가격 정보를 불러올 수 없어요. 잠시 후 다시 접속해 주세요.');}
+ showPrices();
+}
+async function loadGenres(){
+ try{
+  const response=await fetch('music-genres.json',{cache:'no-store'});
+  if(!response.ok)throw Error('Genres unavailable');
+  const result=await response.json();
+  if(result.version!==1||!Array.isArray(result.genres)||result.genres.length<2
+    ||new Set(result.genres.map(x=>x.id)).size!==result.genres.length
+    ||result.genres.some(x=>typeof x.id!=='string'||typeof x.style!=='string'))
+    throw Error('Invalid genres');
+  genres=result;
   for(const id of ['song-genre-first','song-genre-second']){
-   const select=$(id);
-   select.replaceChildren();
-   for(const genre of catalog.genres){
+   const select=$(id);select.replaceChildren();
+   for(const item of result.genres){
     const option=document.createElement('option');
-    option.value=genre.id;option.textContent=genre.id;select.append(option);
+    option.value=item.id;option.textContent=item.id;select.append(option);
    }
    select.disabled=false;
   }
-  const initial=previous&&isAllowedGenre(previous.first)?previous.first:
-    isAllowedGenre(saved?.genre)?saved.genre:catalog.genres[0].id;
-  $('song-genre-first').value=initial;
-  const second=previous&&isAllowedGenre(previous.second)?previous.second:chooseAlternateGenre(initial);
-  $('song-genre-second').value=second;
-  $('song-shared-notes').value=typeof saved?.sharedStyleNotes==='string'?
-    saved.sharedStyleNotes.slice(0,500):
-    typeof saved?.styleOverrides==='string'?saved.styleOverrides.slice(0,500):'';
-  const mode=previous?.mode==='different'?'different':'same';
-  document.querySelector('input[name="duoGenreMode"][value="'+mode+'"]').checked=true;
-  renderGenrePlan();
+  const old=draft?.duoGenreChoice;
+  const first=[old?.first,draft?.genre,result.genres[0].id].find(validGenre);
+  $('song-genre-first').value=first;
+  $('song-genre-second').value=validGenre(old?.second)?old.second:
+   result.genres.find(g=>g.id!==first).id;
+  if(old?.mode==='different')$('duo-mode-different').checked=true;
+  $('song-shared-notes').value=typeof draft?.sharedStyleNotes==='string'?
+   draft.sharedStyleNotes.slice(0,500):typeof draft?.styleOverrides==='string'?
+   draft.styleOverrides.slice(0,500):'';
+  renderGenres();
  }catch(_){
-  genreCatalog=null;
-  $('genre-plan-preview').textContent='장르 목록을 불러오지 못했어요. 새로고침해 주세요.';
-  $('order-song-genres').textContent='장르 선택을 불러올 수 없습니다.';
+  genres=null;$('genre-plan-preview').textContent='장르 목록을 불러오지 못했어요. 다시 접속해 주세요.';
  }
 }
-
-function getDraft(){
- try{
-  const parsed=JSON.parse(sessionStorage.getItem(KEY)||'null');
-  if(!parsed||typeof parsed!=='object'||!Number.isFinite(parsed.savedAt)||Date.now()-parsed.savedAt>draftMaxAge)return null;
-  if(typeof parsed.lyrics!=='string'||typeof parsed.style!=='string'||!parsed.lyrics.trim()||!parsed.style.trim())return null;
-  return parsed;
- }catch(_){return null}
-}
-// Display-only choices: the real PG widget will be rendered only after
-// server-owned prices, approved payment credentials and a durable order store exist.
-// No card number, bank credential or customer email is sent by this preview.
-const paymentInfo=Object.freeze({
- toss_pay:{title:'토스페이',help:'실제 연동 시 토스페이 앱 또는 인증창에서 결제를 승인합니다.'},
- kakao_pay:{title:'카카오페이',help:'실제 연동 시 카카오페이 앱/결제창으로 이동해 인증합니다. 가맹점 계약 후 제공 여부가 결정됩니다.'},
- naver_pay:{title:'네이버페이',help:'실제 연동 시 네이버페이 인증창에서 결제합니다. 가맹점 설정에 따라 제공됩니다.'},
- card:{title:'신용·체크카드',help:'카드번호를 WITHU가 직접 수집하지 않습니다. 결제사 보안 결제창에서 카드 정보를 입력합니다.'},
- transfer:{title:'실시간 계좌이체',help:'결제사의 은행 이체 인증 후 서버에서 승인 상태를 확인합니다.'},
- virtual_account:{title:'가상계좌 입금',help:'계약 후 주문별 가상계좌가 발급됩니다. 입금 확인 웹훅과 서버 검증 이후에만 결제 완료로 처리합니다.'}
-});
-function chosenPayment(){
- const value=document.querySelector('input[name="paymentMethod"]:checked')?.value;
- return paymentInfo[value]||paymentInfo.toss_pay;
-}
-function showPaymentSelection(){
- const method=chosenPayment();
- $('payment-method-title').textContent=method.title;
- $('payment-method-help').textContent=method.help;
- $('selected-payment-method').textContent=method.title+' (연동 준비 중)';
-}
-function closePaymentPreview(){
- const dialog=$('payment-preview-dialog');
- if(typeof dialog.close==='function')dialog.close();
- else dialog.removeAttribute('open');
-}
-function showPaymentPreview(){
- const dialog=$('payment-preview-dialog'),method=chosenPayment();
- const product=document.querySelector('input[name="product"]:checked')?.value;
- const order=getDraft();
- $('demo-product').textContent=product==='audio_video'?'노래 + 뮤직비디오 (사전 견적 필요)':product==='audio_duo'?'맞춤 노래 2곡 (같은 가사, 서로 다른 스타일)':'맞춤 노래 1곡 (MP3 + 가사)';
- $('demo-order').textContent=order?.title||'가사 작성 후 확정';
- $('demo-payment-method').textContent=method.title;
- $('demo-amount').textContent=priceCatalog?priceText(selectedPrice())+' · 청구 불가':'가격 확인 중 · 청구 불가';
- $('demo-method-detail').textContent=method.help;
- try{$('demo-genre-plan').textContent=genreLabels(getGenreSelection()).join(' · ');}
- catch(error){$('demo-genre-plan').textContent=error.message;}
- if(typeof dialog.showModal==='function')dialog.showModal();
- else dialog.setAttribute('open','');
-}
-function show(){
+async function init(){
  draft=getDraft();
- $('order-title').textContent=draft?.title||'노래가 준비되지 않았어요.';
- $('order-style').textContent=draft?.style||'가사를 작성한 뒤 주문 화면으로 이동해 주세요.';
- $('order-lyrics').textContent=draft?.lyrics||'가사 작성 화면에서 먼저 노랫말을 준비해 주세요.';
-}
-function checkOrder(){
- const email=$('delivery-email').value.trim();
- const again=$('delivery-email-again').value.trim();
- if(!draft){$('checkout-message').textContent='먼저 가사를 작성하고 확정해 주세요.';return}
- if(!email||!$('delivery-email').checkValidity()){
-  $('checkout-message').textContent='완성곡을 받을 올바른 이메일 주소를 입력해 주세요.';return;
+ const productParam=new URLSearchParams(location.search).get('product');
+ const selected=allowedProducts.includes(productParam)?productParam:
+   allowedProducts.includes(draft?.selectedProduct)?draft.selectedProduct:'audio';
+ const radio=document.querySelector('input[name="product"][value="'+selected+'"]');
+ if(radio)radio.checked=true;
+ for(const label of document.querySelectorAll('.gift-choice')){
+  label.classList.toggle('active',label.querySelector('input')?.checked===true);
  }
- if(email.toLowerCase()!==again.toLowerCase()){
-  $('checkout-message').textContent='두 이메일 주소가 일치하지 않습니다.';return;
- }
- if(!$('consent-delivery').checked||!$('consent-service').checked){
-  $('checkout-message').textContent='이메일 처리 동의와 서비스 안내 확인이 필요합니다.';return;
- }
- let selection;
- try{selection=getGenreSelection();}
- catch(error){$('checkout-message').textContent=error.message;return;}
- saveGenreChoice();
- const option=chosenProduct();
- const label=option==='audio_video'?'노래와 뮤직비디오':option==='audio_duo'?'노래 2곡':'노래 1곡';
- $('checkout-message').textContent=label+' 주문 내용을 확인했어요. 결제·자동 제작 연결이 완료되면 여기에서 실제 주문할 수 있어요.';
+ await Promise.all([loadPrices(),loadGenres()]);
+ // The old draft must not be silently promoted into a paid order.
+ show(new URLSearchParams(location.search).get('stage')||'product');
+ if(!draft)error('아직 작성된 노래가 없어요. 가사를 먼저 확정한 뒤 돌아와 주세요.');
 }
-async function readiness(){
- try{
-  const r=await fetch('api/commerce/readiness',{cache:'no-store'});
-  if(!r.ok)throw Error('not-ready');
-  const config=await r.json();
-  // Never enable payment unless backend is explicit about verified music,
-  // payment, delivery, license and persistent order-queue readiness.
-  const ready=config?.canCharge===true&&config?.licenseVerified===true
-   &&config?.paymentVerified===true&&config?.musicVerified===true
-   &&config?.emailVerified===true&&config?.orderStoreVerified===true;
-  if(ready){
-   // Intentionally keep closed: payment execution will be activated only when
-   // server-side order-create + confirmation + idempotent webhook paths are implemented and tested.
-   $('commerce-status').querySelector('strong').textContent='결제 기능 연결 확인 중';
-   $('commerce-status').querySelector('p').textContent='결제 서버의 최종 주문 확인 절차를 준비하고 있습니다.';
-  }
- }catch(_){
-  $('commerce-status').querySelector('strong').textContent='주문·결제 기능 준비 중';
- }
- $('confirm-checkout').disabled=true;
-}
-for(const radio of document.querySelectorAll('input[name="paymentMethod"]')){
- radio.addEventListener('change',showPaymentSelection);
-}
-$('preview-payment').addEventListener('click',showPaymentPreview);
-$('close-payment-preview').addEventListener('click',closePaymentPreview);
-$('finish-payment-preview').addEventListener('click',closePaymentPreview);
-$('payment-preview-dialog').addEventListener('click',event=>{
- if(event.target===$('payment-preview-dialog'))closePaymentPreview();
-});
-showPaymentSelection();
-for(const radio of document.querySelectorAll('input[name="product"]')){
- radio.addEventListener('change',()=>{
-  for(const label of document.querySelectorAll('.gift-choice'))label.classList.toggle('active',label.querySelector('input')?.checked===true);
-  showProductPrice();
-  renderGenrePlan();
-  $('checkout-message').textContent='상품을 선택했어요. 실제 결제는 아직 시작되지 않습니다.';
- });
-}
-for(const input of document.querySelectorAll('input[name="duoGenreMode"]')){
- input.addEventListener('change',renderGenrePlan);
-}
-for(const id of ['song-genre-first','song-genre-second']){
- $(id).addEventListener('change',renderGenrePlan);
-}
-$('song-shared-notes').addEventListener('input',saveGenreChoice);
-$('inspect-order').addEventListener('click',checkOrder);
-show();
-showProductPrice();
-void loadPrices();
-void loadGenreChoices();
-void readiness();
+void init();
 })();

@@ -236,3 +236,16 @@
 @media(max-width:850px){.payment-page-layout{grid-template-columns:1fr;max-width:650px;margin:auto}.payment-page-layout .payment-summary{position:static}}
 @media(max-width:520px){.checkout-flow .checkout-stage{padding:22px 17px}.checkout-flow .gift-choice{padding:15px 12px}.checkout-flow .wizard-actions .checkout-button{font-size:12px}.payment-page-layout .checkout-card{padding:24px 19px}}
 @media(prefers-reduced-motion:reduce){.checkout-flow .checkout-stage{animation:none}.checkout-flow .wizard-progress-bar span{transition:none}}
+
+/* Large, tap-friendly card selector; no hidden CSS-generated music prompts. */
+.checkout-flow .music-choice-fieldset{border:0;min-width:0;padding:0;margin:15px 0 20px}
+.checkout-flow .music-choice-fieldset legend{font-size:13px;font-weight:700;color:#5d4657;margin:0 0 12px}
+.checkout-flow .genre-tile-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.checkout-flow .music-choice{position:relative;display:block;cursor:pointer}
+.checkout-flow .music-choice input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.checkout-flow .music-choice span{display:flex;align-items:center;justify-content:center;text-align:center;min-height:52px;background:#fff;border:1px solid #e1d4dc;border-radius:10px;font-weight:700;color:#645060;font-size:12px}
+.checkout-flow .music-choice input:checked+span{background:#f2e1ea;border:2px solid #996d86;color:#523c4a;box-shadow:0 4px 13px #976b8721}
+.checkout-flow .music-choice input:focus-visible+span{outline:3px solid #91647e;outline-offset:3px}
+.checkout-flow .song-genre-visual{margin:12px 0}
+@media(max-width:560px){.checkout-flow .genre-tile-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.checkout-flow .music-choice span{font-size:11px;min-height:48px}}
+@media(max-width:355px){.checkout-flow .genre-tile-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}

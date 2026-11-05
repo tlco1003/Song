@@ -188,6 +188,10 @@ async function initialize(){
           mood:draft.mood||'따뜻한',
           sharedStyleNotes:draft.sharedStyleNotes||'',
           deliveryEmail:email,
+          paymentChoice:chosen.id,
+          directPaymentConsents:requiresDirectPayConsent(chosen.id)?{
+            financial:true,privacy:true,thirdParty:true
+          }:null,
           consentDelivery:true,consentTerms:true
         })).data;
         if(created.productId!==draft.selectedProduct

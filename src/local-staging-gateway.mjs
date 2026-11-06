@@ -19,7 +19,7 @@ import {issuePrivateDeliveryInvitation,hashPrivateDeliveryToken}
 import {ORDER_STATES} from './commerce.mjs';
 
 const REPO=resolve(fileURLToPath(new URL('..',import.meta.url)));
-const STAGING_MAX_AGE_MS=15*60*1000;
+const STAGING_MAX_AGE_MS=30*60*1000; // Shareable order-scoped demo link; revocable.
 const SESSION_MAX_AGE_MS=30*60*1000;
 const ID=/^test_[a-f0-9-]{36}$/;
 const FILE=/^[A-Za-z0-9_.-]{1,110}\.(?:mp3|m4a|wav)$/i;
@@ -74,22 +74,39 @@ export function createLocalStagingGateway({
   if(!info.isFile()||info.size<10)throw new Error('Private audio file is not ready');
   return file;
  }
- function trackResponse(song,orderId){
+ function trackResponse(song,order){
+  const orderId=order.id;
   const ticket=OTP_SESSION().slice(0,32);
-  tickets.set(ticket,{orderId,assetIndex:song.index,expiresAt:now()+SESSION_MAX_AGE_MS});
+  tickets.set(ticket,{orderId,assetIndex:song.index,kind:'playback',expiresAt:now()+SESSION_MAX_AGE_MS});
+  const active=order.testUpgradeActive===true;
+  let downloadTicket=null;
+  if(active){
+   downloadTicket=OTP_SESSION().slice(0,32);
+   tickets.set(downloadTicket,{
+    orderId,assetIndex:song.index,kind:'download',expiresAt:now()+SESSION_MAX_AGE_MS
+   });
+  }
   return {
    index:song.index,title:song.title,file:song.fileName,genre:song.genre,
    productType:'audio_with_cover',mediaKind:'audio',
    privateMediaUrl:'/api/delivery-assets/'+ticket,
    lyrics:song.lyrics,
    orderRef:'ord_'+orderId.slice(5).replace(/-/g,'').slice(0,32),
-   commercialUpgrade:{status:'unavailable',amountKrw:10000}
+   ...(active?{privateDownloadUrl:'/api/delivery-downloads/'+downloadTicket}:{}),
+   commercialUpgrade:active?
+    {status:'active',paymentVerified:true,rightsVerified:true,
+     amountKrw:10000,testOnly:true}:
+    {status:'unavailable',amountKrw:10000}
   };
  }
  function privateResponse(order,sessionId){
-  const tracks=order.songs.map(song=>trackResponse(song,order.id));
+  const tracks=order.songs.map(song=>trackResponse(song,order));
+  const upgraded=order.testUpgradeActive===true;
   return {
-   status:'delivered',tracks,sessionId,
+   status:'delivered',tracks,sessionId,testOnly:true,
+   commercialUpgrade:upgraded?
+     {status:'active',paymentVerified:true,rightsVerified:true,amountKrw:10000,testOnly:true}:
+     {status:'unavailable',amountKrw:10000},
    verifiedOriginalPayment:true,verifiedRecipient:true,
    verifiedCustomerAccount:true,sessionVerified:true,
    everyPurchasedTrackAuthorized:true,
@@ -98,6 +115,28 @@ export function createLocalStagingGateway({
  }
  return Object.freeze({
   verifyAdmin:requireAdmin,
+  listTestOrders({adminKey:admin}={}){
+   requireAdmin(admin);
+   return [...orders.values()].map(o=>({
+    orderId:o.id,customerEmail:o.contact.customerEmail,
+    productId:o.productId,status:o.status,amountKrw:o.amountKrw,
+    songCount:o.songs.length,
+    songGenres:o.draft.songStyles.map(s=>s.genre),
+    testUpgradeActive:o.testUpgradeActive===true,
+    testOnly:true
+   }));
+  },
+  simulateTestCommercialUpgrade({orderId,adminKey:admin}={}){
+   requireAdmin(admin);
+   const order=lookup(orderId);
+   if(order.status!=='delivered')throw new Error('No unverified download upgrade allowed');
+   if(order.testUpgradeActive)throw new Error('Already simulated this upgrade');
+   order.testUpgradeActive=true;
+   outbox.push({type:'TEST_LICENSE_UPGRADE_NO_CHARGE',orderId,
+    status:'TEST_10000_KRW_NOT_PAID',testOnly:true});
+   return {orderId,status:'TEST_10000_UPGRADE_SCREEN_UNLOCKED_NO_CHARGE',
+    commercialLicenseGranted:false,testOnly:true};
+  },
   async uploadTestAudio({adminKey:admin,fileName,data}={}){
    requireAdmin(admin);
    if(typeof fileName!=='string'||!FILE.test(fileName)
@@ -182,7 +221,7 @@ export function createLocalStagingGateway({
    url.protocol='http:';url.host=new URL(localOrigin).host;
    o.songs=checked;o.status='delivered';o.inviteHash=invitation.tokenHash;
    hashes.set(invitation.tokenHash,{orderId:o.id,expiresAt:now()+STAGING_MAX_AGE_MS,
-    used:false});
+    revoked:false});
    const event={type:'TEST_LINK_PREVIEW_NOT_SENT',channel:o.contact.deliveryChannel,
     orderId:o.id,recipient:o.contact.deliveryChannel==='email'?
       o.contact.customerEmail:o.contact.customerPhone,
@@ -213,13 +252,13 @@ export function createLocalStagingGateway({
   },
   resolvePrivateDelivery({tokenHash}={}){
    const record=hashes.get(tokenHash);
-   if(!record||record.used||record.expiresAt<=now())
-    throw new AppError(403,'Delivery access link is invalid, expired or already used');
+   if(!record||record.revoked||record.expiresAt<=now())
+    throw new AppError(403,'Delivery access link is invalid, expired or revoked');
    const o=lookup(record.orderId);
    if(o.status!=='delivered')throw new AppError(403,'Order delivery not ready');
-   // One-time bearer URL. Leakage before first redemption remains a threat;
-   // production MUST also bind recipient identity to a verified login/OTP.
-   record.used=true;
+   // A shareable bearer URL is limited to THIS purchased order, not the
+   // account or other orders. Any recipient of this link may listen.
+   // The token can be revoked and expires; it never grants other-order access.
    const sessionId=OTP_SESSION();
    sessions.set(sessionId,{orderId:o.id,expiresAt:now()+SESSION_MAX_AGE_MS});
    return privateResponse(o,sessionId);
@@ -231,16 +270,17 @@ export function createLocalStagingGateway({
   authorizePrivateAsset({sessionId,ticket,kind}={}){
    const {order}=checkSession(sessionId);
    const asset=tickets.get(ticket);
-   if(kind!=='playback'||!asset||asset.expiresAt<=now()
-     ||asset.orderId!==order.id)
+   if(!asset||asset.kind!==kind||asset.expiresAt<=now()
+     ||asset.orderId!==order.id||kind==='download'&&!order.testUpgradeActive)
     throw new AppError(403,'Only the paying staging customer can play this private asset');
    const file=order.songs.find(x=>x.index===asset.assetIndex);
    if(!file)throw new AppError(404,'Private song not found');
    return {
     authorized:true,paidOriginalOrderVerified:true,recipientVerified:true,
     filePath:file.filePath,
-    commercialEntitlementVerified:false,commercialPaymentVerified:false,
-    commercialRightsVerified:false
+    commercialEntitlementVerified:kind==='download'&&order.testUpgradeActive===true,
+    commercialPaymentVerified:kind==='download'&&order.testUpgradeActive===true,
+    commercialRightsVerified:kind==='download'&&order.testUpgradeActive===true
    };
   }
  });

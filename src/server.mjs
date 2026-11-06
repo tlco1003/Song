@@ -212,6 +212,10 @@ async function handle(req,res,customerAccess,staging,notificationEvents){
    limited(req,120);
    try{staging.verifyAdmin(req.headers['x-withu-test-key']);}
    catch(_){throw new AppError(403,'Local staging operator key required');}
+   if(req.method==='GET'&&pathname==='/api/_staging/orders')
+    return json(res,200,{orders:staging.listTestOrders({
+     adminKey:req.headers['x-withu-test-key']
+    })});
    if(req.method==='GET'&&pathname==='/api/_staging/outbox')
     return json(res,200,{messages:staging.listTestOutbox({
      adminKey:req.headers['x-withu-test-key']
@@ -233,6 +237,13 @@ async function handle(req,res,customerAccess,staging,notificationEvents){
      fileName,data:buffer,adminKey:req.headers['x-withu-test-key']
     });
     return json(res,201,result);
+   }
+   const license=/^\/api\/_staging\/orders\/(test_[a-f0-9-]{36})\/simulate-upgrade$/.exec(pathname);
+   if(req.method==='POST'&&license){
+    await jsonBody(req,256);
+    return json(res,200,staging.simulateTestCommercialUpgrade({
+     orderId:license[1],adminKey:req.headers['x-withu-test-key']
+    }));
    }
    const pay=/^\/api\/_staging\/orders\/(test_[a-f0-9-]{36})\/simulate-payment$/.exec(pathname);
    if(req.method==='POST'&&pay){
@@ -321,6 +332,7 @@ async function handle(req,res,customerAccess,staging,notificationEvents){
       });
       return json(res,200,{
         status:'delivered',track:tracks[0],tracks,
+        ...(localStagingAvailable&&result.testOnly===true?{testOnly:true}:{}),
         commercialUpgrade:{status:'unavailable',amountKrw:10000}
       });
     }
@@ -346,6 +358,7 @@ async function handle(req,res,customerAccess,staging,notificationEvents){
         (process.env.NODE_ENV==='production'?'; Secure':''));
       return json(res,200,{
         status:'delivered',track:tracks[0],tracks,
+        ...(localStagingAvailable&&result.testOnly===true?{testOnly:true}:{}),
         commercialUpgrade:commercialActive?
           {status:'active',rightsVerified:true,paymentVerified:true,amountKrw:10000}:
           available?{status:'available',rightsVerified:true,amountKrw:10000}:
@@ -463,6 +476,12 @@ async function handle(req,res,customerAccess,staging,notificationEvents){
     '/lyric-timer.js':'docs/lyric-timer.js',
     '/song.html':'docs/song.html',
     '/my-music.html':'docs/my-music.html',
+    '/admin.html':'docs/admin.html',
+    '/admin.js':'docs/admin.js',
+    '/admin.css':'docs/admin.css',
+    '/email-preview.html':'docs/email-preview.html',
+    '/my-music-preview.html':'docs/my-music-preview.html',
+    '/customer-preview.js':'docs/customer-preview.js',
     '/song.css':'docs/song.css',
     '/song.js':'docs/song.js',
     '/cover-store.js':'docs/cover-store.js',

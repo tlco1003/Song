@@ -245,6 +245,11 @@ async function loadPrivate(token=null){
   loadTrack(t,false);
   if(!mediaReady)throw Error('not_ready');
   configurePrivateLicense(j,t);
+  if(j.testOnly===true){
+   $('detail-private-note').textContent='[로컬 시연] 이 노래는 실제 결제 상품이 아닌 시험 주문의 음원입니다.';
+   if(j.commercialUpgrade?.status==='active')
+    $('commercial-upgrade-status').textContent='[시연용] 관리자 모의 10,000원 결제 상태입니다. 실제 상업적 이용권이 부여된 것은 아닙니다.';
+  }
   const select=$('private-track-choice');
   select.onchange=()=>{
    const index=Number(select.value);
@@ -375,12 +380,17 @@ $('detail-fullscreen').addEventListener('click',async()=>{
  showControls();
 });
 $('share-button').addEventListener('click',async()=>{
- if(isPrivate){notice('고객 전용 링크는 공유할 수 없어요.');return}
- const link=location.origin+location.pathname+'?demo='+encodeURIComponent(track?.id||'song-mother');
+ let link;
+ if(isPrivate){
+  if(!privateDeliveryToken){notice('새 공유 링크는 메일에 담긴 개인 감상 링크를 복사해 공유해 주세요.');return;}
+  link=location.origin+location.pathname+'#delivery='+privateDeliveryToken;
+ }else{
+  link=location.origin+location.pathname+'?demo='+encodeURIComponent(track?.id||'song-mother');
+ }
  try{if(navigator.share)await navigator.share({title:track?.title||'WITHU',url:link});
  else await navigator.clipboard.writeText(link)}
  catch(_){notice('공유가 취소되었거나 사용할 수 없습니다.');return}
- notice('공개 감상 링크를 공유했어요.');
+ notice(isPrivate?'고객 주문의 공유 감상 링크를 복사했어요.':'공개 감상 링크를 공유했어요.');
 });
 function showDialog(){if(!track){notice('노래를 먼저 선택해 주세요.');return}
  $('cover-message').textContent='이미지를 선택하면 바로 미리 볼 수 있어요. 변경한 커버는 이 기기에만 저장됩니다.';

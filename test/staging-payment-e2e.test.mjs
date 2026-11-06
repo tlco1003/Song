@@ -150,7 +150,8 @@ test('operator upload -> mock email -> one-time link -> own private playback onl
  assert.equal(client1.commercialUpgrade.status,'unavailable');
  assert.equal(client1.track.privateDownloadUrl,undefined);
  const tokenReplay=await redeem(getToken(mails[0].listeningUrl));
- assert.equal(tokenReplay.status,403,'Delivery token must be one-time');
+ assert.equal(tokenReplay.status,200,'Customer has enabled shareable order-scoped listening links');
+ assert.equal((await tokenReplay.json()).track.title,'첫 고객에게');
  const response2=await redeem(getToken(mails[1].listeningUrl));
  assert.equal(response2.status,200);
  const cookie2=response2.headers.get('set-cookie').split(';')[0];

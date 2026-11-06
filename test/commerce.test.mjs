@@ -93,10 +93,12 @@ test('six payment methods live on payment page only, with no customer card numbe
   assert.ok(paymentJs.includes(value),value);
   assert.ok(!checkout.includes('id="'+id+'"'),id+' leaked to product stage');
  }
- for(const id of ['payment-methods','delivery-email','delivery-email-again','consent-delivery','consent-service','payment-price']){
+ for(const id of ['payment-methods','delivery-email','delivery-phone','delivery-channel-options','consent-delivery','consent-service','payment-price']){
   assert.ok(payment.includes('id="'+id+'"'),id);
  }
  assert.match(payment,/id="confirm-checkout"[^>]*disabled/);
+ assert.ok(!payment.includes('id="delivery-email-again"'));
+ for(const channel of ['deliver-email','deliver-sms','deliver-kakao'])assert.ok(payment.includes('id="'+channel+'"'));
  assert.doesNotMatch(payment,/name="(?:cardNumber|cardCvv|cardPassword|accountPassword)"|autocomplete="cc-number"/i);
  assert.doesNotMatch(paymentJs,/requestPayment\s*\(|api\/payments\/confirm|fetch\s*\(\s*['"]https?:\/\//);
  assert.doesNotMatch(paymentJs,/\.addEventListener\('click'[^\n]*confirm-checkout/);

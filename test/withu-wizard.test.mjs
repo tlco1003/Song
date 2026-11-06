@@ -52,7 +52,10 @@ test('payment alone contains email and method fields and is strictly non-payable
  assert.ok(payment.includes('class="payment-total-line"'));
  assert.match(payment,/id="payment-price"/);
  assert.ok(payment.includes('id="delivery-email"'));
- assert.ok(payment.includes('id="delivery-email-again"'));
+ assert.ok(payment.includes('id="delivery-phone"'));
+ assert.ok(payment.includes('id="delivery-channel-options"'));
+ assert.ok(!payment.includes('id="delivery-email-again"'));
+ assert.ok(payment.includes('value="kakao"'));
  assert.ok(payment.includes('id="payment-methods"'));
  assert.ok(payment.includes('id="confirm-checkout"'));
  assert.match(payment,/id="confirm-checkout"[^>]*disabled/);

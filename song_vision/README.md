@@ -5,6 +5,10 @@ video-generation API. The **model has no trained weights in Git** and cannot
 produce a convincing singing video until suitable authorized data have been
 prepared, training completed and the resulting quality independently evaluated.
 
+## v7: extended training rounds on 20 authorized research-only singing takes
+
+The [diverse research runner](external_ravdess_diverse_retrain.py) now requests **up to 36 epochs** (previously 10) with **minimum 20 epochs, patience 10 and min-delta 0.0002**. The model re-trains **from scratch** because the noncommercial research checkpoint was deliberately destroyed after earlier GitHub Actions jobs. Early stopping ends training only after the minimum when validation does not improve materially. Results are checked against the previous ten-epoch run on the same fixed actor/take split; this cannot prove phoneme-correct singing or commercial readiness. See [extended retraining report](../docs/SONG_VISION_EXTENDED_RETRAIN_V7.md).
+
 ## v6: masked-reference training to investigate audio-conditioning failure
 
 The experimental [masked_retrain.py](masked_retrain.py) network removes the central mouth from the reference image **before** the encoder sees it, then fuses an explicit 80-bin Mel acoustic embedding with skin/face context. It learns inpainting from matched singer/audio frames, evaluates matched-versus-shuffled audio losses, reference-copy baseline and audio sensitivity, and saves a distinct **unvalidated** checkpoint. The isolated RAVDESS research pipeline is in [external_ravdess_retrain.py](external_ravdess_retrain.py); its research weights and video data are removed after the temporary CI runner finishes. Results do not authorize commercial use. Full technical guide: [docs/SONG_VISION_MASKED_RETRAIN_V6.md](../docs/SONG_VISION_MASKED_RETRAIN_V6.md).

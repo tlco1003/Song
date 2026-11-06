@@ -106,9 +106,9 @@ def prepare_diverse_assets(takes: list[SelectedTake], folder: Path) -> Path:
     return manifest
 
 
-def run_research(epochs: int = 10):
-    if not 1 <= epochs <= 20:
-        raise ValueError("Research-only epoch cap 20")
+def run_research(epochs: int = 36, patience: int = 10, min_epochs: int = 20):
+    if not 1 <= epochs <= 40 or not 1 <= min_epochs <= epochs or not 0 <= patience <= epochs:
+        raise ValueError("Invalid research-only epoch or early stopping limits")
     with tempfile.TemporaryDirectory(prefix="song-vision-ravdess-diverse-cc-nc-") as td:
         folder = Path(td)
         archive = folder / "source.zip"
@@ -120,7 +120,9 @@ def run_research(epochs: int = 10):
         data_root = folder / "research-only-train-val"
         summary = prepare_manifest(manifest, data_root)
         checkpoint = folder / "ephemeral-v2-masked-model.pt"
-        report = masked_retrain(data_root, checkpoint, epochs=epochs, batch_size=12, seed=42)
+        report = masked_retrain(data_root, checkpoint, epochs=epochs, batch_size=12,
+                                seed=42, patience=patience, min_epochs=min_epochs,
+                                min_delta=.0002)
         metrics = report["bestMetrics"]
         conclusion = {
             "experiment": "RAVDESS_20_takes_masked_audio_retrain",
@@ -133,7 +135,12 @@ def run_research(epochs: int = 10):
             "valTakeCount": sum(x.split == "val" for x in takes),
             "trainFrames": report["trainFrames"],
             "valFrames": report["valFrames"],
+            "trainingEpochsRequested": epochs,
             "trainingEpochsCompleted": len(report["history"]),
+            "earlyStopped": report["earlyStopped"],
+            "earlyStoppingPatience": patience,
+            "earlyStoppingMinEpochs": min_epochs,
+            "earlyStoppingMinDelta": .0002,
             "bestEpoch": report["bestEpoch"],
             "metrics": metrics,
             "diagnosticFlags": report["diagnosticFlags"],
@@ -153,11 +160,14 @@ def run_research(epochs: int = 10):
 def main():
     parser = argparse.ArgumentParser(description="20 authorized RAVDESS recordings, noncommercial research")
     parser.add_argument("--acknowledge-noncommercial-research", action="store_true")
-    parser.add_argument("--epochs", type=int, default=10)
+    parser.add_argument("--epochs", type=int, default=36)
+    parser.add_argument("--patience", type=int, default=10)
+    parser.add_argument("--min-epochs", type=int, default=20)
     args = parser.parse_args()
     if not args.acknowledge_noncommercial_research:
         parser.error("Noncommercial research acknowledgment required")
-    run_research(epochs=args.epochs)
+    run_research(epochs=args.epochs, patience=args.patience,
+                 min_epochs=args.min_epochs)
 
 
 if __name__ == "__main__":

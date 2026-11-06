@@ -5,7 +5,7 @@ import zipfile
 from pathlib import Path
 
 from song_vision.external_ravdess_diverse_retrain import (
-    EMOTIONS, STATEMENTS, REPETITIONS, select_diverse_research_takes,
+    EMOTIONS, STATEMENTS, REPETITIONS, select_diverse_research_takes, run_research,
 )
 
 
@@ -30,6 +30,14 @@ class DiverseResearchSources(unittest.TestCase):
             self.assertEqual(sum(x.split == "val" for x in clips), 10)
             self.assertEqual({x.statement for x in clips}, {"01", "02"})
             self.assertEqual({x.emotion for x in clips}, set(EMOTIONS))
+
+    def test_epoch_caps_and_early_stopping_limits_fail_closed(self):
+        with self.assertRaisesRegex(ValueError, "epoch or early stopping"):
+            run_research(epochs=41)
+        with self.assertRaisesRegex(ValueError, "epoch or early stopping"):
+            run_research(epochs=3, min_epochs=20)
+        with self.assertRaisesRegex(ValueError, "epoch or early stopping"):
+            run_research(epochs=10, patience=11, min_epochs=1)
 
     def test_missing_clip_is_rejected(self):
         with tempfile.TemporaryDirectory() as td:

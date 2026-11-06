@@ -70,3 +70,21 @@
 .detail-player video[hidden],.detail-player audio[hidden]{display:none!important}
 #detail-repeat[aria-pressed="true"]{background:#8f637f;border-color:#f0c6dd}
 .detail-background-hint{max-width:790px;margin:0 auto 15px;text-align:center;color:#cbb5c7;font-size:11px;line-height:1.65}
+
+/* Paid customers get one secure listening page, without public file links. */
+.private-track-list,.commercial-upgrade-panel{
+ max-width:790px;margin:16px auto 30px;padding:21px 24px;
+ background:#fffaf6;color:#443446;border:1px solid #e9dce4;border-radius:15px
+}
+.private-track-list[hidden],.commercial-upgrade-panel[hidden],
+.commercial-upgrade-panel #download-track[hidden]{display:none!important}
+.private-track-list label{display:block;margin:0 0 10px;font-size:13px;font-weight:700}
+.private-track-list select{display:block;width:100%;padding:11px 12px;border:1px solid #cbb5c3;border-radius:9px;background:white;color:#493449}
+.commercial-upgrade-panel h2{font:400 clamp(32px,5vw,43px) "Nanum Brush Script","Gowun Batang",serif;margin:9px 0 12px}
+.commercial-upgrade-panel p{font-size:13px;line-height:1.8;color:#816e7d}
+.commercial-upgrade-panel .commercial-upgrade-price{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid #e8dce2;padding:17px 0;margin-top:20px;font-size:13px}
+.commercial-upgrade-panel .commercial-upgrade-price strong{font-size:18px;color:#8f5d75;white-space:nowrap}
+.commercial-upgrade-panel #commercial-upgrade-buy{min-height:44px}
+.commercial-upgrade-panel #download-track{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+.commercial-upgrade-panel #commercial-upgrade-status{font-size:12px;margin:14px 0 0}
+@media(max-width:500px){.private-track-list,.commercial-upgrade-panel{padding:19px}.commercial-upgrade-panel .commercial-upgrade-price{flex-wrap:wrap}}

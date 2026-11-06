@@ -10,6 +10,7 @@ const stage=$('player-stage'),cover=$('detail-cover'),coverFallback=$('detail-co
  video=$('detail-video'),audio=$('detail-audio'),play=$('detail-play'),seek=$('detail-seek');
 let track=null,player=audio,coverURL=null,candidateURL=null,candidateBlob=null,hideTimer=null,playing=false,mediaReady=false;
 let isPrivate=false,repeatOne=false;
+let privateDeliveryToken=null,privateTrackChoices=[],privateLicense=null;
 function syncVideo(){
  if(player===video||video.hidden||!video.getAttribute('src'))return;
  if(document.visibilityState==='hidden'||player.paused||player.ended){
@@ -136,11 +137,10 @@ function loadTrack(item,publicDemo){
  if(item.lyricsFile&&publicDemo&&simpleName(item.lyricsFile))void fetchLyrics('media/'+encodeURIComponent(item.lyricsFile)+'?lyricsUpdated='+Date.now());
  else if(typeof item.lyrics==='string')$('detail-lyrics-text').textContent=item.lyrics;
  else $('detail-lyrics-text').textContent='가사 공개를 준비하고 있어요.';
- // Download is only permitted for the public sample file; authenticated deliveries
- // will need an expiring, server-minted download ticket.
- const download=$('download-track');
- if(publicDemo){download.href=mediaPath;download.download=item.file;download.hidden=false;}
- else download.hidden=true;
+ // Never make a public sample or a stream URL directly downloadable from the UI.
+ // The only eligible file URL comes from a verified entitlement response.
+ $('download-track').hidden=true;
+ $('download-track').removeAttribute('href');
  if(isVideo){$('detail-art').hidden=true;video.poster=art||'';}
  else $('detail-art').hidden=false;
  progress();showControls();
@@ -158,27 +158,120 @@ async function loadDemo(id){
   notice('공개된 곡 목록에서 선택해 주세요.');
  }
 }
-async function loadPrivate(token){
- // No paid customer content is bundled into public GitHub Pages.
- // The endpoint will be provided only on an authenticated HTTPS backend.
+function configurePrivateLicense(response,item){
+ const panel=$('commercial-upgrade-panel');
+ panel.hidden=false;
+ const data=response?.commercialUpgrade||{};
+ const eligible=data.status==='available'&&data.rightsVerified===true
+  &&data.amountKrw===10000;
+ const entitled=data.status==='active'&&data.paymentVerified===true
+  &&data.rightsVerified===true;
+ privateLicense=data;
+ const buy=$('commercial-upgrade-buy');
+ buy.disabled=!eligible;
+ buy.textContent=eligible?'상업적 이용 + 음원 파일 · 10,000원 결제':'상업적 이용 옵션 준비 중';
+ $('commercial-upgrade-status').textContent=entitled?
+  '상업적 이용 옵션의 결제가 확인됐어요. 구매한 곡의 파일을 받을 수 있습니다.':
+  eligible?'선택한 곡의 권리를 확인했어요. 결제 후 이용권과 원본 음원을 제공합니다.':
+  '이 음원은 상업적 이용 권리와 결제 준비가 확인되면 옵션을 구매할 수 있어요.';
+ const download=$('download-track');
+ download.hidden=true;download.removeAttribute('href');
+ const source=item?.privateDownloadUrl;
+ if(!entitled||typeof source!=='string')return;
  try{
-  const r=await fetch('api/delivery/'+encodeURIComponent(token),{credentials:'same-origin',cache:'no-store'});
+  const url=new URL(source,location.href);
+  if(url.origin!==location.origin||!/^\/api\/delivery-downloads\/[A-Za-z0-9_-]{16,180}$/.test(url.pathname))
+   return;
+  download.href=url.href;
+  download.download='withu-commercial-'+String(item.index||1)+'.mp3';
+  download.hidden=false;
+ }catch(_){}
+}
+function renderPrivateTrackChoices(response){
+ privateTrackChoices=Array.isArray(response?.tracks)&&response.tracks.length>0?
+  response.tracks:[response.track];
+ const select=$('private-track-choice');
+ const list=$('private-track-list');
+ select.replaceChildren();
+ if(privateTrackChoices.length<=1){list.hidden=true;return;}
+ for(let i=0;i<privateTrackChoices.length;i++){
+  const opt=document.createElement('option');
+  opt.value=String(i);
+  opt.textContent=String(i+1)+'곡 · '+(privateTrackChoices[i]?.title||'나의 노래');
+  select.appendChild(opt);
+ }
+ list.hidden=false;
+}
+async function loadPrivate(token){
+ // The emailed #delivery= token stays out of HTTP URL paths and browser referrers.
+ // The HTTPS server must validate its hash against a verified order, then create
+ // an HttpOnly session for /api/delivery-assets/* and any paid download ticket.
+ privateDeliveryToken=token;
+ $('commercial-upgrade-panel').hidden=true;
+ $('private-track-list').hidden=true;
+ try{
+  const r=await fetch('api/delivery/resolve',{
+   method:'POST',
+   headers:{'Content-Type':'application/json'},
+   credentials:'same-origin',cache:'no-store',
+   body:JSON.stringify({token})
+  });
   if(!r.ok)throw Error('unavailable');
   const j=await r.json();
   if(j?.status!=='delivered'||typeof j?.track?.file!=='string')throw Error('not delivered');
-  // Private media must be supplied only via server-generated signed URL.
   const t=j.track,u=new URL(t.privateMediaUrl||'',location.origin);
   if(u.origin!==location.origin||!u.pathname.startsWith('/api/delivery-assets/'))throw Error('invalid asset path');
+  renderPrivateTrackChoices(j);
+  for(const song of privateTrackChoices){
+   if(!simpleName(song?.file)||typeof song.privateMediaUrl!=='string')throw Error('invalid track');
+   const asset=new URL(song.privateMediaUrl,location.origin);
+   if(asset.origin!==location.origin||!asset.pathname.startsWith('/api/delivery-assets/'))throw Error('invalid track asset');
+  }
   loadTrack(t,false);
+  configurePrivateLicense(j,t);
+  const select=$('private-track-choice');
+  select.onchange=()=>{
+   const index=Number(select.value);
+   if(!Number.isSafeInteger(index)||index<0||index>=privateTrackChoices.length)return;
+   loadTrack(privateTrackChoices[index],false);
+   configurePrivateLicense(j,privateTrackChoices[index]);
+  };
  }catch(_){
   $('detail-title').textContent='음악 선물 전달 준비 중';
   $('detail-kind').textContent='고객 전용 전달 페이지';
-  $('detail-genre').textContent='인증된 배송 링크가 필요해요';
+  $('detail-genre').textContent='인증된 전달 링크가 필요해요';
   $('detail-not-ready').hidden=false;
-  $('detail-lyrics-text').textContent='결제 완료 후 인증된 전용 링크로 노래와 커버를 받을 수 있도록 준비 중입니다.';
-  notice('현재 고객 인증·파일 전달 서버는 아직 연결되지 않았습니다. 공개 예시만 감상할 수 있습니다.');
+  $('commercial-upgrade-panel').hidden=true;
+  $('detail-lyrics-text').textContent='결제 후 제작이 완료되면 이메일로 받은 전용 링크에서 감상할 수 있어요.';
+  notice('현재 고객 인증·이메일·음원 전달 서버는 아직 연결되지 않았습니다. 공개 예시만 감상할 수 있습니다.');
  }
 }
+$('commercial-upgrade-buy').addEventListener('click',async()=>{
+ const button=$('commercial-upgrade-buy');
+ if(button.disabled||!privateDeliveryToken||privateLicense?.status!=='available'
+   ||privateLicense?.rightsVerified!==true||privateLicense?.amountKrw!==10000)return;
+ button.disabled=true;
+ $('commercial-upgrade-status').textContent='안전한 추가 결제 연결을 확인하는 중이에요.';
+ try{
+  const response=await fetch('api/commerce/commercial-upgrade/checkout',{
+   method:'POST',credentials:'same-origin',cache:'no-store',
+   headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({deliveryToken:privateDeliveryToken})
+  });
+  if(!response.ok)throw Error('payment-unavailable');
+  const data=await response.json();
+  if(data?.status!=='checkout_ready'||data.amountKrw!==10000
+    ||typeof data.checkoutUrl!=='string')throw Error('bad-checkout');
+  const url=new URL(data.checkoutUrl,location.href);
+  // Payment authorization must begin at a protected same-origin callback.
+  if(url.origin!==location.origin||!url.pathname.startsWith('/commercial-upgrade/'))
+   throw Error('external-checkout');
+  location.assign(url.href);
+ }catch(_){
+  button.disabled=false;
+  $('commercial-upgrade-status').textContent='상업적 이용권 결제는 현재 준비 중입니다. 별도 요금은 청구되지 않았어요.';
+ }
+});
 async function init(){
  const params=new URLSearchParams(location.search);
  const delivered=new URLSearchParams(location.hash.slice(1)).get('delivery');
@@ -281,16 +374,6 @@ $('generate-cover').addEventListener('click',async()=>{
   const f=await (await fetch(d.image)).blob();newCandidate(f);$('cover-message').textContent='이미지를 생성했어요. 마음에 들면 이 이미지를 사용해 주세요.';
  }catch(e){$('cover-message').textContent=e.message}
  finally{btn.disabled=false}
-});
-$('download-cover').addEventListener('click',async()=>{
- if(!track)return;
- try{
-  const saved=await window.WithuCovers.get(track.id);
-  const url=saved?URL.createObjectURL(saved):coverPath(track.coverImage)?track.coverImage:null;
-  if(!url){notice('커버가 아직 게시되지 않았어요.');return}
-  const a=document.createElement('a');a.href=url;a.download=(track.id||'withu')+'-cover.webp';document.body.appendChild(a);a.click();a.remove();
-  if(saved)setTimeout(()=>URL.revokeObjectURL(url),3000);
- }catch(_){notice('커버를 받을 수 없어요.')}
 });
 window.addEventListener('pagehide',()=>{if(coverURL)URL.revokeObjectURL(coverURL);if(candidateURL)URL.revokeObjectURL(candidateURL);clearHideTimer()});
 updateRepeat();void init();

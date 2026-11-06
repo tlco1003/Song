@@ -23,7 +23,7 @@
   <header class="checkout-intro">
    <span class="small-caps">SECURE PAYMENT</span>
    <h1>간편하게 <em>결제 정보를 입력해 주세요.</em></h1>
-   <p>선물 받을 이메일과 결제수단을 선택해 주세요.</p>
+   <p>제작 완료 후 보내드릴 전용 감상 링크의 수신 이메일과 결제수단을 선택해 주세요.</p>
   </header>
   <div class="payment-page-layout">
    <section class="checkout-card payment-entry" aria-labelledby="payment-method-title">
@@ -31,7 +31,7 @@
     <h2 id="payment-method-title">결제 정보</h2>
     <div class="payment-total-line" aria-live="polite"><span>결제 예정 금액</span><strong id="payment-price">금액 확인 중</strong></div>
     <p id="payment-quote-notice" class="small-explain" hidden>뮤직비디오는 제작 범위에 따른 개별 견적이 확정된 뒤 결제할 수 있어요.</p>
-    <label for="delivery-email" class="form-label">완성곡을 받을 이메일</label>
+    <label for="delivery-email" class="form-label">전용 감상 링크를 받을 이메일</label>
     <input id="delivery-email" type="email" inputmode="email" autocomplete="email" maxlength="254" placeholder="name@example.com" required>
     <label for="delivery-email-again" class="form-label">이메일 주소 확인</label>
     <input id="delivery-email-again" type="email" inputmode="email" autocomplete="off" maxlength="254" placeholder="이메일 주소를 다시 입력해 주세요" required>
@@ -45,10 +45,11 @@
      <label class="payment-option" for="pay-virtual"><input type="radio" id="pay-virtual" name="paymentMethod" value="virtual_account"><span class="payment-option-copy"><strong>가상계좌</strong><small>입금 확인 후 제작</small></span></label>
     </fieldset>
     <p id="payment-method-hint" class="small-explain">토스페이를 선택했어요.</p>
-    <label class="consent-row"><input id="consent-delivery" type="checkbox"><span>완성곡 전달을 위한 이메일 이용에 동의합니다.</span></label>
+    <label class="consent-row"><input id="consent-delivery" type="checkbox"><span>완성곡 전용 감상 링크 발송을 위한 이메일 이용에 동의합니다.</span></label>
     <label class="consent-row"><input id="consent-service" type="checkbox" disabled><span>이용약관과 취소·환불 조건 확인 (결제 이용 시 제공)</span></label>
     <button id="confirm-checkout" type="button" class="checkout-button" disabled>현재 결제를 이용할 수 없습니다</button>
     <p class="payment-unavailable" id="payment-unavailable" role="status">현재는 결제를 이용할 수 없습니다. 정식 주문이 가능해지면 이곳에서 진행할 수 있어요.</p>
+    <p class="small-explain">기본 제작비에는 전용 링크를 통한 감상만 포함됩니다. 원본 파일과 상업적 이용 옵션은 제작 완료 후 별도로 선택할 수 있어요.</p>
     <p class="small-explain">현재 입력한 정보는 결제나 주문 접수에 사용되지 않습니다.</p>
    </section>
   </div>

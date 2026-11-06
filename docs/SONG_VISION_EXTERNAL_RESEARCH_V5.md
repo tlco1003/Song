@@ -42,3 +42,27 @@ RAVDESS 연구실 설명: https://affectivedatascience.com/datasets
 기존 신경망: song_vision/core.py / real_training.py
 
 **Github Actions 결과를 확인하기 전에는 실제 외부 자료 학습 완료라고 표기하지 않는다.**
+
+
+## 2026-11-06 실제 GitHub Actions 검증 결과 (완료)
+
+실행: https://github.com/tlco1003/Song/actions/runs/42193174990
+커밋: 4397b5c03132a134b235229035781f458f9b0477
+
+- GitHub Actions job conclusion: **success** = 코드·실제 데이터 학습 경로 실행 완료라는 의미.
+- Zenodo 원본 MD5: **검증 통과** (md5 0f7ba20f3a7278d5a662a7e30f44c942).
+- 실제 Actor 01의 서로 다른 두 노래 실연: train 75 frames / val 75 frames.
+- 1 epoch trainLoss: **0.138541**.
+- 검증 valMAE: **0.134937**.
+- 원본 mouth reference 복사 baseline MAE: **0.058546**.
+- audioSensitivity: **0.00001133**.
+- 진단 실패 플래그: **WORSE_THAN_COPY_REFERENCE**, **LOW_AUDIO_SENSITIVITY**.
+
+**결론은 신경망 가창 립싱크 품질 FAIL이다.** 실가수 데이터 학습 코드가 실행되었지만 모델이 소리를 실제 입술 형태로 충분히 바꾸지 못했다. 이 수치를 임의로 합격 처리하거나 v5를 상용 가창 AI라 홍보해서는 안 된다.
+
+기존 구조에 남은 연구 문제:
+1. Reference crop에 원래 입술 형태가 그대로 들어가 오디오 특징을 무시하는 shortcut learning이 가능하다. Reference mouth 마스킹/다른 프레임 참조 및 Audio-Visual Counterfactual 평가를 설계한다.
+2. 동일 배우·동일 문장 두 번의 3초 데이터로는 발음별/가수별/장르별 일반화 불가능. 동의된 다인물·다음소·다양한 음역 및 긴 모음 자료를 수집한다.
+3. 복사 baseline과 독립 음소-입술 정확도를 통과하기 전에는 연구 체크포인트를 고객이나 상품에 연결하지 않는다.
+
+RAVDESS 비상업 연구 가중치는 GitHub Action 임시 머신 종료로 폐기됐으며 사용자에게 판매용으로 제공하지 않는다. 상업용 훈련의 경우 별도로 **상업 AI 합성·학습이 명시적으로 허가된 출연자 자료**를 확보해야 한다.

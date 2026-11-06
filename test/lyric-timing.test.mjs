@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {filterLyricLines,parseLyricDocument,cueIndexAt,formatCueTime,serializeTimedLyrics} from '../docs/lyric-timing.mjs';
+import {filterLyricLines,parseLyricDocument,cueIndexAt,formatCueTime,serializeTimedLyrics,approximateLyricIndexAt} from '../docs/lyric-timing.mjs';
 import {readFileSync} from 'node:fs';
 const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 
@@ -73,4 +73,25 @@ test('the public timing workbench supports AI draft import but never publishes g
  assert.ok(page.includes('id="import-timing"'));
  assert.ok(page.includes('실제 음악으로 교정'));
  assert.equal(editor.includes('api.github.com/repos/'),false);
+});
+
+test('restores the same legacy auto-scroll estimate for songs without real cues',()=>{
+ const duration=436.8;
+ const count=60;
+ const intro=Math.min(14,Math.max(4,duration*0.035));
+ const outro=Math.min(13,duration*0.025);
+ const expected=t=>Math.min(count-1,Math.floor(Math.max(0,Math.min(1,(t-intro)/(duration-intro-outro)))*count));
+ for(const seconds of [0,5,14,15,30,95,180,330,435,436.8])
+  assert.equal(approximateLyricIndexAt(count,seconds,duration),expected(seconds));
+ assert.equal(approximateLyricIndexAt(count,0,duration),0);
+ assert.equal(approximateLyricIndexAt(count,9999,duration),count-1);
+ assert.equal(approximateLyricIndexAt(0,30,duration),-1);
+ assert.equal(approximateLyricIndexAt(count,30,NaN),-1);
+});
+test('homepage advances automatically with precise cues first and duration fallback otherwise',()=>{
+ const player=read('docs/player.js');
+ assert.match(player,/if\(lyricCueSeconds\)\{\s*setActiveLine\(cueIndexAt\(lyricCueSeconds,playbackPlayer\.currentTime\)\)/);
+ assert.match(player,/approximateLyricIndexAt\(visibleLyrics\.length,playbackPlayer\.currentTime,duration\)/);
+ assert.match(player,/audio\.addEventListener\('timeupdate'/);
+ assert.doesNotMatch(player,/가사 시간 정보가 없어 자동 이동하지 않아요/);
 });

@@ -80,3 +80,18 @@ export function serializeTimedLyrics(lines,times){
   return formatCueTime(rounded)+value;
  }).join('\n')+'\n';
 }
+
+/**
+ * Restore the legacy lyric auto-scroll approximation for published songs
+ * that have not yet been annotated with real per-line timestamps.
+ * This does not identify the sung word: it uses the actual media clock
+ * and the original intro/outro weighting from the WITHU homepage.
+ */
+export function approximateLyricIndexAt(count,currentTime,duration){
+ if(!Number.isInteger(count)||count<1||!Number.isFinite(currentTime)||
+    !Number.isFinite(duration)||duration<=0)return -1;
+ const intro=Math.min(14,Math.max(4,duration*0.035));
+ const outro=Math.min(13,duration*0.025);
+ const progress=Math.max(0,Math.min(1,(currentTime-intro)/Math.max(1,duration-intro-outro)));
+ return Math.max(0,Math.min(count-1,Math.floor(progress*count)));
+}

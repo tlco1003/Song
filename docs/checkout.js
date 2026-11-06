@@ -248,6 +248,7 @@ for(const radio of document.querySelectorAll('input[name="product"]')){
 }
 for(const control of document.querySelectorAll('input[name="duoGenreMode"]'))
  control.addEventListener('change',renderGenres);
+$('single-genre-blend').addEventListener('change',renderGenres);
 for(const id of ['song-genre-first','song-genre-second'])
  $(id).addEventListener('change',renderGenres);
 
@@ -260,7 +261,8 @@ async function loadPrices(){
   const response=await fetch('prices.json',{cache:'no-store'});
   if(!response.ok)throw Error('Prices unavailable');
   const result=await response.json();
-  if(result.version!==1||result.currency!=='KRW'||!Array.isArray(result.products)
+  if(result.version!==1||result.currency!=='KRW'||result.addOns?.genreBlend?.amountKrw!==5000
+    ||!Array.isArray(result.products)
     ||!['audio','audio_duo','audio_video'].every(id=>result.products.some(x=>x.id===id&&Number.isSafeInteger(x.amountKrw)&&x.amountKrw>0)))
     throw Error('Incomplete price list');
   prices=result;
@@ -297,11 +299,14 @@ async function loadGenres(){
    select.disabled=false;
   }
   const old=draft?.duoGenreChoice;
-  const first=[old?.first,draft?.genre,result.genres[0].id].find(validGenre);
+  const first=[draft?.genre,old?.first,result.genres[0].id].find(validGenre);
   $('song-genre-first').value=first;
+  $('selected-primary-genre').textContent=first;
   $('song-genre-second').value=validGenre(old?.second)?old.second:
    result.genres.find(g=>g.id!==first).id;
   if(old?.mode==='different')$('duo-mode-different').checked=true;
+  if(old?.mode==='blend')$('duo-mode-blend').checked=true;
+  $('single-genre-blend').checked=draft?.genreSelection?.mode==='blend'||draft?.singleGenreBlend===true;
   $('song-shared-notes').value='';
   renderGenres();
  }catch(_){

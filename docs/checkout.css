@@ -309,24 +309,3 @@
 .checkout-flow .dedication-text-wrap input{box-sizing:border-box;width:100%;border:1px solid #dccbd4;
  border-radius:9px;padding:13px 12px;font-size:15px;background:white;color:#453543}
 .checkout-flow .dedication-text-wrap input:focus{outline:2px solid #a47f94;outline-offset:2px}
-
-/* Creator-set standard production prices are informational, not past-sale claims. */
-.checkout-flow .gift-choice .choice-price-stack{
- display:flex;flex:0 0 auto;flex-direction:column;align-items:flex-end;
- gap:2px;text-align:right;min-width:94px
-}
-.checkout-flow .gift-choice .creator-list-price{
- display:block;color:#9b959b;font-size:11px;font-weight:400;
- line-height:1.55;white-space:nowrap;text-decoration:none
-}
-.checkout-flow .gift-choice .choice-price-stack .choice-side{
- font-size:17px;font-weight:700;color:#735066;white-space:nowrap
-}
-.checkout-flow .promotion-note .creator-price-explanation{
- font-size:11px;line-height:1.7;color:#8a7b88
-}
-@media(max-width:420px){
- .checkout-flow .gift-choice .choice-price-stack{min-width:82px}
- .checkout-flow .gift-choice .creator-list-price{font-size:10px}
- .checkout-flow .gift-choice .choice-price-stack .choice-side{font-size:14px}
-}

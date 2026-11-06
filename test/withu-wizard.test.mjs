@@ -45,7 +45,7 @@ test('product and all genre/video choices share one stage, followed by one final
  assert.ok(server.includes("'/payment.html':'docs/payment.html'"));
  assert.ok(server.includes("'/payment.js':'docs/payment.js'"));
 });
-test('payment alone contains email and method fields and is strictly non-payable',()=>{
+test('final payment step contains real provider widget and does not trust browser payment status',()=>{
  assert.ok(!checkout.includes('id="delivery-email"'));
  assert.ok(!payment.includes('class="checkout-card payment-summary"'));
  assert.ok(!payment.includes('id="payment-product"'));
@@ -59,8 +59,10 @@ test('payment alone contains email and method fields and is strictly non-payable
  assert.ok(payment.includes('id="payment-methods"'));
  assert.ok(payment.includes('id="confirm-checkout"'));
  assert.match(payment,/id="confirm-checkout"[^>]*disabled/);
- assert.match(paymentJs,/\$\('confirm-checkout'\)\.disabled=true/);
- assert.doesNotMatch(paymentJs,/sessionStorage\.setItem|localStorage|requestPayment\(/);
+ assert.match(paymentJs,/widgets\.requestPayment/);
+ assert.match(paymentJs,/fetch\('\/api\/orders'/);
+ assert.match(paymentJs,/cfg\.canCharge!==true/);
+ assert.doesNotMatch(paymentJs,/sessionStorage\.setItem|localStorage\.setItem/);
  assert.ok(!checkout.includes('checkout-status'));
  assert.ok(!checkout.includes('fulfillment-preview'));
  assert.doesNotMatch(checkout,/운영자가 직접 제작|FUTURE|API 승인|토스페이먼츠 통합/);

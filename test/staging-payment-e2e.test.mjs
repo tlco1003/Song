@@ -272,8 +272,10 @@ test('public preview pages and admin UI never expose paid user data or activate 
  }
  const admin=await (await fetch(base+'/admin.html')).text();
  assert.match(admin,/id="admin-song-editor"/);
- assert.match(admin,/id="admin-outbox-list"/);
- assert.match(admin,/id="admin-simulate-upgrade"/);
+ assert.match(admin,/id="admin-workspace"/);
+ assert.match(admin,/id="admin-finalize"/);
+ assert.match(admin,/id="admin-sign-in"/);
+ assert.ok(!admin.includes('id="admin-key"'));
  const preview=await (await fetch(base+'/my-music-preview.html')).text();
  assert.match(preview,/data-withu-view="preview"/);
  assert.match(preview,/고객 감상 화면 · 시연/);

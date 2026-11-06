@@ -12,6 +12,7 @@ import {onDocumentUpdated} from 'firebase-functions/v2/firestore';
 import {handleProductionPayments} from './production-payments.mjs';
 import {handleProductionDelivery} from './production-delivery.mjs';
 import {handleProductionAdmin} from './production-admin.mjs';
+import {handleProductionWebhooks} from './production-webhooks.mjs';
 import {processVerifiedPaidWork} from './production-worker.mjs';
 import {respond,stop} from './production-runtime.mjs';
 
@@ -19,7 +20,8 @@ const app=getApps().length?getApp():initializeApp();
 const db=getFirestore(app),auth=getAuth(app);
 const bucket=getStorage(app).bucket(process.env.WITHU_STORAGE_BUCKET);
 const context={db,auth,bucket,env:process.env,fetcher:globalThis.fetch};
-const apiSecrets=['TOSS_SECRET_KEY','RESEND_API_KEY','WITHU_LINK_ENCRYPTION_KEY'];
+const apiSecrets=['TOSS_SECRET_KEY','RESEND_API_KEY','WITHU_LINK_ENCRYPTION_KEY',
+ 'RESEND_WEBHOOK_SIGNING_SECRET'];
 const workerSecrets=['RESEND_API_KEY','OPENAI_API_KEY'];
 
 export const api=onRequest({
@@ -31,7 +33,7 @@ export const api=onRequest({
   res.setHeader('X-Content-Type-Options','nosniff');
   res.setHeader('Referrer-Policy','no-referrer');
   res.setHeader('Cache-Control','private, no-store');
-  for(const handle of [handleProductionPayments,
+  for(const handle of [handleProductionWebhooks,handleProductionPayments,
     handleProductionDelivery,handleProductionAdmin]){
    if(await handle(req,res,context))return;
   }

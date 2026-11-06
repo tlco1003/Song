@@ -1,0 +1,78 @@
+name: SONG Vision RAVDESS independent singer holdout training
+on:
+  push:
+    branches:
+      - feature/song-vision-self-hosted-v1
+    paths:
+      - 'song_vision/external_ravdess_multisinger.py'
+      - 'song_vision/test_multisinger_research.py'
+      - '.github/workflows/song-vision-ravdess-multisinger.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: song-vision-independent-singer-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  independent_singer_research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      OMP_NUM_THREADS: '2'
+      MKL_NUM_THREADS: '2'
+      RESEARCH_VAULT_FOLDER: ${{ github.workspace }}/song-multi-singer-research-output
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install FFmpeg and ffprobe
+        run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ffmpeg
+      - name: Install CPU PyTorch and local model + cryptography dependencies
+        run: |
+          python -m pip install -q torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install --no-cache-dir -q -r song_vision/requirements.txt
+      - name: Verify multi-singer split and encryption guards without downloading raw data
+        run: python -m unittest song_vision.test_multisinger_research song_vision.test_research_checkpoint_vault -v
+      - name: Real RAVDESS video + same-recording vocal, singer-independent validation
+        run: |
+          python -m song_vision.external_ravdess_multisinger \
+            --acknowledge-noncommercial-research \
+            --epochs 24 --min-epochs 12 --patience 7 \
+            --vault-public-key song_vision/research_vault_public.pem \
+            --vault-output-dir "$RESEARCH_VAULT_FOLDER"
+      - name: Keep encrypted training checkpoint as secondary 90-day artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: song-ravdess-3actors-encrypted-${{ github.run_id }}-a${{ github.run_attempt }}
+          path: ${{ env.RESEARCH_VAULT_FOLDER }}/*
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+      - name: Preserve encrypted checkpoint in permanent research Git branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin refs/heads/research/song-vision-vault:refs/remotes/origin/research/song-vision-vault
+          git worktree add --detach "$RUNNER_TEMP/song-research-multi-vault" refs/remotes/origin/research/song-vision-vault
+          cd "$RUNNER_TEMP/song-research-multi-vault"
+          mkdir -p encrypted/ravdess-actors-01-02-03
+          cp "$RESEARCH_VAULT_FOLDER"/*.svault encrypted/ravdess-actors-01-02-03/
+          cp "$RESEARCH_VAULT_FOLDER"/*.manifest.json encrypted/ravdess-actors-01-02-03/
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add encrypted/ravdess-actors-01-02-03
+          if git diff --cached --quiet; then
+            echo 'Encrypted research checkpoint is required; refusing false success'
+            exit 1
+          fi
+          git commit -m "research-vault: preserve independent-singer run $GITHUB_RUN_ID attempt $GITHUB_RUN_ATTEMPT"
+          git push origin HEAD:refs/heads/research/song-vision-vault
+      - name: Declare research-only status
+        run: |
+          echo 'Only public-license research data used; weights ciphertext and report preserved.'
+          echo 'No raw clips, singer likenesses or vocal stems published.'
+          echo 'Commercial SONG customer inference remains disabled.'

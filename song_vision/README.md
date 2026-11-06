@@ -5,6 +5,10 @@ video-generation API. The **model has no trained weights in Git** and cannot
 produce a convincing singing video until suitable authorized data have been
 prepared, training completed and the resulting quality independently evaluated.
 
+## v8: new external singers + independent held-out singer evaluation
+
+The verified [RAVDESS three-actor research runner](external_ravdess_multisinger.py) **trains with actors 01 and 02, then validates only on previously unseen actor 03**; unlike prior same-actor validation, this split tests one new performer. The source is the official CC BY-NC-SA 4.0 Zenodo record and each actor archive is verified against its official MD5. All trained research weights and reports are encrypted for the existing owner-held key and copied to `research/song-vision-vault` as independent `.svault` files, not discarded. This is NOT commercial training or validated singing lip-sync. Guide: [docs/SONG_VISION_INDEPENDENT_SINGER_RETRAIN_V8.md](../docs/SONG_VISION_INDEPENDENT_SINGER_RETRAIN_V8.md).
+
 ## Research model preservation (NEW)
 
 Training on RAVDESS is licensed CC BY-NC-SA 4.0 and cannot feed paid SONG jobs. The newer research pipeline **encrypts and preserves every completed checkpoint**, including the training report, in the `research/song-vision-vault` branch and a separate 90-day Actions artifact. The private X25519 key is held by the owner outside GitHub, never by the runner. If it is lost, restoration is impossible. See [the research checkpoint vault guide](../docs/SONG_VISION_RESEARCH_CHECKPOINT_VAULT_V1.md). Previous 36-epoch weights had no artifact and cannot be recovered; a fresh research run will create a backup. Raw singer videos, vocals and face crops remain transient.

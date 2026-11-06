@@ -62,7 +62,7 @@ def _validated_metadata(metadata: dict) -> dict:
         raise ValueError("Research licensing tag must be CC-BY-NC-SA-4.0")
     if metadata.get("commercialUseAllowed") is not False:
         raise ValueError("Commercial use must be explicitly disabled")
-    if metadata.get("dataset") != "RAVDESS-Actor-01":
+    if metadata.get("dataset") not in {"RAVDESS-Actor-01", "RAVDESS-Actors-01-02-03"}:
         raise ValueError("Unsupported research dataset")
     if metadata.get("checkpointCategory") != "research_only_not_lipsync_validated":
         raise ValueError("Unvalidated noncommercial model category required")

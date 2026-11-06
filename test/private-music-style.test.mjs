@@ -27,7 +27,10 @@ test('public genre catalog has labels only and no music style or music prompt le
  assert.ok(!page.includes('id="copy-style"'));
  assert.ok(!page.includes('id="song-lyrics"'));
  assert.ok(!page.includes('id="copy-lyrics"'));
- assert.ok(page.includes('id="song-lyrics-preview"'));
+ assert.ok(page.includes('id="review-recipient"'));
+ assert.ok(!page.includes('id="song-lyrics-preview"'));
+ assert.ok(!page.includes('id="generate-lyrics"'));
+ assert.ok(!checkout.includes('id="order-lyrics"'));
 });
 test('creation shows all seven genre tiles, moods and preferred eras at once',()=>{
  for(const g of GENRE_KEYS)assert.ok(page.includes('name="genreChoice" value="'+g+'"'));

@@ -82,9 +82,10 @@ test('paid immutable song plan must match original approved genre choice',()=>{
  }),/differs/);
 });
 test('browser remembers genre choice while real payment and email dispatch remain disabled',()=>{
- assert.match(create,/genre:v.genre,mood:v.mood,eraPreference:v.eraPreference/);
+ assert.match(create,/genre:answers.genre,mood:answers.mood,eraPreference:answers.eraPreference/);
  assert.doesNotMatch(create,/stylePrompt|song-style/);
- assert.match(createPage,/id="song-lyrics-preview"/);
+ assert.match(createPage,/id="review-genre"/);
+ assert.doesNotMatch(createPage,/id="song-lyrics-preview"/);
  assert.match(script,/duoGenreChoice:/);
  assert.match(script,/genreSelection/);
  assert.match(script,/sharedStyleNotes/);

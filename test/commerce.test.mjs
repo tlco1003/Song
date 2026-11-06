@@ -15,7 +15,7 @@ const server=read('src/server.mjs');
 test('story and product stages navigate to a separate payment page',()=>{
  assert.match(create,/href="checkout\.html"/);
  for(const id of ['product-audio','product-video','product-audio-duo','song-genre-first','song-genre-second',
-   'checkout-prev','checkout-next','go-payment','order-title','order-lyrics']){
+   'checkout-prev','checkout-next','go-payment','order-title','order-mood-era']){
   assert.ok(checkout.includes('id="'+id+'"'),id);
  }
  for(const stage of ['product','genre','video','review']){
@@ -25,6 +25,9 @@ test('story and product stages navigate to a separate payment page',()=>{
  assert.ok(server.includes("'/payment.html':'docs/payment.html'"));
  assert.ok(server.includes("'/payment.js':'docs/payment.js'"));
  assert.match(checkoutJs,/sessionStorage\.getItem/);
+ assert.ok(!checkout.includes('id="order-lyrics"'));
+ assert.ok(!checkout.includes('확정 가사'));
+ assert.match(checkoutJs,/api\/commerce\/drafts/);
  assert.match(checkoutJs,/history\.pushState/);
  assert.match(checkoutJs,/saveChoices/);
  assert.match(checkoutJs,/stage:currentStage/);

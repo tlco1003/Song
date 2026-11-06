@@ -21,7 +21,7 @@ test('public creation collects the original five answers and speech choices',()=
   for(const id of ['recipient','memory','message','gratitudeApology','occasion','recipientAgeGroup','relativePosition','speechStyle','genre','mood','lyricLength']){
     assert.ok(create.includes('id="'+id+'"'),id);
   }
-  for(const id of ['song-lyrics-preview','generated-song-title','generate-lyrics','go-create','eraPreference']){
+  for(const id of ['review-recipient','review-memory','review-message','review-genre','review-mood','review-eraPreference','go-create','eraPreference']){
     assert.ok(create.includes('id="'+id+'"'),id);
   }
   assert.match(create,/name="genreChoice"/);
@@ -39,11 +39,13 @@ test('creation routes to WITHU checkout, keeps lyric authoring and avoids extern
   assert.match(createScript,/withu-order-draft-v1/);
   assert.match(createScript,/sessionStorage\.setItem/);
   assert.doesNotMatch(createScript,/navigator\.clipboard\.writeText|stylePrompt|song-style/);
-  assert.match(createScript,/fetch\('api\/lyrics'/);
-  assert.match(createScript,/generatedLyrics/);
-  assert.match(createScript,/generatedFor!==fingerprint\(\)/);
+  assert.doesNotMatch(createScript,/fetch\('api\/lyrics'|generatedLyrics|generatedFor/);
+  assert.match(createScript,/version:3/);
+  assert.match(createScript,/titlePreview:answers\.recipient/);
+  assert.match(createScript,/renderSummary/);
   assert.ok(!/\?lyrics=|\?prompt=|\?style=/.test(create+createScript));
-  assert.match(createScript,/AI 작사 서버 연결이 필요합니다/);
+  assert.ok(!create.includes('id="song-lyrics-preview"'));
+  assert.match(create,/상품 선택 후 결제하기/);
 });
 test('HTTPS backend serves landing, lyric creation and opt-in mother video routes',()=>{
   for(const line of ["'/create.html':'docs/create.html'","'/create.js':'docs/create.js'","'/create.css':'docs/create.css'"]){

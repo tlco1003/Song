@@ -1,0 +1,49 @@
+{
+  "bestEpoch": 3,
+  "bestMetrics": {
+    "audioMotionSensitivity": 0.0578687,
+    "cheekMotionMAE": 0.0279986,
+    "chinJawMAE": 0.1357927,
+    "copyMouthMAE": 0.0500151,
+    "epoch": 3,
+    "matchedVsShuffledMotionGain": 0.0324201,
+    "motionMAE": 0.0806866,
+    "mouthMaskedMAE": 0.0778292,
+    "trainJointLoss": 0.0788117,
+    "zeroMotionMAE": 0.0962477
+  },
+  "commercialUseAllowed": false,
+  "dataset": "RAVDESS-Actors-01-02-03",
+  "diagnosticFlags": [
+    "MOUTH_WORSE_THAN_COPY_REFERENCE"
+  ],
+  "encryptedFilename": "song-joint-face-run-42246223132-attempt-1.svault",
+  "encryptedSha256": "f0ca8e29470cd41743d3332febac9a0f6537efc4da76ddd0dfe0d2649d80622f",
+  "epochsCompleted": 8,
+  "labelCounts": {
+    "train": {
+      "total": 3000,
+      "valid": 3000
+    },
+    "val": {
+      "total": 1500,
+      "valid": 1500
+    }
+  },
+  "license": "CC-BY-NC-SA-4.0",
+  "modelStudy": "visible_cheek_chin_lip_motion_joint_research_v9",
+  "ownerHeldPrivateKeyRequired": true,
+  "qualityValidatedForCommercialUse": false,
+  "rawVideoAudioOrBiometricsIncluded": false,
+  "trainActors": [
+    "01",
+    "02"
+  ],
+  "trainClips": 40,
+  "trainFrames": 3000,
+  "unseenValActors": [
+    "03"
+  ],
+  "valClips": 20,
+  "valFrames": 1500
+}

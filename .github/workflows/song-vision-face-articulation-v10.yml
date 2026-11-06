@@ -1,0 +1,106 @@
+name: SONG Vision v10 audiovisual face articulation research
+on:
+  push:
+    branches:
+      - feature/song-vision-self-hosted-v1
+    paths:
+      - 'song_vision/facial_articulation_v10.py'
+      - 'song_vision/external_ravdess_face_articulation_v10.py'
+      - 'song_vision/face_surface_motion.py'
+      - 'song_vision/test_facial_articulation_v10.py'
+      - '.github/workflows/song-vision-face-articulation-v10.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: song-vision-face-articulation-v10-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  singer_face_articulation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      OMP_NUM_THREADS: '2'
+      MKL_NUM_THREADS: '2'
+      RESEARCH_VAULT_FOLDER: ${{ github.workspace }}/research-face-v10-backup
+      LOCAL_FACE_TASK: ${{ github.workspace }}/face_landmarker.task
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install FFmpeg, EGL, GLES and local research dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg libgles2 libegl1 libgl1 libglib2.0-0
+          python -m pip install -q torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -q -r song_vision/requirements-geometry.txt
+      - name: Check synthetic face expression, audio, temporal and encryption contracts
+        run: |
+          python -m unittest song_vision.test_joint_face_training song_vision.test_facial_articulation_v10 song_vision.test_research_checkpoint_vault -v
+      - name: Download and authenticate local Face Landmarker task model
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error --retry 4 --retry-delay 8 --max-time 240 \
+            'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task' \
+            --output "$LOCAL_FACE_TASK"
+          echo '64184e229b263107bc2b804c6625db1341ff2bb731874b0bcc2fe6544e0bc9ff  '"$LOCAL_FACE_TASK" | sha256sum --check
+          python - <<'PY'
+          from pathlib import Path
+          from song_vision.face_geometry import LocalFaceLandmarker
+          with LocalFaceLandmarker(Path("face_landmarker.task")) as teacher:
+              assert teacher.model is not None
+          print("SONG_FACE_LANDMARKER_REAL_RUNTIME=PASS")
+          PY
+      - name: Real RAVDESS audio and face articulation training with untouched singer holdout
+        run: |
+          python -m song_vision.external_ravdess_face_articulation_v10 \
+            --acknowledge-noncommercial-research \
+            --landmarker-task "$LOCAL_FACE_TASK" \
+            --vault-public-key song_vision/research_vault_public.pem \
+            --vault-output-dir "$RESEARCH_VAULT_FOLDER" \
+            --epochs 8 --min-epochs 4 --patience 4
+      - name: Encrypted backup to GitHub Actions artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: song-face-v10-research-encrypted-${{ github.run_id }}-a${{ github.run_attempt }}
+          path: ${{ env.RESEARCH_VAULT_FOLDER }}/*
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+      - name: Preserve encrypted weights and metrics in the existing vault Git branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin refs/heads/research/song-vision-vault:refs/remotes/origin/research/song-vision-vault
+          git worktree add --detach "$RUNNER_TEMP/song-v10-studies" refs/remotes/origin/research/song-vision-vault
+          cd "$RUNNER_TEMP/song-v10-studies"
+          mkdir -p encrypted/ravdess-face-articulation-v10
+          cp "$RESEARCH_VAULT_FOLDER"/*.svault encrypted/ravdess-face-articulation-v10/
+          cp "$RESEARCH_VAULT_FOLDER"/*.manifest.json encrypted/ravdess-face-articulation-v10/
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add encrypted/ravdess-face-articulation-v10/
+          if git diff --cached --quiet; then
+            echo 'No encrypted model produced. Refusing to claim preservation.'
+            exit 1
+          fi
+          git commit -m "research-vault: preserve eye-cheek-jaw-lip v10 A/V run $GITHUB_RUN_ID attempt $GITHUB_RUN_ATTEMPT"
+          for attempt in 1 2 3; do
+            if git push origin HEAD:refs/heads/research/song-vision-vault; then
+              exit 0
+            fi
+            sleep $(( 4 * attempt ))
+            git fetch origin research/song-vision-vault
+            git rebase FETCH_HEAD
+          done
+          echo 'Encrypted vault branch save unsuccessful'
+          exit 1
+      - name: Report noncommercial safety
+        run: |
+          echo 'Model archived encrypted, no raw faces, vocals or owner-held private key committed.'
+          echo 'Face dynamics remain unvalidated; SONG paid video jobs disabled.'

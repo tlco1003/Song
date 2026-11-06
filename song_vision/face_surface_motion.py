@@ -42,6 +42,14 @@ FEATURE_SCALE = np.array(
     [.30, .35, .35, .40, .32, .32, .32, .32, .50, .50, .50, .50],
     dtype=np.float32,
 )
+EXPRESSION_EXTRAS = (
+    "eyeBlinkLeft", "eyeBlinkRight", "eyeSquintLeft", "eyeSquintRight",
+    "eyeWideLeft", "eyeWideRight", "browInnerUp", "browDownLeft", "browDownRight",
+    "mouthClose", "mouthFunnel", "mouthPucker", "mouthPressLeft", "mouthPressRight",
+    "mouthSmileLeft", "mouthSmileRight", "mouthStretchLeft", "mouthStretchRight",
+    "noseSneerLeft", "noseSneerRight", "jawLeft", "jawRight",
+    "mouthLowerDownLeft", "mouthLowerDownRight", "mouthUpperUpLeft", "mouthUpperUpRight",
+)
 MIN_VALID_COVERAGE = .80
 SCORE_NAMES = (
     "jawOpen", "cheekPuff", "cheekSquintLeft", "cheekSquintRight",
@@ -134,6 +142,7 @@ def annotate_face_surface_dataset(dataset: Path, model_path: Path,
                 valid = np.zeros(len(records), dtype=bool)
                 observed = np.full((len(records), len(FEATURE_NAMES)), np.nan, dtype=np.float32)
                 points = np.full((len(records), POINT_COUNT, 3), np.nan, dtype=np.float32)
+                extras = np.full((len(records), len(EXPRESSION_EXTRAS)), np.nan, dtype=np.float32)
                 for i, record in enumerate(records):
                     photo = cv2.imread(str(folder / "frames" / record["file"]))
                     if photo is None or photo.shape[:2] != (96, 96):
@@ -148,9 +157,16 @@ def annotate_face_surface_dataset(dataset: Path, model_path: Path,
                     landmarks, shapes = result
                     try:
                         feat = measure_surface_feature_vector(landmarks, shapes)
+                        if any(key not in shapes for key in EXPRESSION_EXTRAS):
+                            raise ValueError("Incomplete face expression teacher labels")
+                        expression = np.asarray([shapes[key] for key in EXPRESSION_EXTRAS],
+                                                dtype=np.float32)
+                        if not np.isfinite(expression).all() or np.any(expression < 0) or np.any(expression > 1):
+                            raise ValueError("Unreliable face expression label")
                     except ValueError:
                         continue
                     observed[i] = feat
+                    extras[i] = expression
                     points[i] = np.asarray(landmarks, dtype=np.float32)
                     valid[i] = True
                 coverage = float(valid.mean())
@@ -163,11 +179,19 @@ def annotate_face_surface_dataset(dataset: Path, model_path: Path,
                 # Robust per-clip neutral reference, not anatomically neutral.
                 median = np.median(observed[valid], axis=0).astype(np.float32)
                 delta = (observed - median[None, :]) / FEATURE_SCALE[None, :]
+                expression_median = np.median(extras[valid], axis=0).astype(np.float32)
+                expression_delta = (extras - expression_median[None, :]) / .50
+                if np.any(np.abs(expression_delta[valid]) > 5.):
+                    raise ValueError("Unexpected facial expression label range")
                 if np.any(np.abs(delta[valid]) > 5.):
                     raise ValueError("Unexpected facial dynamics range; check camera framing")
                 np.savez_compressed(dest, surfacePoints=points, observed=observed,
                                     median=median, motion=delta.astype(np.float32),
-                                    valid=valid, featureNames=np.array(FEATURE_NAMES))
+                                    valid=valid, featureNames=np.array(FEATURE_NAMES),
+                                    expressionNames=np.array(EXPRESSION_EXTRAS),
+                                    expressionObserved=extras,
+                                    expressionMedian=expression_median,
+                                    expressionMotion=expression_delta.astype(np.float32))
                 counts[split]["total"] += len(records)
                 counts[split]["valid"] += int(valid.sum())
                 # No personal surface landmark output in public logs.

@@ -10,7 +10,7 @@ import numpy as np
 import torch
 
 from song_vision.face_surface_motion import (
-    FEATURE_NAMES, FEATURE_SCALE, measure_surface_feature_vector,
+    FEATURE_NAMES, FEATURE_SCALE, EXPRESSION_EXTRAS, measure_surface_feature_vector,
     annotate_face_surface_dataset,
 )
 from song_vision.joint_face_training import (
@@ -39,12 +39,14 @@ def fake_points(i=0):
 
 
 def fake_shapes(i=0):
-    return {
+    shapes = {k: .1 + .01 * (i % 4) for k in EXPRESSION_EXTRAS}
+    shapes.update({
         "jawOpen": .12 + .04 * (i % 4),
         "cheekPuff": .08 + .01 * i,
         "cheekSquintLeft": .13 + .01 * (i % 4),
         "cheekSquintRight": .1 + .01 * (i % 4),
-    }
+    })
+    return shapes
 
 
 class FakeLocalLandmarker:
@@ -120,6 +122,8 @@ class SurfaceGeometryJointTests(unittest.TestCase):
             with np.load(first) as record:
                 self.assertEqual(record["motion"].shape, (16, 12))
                 self.assertEqual(record["surfacePoints"].shape, (16, 478, 3))
+                self.assertEqual(record["expressionMotion"].shape, (16, len(EXPRESSION_EXTRAS)))
+                self.assertEqual(list(record["expressionNames"]), list(EXPRESSION_EXTRAS))
                 self.assertTrue(record["valid"].all())
                 self.assertTrue(np.allclose(np.median(record["observed"], axis=0),
                                             record["median"], atol=1e-5))

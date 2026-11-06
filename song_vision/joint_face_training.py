@@ -191,7 +191,7 @@ def train_joint(dataset: Path, checkpoint: Path, epochs: int = 12, batch_size: i
                 min_epochs: int = 6, seed: int = 42,
                 init_checkpoint: Path | None = None) -> dict:
     if (not 1 <= epochs <= 50 or not 1 <= min_epochs <= epochs or
-            not 2 <= batch_size <= 64 or not 0 <= patience <= epochs or
+            not 2 <= batch_size <= 64 or not 0 <= patience <= 100 or
             not 1e-7 <= lr <= .01):
         raise ValueError("Invalid training and early-stop parameters")
     if checkpoint.exists():

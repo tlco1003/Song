@@ -45,6 +45,14 @@ function customerSession(req){
  if(!PRIVATE_SESSION_ID.test(session))throw new AppError(401,'인증된 고객 전용 링크가 필요합니다.');
  return session;
 }
+function sanitizeCustomerCommercialStatus(right){
+ if(right?.status==='active'&&right.paymentVerified===true&&right.rightsVerified===true
+  &&right.amountKrw===upgradePriceKrw())
+  return {status:'active',paymentVerified:true,rightsVerified:true,amountKrw:10000};
+ if(right?.status==='available'&&right.rightsVerified===true&&right.amountKrw===upgradePriceKrw())
+  return {status:'available',rightsVerified:true,amountKrw:10000};
+ return {status:'unavailable',amountKrw:10000};
+}
 function safePrivateTrack(track,commercialActive){
  if(!track||typeof track.title!=='string'||track.title.length>180
   ||typeof track.file!=='string'||!/^[A-Za-z0-9_.-]{1,110}$/.test(track.file)
@@ -63,6 +71,8 @@ function safePrivateTrack(track,commercialActive){
  if(commercialActive&&typeof track.privateDownloadUrl==='string'
   &&PRIVATE_DOWNLOAD_URL.test(track.privateDownloadUrl))
   result.privateDownloadUrl=track.privateDownloadUrl;
+ if(typeof track.orderRef==='string'&&/^ord_[A-Za-z0-9_-]{16,64}$/.test(track.orderRef))
+  result.orderRef=track.orderRef;
  return result;
 }
 async function streamProtectedCustomerMedia(req,res,adapter,kind,ticket){
@@ -204,18 +214,16 @@ async function handle(req,res,customerAccess){
         ||result?.status!=='delivered'
         ||!Array.isArray(result.tracks)||result.tracks.length<1||result.tracks.length>60)
         throw new AppError(403,'나의 노래함에 접근할 수 있는 인증이 없습니다.');
-      const right=result.commercialUpgrade||{status:'unavailable'};
-      const active=right.status==='active'&&right.paymentVerified===true
-        &&right.rightsVerified===true&&right.amountKrw===upgradePriceKrw();
-      const available=right.status==='available'&&right.rightsVerified===true
-        &&right.amountKrw===upgradePriceKrw();
-      const tracks=result.tracks.map(item=>safePrivateTrack(item,active));
+      // Each song in this account needs its own verified order entitlement.
+      const tracks=result.tracks.map(item=>{
+        const right=sanitizeCustomerCommercialStatus(item?.commercialUpgrade);
+        const safe=safePrivateTrack(item,right.status==='active');
+        safe.commercialUpgrade=right;
+        return safe;
+      });
       return json(res,200,{
         status:'delivered',track:tracks[0],tracks,
-        commercialUpgrade:active?
-          {status:'active',paymentVerified:true,rightsVerified:true,amountKrw:10000}:
-          available?{status:'available',rightsVerified:true,amountKrw:10000}:
-          {status:'unavailable',amountKrw:10000}
+        commercialUpgrade:{status:'unavailable',amountKrw:10000}
       });
     }
     if(req.method==='POST'&&pathname==='/api/delivery/resolve'){
@@ -253,10 +261,15 @@ async function handle(req,res,customerAccess){
       const sessionId=customerSession(req);
       const body=await jsonBody(req,1024);
       const tokenHash=body?.deliveryToken==null?null:hashPrivateDeliveryToken(body.deliveryToken);
+      const orderRef=body?.orderRef;
+      if(orderRef!==undefined&&(typeof orderRef!=='string'
+        ||!/^ord_[A-Za-z0-9_-]{16,64}$/.test(orderRef)))
+        throw new AppError(400,'올바르지 않은 고객 주문 선택입니다.');
+      if(!tokenHash&&!orderRef)throw new AppError(400,'인증된 주문 선택이 필요합니다.');
       // The adapter verifies this session, its owner and optional delivery token,
       // recording provenance, licence authority, a separate pending PG intent and fixed price.
       const result=await customerAccess.beginCommercialCheckout({
-        sessionId,tokenHash,amountKrw:upgradePriceKrw()
+        sessionId,tokenHash,orderRef:orderRef||null,amountKrw:upgradePriceKrw()
       });
       const target=typeof result?.checkoutUrl==='string'?
         new URL(result.checkoutUrl,'http://'+req.headers.host):null;

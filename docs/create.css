@@ -88,3 +88,16 @@
 .story-summary-row dd{margin:0;font-size:13px;color:#413242;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}
 .create-page .review-next-note{margin:18px 0 0}
 @media(max-width:430px){.story-summary-row{grid-template-columns:1fr;gap:2px;padding:12px 14px}}
+
+/* Keep the continuation action reachable on narrow phones even for long stories. */
+@media(max-width:650px){
+ .create-page .wizard-actions{
+  position:sticky;
+  bottom:env(safe-area-inset-bottom,0px);
+  z-index:5;
+  background:linear-gradient(to bottom,rgba(250,247,244,.93),#faf7f4);
+  border-radius:12px;
+  padding:10px 5px;
+  box-shadow:0 -9px 25px rgba(42,29,43,.08)
+ }
+}

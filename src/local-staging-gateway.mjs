@@ -12,6 +12,7 @@ import {realpath,stat,mkdir,writeFile} from 'node:fs/promises';
 import {resolve,sep,extname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {prepareServerOrderDraft} from './order-draft-preparation.mjs';
+import {AppError} from './lib.mjs';
 import {validateCheckoutDeliveryContact} from './customer-notification-contact.mjs';
 import {issuePrivateDeliveryInvitation,hashPrivateDeliveryToken}
  from './private-delivery-invitation.mjs';
@@ -56,11 +57,11 @@ export function createLocalStagingGateway({
   return order;
  };
  const checkSession=(sessionId)=>{
-  if(!TOKEN.test(sessionId))throw new Error('Customer session is missing');
+  if(!TOKEN.test(sessionId))throw new AppError(401,'Customer session is missing');
   const s=sessions.get(sessionId);
-  if(!s||s.expiresAt<=now())throw new Error('Customer session expired');
+  if(!s||s.expiresAt<=now())throw new AppError(401,'Customer session expired');
   const order=lookup(s.orderId);
-  if(order.status!=='delivered')throw new Error('Order not delivered');
+  if(order.status!=='delivered')throw new AppError(403,'Order not delivered');
   return {session:s,order};
  };
  async function validatePrivateAsset(fileName){
@@ -212,9 +213,9 @@ export function createLocalStagingGateway({
   resolvePrivateDelivery({tokenHash}={}){
    const record=hashes.get(tokenHash);
    if(!record||record.used||record.expiresAt<=now())
-    throw new Error('Delivery access link is invalid, expired or already used');
+    throw new AppError(403,'Delivery access link is invalid, expired or already used');
    const o=lookup(record.orderId);
-   if(o.status!=='delivered')throw new Error('Order delivery not ready');
+   if(o.status!=='delivered')throw new AppError(403,'Order delivery not ready');
    // One-time bearer URL. Leakage before first redemption remains a threat;
    // production MUST also bind recipient identity to a verified login/OTP.
    record.used=true;
@@ -231,9 +232,9 @@ export function createLocalStagingGateway({
    const asset=tickets.get(ticket);
    if(kind!=='playback'||!asset||asset.expiresAt<=now()
      ||asset.orderId!==order.id)
-    throw new Error('Only the paying staging customer can play this private asset');
+    throw new AppError(403,'Only the paying staging customer can play this private asset');
    const file=order.songs.find(x=>x.index===asset.assetIndex);
-   if(!file)throw new Error('Private song not found');
+   if(!file)throw new AppError(404,'Private song not found');
    return {
     authorized:true,paidOriginalOrderVerified:true,recipientVerified:true,
     filePath:file.filePath,

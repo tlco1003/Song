@@ -10,3 +10,12 @@ node_modules/
 # Proprietary WITHU music recipes: store only in server private volume.
 .withu-private-styles/
 private-style-library/
+
+# Generated Firebase Cloud Functions bundle - rebuild from src/ on deploy.
+functions/src/
+functions/docs/
+functions/node_modules/
+functions/가사 프롬프트.md
+functions/.env
+functions/.env.*
+!functions/.env.example

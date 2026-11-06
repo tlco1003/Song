@@ -22,7 +22,7 @@ jobs:
       PYTHONDONTWRITEBYTECODE: '1'
       OMP_NUM_THREADS: '2'
       MKL_NUM_THREADS: '2'
-      RESEARCH_VAULT_FOLDER: ${{ runner.temp }}/song-research-vault
+      RESEARCH_VAULT_FOLDER: ${{ github.workspace }}/song-research-vault-output
     steps:
       - uses: actions/checkout@v4
         with:

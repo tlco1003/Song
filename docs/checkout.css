@@ -267,3 +267,23 @@
 .payment-page-layout .payment-total-line strong{font-size:19px;color:#765268;white-space:nowrap}
 .payment-shell{width:min(780px,calc(100% - 32px))}
 @media(max-width:570px){.checkout-flow .order-review-list>div{grid-template-columns:1fr;gap:2px;padding:12px 14px}.checkout-flow .inline-choice-section{margin-top:17px;padding-top:19px}}
+
+
+/* Genre selection has already happened in step 6: show primary, then optional add-on. */
+.checkout-flow .selected-genre-summary{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 17px;border-radius:12px;background:#faf5f8;border:1px solid #e9dbe3;margin:19px 0}
+.checkout-flow .selected-genre-summary span{font-size:12px;color:#93768a}
+.checkout-flow .selected-genre-summary strong{font-size:16px;color:#583c50}
+.checkout-flow .selected-genre-summary a{margin-left:auto;font-size:12px;text-decoration:underline;color:#927086}
+.checkout-flow .genre-blend-toggle{display:flex;gap:12px;align-items:center;cursor:pointer;padding:16px 14px;border:1px solid #e5d5dd;border-radius:12px;margin:14px 0}
+.checkout-flow .genre-blend-toggle:has(input:checked){border-color:#a77e93;background:#f8eef3}
+.checkout-flow .genre-blend-toggle input{accent-color:#9e738c;flex:0 0 auto;width:20px;height:20px}
+.checkout-flow .genre-blend-toggle>span{display:grid;gap:4px}
+.checkout-flow .genre-blend-toggle strong{font-size:14px}
+.checkout-flow .genre-blend-toggle em,.checkout-flow .duo-genre-modes em{font-style:normal;color:#9a6480;font-weight:700}
+.checkout-flow .genre-blend-toggle small{font-size:12px;color:#8d7a84}
+.checkout-flow .order-price-live{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;border:1px solid #e6d6de;background:#faf4f7;border-radius:12px;margin:21px 0 12px;padding:14px 17px}
+.checkout-flow .order-price-live>span{font-size:13px;color:#75556b}
+.checkout-flow .order-price-live>strong{font-size:21px;color:#67435a}
+.checkout-flow .order-price-live>small{flex-basis:100%;font-size:12px;color:#907a88}
+.checkout-flow #song-genre-first-tiles[hidden]{display:none!important}
+.checkout-flow .gift-choice .choice-body s{font-size:11px;color:#a68d99;text-decoration-thickness:1px}

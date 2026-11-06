@@ -10,8 +10,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="checkout.css?v=20261106-streamlined-02">
-<script defer src="checkout.js?v=20261106-streamlined-02"></script>
+<link rel="stylesheet" href="checkout.css?v=20261106-mix-03">
+<script defer src="checkout.js?v=20261106-mix-03"></script>
 <script defer src="checkout-media.js?v=20261106-streamlined-02"></script>
 </head>
 <body>
@@ -34,12 +34,12 @@
     <legend class="screen-reader-only">선물 종류</legend>
     <label class="gift-choice active" for="product-audio">
      <input type="radio" id="product-audio" name="product" value="audio" checked>
-     <span class="choice-body"><strong>맞춤 노래 1곡</strong><small>최종 완성곡 1개 + 가사</small></span>
+     <span class="choice-body"><strong>맞춤 노래 1곡 <em class="choice-highlight">출시 특별가</em></strong><small>맞춤 가사 + MP3 음원 1곡 · 다운로드 제공</small></span>
      <span class="choice-side" data-price-for="audio">가격 확인 중</span>
     </label>
     <label class="gift-choice" for="product-audio-duo">
      <input type="radio" id="product-audio-duo" name="product" value="audio_duo">
-     <span class="choice-body"><strong>맞춤 노래 2곡 <em class="choice-highlight">추천</em></strong><small>같은 가사로 2개의 서로 다른 완성곡 · 19,000원 할인</small></span>
+     <span class="choice-body"><strong>맞춤 노래 2곡 <em class="choice-highlight">인기 구성</em></strong><small>맞춤 가사 + 서로 다른 MP3 음원 2곡 · <s>개별 구매 58,000원</s> → 39,000원 (19,000원 절약)</small></span>
      <span class="choice-side" data-price-for="audio_duo">가격 확인 중</span>
     </label>
     <label class="gift-choice" for="product-video">
@@ -51,27 +51,31 @@
    <p class="small-explain">한 곡 상품에는 최종 선택된 완성곡 1개만 제공돼요. 뮤직비디오 가격은 제작 범위에 따라 별도로 확정됩니다.</p>
   <div class="inline-choice-section" id="inline-genre-options" aria-labelledby="genre-config-heading">
    <span class="small-caps">YOUR SOUND</span>
-   <h2 id="genre-config-heading">어떤 장르로 만들까요?</h2>
-   <p class="small-explain">선택한 장르는 완성곡마다 적용돼요.</p>
+   <h2 id="genre-config-heading">선택한 음악을 더 특별하게</h2>
+   <p class="small-explain">6단계에서 고른 기본 장르를 그대로 사용해요. 다른 장르를 섞거나, 2곡이면 곡마다 다른 장르를 고를 수 있어요.</p>
+   <div class="selected-genre-summary"><span>내가 고른 기본 장르</span><strong id="selected-primary-genre">장르 확인 중</strong><a href="create.html?step=6">변경하기</a></div>
+   <label id="single-genre-blend-wrap" class="genre-blend-toggle"><input type="checkbox" id="single-genre-blend"><span><strong>다른 장르 섞기 <em>+5,000원</em></strong><small>한 곡 안에서 기본 장르 + 추가 장르를 조화롭게 믹스</small></span></label>
    <fieldset class="duo-genre-modes" id="duo-genre-modes" hidden>
     <legend>두 곡의 장르 선택</legend>
     <label for="duo-mode-same"><input type="radio" name="duoGenreMode" id="duo-mode-same" value="same" checked><span><strong>한 장르로 2곡</strong><small>같은 장르, 서로 다른 멜로디·편곡</small></span></label>
-    <label for="duo-mode-different"><input type="radio" name="duoGenreMode" id="duo-mode-different" value="different"><span><strong>두 장르로 각각 1곡</strong><small>첫 번째 장르 1곡 + 두 번째 장르 1곡</small></span></label>
+    <label for="duo-mode-different"><input type="radio" name="duoGenreMode" id="duo-mode-different" value="different"><span><strong>두 장르로 각각 1곡</strong><small>기본 장르 1곡 + 다른 장르 1곡 · 추가금 없음</small></span></label>
+    <label for="duo-mode-blend"><input type="radio" name="duoGenreMode" id="duo-mode-blend" value="blend"><span><strong>두 장르를 섞어 2곡 <em>+5,000원</em></strong><small>두 곡 모두 같은 장르 조합, 다른 멜로디·편곡 · 추가금 주문당 1회</small></span></label>
    </fieldset>
    <div class="song-genre-visual">
     <fieldset class="music-choice-fieldset">
-     <legend>첫 번째 완성곡 장르</legend>
-     <div class="music-choice-grid genre-tile-grid" id="song-genre-first-tiles" role="group" aria-label="첫 번째 완성곡 장르 선택"></div>
+     <legend class="screen-reader-only">기존에 선택한 기본 장르</legend>
+     <div class="music-choice-grid genre-tile-grid" id="song-genre-first-tiles" role="group" aria-label="기본 장르 (이전 단계에서 선택)" hidden></div>
      <select id="song-genre-first" class="song-genre-select" hidden disabled required aria-hidden="true"><option value="">장르 선택</option></select>
     </fieldset>
     <fieldset id="song-genre-second-wrap" class="music-choice-fieldset" hidden>
-     <legend>두 번째 완성곡 장르</legend>
+     <legend id="song-genre-second-legend">추가할 음악 장르</legend>
      <div class="music-choice-grid genre-tile-grid" id="song-genre-second-tiles" role="group" aria-label="두 번째 완성곡 장르 선택"></div>
      <select id="song-genre-second" class="song-genre-select" hidden disabled aria-hidden="true"><option value="">장르 선택</option></select>
     </fieldset>
    </div>
    <input id="song-shared-notes" type="hidden" value="">
    <div id="genre-plan-preview" class="genre-plan-preview" role="status" aria-live="polite">장르 선택을 불러오는 중이에요.</div>
+   <div class="order-price-live" role="status" aria-live="polite"><span>선택한 구성 금액</span><strong id="selection-total">가격 확인 중</strong><small id="selection-addon">장르 혼합은 선택 사항이에요.</small></div>
    <p class="small-explain">음악 생성 과정에서 여러 후보가 나오더라도, 구매한 곡 수만큼 최종 완성곡을 선택해 전달해요.</p>
   </div>
   <div class="inline-choice-section" id="video-inline-options" hidden>

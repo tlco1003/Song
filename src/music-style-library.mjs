@@ -92,7 +92,7 @@ export function composeServerMusicStyle({
   'Make this second paid track independently melodic and arranged, never a duplicate of track one.':'';
  const stylePreset=[
   'Compose an original Korean song, not a cover. Never reproduce a known melody, lyric, vocal identity or signature recording.',
-  'Chosen primary genre: '+genre+'. '+genreText,
+  'Chosen genre: '+genre+'. '+genreText,
   blendGenre?'Blend in '+blendGenre+' while retaining the primary identity: '+blendText:'',
   eraText?'Era-inspired, not song-copied: '+eraText:'',
   moodText,phrasing,

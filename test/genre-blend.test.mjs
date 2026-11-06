@@ -54,6 +54,7 @@ test('server quote recomputes total from selected product and blend, not browser
   productId:'audio_duo',genreSelection:{mode:'blend',genres:['발라드','재즈']}
  }),{
   productId:'audio_duo',baseAmountKrw:39000,blendAddOnKrw:5000,
+  thirdVerseAddOnKrw:0,dedicationAddOnKrw:0,
   amountKrw:44000,priceKind:'fixed',quoteRequired:false,currency:'KRW'
  });
  assert.equal(quoteOrderAmount({

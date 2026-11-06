@@ -12,7 +12,14 @@ const validIds=['audio','audio_duo','audio_video'];
 if(catalog.version!==1||catalog.currency!=='KRW'||!Array.isArray(catalog.products)
   ||catalog.products.length!==3||!validIds.every(id=>catalog.products.some(item=>item.id===id&&Number.isSafeInteger(item.amountKrw)&&item.amountKrw>0))
   ||catalog.addOns?.genreBlend?.amountKrw!==5000||catalog.addOns?.thirdVerse?.amountKrw!==10000
-  ||(catalog.promotion?.comparisonPriceVerified===true&&(!catalog.promotion?.comparisonEvidenceId||catalog.promotion.plannedRegularPriceKrw!==100000))
+  ||catalog.addOns?.dedicationOutro?.amountKrw!==5000
+  ||catalog.promotion?.plannedRegularPricesKrw?.audio!==100000
+  ||catalog.promotion?.plannedRegularPricesKrw?.audio_duo!==200000
+  ||(catalog.promotion?.comparisonPriceVerified===true&&(
+    !catalog.promotion?.comparisonEvidenceId?.trim()
+    ||!catalog.promotion?.comparisonEvidenceByProduct?.audio?.trim()
+    ||!catalog.promotion?.comparisonEvidenceByProduct?.audio_duo?.trim()
+  ))
   ||!catalog.products.some(item=>item.id==='audio_video'&&item.priceKind==='starting_at'&&item.quoteRequired===true))
   throw new Error('Invalid WITHU price catalog');
 export function publicPriceCatalog(){

@@ -5,6 +5,10 @@ video-generation API. The **model has no trained weights in Git** and cannot
 produce a convincing singing video until suitable authorized data have been
 prepared, training completed and the resulting quality independently evaluated.
 
+## v9: singing jaw, cheek and lip JOINT surface-motion training
+
+[v9 face geometry research guide](../docs/SONG_VISION_FULL_FACE_JOINT_V9.md) documents the new self-authored network. The [frozen offline 478-point/52-expression teacher](face_surface_motion.py) provides real frame labels; the [joint PyTorch student](joint_face_training.py) shares voice features between lip image and **jaw/chin + cheek surface motion** objectives. Predicted surface motion is also fed back into the mouth decoder. The current 64px mouth decoder **does not produce full cheek/jaw photo pixels**. Surface landmarks do not represent actual zygomatic or mandible bone structure. The research-only [runner](external_ravdess_face_joint.py) uses strict RAVDESS licenses, signer disjoint holdout and encrypted checkpoint preservation. Existing v2 checkpoints are preserved; optional owner-restored checkpoints can initialize the mouth subnet while training the new motion head.
+
 ## v8: new external singers + independent held-out singer evaluation
 
 The verified [RAVDESS three-actor research runner](external_ravdess_multisinger.py) **trains with actors 01 and 02, then validates only on previously unseen actor 03**; unlike prior same-actor validation, this split tests one new performer. The source is the official CC BY-NC-SA 4.0 Zenodo record and each actor archive is verified against its official MD5. All trained research weights and reports are encrypted for the existing owner-held key and copied to `research/song-vision-vault` as independent `.svault` files, not discarded. This is NOT commercial training or validated singing lip-sync. Guide: [docs/SONG_VISION_INDEPENDENT_SINGER_RETRAIN_V8.md](../docs/SONG_VISION_INDEPENDENT_SINGER_RETRAIN_V8.md).

@@ -1,0 +1,87 @@
+name: SONG Vision joint singing lip jaw cheek surface training
+on:
+  push:
+    branches:
+      - feature/song-vision-self-hosted-v1
+    paths:
+      - 'song_vision/face_surface_motion.py'
+      - 'song_vision/joint_face_training.py'
+      - 'song_vision/external_ravdess_face_joint.py'
+      - 'song_vision/test_joint_face_training.py'
+      - '.github/workflows/song-vision-face-joint.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: song-vision-joint-face-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  joint_face_surface:
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      OMP_NUM_THREADS: '2'
+      MKL_NUM_THREADS: '2'
+      RESEARCH_VAULT_FOLDER: ${{ github.workspace }}/joint-face-study-vault
+      LOCAL_FACE_TASK: ${{ runner.temp }}/face_landmarker.task
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install FFmpeg, locally-run PyTorch and MediaPipe
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ffmpeg
+          python -m pip install -q torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -q -r song_vision/requirements-geometry.txt
+      - name: Test face motion geometry, joint gradients and research-only vault
+        run: |
+          python -m unittest song_vision.test_joint_face_training song_vision.test_multisinger_research song_vision.test_research_checkpoint_vault -v
+      - name: Download pinned Google on-device Face Landmarker bundle (no API)
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error --retry 4 --retry-delay 8 --max-time 240 \
+            'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task' \
+            --output "$LOCAL_FACE_TASK"
+          echo '64184e229b263107bc2b804c6625db1341ff2bb731874b0bcc2fe6544e0bc9ff  '"$LOCAL_FACE_TASK" | sha256sum --check
+      - name: Research-only training - lip mouth jaw and cheek surface motion
+        run: |
+          python -m song_vision.external_ravdess_face_joint \
+            --acknowledge-noncommercial-research \
+            --landmarker-task "$LOCAL_FACE_TASK" \
+            --vault-public-key song_vision/research_vault_public.pem \
+            --vault-output-dir "$RESEARCH_VAULT_FOLDER" \
+            --epochs 12 --min-epochs 6 --patience 5
+      - name: Secondary encrypted research backup for 90 days
+        uses: actions/upload-artifact@v4
+        with:
+          name: song-vision-face-joint-research-${{ github.run_id }}-a${{ github.run_attempt }}
+          path: ${{ env.RESEARCH_VAULT_FOLDER }}/*
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+      - name: Preserve encrypted checkpoint in permanent research Git branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin refs/heads/research/song-vision-vault:refs/remotes/origin/research/song-vision-vault
+          git worktree add --detach "$RUNNER_TEMP/song-joint-face-vault" refs/remotes/origin/research/song-vision-vault
+          cd "$RUNNER_TEMP/song-joint-face-vault"
+          mkdir -p encrypted/ravdess-face-joint-v9
+          cp "$RESEARCH_VAULT_FOLDER"/*.svault encrypted/ravdess-face-joint-v9/
+          cp "$RESEARCH_VAULT_FOLDER"/*.manifest.json encrypted/ravdess-face-joint-v9/
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add encrypted/ravdess-face-joint-v9
+          if git diff --cached --quiet; then
+            echo 'Encrypted research checkpoint required; refusing false success'
+            exit 1
+          fi
+          git commit -m "research-vault: save joint face/lip/cheek study $GITHUB_RUN_ID a$GITHUB_RUN_ATTEMPT"
+          git push origin HEAD:refs/heads/research/song-vision-vault
+      - name: Keep production disabled
+        run: echo 'Real research data only; not validated and never loaded for customer SONG generation.'

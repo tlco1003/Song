@@ -50,8 +50,8 @@ test('payment replaces duplicate email confirmation with a phone and three opt-i
  }
  assert.match(html,/동의합니다/);
  assert.match(html,/id="confirm-checkout"[^>]*disabled/);
- assert.match(script,/validateContactFields/);
- assert.match(script,/normalizedPhone/);
+ assert.match(script,/checkContact/);
+ assert.match(script,/customerPhone:phone/);
  assert.ok(!script.includes('delivery-email-again'));
  assert.ok(!script.includes('RESEND_API_KEY'));
  assert.ok(!script.includes('WITHU_BIZGO_AUTHORIZATION'));

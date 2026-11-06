@@ -28,3 +28,6 @@ jobs:
       - run: python -m unittest discover -s song_vision -p 'test_*.py' -v
       - run: python -m song_vision --help
       - run: python -m song_vision.real_training --help
+      - run: python -m song_vision.face_geometry --help
+      - run: python -m song_vision.face_geometry analyze-face --help
+      - run: python -m song_vision.face_geometry warp-video --help

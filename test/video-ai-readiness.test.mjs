@@ -7,6 +7,9 @@ test('self-hosted video model status is explicit and noncommercial',()=>{
  assert.equal(state.externalVideoApiRequired,false);
  assert.equal(state.researchCliAvailable,true);
  assert.equal(state.synchronizedVideoVocalTrainingPipeline,true);
+ assert.equal(state.faceSurfaceGeometryResearchCliAvailable,true);
+ assert.equal(state.phonemeAccurateLipsyncVerified,false);
+ assert.equal(state.actualBoneStructureEstimation,false);
  assert.equal(state.clipDisjointValidationImplemented,true);
  assert.equal(state.realSingerTrainingDataProvided,false);
  assert.equal(state.canAcceptCustomerJobs,false);

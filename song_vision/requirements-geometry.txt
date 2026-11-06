@@ -1,0 +1,3 @@
+-r requirements.txt
+# Optional offline face-surface detector (not a hosted AI API).
+mediapipe>=0.10.20,<0.11

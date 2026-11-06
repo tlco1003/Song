@@ -5,6 +5,10 @@ video-generation API. The **model has no trained weights in Git** and cannot
 produce a convincing singing video until suitable authorized data have been
 prepared, training completed and the resulting quality independently evaluated.
 
+## v3: facial surface geometry and offline lip-warp experiments
+
+See [`docs/SONG_VISION_FACE_GEOMETRY_V3.md`](../docs/SONG_VISION_FACE_GEOMETRY_V3.md). New commands: `python -m song_vision.face_geometry analyze-face` (eye, nose, lip, chin surface coordinates) and `python -m song_vision.face_geometry warp-video` (RMS-driven **approximate** mouth displacement over an authorized singer video). This geometry preview cannot reproduce exact Korean phonemes or determine true skull/jaw/teeth/tongue anatomy; model weights for the landmark detector are a separately downloaded Google offline model, **not** a newly trained SONG model. Existing custom neural net training remains separate.
+
 ## Architecture
 
 - FFmpeg decodes the **isolated vocal track** locally to mono 16 kHz.

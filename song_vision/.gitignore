@@ -17,3 +17,7 @@ private/
 *.jpeg
 *.quality.json
 __pycache__/
+
+# Offline pretrained landmark detector weights and all subject data
+*.task
+*.onnx

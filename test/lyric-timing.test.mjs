@@ -106,7 +106,7 @@ test('mother song has an isolated 1-second lyric delay and no other song changes
  for(const t of [intro+8,intro+100,intro+190])
   assert.equal(approximateLyricIndexAt(n,t+1,d,1),approximateLyricIndexAt(n,t,d,0));
  const exact=[12,15.5,20];
- assert.equal(cueIndexAt(exact,16-1),1);
+ assert.equal(cueIndexAt(exact,16.5-1),1);
  assert.equal(cueIndexAt(exact,15.4-1),0);
  const player=read('docs/player.js');
  assert.match(player,/currentTime-offset/);

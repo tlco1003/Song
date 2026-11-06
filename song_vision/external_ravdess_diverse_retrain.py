@@ -17,8 +17,9 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from .external_ravdess_research import (
-    ARCHIVE_URL, ORIGINAL_MD5, RECORD_URL, download_public_archive,
+    ARCHIVE_URL, ORIGINAL_MD5, RECORD_URL,
 )
+from .research_source_retries import download_research_archive_with_retry
 from .masked_retrain import masked_retrain
 from .research_checkpoint_vault import seal
 from .real_training import prepare_manifest
@@ -120,7 +121,7 @@ def run_research(epochs: int = 36, patience: int = 10, min_epochs: int = 20,
     with tempfile.TemporaryDirectory(prefix="song-vision-ravdess-diverse-cc-nc-") as td:
         folder = Path(td)
         archive = folder / "source.zip"
-        md5 = download_public_archive(archive)
+        md5 = download_research_archive_with_retry(archive)
         if md5 != ORIGINAL_MD5:
             raise RuntimeError("Source MD5 mismatch")
         takes = select_diverse_research_takes(archive, folder)

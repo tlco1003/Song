@@ -9,6 +9,7 @@ import {generateCoverImage} from './cover-image.mjs';
 import {publicCommerceReadiness,publicPriceCatalog} from './commerce.mjs';
 import {prepareServerOrderDraft} from './order-draft-preparation.mjs';
 import {storePrivateOrderDraft} from './private-draft-store.mjs';
+import {songVisionReadiness} from './video-ai/readiness.mjs';
 
 // Single-operator local MVP. Public multi-user deployment requires an
 // authenticated OAuth PKCE flow and per-user Suno credential vault.
@@ -52,6 +53,8 @@ async function handle(req,res){
   const pathname=u.pathname;
   // Public health check: no user data, credentials, providers, or capability claims.
   if(req.method==='GET'&&pathname==='/healthz')return json(res,200,{status:'ok',service:'withu-api'});
+  // Public research-engine capability declaration; never enables a paid generation route.
+  if(req.method==='GET'&&pathname==='/api/video-ai/readiness')return json(res,200,songVisionReadiness());
   if(pathname.startsWith('/api/')){
     // Customer payment-related routes must fail closed until a durable,
     // licensed commercial fulfillment implementation passes verification.

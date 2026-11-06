@@ -5,7 +5,7 @@ const KEY='withu-order-draft-v1';
 const MAX_AGE=30*60*1000;
 const won=new Intl.NumberFormat('ko-KR',{style:'currency',currency:'KRW',maximumFractionDigits:0});
 let prices=null,genres=null,draft=null,currentStage='product';
-const titleOf={product:'선물 종류',genre:'장르 선택',video:'영상 자료',review:'주문 확인'};
+const titleOf={product:'상품·장르 선택',review:'주문 확인'};
 const allowedProducts=['audio','audio_duo','audio_video'];
 function getDraft(){
  try{
@@ -72,6 +72,7 @@ function saveChoices(){
 }
 function renderGenres(){
  const duo=chosenProduct()==='audio_duo';
+ $('video-inline-options').hidden=chosenProduct()!=='audio_video';
  const different=duo&&document.querySelector('input[name="duoGenreMode"]:checked')?.value==='different';
  $('duo-genre-modes').hidden=!duo;
  $('song-genre-second-wrap').hidden=!different;
@@ -91,12 +92,29 @@ function renderGenres(){
  saveChoices();
 }
 function stages(){
- return chosenProduct()==='audio_video'?['product','genre','video','review']:['product','genre','review'];
+ return ['product','review'];
+}
+const choiceLabels=Object.freeze({
+ recipientAgeGroup:{unknown:'선택 안 함',under20:'10대 이하','20s':'20대','30s':'30대','40s':'40대','50s':'50대','60s':'60대','70plus':'70대 이상'},
+ relativePosition:{unknown:'자연스럽게',older:'윗사람',peer:'친구·동등한 사이',younger:'아랫사람'},
+ speechStyle:{auto:'사연에 맞게 자연스럽게',casual:'친근한 반말',polite:'따뜻한 존댓말',mixed:'반말과 존댓말을 함께'},
+ eraPreference:{auto:'나이대에 맞게',none:'시대 상관없음',
+  '1960s':'1960년대','1970s':'1970년대','1980s':'1980년대',
+  '1990s':'1990년대','2000s':'2000년대','2010s':'2010년대','2020s':'2020년대'}
+});
+function summaryValue(field,value){
+ return choiceLabels[field]?.[value]||String(value||'').trim()||'선택 안 함';
 }
 function updateReview(){
  draft=getDraft();
- $('order-title').textContent=draft?.story?.recipient||'받는 사람 확인 중';
- $('order-mood-era').textContent=(draft?.mood||'')+' · '+({'auto':'나이대에 맞게','none':'시대 상관없음'}[draft?.eraPreference]||draft?.eraPreference||'시대 미선택');
+ const data=draft?.story||{};
+ for(const field of ['recipient','occasion','memory','message','gratitudeApology',
+  'recipientAgeGroup','relativePosition','speechStyle']){
+  const id=field==='recipient'?'order-title':'order-'+field;
+  $(id).textContent=summaryValue(field,data[field]);
+ }
+ $('order-mood-era').textContent=summaryValue('mood',draft?.mood)+' · '+
+  summaryValue('eraPreference',draft?.eraPreference);
  $('order-product').textContent=selectedPrice()?.name||'상품 선택';
  $('order-style').textContent='';
  try{$('order-song-genres').textContent=genreLabels(genreSelection()).join('\n');}
@@ -133,11 +151,11 @@ function show(stage,{push=false,focus=false}={}){
  window.dispatchEvent(new CustomEvent('withu:checkout-stage',{detail:{stage:currentStage}}));
 }
 function canAdvance(){
- if(!draft){error('먼저 사연과 음악 취향을 선택해 주세요. 7단계 주문 확인 화면으로 돌아가세요.');return false;}
+ if(!draft){error('먼저 사연과 음악 취향을 입력해 주세요. 나만의 노래 6단계로 돌아가세요.');return false;}
  if(!prices){error('현재 가격을 불러올 수 없어요. 새로고침해 주세요.');return false;}
  // A direct ?stage=review link must never bypass genre validation.
  // Re-validate at every final handoff, including browser history navigation.
- if(currentStage==='genre'||currentStage==='review'){
+ if(currentStage==='product'||currentStage==='review'){
   try{genreSelection();}
   catch(e){error(e.message);return false;}
  }
@@ -157,32 +175,33 @@ $('checkout-prev').addEventListener('click',()=>{
 $('go-payment').addEventListener('click',async event=>{
  event.preventDefault();
  if(!canAdvance())return;
- if(selectedPrice()?.quoteRequired){
-  error('뮤직비디오는 개별 견적 확정 후 결제할 수 있어요. 현재는 결제 단계로 진행할 수 없습니다.');
+ const target=$('go-payment').href;
+ // Static hosting does not expose an API. Proceed without a fake API call.
+ if(location.hostname.endsWith('.github.io')){
+  location.assign(target);
   return;
  }
- const target=$('go-payment').href;
  const payload={selectedProduct:chosenProduct(),genreSelection:genreSelection(),story:draft.story};
  $('go-payment').setAttribute('aria-busy','true');
  try{
-  // If deployed with the Node backend, keep AI lyric prompt and style server-only.
-  // GitHub Pages has no API; the payment information page still opens.
+  // A properly deployed private server prepares encrypted instructions.
+  // Only an opaque draft ID is retained by the client, never prompts/lyrics.
   const response=await fetch('api/commerce/drafts',{
    method:'POST',headers:{'Content-Type':'application/json'},
-   body:JSON.stringify(payload),credentials:'same-origin',signal:AbortSignal.timeout(3500)
+   body:JSON.stringify(payload),credentials:'same-origin',signal:AbortSignal.timeout(1500)
   });
   if(response.ok){
-   const data=await response.json();
-   if(typeof data.draftId==='string'&&/^[a-f0-9-]{36}$/.test(data.draftId)){
-    draft={...draft,serverDraftId:data.draftId,savedAt:Date.now()};
+   const result=await response.json();
+   if(typeof result.draftId==='string'&&/^[a-f0-9-]{36}$/.test(result.draftId)){
+    draft={...draft,serverDraftId:result.draftId,savedAt:Date.now()};
     sessionStorage.setItem(KEY,JSON.stringify(draft));
    }
   }
  }catch(_){
-  // A disconnected server does not break customer review -> payment navigation.
+  // The payment page is informational; actual PG payment remains disabled.
  }finally{
   $('go-payment').removeAttribute('aria-busy');
-  window.location.assign(target);
+  location.assign(target);
  }
 });
 for(const radio of document.querySelectorAll('input[name="product"]')){
@@ -191,7 +210,6 @@ for(const radio of document.querySelectorAll('input[name="product"]')){
    label.classList.toggle('active',label.querySelector('input')?.checked===true);
   }
   showPrices();renderGenres();
-  if(!stages().includes(currentStage))show('product');
  });
 }
 for(const control of document.querySelectorAll('input[name="duoGenreMode"]'))
@@ -269,7 +287,7 @@ async function init(){
  await Promise.all([loadPrices(),loadGenres()]);
  // The old draft must not be silently promoted into a paid order.
  show(new URLSearchParams(location.search).get('stage')||'product');
- if(!draft)error('아직 작성된 사연이 없어요. 나만의 노래 7단계에서 선택 내용을 확인해 주세요.');
+ if(!draft)error('아직 작성된 사연이 없어요. 나만의 노래 6단계를 완료해 주세요.');
 }
 void init();
 })();

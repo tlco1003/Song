@@ -203,6 +203,6 @@
   }
   switchProduct();
   window.addEventListener('withu:checkout-stage',event=>{
-    if(event.detail?.stage!=='video'&&state.stream)closeCamera(true);
+    if(event.detail?.stage!=='product'&&state.stream)closeCamera(true);
   });
 })();

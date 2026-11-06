@@ -8,8 +8,8 @@
  * a public interface. Do not process real customer PII in this lab.
  */
 import {randomBytes,randomUUID,timingSafeEqual} from 'node:crypto';
-import {realpath,stat} from 'node:fs/promises';
-import {resolve,sep,extname,basename} from 'node:path';
+import {realpath,stat,mkdir,writeFile} from 'node:fs/promises';
+import {resolve,sep,extname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {prepareServerOrderDraft} from './order-draft-preparation.mjs';
 import {validateCheckoutDeliveryContact} from './customer-notification-contact.mjs';
@@ -97,6 +97,25 @@ export function createLocalStagingGateway({
  }
  return Object.freeze({
   verifyAdmin:requireAdmin,
+  async uploadTestAudio({adminKey:admin,fileName,data}={}){
+   requireAdmin(admin);
+   if(typeof fileName!=='string'||!FILE.test(fileName)
+     ||!Buffer.isBuffer(data)||data.length<44||data.length>25*1024*1024)
+    throw new Error('Only an uploaded MP3, M4A or WAV under 25 MB is accepted');
+   const ext=extname(fileName).toLowerCase();
+   const signature=ext==='.wav'?
+    data.toString('ascii',0,4)==='RIFF'&&data.toString('ascii',8,12)==='WAVE':
+    ext==='.m4a'?data.toString('ascii',4,8)==='ftyp':
+    data.toString('ascii',0,3)==='ID3'||(
+      data[0]===255&&(data[1]&224)===224
+    );
+   if(!signature)throw new Error('Uploaded audio does not match its file extension');
+   await mkdir(dir,{recursive:true,mode:0o700});
+   const storedFile='staging_'+randomUUID()+ext;
+   await writeFile(resolve(dir,storedFile),data,{flag:'wx',mode:0o600});
+   return {fileName:storedFile,status:'STAGING_AUDIO_STORED_PRIVATELY',
+     originalFileExcludedFromPublicRepo:true};
+  },
   async createTestOrder({draft,contact,adminKey:admin}={}){
    requireAdmin(admin);
    const prepared=prepareServerOrderDraft(draft);

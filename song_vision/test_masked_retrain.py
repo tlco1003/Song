@@ -73,6 +73,19 @@ class MaskedTrainingResearchTests(unittest.TestCase):
             self.assertTrue(checkpoint.with_suffix(".report.json").is_file())
             model = load_masked_model(checkpoint)
             self.assertIsInstance(model, MaskedSingingMouthNet)
+            source_bytes = checkpoint.read_bytes()
+            with self.assertRaises(FileExistsError):
+                masked_retrain(dataset, checkpoint, epochs=1, batch_size=8, seed=17)
+            next_checkpoint = root / "warm-start-research.pt"
+            warm_report = masked_retrain(
+                dataset, next_checkpoint, epochs=1, batch_size=8,
+                seed=17, init_checkpoint=checkpoint)
+            self.assertTrue(warm_report["warmStartedFromPriorWeights"])
+            self.assertFalse(warm_report["optimizerStateRestored"])
+            self.assertTrue(next_checkpoint.is_file())
+            self.assertEqual(checkpoint.read_bytes(), source_bytes)
+            self.assertIsInstance(load_masked_model(next_checkpoint),
+                                  MaskedSingingMouthNet)
 
 
 if __name__ == "__main__":

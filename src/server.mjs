@@ -337,7 +337,7 @@ async function handle(req,res,customerAccess,staging,notificationEvents){
       });
     }
     if(req.method==='POST'&&pathname==='/api/delivery/resolve'){
-      sameOriginPost(req);limited(req,20);
+      sameOriginPost(req);limited(req,localStagingAvailable?120:20);
       if(typeof customerAccess?.resolvePrivateDelivery!=='function')
         throw new AppError(503,'인증된 고객 음원 전달 서버는 아직 연결되지 않았습니다.');
       const input=await jsonBody(req,1024);

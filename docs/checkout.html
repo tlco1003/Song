@@ -10,8 +10,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="checkout.css?v=20261106-verse-promo-04">
-<script defer src="checkout.js?v=20261106-verse-promo-04"></script>
+<link rel="stylesheet" href="checkout.css?v=20261106-upsell-05">
+<script defer src="checkout.js?v=20261106-upsell-05"></script>
 <script defer src="checkout-media.js?v=20261106-streamlined-02"></script>
 </head>
 <body>
@@ -35,12 +35,12 @@
     <label class="gift-choice active" for="product-audio">
      <input type="radio" id="product-audio" name="product" value="audio" checked>
      <span class="choice-body"><strong>맞춤 노래 1곡 <em class="choice-highlight">출시 특가세일</em></strong><small>맞춤 가사 + MP3 음원 1곡 · 다운로드 제공</small></span>
-     <span class="choice-side" data-price-for="audio">가격 확인 중</span>
+     <span class="choice-side" data-price-for="audio">가격 확인 중</span><small data-promo-for="audio" class="verified-price-promotion" hidden></small>
     </label>
     <label class="gift-choice" for="product-audio-duo">
      <input type="radio" id="product-audio-duo" name="product" value="audio_duo">
      <span class="choice-body"><strong>맞춤 노래 2곡 <em class="choice-highlight">출시 특가세일</em></strong><small>맞춤 가사 + 서로 다른 MP3 음원 2곡 · <s>개별 구매 58,000원</s> → 39,000원 (19,000원 절약)</small></span>
-     <span class="choice-side" data-price-for="audio_duo">가격 확인 중</span>
+     <span class="choice-side" data-price-for="audio_duo">가격 확인 중</span><small data-promo-for="audio_duo" class="verified-price-promotion" hidden></small>
     </label>
     <label class="gift-choice" for="product-video">
      <input type="radio" id="product-video" name="product" value="audio_video">
@@ -86,6 +86,17 @@
     <small>한 번 더 추억을 담아 1절·2절·3절로 완성해요. 2곡이어도 추가금은 주문당 한 번만 적용돼요.</small>
     <small>음악 길이는 장르·편곡에 따라 달라지며 특정 분량을 보장하지 않아요.</small></span>
    </label>
+   <label class="genre-blend-toggle dedication-toggle" for="dedication-outro">
+    <input type="checkbox" id="dedication-outro">
+    <span><strong>마지막에 전하는 한마디 <em>+5,000원</em></strong>
+    <small>직접 적은 한마디를 노래 마지막의 별도 헌정 엔딩(2~4행)에 담아요.</small>
+    <small>2곡 상품도 추가금은 주문당 한 번만 적용돼요.</small></span>
+   </label>
+   <div id="dedication-text-wrap" class="dedication-text-wrap" hidden>
+    <label for="dedication-text">노래 마지막에 꼭 넣을 말 <span>(4~70자)</span></label>
+    <input id="dedication-text" maxlength="70" autocomplete="off" placeholder="예: 엄마, 내 모든 계절에 함께해 줘서 고마워요">
+    <p class="small-explain">이 문장을 가사에 그대로 반영합니다. 실제 보컬 발음과 길이는 생성 결과에 따라 달라질 수 있어요.</p>
+   </div>
    <div class="order-price-live" role="status" aria-live="polite"><span>선택한 구성 금액</span><strong id="selection-total">가격 확인 중</strong><small id="selection-addon">장르 혼합은 선택 사항이에요.</small></div>
    <p class="small-explain">음악 생성 과정에서 여러 후보가 나오더라도, 구매한 곡 수만큼 최종 완성곡을 선택해 전달해요.</p>
   </div>
@@ -155,6 +166,7 @@
     <div><dt>선택한 상품</dt><dd id="order-product"></dd></div>
     <div><dt>완성곡별 장르</dt><dd id="order-song-genres" class="order-song-genres"></dd></div>
     <div><dt>가사 구성</dt><dd id="order-verse-selection"></dd></div>
+    <div><dt>마지막 헌정 한마디</dt><dd id="order-dedication"></dd></div>
    </dl>
    <p id="order-style" hidden></p>
    <div class="price-row"><span>결제 예정 금액</span><strong id="order-price">가격 확인 중</strong></div>

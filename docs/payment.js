@@ -57,12 +57,19 @@ async function init(){
     ||!draft.genreSelection.genres.every(g=>allowed.has(g))
     ||catalog.addOns?.genreBlend?.amountKrw!==5000
     ||catalog.addOns?.thirdVerse?.amountKrw!==10000
-    ||(draft.thirdVerse!==undefined&&typeof draft.thirdVerse!=='boolean'))throw Error('invalid selection');
+    ||catalog.addOns?.dedicationOutro?.amountKrw!==5000
+    ||(draft.thirdVerse!==undefined&&typeof draft.thirdVerse!=='boolean')
+    ||(draft.dedicationOutro!==undefined&&typeof draft.dedicationOutro!=='boolean'))throw Error('invalid selection');
+  if(draft.dedicationOutro===true){
+   const text=String(draft.dedicationText||'').trim().replace(/\s+/g,' ');
+   if(text.length<4||text.length>70||/[<>\r\n\u0000-\u001f]/u.test(text))throw Error('invalid dedication');
+  }else if(String(draft.dedicationText||'').trim())throw Error('orphan dedication');
   const mode=draft.genreSelection.mode,g=draft.genreSelection.genres;
   if(!(expectedCount===1?['single','blend'].includes(mode):['same','different','blend'].includes(mode))
     ||(mode==='blend'&&!(g.length===2&&g[0]!==g[1])))throw Error('invalid genre mode');
   const total=chosen.amountKrw+(mode==='blend'?catalog.addOns.genreBlend.amountKrw:0)
-   +(draft.thirdVerse===true?catalog.addOns.thirdVerse.amountKrw:0);
+   +(draft.thirdVerse===true?catalog.addOns.thirdVerse.amountKrw:0)
+   +(draft.dedicationOutro===true?catalog.addOns.dedicationOutro.amountKrw:0);
   $('payment-price').textContent=won.format(total)+(chosen.priceKind==='starting_at'?'부터':'');
   $('payment-quote-notice').hidden=!chosen.quoteRequired;
   if(chosen.quoteRequired){

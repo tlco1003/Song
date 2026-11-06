@@ -294,3 +294,18 @@
 .checkout-flow .promotion-note #verified-promotion-claim{color:#9e587c;font-weight:700}
 .checkout-flow .third-verse-toggle{margin-top:22px;background:#fffdfb}
 .checkout-flow .third-verse-toggle:has(input:checked){box-shadow:0 0 0 1px #ae8a9d}
+
+/* Verified price comparisons are deliberately hidden until evidence approval. */
+.checkout-flow .gift-choice .verified-price-promotion{
+ flex-basis:100%;font-size:11px;line-height:1.5;color:#9c617e;
+ text-align:right;font-weight:600
+}
+.checkout-flow .dedication-toggle{margin-top:12px;background:#fffdfb}
+.checkout-flow .dedication-text-wrap{padding:8px 16px 15px;border:1px solid #e5d5dd;
+ border-radius:11px;margin:0 0 18px;background:#fffefa}
+.checkout-flow .dedication-text-wrap[hidden]{display:none}
+.checkout-flow .dedication-text-wrap>label{display:block;margin:10px 0;color:#594258;font-weight:700;font-size:13px}
+.checkout-flow .dedication-text-wrap>label span{font-weight:400;color:#a07d91}
+.checkout-flow .dedication-text-wrap input{box-sizing:border-box;width:100%;border:1px solid #dccbd4;
+ border-radius:9px;padding:13px 12px;font-size:15px;background:white;color:#453543}
+.checkout-flow .dedication-text-wrap input:focus{outline:2px solid #a47f94;outline-offset:2px}

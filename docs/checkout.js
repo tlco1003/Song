@@ -31,16 +31,25 @@ function thirdVerseFee(){
  if(prices?.addOns?.thirdVerse?.amountKrw!==10000)return null;
  return $('third-verse').checked?10000:0;
 }
-function totalText(){
- const product=selectedPrice(),mix=mixFee(),verse=thirdVerseFee();
- if(!product||mix===null||verse===null)return '가격 확인 중';
- return won.format(product.amountKrw+mix+verse)+(product.priceKind==='starting_at'?'부터':'');
+function dedicationFee(){
+ if(prices?.addOns?.dedicationOutro?.amountKrw!==5000)return null;
+ return $('dedication-outro').checked?5000:0;
 }
-function validPromotion(){
- const p=prices?.promotion;
- return p?.comparisonPriceVerified===true&&typeof p.comparisonEvidenceId==='string'
-  &&p.comparisonEvidenceId.trim().length>0
-  &&p.plannedRegularPriceKrw===100000;
+function totalText(){
+ const product=selectedPrice(),mix=mixFee(),verse=thirdVerseFee(),dedication=dedicationFee();
+ if(!product||mix===null||verse===null||dedication===null)return '가격 확인 중';
+ return won.format(product.amountKrw+mix+verse+dedication)+(product.priceKind==='starting_at'?'부터':'');
+}
+function promotionFor(productId){
+ const promotion=prices?.promotion;
+ const comparison=promotion?.plannedRegularPricesKrw?.[productId];
+ const evidence=promotion?.comparisonEvidenceByProduct?.[productId];
+ if(promotion?.comparisonPriceVerified!==true||!promotion?.comparisonEvidenceId?.trim()
+  ||!evidence?.trim()||!Number.isSafeInteger(comparison)||comparison<=0)
+  return null;
+ const current=prices?.products.find(x=>x.id===productId)?.amountKrw;
+ if(!Number.isSafeInteger(current)||current>=comparison)return null;
+ return {regular:comparison,discountRate:Math.round((1-current/comparison)*1000)/10};
 }
 function showPrices(){
  for(const node of document.querySelectorAll('[data-price-for]')){
@@ -51,13 +60,18 @@ function showPrices(){
  const extras=[];
  if(mixFee()===5000)extras.push('장르 믹스 +5,000원');
  if(thirdVerseFee()===10000)extras.push('3절 확장 +10,000원');
+ if(dedicationFee()===5000)extras.push('헌정 엔딩 +5,000원');
  $('selection-addon').textContent=extras.length?extras.join(' · ')+' 포함':'필요할 때만 옵션을 추가할 수 있어요.';
- $('verified-promotion-claim').hidden=!validPromotion();
- if(validPromotion()){
-  const base=selectedPrice()?.amountKrw;
-  const off=Math.round((100000-base)/100000*100);
-  $('verified-promotion-claim').textContent='입증된 정상가 100,000원 대비 기본 상품 '+off+'% 할인';
+ const discountMessages=[];
+ for(const node of document.querySelectorAll('[data-promo-for]')){
+  const claim=promotionFor(node.dataset.promoFor);
+  node.hidden=!claim;
+  node.textContent=claim?
+   '검증된 정상가 '+won.format(claim.regular)+' 대비 '+claim.discountRate+'% 할인':'';
+  if(claim)discountMessages.push(node.textContent);
  }
+ $('verified-promotion-claim').hidden=!discountMessages.length;
+ $('verified-promotion-claim').textContent=discountMessages.join(' · ');
  $('order-pricing-notice').textContent=selectedPrice()?.quoteRequired?
   '뮤직비디오는 시작가입니다. 길이와 편집·수정 범위에 따라 개별 견적을 먼저 확정합니다.':
   (extras.length?extras.join(' · ')+' 포함 · ':'')+'맞춤 가사와 MP3 음원을 함께 제공해요.';
@@ -108,6 +122,8 @@ function saveChoices(){
    sharedStyleNotes:'',
    singleGenreBlend:$('single-genre-blend').checked,
    thirdVerse:$('third-verse').checked,
+   dedicationOutro:$('dedication-outro').checked,
+   dedicationText:$('dedication-outro').checked?$('dedication-text').value.trim():'',
    duoGenreChoice:{
      mode:document.querySelector('input[name="duoGenreMode"]:checked')?.value||'same',
      first:$('song-genre-first').value,second:$('song-genre-second').value
@@ -171,6 +187,8 @@ function updateReview(){
   summaryValue('eraPreference',draft?.eraPreference);
  $('order-product').textContent=selectedPrice()?.name||'상품 선택';
  $('order-verse-selection').textContent=$('third-verse').checked?'3절까지 확장 (+10,000원)':'기본 가사 구성';
+ $('order-dedication').textContent=$('dedication-outro').checked?
+  '헌정 엔딩 (+5,000원) · '+$('dedication-text').value.trim():'선택 안 함';
  $('order-style').textContent='';
  try{$('order-song-genres').textContent=genreLabels(genreSelection()).join('\n');}
  catch(e){$('order-song-genres').textContent=e.message;}
@@ -214,6 +232,13 @@ function canAdvance(){
   try{genreSelection();}
   catch(e){error(e.message);return false;}
  }
+ if($('dedication-outro').checked){
+  const text=$('dedication-text').value.trim().replace(/\s+/g,' ');
+  if(text.length<4||text.length>70||/[<>\r\n\u0000-\u001f]/u.test(text)){
+   error('헌정 엔딩에 넣을 한마디를 4~70자로 적어 주세요.');
+   return false;
+  }
+ }
  if(!saveChoices())return false;
  return true;
 }
@@ -236,7 +261,9 @@ $('go-payment').addEventListener('click',async event=>{
   location.assign(target);
   return;
  }
- const payload={selectedProduct:chosenProduct(),genreSelection:genreSelection(),thirdVerse:$('third-verse').checked,story:draft.story};
+ const payload={selectedProduct:chosenProduct(),genreSelection:genreSelection(),thirdVerse:$('third-verse').checked,
+  dedicationOutro:$('dedication-outro').checked,
+  dedicationText:$('dedication-outro').checked?$('dedication-text').value.trim():'',story:draft.story};
  $('go-payment').setAttribute('aria-busy','true');
  try{
   // A properly deployed private server prepares encrypted instructions.
@@ -271,6 +298,12 @@ for(const control of document.querySelectorAll('input[name="duoGenreMode"]'))
  control.addEventListener('change',renderGenres);
 $('single-genre-blend').addEventListener('change',renderGenres);
 $('third-verse').addEventListener('change',()=>{saveChoices();showPrices();});
+$('dedication-outro').addEventListener('change',()=>{
+ $('dedication-text-wrap').hidden=!$('dedication-outro').checked;
+ if(!$('dedication-outro').checked)$('dedication-text').value='';
+ saveChoices();showPrices();
+});
+$('dedication-text').addEventListener('input',()=>{saveChoices();});
 for(const id of ['song-genre-first','song-genre-second'])
  $(id).addEventListener('change',renderGenres);
 
@@ -285,6 +318,7 @@ async function loadPrices(){
   const result=await response.json();
   if(result.version!==1||result.currency!=='KRW'||result.addOns?.genreBlend?.amountKrw!==5000
     ||result.addOns?.thirdVerse?.amountKrw!==10000
+    ||result.addOns?.dedicationOutro?.amountKrw!==5000
     ||!Array.isArray(result.products)
     ||!['audio','audio_duo','audio_video'].every(id=>result.products.some(x=>x.id===id&&Number.isSafeInteger(x.amountKrw)&&x.amountKrw>0)))
     throw Error('Incomplete price list');
@@ -331,6 +365,9 @@ async function loadGenres(){
   if(old?.mode==='blend')$('duo-mode-blend').checked=true;
   $('single-genre-blend').checked=draft?.genreSelection?.mode==='blend'||draft?.singleGenreBlend===true;
   $('third-verse').checked=draft?.thirdVerse===true;
+  $('dedication-outro').checked=draft?.dedicationOutro===true;
+  $('dedication-text').value=typeof draft?.dedicationText==='string'?draft.dedicationText.slice(0,70):'';
+  $('dedication-text-wrap').hidden=!$('dedication-outro').checked;
   $('song-shared-notes').value='';
   renderGenres();
  }catch(_){

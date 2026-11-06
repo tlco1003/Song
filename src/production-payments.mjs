@@ -1,4 +1,5 @@
 /** Server-owned PG amount, paid status and 10,000 KRW upgrade. */
+import {randomUUID} from 'node:crypto';
 import {prepareServerOrderDraft} from './order-draft-preparation.mjs';
 import {validateCheckoutDeliveryContact} from './customer-notification-contact.mjs';
 import {makeTossPaymentAdapter} from './toss-payment-adapter.mjs';
@@ -49,7 +50,8 @@ async function confirmPayment(req,db,env,fetcher,upgrade=false){
  let receipt;
  try{
   receipt=await provider.confirm({
-   paymentKey:key,orderId:id,amountKrw:upgrade?UPGRADE_PRICE:original.amountKrw
+   paymentKey:key,orderId:id,amountKrw:upgrade?UPGRADE_PRICE:original.amountKrw,
+   idempotencyKey:original.confirmationKey
   });
  }catch(err){
   // A timeout may occur after a real charge. Recover by querying the
@@ -137,6 +139,7 @@ export async function handleProductionPayments(req,res,{db,env,fetcher}){
    genreSelection:draft.genreSelection,
    draft,contact,amountKrw:quote.amountKrw,currency:'KRW',
    state:'payment_pending',paymentStatus:'pending',
+   confirmationKey:randomUUID(),
    paymentVerifiedAt:null,confirmLockUntil:0,
    production:{status:'not_started',attempts:0},
    tracks:[],delivery:{status:'not_sent'},
@@ -165,7 +168,8 @@ export async function handleProductionPayments(req,res,{db,env,fetcher}){
   const id=makeProductionId('upg');
   await db.collection('withuUpgradeIntents').doc(id).create({
    id,originalOrderId:order.id,amountKrw:UPGRADE_PRICE,
-   currency:'KRW',paymentStatus:'pending',createdAt:now(),confirmLockUntil:0
+   currency:'KRW',paymentStatus:'pending',createdAt:now(),confirmLockUntil:0,
+   confirmationKey:randomUUID()
   });
   respond(res,200,{status:'checkout_ready',amountKrw:UPGRADE_PRICE,
    checkoutUrl:'/commercial-upgrade/start?intent='+id});

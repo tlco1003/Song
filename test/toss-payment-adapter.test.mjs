@@ -15,7 +15,8 @@ test('server-only Toss adapter confirms with original order amount and non-publi
   }
  });
  const result=await adapter.confirm({
-  paymentKey:'test_payment_key',orderId:'WITHU123',amountKrw:29000
+  paymentKey:'test_payment_key',orderId:'WITHU123',amountKrw:29000,
+  idempotencyKey:'6a183d5a-704a-44c3-a47b-851cc7139d62'
  });
  assert.equal(result.status,'DONE');
  assert.equal(calls[0].url,'https://api.tosspayments.com/v1/payments/confirm');
@@ -23,7 +24,7 @@ test('server-only Toss adapter confirms with original order amount and non-publi
  assert.deepEqual(JSON.parse(calls[0].options.body),{
   paymentKey:'test_payment_key',orderId:'WITHU123',amount:29000
  });
- assert.equal(calls[0].options.headers['Idempotency-Key'],'withu-confirm-WITHU123');
+ assert.equal(calls[0].options.headers['Idempotency-Key'],'6a183d5a-704a-44c3-a47b-851cc7139d62');
  assert.equal(
   calls[0].options.headers.Authorization,
   'Basic '+Buffer.from('test_sk_example_not_live:').toString('base64')
@@ -42,6 +43,7 @@ test('Toss adapter refuses missing keys, malformed payment and PG rejection',asy
   paymentKey:'short',orderId:'WITHU123',amountKrw:29000
  }),/Invalid verified-order/);
  await assert.rejects(adapter.confirm({
-  paymentKey:'test_payment_key',orderId:'WITHU123',amountKrw:1
+  paymentKey:'test_payment_key',orderId:'WITHU123',amountKrw:1,
+  idempotencyKey:'6a183d5a-704a-44c3-a47b-851cc7139d62'
  }),/Toss Payments API rejected/);
 });

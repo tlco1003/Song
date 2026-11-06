@@ -29,14 +29,17 @@ export function makeTossPaymentAdapter({
     return payload;
   }
   return Object.freeze({
-    async confirm({paymentKey,orderId,amountKrw}){
+    async confirm({paymentKey,orderId,amountKrw,idempotencyKey}){
       if(typeof paymentKey!=='string'||paymentKey.length<6
         ||typeof orderId!=='string'||orderId.length<6
         ||!Number.isSafeInteger(amountKrw)||amountKrw<=0)
         throw new Error('Invalid verified-order confirmation arguments');
+      if(typeof idempotencyKey!=='string'
+        ||!/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(idempotencyKey))
+        throw new Error('Payment approval requires a server-owned UUIDv4 idempotency key');
       return request('https://api.tosspayments.com/v1/payments/confirm',{
         method:'POST',
-        headers:{'Idempotency-Key':'withu-confirm-'+orderId},
+        headers:{'Idempotency-Key':idempotencyKey},
         body:JSON.stringify({paymentKey,orderId,amount:amountKrw})
       });
     },

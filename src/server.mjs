@@ -1,7 +1,7 @@
 import http from 'node:http';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {stat} from 'node:fs/promises';
+import {stat,realpath} from 'node:fs/promises';
 import {createReadStream} from 'node:fs';
 import {AppError,validateLyricInput,buildSunoPackage} from './lib.mjs';
 import {makeLyrics,createSunoSong,SUNO_MCP_URL} from './providers.mjs';
@@ -9,6 +9,8 @@ import {generateCoverImage} from './cover-image.mjs';
 import {publicCommerceReadiness,publicPriceCatalog} from './commerce.mjs';
 import {prepareServerOrderDraft} from './order-draft-preparation.mjs';
 import {storePrivateOrderDraft} from './private-draft-store.mjs';
+import {hashPrivateDeliveryToken} from './private-delivery-invitation.mjs';
+import {upgradePriceKrw} from './commercial-rights-upgrade.mjs';
 
 // Single-operator local MVP. Public multi-user deployment requires an
 // authenticated OAuth PKCE flow and per-user Suno credential vault.
@@ -19,6 +21,114 @@ const accessToken=process.env.APP_ACCESS_TOKEN||'';
 const isLocal=['127.0.0.1','localhost','::1'].includes(host);
 if(!isLocal&&!accessToken)throw new Error('APP_ACCESS_TOKEN is required for non-localhost deployments');
 const requests=new Map();
+
+const PRIVATE_SESSION_COOKIE='withu_delivery_session';
+const PRIVATE_SESSION_ID=/^[A-Za-z0-9_-]{43}$/;
+const PRIVATE_ASSET_ID=/^[A-Za-z0-9_-]{16,180}$/;
+const PRIVATE_STREAM_URL=/^\/api\/delivery-assets\/[A-Za-z0-9_-]{16,180}$/;
+const PRIVATE_DOWNLOAD_URL=/^\/api\/delivery-downloads\/[A-Za-z0-9_-]{16,180}$/;
+
+function sameOriginPost(req){
+ if(req.headers['sec-fetch-site']==='cross-site')
+  throw new AppError(403,'다른 사이트에서는 고객 인증을 요청할 수 없습니다.');
+ if(!req.headers.origin)return;
+ let origin;
+ try{origin=new URL(req.headers.origin);}
+ catch(_){throw new AppError(403,'요청 출처가 유효하지 않습니다.');}
+ if(!/^https?:$/.test(origin.protocol)||origin.host!==req.headers.host)
+  throw new AppError(403,'같은 사이트의 요청만 허용합니다.');
+}
+function customerSession(req){
+ const cookies=typeof req.headers.cookie==='string'?req.headers.cookie.split(';'):[];
+ const item=cookies.map(s=>s.trim()).find(x=>x.startsWith(PRIVATE_SESSION_COOKIE+'='));
+ const session=item?.slice(PRIVATE_SESSION_COOKIE.length+1)||'';
+ if(!PRIVATE_SESSION_ID.test(session))throw new AppError(401,'인증된 고객 전용 링크가 필요합니다.');
+ return session;
+}
+function safePrivateTrack(track,commercialActive){
+ if(!track||typeof track.title!=='string'||track.title.length>180
+  ||typeof track.file!=='string'||!/^[A-Za-z0-9_.-]{1,110}$/.test(track.file)
+  ||typeof track.privateMediaUrl!=='string'||!PRIVATE_STREAM_URL.test(track.privateMediaUrl)
+  ||typeof track.genre!=='string'||track.genre.length>90)
+  throw new AppError(503,'비공개 음원 메타데이터가 올바르지 않습니다.');
+ const result={
+  index:track.index,title:track.title,genre:track.genre,
+  file:track.file,mediaKind:track.mediaKind||'audio',
+  productType:track.productType||'audio_with_cover',
+  privateMediaUrl:track.privateMediaUrl
+ };
+ if(typeof track.lyrics==='string'&&track.lyrics.length<=8000)result.lyrics=track.lyrics;
+ if(track.privateAudioUrl&&PRIVATE_STREAM_URL.test(track.privateAudioUrl))
+  result.privateAudioUrl=track.privateAudioUrl;
+ if(commercialActive&&typeof track.privateDownloadUrl==='string'
+  &&PRIVATE_DOWNLOAD_URL.test(track.privateDownloadUrl))
+  result.privateDownloadUrl=track.privateDownloadUrl;
+ return result;
+}
+async function streamProtectedCustomerMedia(req,res,adapter,kind,ticket){
+ if(req.method!=='GET'&&req.method!=='HEAD')throw new AppError(405,'고객 파일은 읽기 전용입니다.');
+ if(!PRIVATE_ASSET_ID.test(ticket))throw new AppError(400,'올바르지 않은 파일 식별자입니다.');
+ if(typeof adapter?.authorizePrivateAsset!=='function')
+  throw new AppError(503,'비공개 음원 전달 저장소가 연결되지 않았습니다.');
+ const sessionId=customerSession(req);
+ // This trusted adapter MUST revalidate recipient, paid order, selected asset,
+ // session TTL, and (for downloads) separate PG payment and licence proof
+ // on EVERY request. A playback session alone cannot authorize download.
+ const access=await adapter.authorizePrivateAsset({sessionId,ticket,kind,method:req.method});
+ if(access?.authorized!==true||access?.paidOriginalOrderVerified!==true
+  ||access?.recipientVerified!==true
+  ||(kind==='download'&&(
+    access.commercialEntitlementVerified!==true||access.commercialPaymentVerified!==true
+    ||access.commercialRightsVerified!==true
+  )))throw new AppError(403,'이 파일의 접근 권한이 없습니다.');
+ if(typeof process.env.WITHU_PRIVATE_MUSIC_DIR!=='string'
+  ||!process.env.WITHU_PRIVATE_MUSIC_DIR.trim()
+  ||typeof access.filePath!=='string')
+  throw new AppError(503,'비공개 파일 저장 경로가 설정되지 않았습니다.');
+ const root=await realpath(path.resolve(process.env.WITHU_PRIVATE_MUSIC_DIR));
+ const full=await realpath(path.resolve(access.filePath));
+ if(root===appRoot||root.startsWith(appRoot+path.sep)||!full.startsWith(root+path.sep))
+  throw new AppError(403,'웹 공개 경로의 음원은 고객 전용으로 제공할 수 없습니다.');
+ const ext=path.extname(full).toLowerCase();
+ const mime={'.mp3':'audio/mpeg','.m4a':'audio/mp4','.wav':'audio/wav','.mp4':'video/mp4'};
+ if(!mime[ext]||(kind==='download'&&ext==='.mp4'))
+  throw new AppError(403,'해당 형식은 접근할 수 없습니다.');
+ const file=await stat(full);
+ if(!file.isFile()||file.size<=0)throw new AppError(404,'파일을 찾을 수 없습니다.');
+ const header={
+  'Content-Type':mime[ext],
+  'Cache-Control':'private, no-store',
+  'Accept-Ranges':'bytes',
+  'X-Content-Type-Options':'nosniff',
+  'Content-Security-Policy':"default-src 'none'"
+ };
+ if(kind==='download')header['Content-Disposition']='attachment; filename="withu-commercial-track'+ext+'"';
+ const range=typeof req.headers.range==='string'?req.headers.range:'';
+ let start=0,end=file.size-1,status=200;
+ if(range){
+  const match=/^bytes=(\d*)-(\d*)$/.exec(range);
+  if(!match||(!match[1]&&!match[2])){
+   res.writeHead(416,{'Content-Range':'bytes */'+file.size});return res.end();
+  }
+  if(match[1]){
+   start=Number(match[1]);
+   end=match[2]?Number(match[2]):file.size-1;
+  }else{
+   const suffix=Number(match[2]);start=Math.max(0,file.size-suffix);
+  }
+  if(!Number.isSafeInteger(start)||!Number.isSafeInteger(end)
+    ||start<0||end<start||start>=file.size){
+   res.writeHead(416,{'Content-Range':'bytes */'+file.size});return res.end();
+  }
+  end=Math.min(end,file.size-1);status=206;
+  header['Content-Range']='bytes '+start+'-'+end+'/'+file.size;
+ }
+ header['Content-Length']=end-start+1;
+ res.writeHead(status,header);
+ if(req.method==='HEAD')return res.end();
+ createReadStream(full,{start,end}).on('error',()=>res.destroy()).pipe(res);
+}
+
 function json(res,status,body){
   res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});
   res.end(JSON.stringify(body));
@@ -46,7 +156,7 @@ function limited(req,max=15){
   if(++item.count>max)throw new AppError(429,'시간당 생성 요청 한도를 초과했습니다.');
   requests.set(ip,item);
 }
-async function handle(req,res){
+async function handle(req,res,customerAccess){
   harden(res);
   const u=new URL(req.url,'http://'+host+':'+port);
   const pathname=u.pathname;
@@ -77,6 +187,64 @@ async function handle(req,res){
       return json(res,201,{
         draftId:stored.id,expiresAt:stored.expiresAt,status:'pending_payment'
       });
+    }
+
+    if(req.method==='POST'&&pathname==='/api/delivery/resolve'){
+      sameOriginPost(req);limited(req,20);
+      if(typeof customerAccess?.resolvePrivateDelivery!=='function')
+        throw new AppError(503,'인증된 고객 음원 전달 서버는 아직 연결되지 않았습니다.');
+      const input=await jsonBody(req,1024);
+      const hash=hashPrivateDeliveryToken(input?.token);
+      const result=await customerAccess.resolvePrivateDelivery({tokenHash:hash});
+      if(result?.verifiedOriginalPayment!==true||result?.verifiedRecipient!==true
+        ||result?.status!=='delivered'||!PRIVATE_SESSION_ID.test(result.sessionId)
+        ||!Array.isArray(result.tracks)||result.tracks.length<1||result.tracks.length>2)
+        throw new AppError(403,'해당 전용 링크의 주문과 수령자를 확인할 수 없습니다.');
+      const right=result.commercialUpgrade||{status:'unavailable'};
+      const commercialActive=right.status==='active'&&right.paymentVerified===true
+        &&right.rightsVerified===true&&right.amountKrw===upgradePriceKrw();
+      const available=right.status==='available'&&right.rightsVerified===true
+        &&right.amountKrw===upgradePriceKrw();
+      const tracks=result.tracks.map(song=>safePrivateTrack(song,commercialActive));
+      res.setHeader('Set-Cookie',PRIVATE_SESSION_COOKIE+'='+result.sessionId+
+        '; HttpOnly; Path=/api; Max-Age=1800; SameSite=Strict'+
+        (process.env.NODE_ENV==='production'?'; Secure':''));
+      return json(res,200,{
+        status:'delivered',track:tracks[0],tracks,
+        commercialUpgrade:commercialActive?
+          {status:'active',rightsVerified:true,paymentVerified:true,amountKrw:10000}:
+          available?{status:'available',rightsVerified:true,amountKrw:10000}:
+          {status:'unavailable',amountKrw:10000}
+      });
+    }
+    if(req.method==='POST'&&pathname==='/api/commerce/commercial-upgrade/checkout'){
+      sameOriginPost(req);limited(req,8);
+      if(typeof customerAccess?.beginCommercialCheckout!=='function')
+        throw new AppError(503,'상업적 이용권 결제는 아직 연결되지 않았습니다.');
+      const sessionId=customerSession(req);
+      const body=await jsonBody(req,1024);
+      const tokenHash=hashPrivateDeliveryToken(body?.deliveryToken);
+      // The adapter verifies original order, visitor, recording provenance,
+      // licence authority, a separate pending PG intent and a fixed KRW price.
+      const result=await customerAccess.beginCommercialCheckout({
+        sessionId,tokenHash,amountKrw:upgradePriceKrw()
+      });
+      const target=typeof result?.checkoutUrl==='string'?
+        new URL(result.checkoutUrl,'http://'+req.headers.host):null;
+      if(result?.verifiedRights!==true||result?.originalPaymentVerified!==true
+        ||result?.amountKrw!==10000||result?.status!=='checkout_ready'
+        ||!target||target.host!==req.headers.host
+        ||!target.pathname.startsWith('/commercial-upgrade/'))
+        throw new AppError(503,'비공개 상업적 이용권 결제 검증에 실패했습니다.');
+      return json(res,200,{status:'checkout_ready',amountKrw:10000,
+        checkoutUrl:target.pathname+target.search});
+    }
+    if(pathname.startsWith('/api/delivery-assets/')||
+       pathname.startsWith('/api/delivery-downloads/')){
+      const kind=pathname.startsWith('/api/delivery-downloads/')?'download':'playback';
+      const ticket=pathname.slice(kind==='download'?'/api/delivery-downloads/'.length:
+        '/api/delivery-assets/'.length);
+      return streamProtectedCustomerMedia(req,res,customerAccess,kind,ticket);
     }
     if(pathname==='/api/commerce/orders'||pathname.startsWith('/api/commerce/orders/'))
       throw new AppError(503,'자동 음악 제작·결제·이메일 발송 서비스는 준비 중이며 현재 주문을 받지 않습니다.');
@@ -219,8 +387,8 @@ async function handle(req,res){
   createReadStream(full).on('error',()=>res.destroy()).pipe(res);
   return;
 }
-export function createApp(){
-  return http.createServer((req,res)=>{void handle(req,res).catch(error=>{
+export function createApp({customerAccess=null}={}){
+  return http.createServer((req,res)=>{void handle(req,res,customerAccess).catch(error=>{
     if(!res.headersSent)json(res,error instanceof AppError?error.status:500,{
       error:error instanceof AppError?error.message:'서버 처리 오류가 발생했습니다.'
     });else res.destroy();

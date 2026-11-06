@@ -1,0 +1,59 @@
+{
+  "bestEpoch": 6,
+  "bestMetrics": {
+    "audioMotionSensitivity": 0.049335,
+    "cheeksMAE": 0.0277779,
+    "copyReferenceMouthMAE": 0.0553422,
+    "correctVsShiftedAudioGain": 0.0337677,
+    "epoch": 6,
+    "eyesBrowMAE": 0.0666218,
+    "lipJawMAE": 0.1066724,
+    "motionMAE": 0.0848568,
+    "mouthMAE": 0.075134,
+    "staticNeutralMAE": 0.0855572,
+    "temporalDeltaMAE": 0.0332079,
+    "trainLoss": 0.0754258
+  },
+  "commercialUseAllowed": false,
+  "customerJobReady": false,
+  "diagnosticFlags": [
+    "WORSE_THAN_COPY_MOUTH"
+  ],
+  "encryptedCheckpoint": "song-face-articulation-v10-run-42246223261-a1.svault",
+  "encryptedFileSha256": "2894b5a2f9189dc188175391f4489cfd6a395e55b186363170e0a1aa43ac0d76",
+  "encryptedResearchModelRetained": true,
+  "epochsCompleted": 8,
+  "expressionCategoryCount": 26,
+  "featureCount": 12,
+  "labelCounts": {
+    "train": {
+      "total": 3000,
+      "valid": 3000
+    },
+    "val": {
+      "total": 1500,
+      "valid": 1500
+    }
+  },
+  "privateKeyIncluded": false,
+  "runId": "42246223261",
+  "source": "https://zenodo.org/records/1188976",
+  "sourceMd5Verified": {
+    "01": "0f7ba20f3a7278d5a662a7e30f44c942",
+    "02": "8e426ef4134abe1dff4d2a8262abe8a9",
+    "03": "2d686591f8760f8041d2dc75e8234828"
+  },
+  "sourceSingerMediaIncluded": false,
+  "study": "multisignal_eyes_cheeks_jaw_perioral_temporal_voice_v10",
+  "trainActors": [
+    "01",
+    "02"
+  ],
+  "trainClips": 40,
+  "trainSamples": 2960,
+  "unseenValidationActors": [
+    "03"
+  ],
+  "valClips": 20,
+  "valSamples": 1480
+}

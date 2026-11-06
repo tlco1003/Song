@@ -30,7 +30,9 @@ function serverAmount(order){
   if(!Number.isSafeInteger(amount)||amount<=0||order.currency!=='KRW')
     throw new Error('Missing server-owned KRW amount');
   const quote=quoteOrderAmount({productId:order.productId,genreSelection:order.genreSelection,
-   thirdVerse:order.thirdVerse??false});
+   thirdVerse:order.thirdVerse??false,
+   dedicationOutro:order.dedicationOutro??false,
+   dedicationText:order.dedicationText??''});
   if(quote.priceKind==='fixed'&&amount!==quote.amountKrw)
     throw new Error('Stored price differs from server catalog and selected genre blend');
   if(quote.priceKind==='starting_at'){

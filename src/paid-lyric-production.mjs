@@ -23,6 +23,9 @@ export async function generatePaidOrderLyrics({
   throw new Error('Customer genre choice changed after draft was saved');
  if((privateDraft.thirdVerse===true)!==(order.thirdVerse===true))
   throw new Error('Customer third verse option differs from paid order');
+ if((privateDraft.dedicationOutro===true)!==(order.dedicationOutro===true)
+   ||String(privateDraft.dedicationText||'')!==String(order.dedicationText||''))
+  throw new Error('Customer dedication differs from paid order');
  if(typeof lyricProvider!=='function'||typeof orders?.storeGeneratedLyricsAtomic!=='function')
   throw new Error('Trusted lyric provider and transactional order adapter required');
  const lyrics=await lyricProvider({
@@ -34,6 +37,11 @@ export async function generatePaidOrderLyrics({
  if(privateDraft.thirdVerse===true&&
    !(['1','2','3'].every(n=>new RegExp('\\[Verse\\s*'+n+'\\]','i').test(lyrics))))
   throw new Error('Paid third verse requires three distinct Verse sections');
+ if(privateDraft.dedicationOutro===true&&
+  (!/\[Outro\]/i.test(lyrics)
+   ||!lyrics.includes(privateDraft.dedicationText)
+   ||lyrics.lastIndexOf(privateDraft.dedicationText)<lyrics.indexOf('[Chorus]')))
+  throw new Error('Paid dedication requires a verified ending containing the customer phrase');
  const result=await orders.storeGeneratedLyricsAtomic({
   orderId:order.id,expectedState:ORDER_STATES.PAID,
   boundDraftId:order.privateDraftId,

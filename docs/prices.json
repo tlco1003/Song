@@ -44,6 +44,14 @@
       "priceKind": "fixed",
       "chargeUnit": "per_order",
       "description": "하나의 공통 사연을 1절·2절·3절로 완성. 2곡 상품에도 한 번만 부과."
+    },
+    "dedicationOutro": {
+      "id": "dedication_outro",
+      "name": "마지막 헌정 한마디",
+      "amountKrw": 5000,
+      "priceKind": "fixed",
+      "chargeUnit": "per_order",
+      "description": "고객이 직접 쓴 한마디를 마지막 헌정 엔딩 [Outro]에 원문 그대로 반영하는 가사 확장. 2곡에도 주문당 1회 부과."
     }
   },
   "promotion": {
@@ -51,6 +59,14 @@
     "plannedRegularPriceKrw": 100000,
     "comparisonPriceVerified": false,
     "comparisonEvidenceId": null,
-    "description": "10만 원은 사업자의 향후 일반가격 계획으로만 저장. 실제 정상가 판매 근거 검증·승인 전에는 취소선 및 할인율 미노출."
+    "description": "사업자 제안 정상가(1곡 10만 원, 2곡 20만 원)는 증빙 전 내부 계획값이다. 실제 비교가격 증빙과 법무 승인 전에는 정상가 취소선·71%/80.5% 할인율을 고객에게 표시하지 않는다.",
+    "plannedRegularPricesKrw": {
+      "audio": 100000,
+      "audio_duo": 200000
+    },
+    "comparisonEvidenceByProduct": {
+      "audio": null,
+      "audio_duo": null
+    }
   }
 }

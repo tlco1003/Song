@@ -95,3 +95,22 @@ test('homepage advances automatically with precise cues first and duration fallb
  assert.match(player,/audio\.addEventListener\('timeupdate'/);
  assert.doesNotMatch(player,/가사 시간 정보가 없어 자동 이동하지 않아요/);
 });
+
+test('mother song has an isolated 1-second lyric delay and no other song changes',()=>{
+ const manifest=JSON.parse(read('docs/media/tracks.json'));
+ assert.equal(manifest.tracks.find(t=>t.id==='song-mother').lyricsOffsetSeconds,1);
+ assert.ok(manifest.tracks.filter(t=>t.id!=='song-mother').every(t=>!Object.hasOwn(t,'lyricsOffsetSeconds')));
+ const d=436.8,n=60,intro=Math.min(14,Math.max(4,d*0.035));
+ assert.equal(approximateLyricIndexAt(n,intro+0.99,d,1),-1);
+ assert.equal(approximateLyricIndexAt(n,intro+1,d,1),0);
+ for(const t of [intro+8,intro+100,intro+190])
+  assert.equal(approximateLyricIndexAt(n,t+1,d,1),approximateLyricIndexAt(n,t,d,0));
+ const exact=[12,15.5,20];
+ assert.equal(cueIndexAt(exact,16-1),1);
+ assert.equal(cueIndexAt(exact,15.4-1),0);
+ const player=read('docs/player.js');
+ assert.match(player,/currentTime-offset/);
+ assert.match(player,/t\.lyricsOffsetSeconds/);
+ assert.match(player,/approximateLyricIndexAt\(visibleLyrics\.length,playbackPlayer\.currentTime,duration,offset\)/);
+ assert.match(player,/else setActiveLine\(-1\)/);
+});

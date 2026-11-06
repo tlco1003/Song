@@ -136,6 +136,16 @@ function saveChoices(){
  }catch(_){error('현재 브라우저에서 주문 내용 임시 저장을 할 수 없어요.');return false;}
 }
 function renderGenres(){
+ const relation=draft?.story?.relativePosition;
+ const contextByRelation={
+  family:'미처 다 전하지 못한 고마움을 마지막에 담아 보세요.',
+  friend:'친구와 나만 아는 추억을 마지막에 남겨 보세요.',
+  lover:'둘만의 약속이나 애틋한 마음을 한마디로 남겨 보세요.',
+  spouse:'함께 걸어온 시간에 전하는 한마디를 남겨 보세요.',
+  colleague:'함께한 시간에 대한 응원의 한마디를 남겨 보세요.',
+  mentor:'전하지 못했던 존경과 감사의 한마디를 남겨 보세요.'
+ };
+ $('dedication-context').textContent=contextByRelation[relation]||'소중한 사람에게 기억될 한마디를 남겨 보세요.';
  const duo=chosenProduct()==='audio_duo';
  $('video-inline-options').hidden=chosenProduct()!=='audio_video';
  const mode=document.querySelector('input[name="duoGenreMode"]:checked')?.value;

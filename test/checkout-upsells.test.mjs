@@ -44,6 +44,10 @@ test('all upgrades are optional with a clear final-price calculation and no paym
  assert.match(html,/id="dedication-text" maxlength="70"/);
  assert.match(html,/id="dedication-text-wrap"[^>]*hidden/);
  assert.match(html,/id="order-dedication"/);
+ assert.match(html,/id="dedication-context"/);
+ assert.match(js,/contextByRelation/);
+ assert.match(js,/family:/);
+ assert.match(js,/lover:/);
  assert.match(js,/dedicationOutro:\$\('dedication-outro'\)\.checked/);
  assert.match(js,/dedicationFee\(\)/);
  assert.equal(publicCommerceReadiness().canCharge,false);

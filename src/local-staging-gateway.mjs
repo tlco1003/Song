@@ -153,6 +153,7 @@ export function createLocalStagingGateway({
     const song=songs[i];
     if(!song||typeof song.title!=='string'||!song.title.trim()||song.title.length>100
      ||typeof song.genre!=='string'||song.genre.length>90
+     ||song.genre!==o.draft.songStyles[i]?.genre
      ||typeof song.lyrics!=='string'||song.lyrics.length<12||song.lyrics.length>8000
      ||!/[\p{L}\p{N}]/u.test(song.lyrics))
      throw new Error('Complete and reviewed lyrics and title are required');

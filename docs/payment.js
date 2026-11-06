@@ -55,11 +55,14 @@ async function init(){
   const expectedCount=draft.selectedProduct==='audio_duo'?2:1;
   if(!chosen||!Number.isSafeInteger(chosen.amountKrw)||!lines||lines.length!==expectedCount
     ||!draft.genreSelection.genres.every(g=>allowed.has(g))
-    ||catalog.addOns?.genreBlend?.amountKrw!==5000)throw Error('invalid selection');
+    ||catalog.addOns?.genreBlend?.amountKrw!==5000
+    ||catalog.addOns?.thirdVerse?.amountKrw!==10000
+    ||(draft.thirdVerse!==undefined&&typeof draft.thirdVerse!=='boolean'))throw Error('invalid selection');
   const mode=draft.genreSelection.mode,g=draft.genreSelection.genres;
   if(!(expectedCount===1?['single','blend'].includes(mode):['same','different','blend'].includes(mode))
     ||(mode==='blend'&&!(g.length===2&&g[0]!==g[1])))throw Error('invalid genre mode');
-  const total=chosen.amountKrw+(mode==='blend'?catalog.addOns.genreBlend.amountKrw:0);
+  const total=chosen.amountKrw+(mode==='blend'?catalog.addOns.genreBlend.amountKrw:0)
+   +(draft.thirdVerse===true?catalog.addOns.thirdVerse.amountKrw:0);
   $('payment-price').textContent=won.format(total)+(chosen.priceKind==='starting_at'?'부터':'');
   $('payment-quote-notice').hidden=!chosen.quoteRequired;
   if(chosen.quoteRequired){

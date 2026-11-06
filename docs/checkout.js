@@ -27,10 +27,20 @@ function mixFee(){
  try{return genreSelection().mode==='blend'?fee:0;}
  catch(_){return 0;}
 }
+function thirdVerseFee(){
+ if(prices?.addOns?.thirdVerse?.amountKrw!==10000)return null;
+ return $('third-verse').checked?10000:0;
+}
 function totalText(){
- const product=selectedPrice(),fee=mixFee();
- if(!product||fee===null)return '가격 확인 중';
- return won.format(product.amountKrw+fee)+(product.priceKind==='starting_at'?'부터':'');
+ const product=selectedPrice(),mix=mixFee(),verse=thirdVerseFee();
+ if(!product||mix===null||verse===null)return '가격 확인 중';
+ return won.format(product.amountKrw+mix+verse)+(product.priceKind==='starting_at'?'부터':'');
+}
+function validPromotion(){
+ const p=prices?.promotion;
+ return p?.comparisonPriceVerified===true&&typeof p.comparisonEvidenceId==='string'
+  &&p.comparisonEvidenceId.trim().length>0
+  &&p.plannedRegularPriceKrw===100000;
 }
 function showPrices(){
  for(const node of document.querySelectorAll('[data-price-for]')){
@@ -38,10 +48,19 @@ function showPrices(){
  }
  $('order-price').textContent=totalText();
  $('selection-total').textContent=totalText();
- $('selection-addon').textContent=mixFee()===5000?'장르 믹스 추가금 +5,000원 포함':'장르 믹스는 선택 시 +5,000원';
+ const extras=[];
+ if(mixFee()===5000)extras.push('장르 믹스 +5,000원');
+ if(thirdVerseFee()===10000)extras.push('3절 확장 +10,000원');
+ $('selection-addon').textContent=extras.length?extras.join(' · ')+' 포함':'필요할 때만 옵션을 추가할 수 있어요.';
+ $('verified-promotion-claim').hidden=!validPromotion();
+ if(validPromotion()){
+  const base=selectedPrice()?.amountKrw;
+  const off=Math.round((100000-base)/100000*100);
+  $('verified-promotion-claim').textContent='입증된 정상가 100,000원 대비 기본 상품 '+off+'% 할인';
+ }
  $('order-pricing-notice').textContent=selectedPrice()?.quoteRequired?
   '뮤직비디오는 시작가입니다. 길이와 편집·수정 범위에 따라 개별 견적을 먼저 확정합니다.':
-  (mixFee()===5000?'장르 믹스 +5,000원 포함 · ':'')+'맞춤 가사와 MP3 음원을 함께 제공해요.';
+  (extras.length?extras.join(' · ')+' 포함 · ':'')+'맞춤 가사와 MP3 음원을 함께 제공해요.';
 }
 function error(message){
  $('checkout-message').textContent=message;
@@ -88,6 +107,7 @@ function saveChoices(){
  const next={...draft,selectedProduct:chosenProduct(),genreSelection:selected,
    sharedStyleNotes:'',
    singleGenreBlend:$('single-genre-blend').checked,
+   thirdVerse:$('third-verse').checked,
    duoGenreChoice:{
      mode:document.querySelector('input[name="duoGenreMode"]:checked')?.value||'same',
      first:$('song-genre-first').value,second:$('song-genre-second').value
@@ -150,6 +170,7 @@ function updateReview(){
  $('order-mood-era').textContent=summaryValue('mood',draft?.mood)+' · '+
   summaryValue('eraPreference',draft?.eraPreference);
  $('order-product').textContent=selectedPrice()?.name||'상품 선택';
+ $('order-verse-selection').textContent=$('third-verse').checked?'3절까지 확장 (+10,000원)':'기본 가사 구성';
  $('order-style').textContent='';
  try{$('order-song-genres').textContent=genreLabels(genreSelection()).join('\n');}
  catch(e){$('order-song-genres').textContent=e.message;}
@@ -215,7 +236,7 @@ $('go-payment').addEventListener('click',async event=>{
   location.assign(target);
   return;
  }
- const payload={selectedProduct:chosenProduct(),genreSelection:genreSelection(),story:draft.story};
+ const payload={selectedProduct:chosenProduct(),genreSelection:genreSelection(),thirdVerse:$('third-verse').checked,story:draft.story};
  $('go-payment').setAttribute('aria-busy','true');
  try{
   // A properly deployed private server prepares encrypted instructions.
@@ -249,6 +270,7 @@ for(const radio of document.querySelectorAll('input[name="product"]')){
 for(const control of document.querySelectorAll('input[name="duoGenreMode"]'))
  control.addEventListener('change',renderGenres);
 $('single-genre-blend').addEventListener('change',renderGenres);
+$('third-verse').addEventListener('change',()=>{saveChoices();showPrices();});
 for(const id of ['song-genre-first','song-genre-second'])
  $(id).addEventListener('change',renderGenres);
 
@@ -262,6 +284,7 @@ async function loadPrices(){
   if(!response.ok)throw Error('Prices unavailable');
   const result=await response.json();
   if(result.version!==1||result.currency!=='KRW'||result.addOns?.genreBlend?.amountKrw!==5000
+    ||result.addOns?.thirdVerse?.amountKrw!==10000
     ||!Array.isArray(result.products)
     ||!['audio','audio_duo','audio_video'].every(id=>result.products.some(x=>x.id===id&&Number.isSafeInteger(x.amountKrw)&&x.amountKrw>0)))
     throw Error('Incomplete price list');
@@ -307,6 +330,7 @@ async function loadGenres(){
   if(old?.mode==='different')$('duo-mode-different').checked=true;
   if(old?.mode==='blend')$('duo-mode-blend').checked=true;
   $('single-genre-blend').checked=draft?.genreSelection?.mode==='blend'||draft?.singleGenreBlend===true;
+  $('third-verse').checked=draft?.thirdVerse===true;
   $('song-shared-notes').value='';
   renderGenres();
  }catch(_){

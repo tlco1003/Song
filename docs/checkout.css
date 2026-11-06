@@ -287,3 +287,10 @@
 .checkout-flow .order-price-live>small{flex-basis:100%;font-size:12px;color:#907a88}
 .checkout-flow #song-genre-first-tiles[hidden]{display:none!important}
 .checkout-flow .gift-choice .choice-body s{font-size:11px;color:#a68d99;text-decoration-thickness:1px}
+
+.checkout-flow .promotion-note{margin:14px 0 23px;padding:16px 18px;border:1px solid #ebd4df;border-radius:13px;background:#faf4f7}
+.checkout-flow .promotion-note strong{font-size:13px;color:#80556f;letter-spacing:.03em}
+.checkout-flow .promotion-note p{font-size:12px;line-height:1.75;margin:5px 0 0;color:#756875}
+.checkout-flow .promotion-note #verified-promotion-claim{color:#9e587c;font-weight:700}
+.checkout-flow .third-verse-toggle{margin-top:22px;background:#fffdfb}
+.checkout-flow .third-verse-toggle:has(input:checked){box-shadow:0 0 0 1px #ae8a9d}

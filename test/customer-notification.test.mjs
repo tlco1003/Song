@@ -8,6 +8,7 @@ import {issuePrivateDeliveryInvitation,dispatchPrivateListeningNotification}
  from '../src/private-delivery-invitation.mjs';
 import {createBizgoMobileNotifier,createResendTransactionalMailer}
  from '../src/withu-notification-providers.mjs';
+import {dispatchCompletedMusicToCustomer} from '../src/dispatch-completed-music.mjs';
 
 const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const order={
@@ -210,4 +211,43 @@ test('Resend email adapter uses server key, verified origin and idempotency',asy
  assert.deepEqual(body.to,['buyer@example.test']);
  assert.ok(body.text.includes(invite.deliveryUrl));
  assert.ok(!body.text.includes('RESEND_API_KEY'));
+});
+
+test('fulfilled production order dispatch chooses SMS gateway only after protected token storage',async()=>{
+ const calls=[];
+ const result=await dispatchCompletedMusicToCustomer({
+  order:{...order,deliveryChannel:'sms'},selectedSongs:songs,
+  config:providerConfig,
+  orders:{async saveDeliveryTokenHashAtomic(payload){
+   calls.push({type:'stored',payload});
+  }},
+  fetcher:async(_url,opts)=>{
+   calls.push({type:'sent',body:JSON.parse(opts.body)});
+   return providerSuccess();
+  }
+ });
+ assert.equal(result.channel,'sms');
+ assert.equal(result.acceptedForDelivery,true);
+ assert.deepEqual(calls.map(x=>x.type),['stored','sent']);
+ assert.equal(calls[1].body.destinations[0].to,'01012345678');
+ assert.equal(calls[1].body.messageFlow[0].sms,undefined);
+ assert.ok(calls[1].body.messageFlow[0].mms);
+ assert.ok(!JSON.stringify(calls[0].payload).includes('#delivery='));
+ await assert.rejects(dispatchCompletedMusicToCustomer({
+  order:{...order,state:ORDER_STATES.DRAFT,deliveryChannel:'sms'},
+  selectedSongs:songs,config:providerConfig,
+  orders:{saveDeliveryTokenHashAtomic:async()=>{}},
+  fetcher:async()=>{throw Error('Must never call gateway');}
+ }),/verified paid order/);
+});
+test('server dispatch refuses unconfigured provider keys even after order authorization',async()=>{
+ let attempts=0;
+ await assert.rejects(dispatchCompletedMusicToCustomer({
+  order:{...order,deliveryChannel:'kakao'},
+  selectedSongs:songs,
+  config:{...providerConfig,WITHU_BIZGO_AUTHORIZATION:''},
+  orders:{saveDeliveryTokenHashAtomic:async()=>{}},
+  fetcher:async()=>{attempts++;return providerSuccess();}
+ }),/configured/);
+ assert.equal(attempts,0);
 });

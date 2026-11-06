@@ -249,3 +249,21 @@
 .checkout-flow .song-genre-visual{margin:12px 0}
 @media(max-width:560px){.checkout-flow .genre-tile-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.checkout-flow .music-choice span{font-size:11px;min-height:48px}}
 @media(max-width:355px){.checkout-flow .genre-tile-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+/* Compact, single-review checkout: genres and optional video are inline with product. */
+.checkout-flow .inline-choice-section{border-top:1px solid #eadfe5;margin-top:24px;padding-top:24px}
+.checkout-flow .inline-choice-section h2{font-size:clamp(29px,4.5vw,36px);margin:8px 0 14px}
+.checkout-flow #video-inline-options[hidden],.checkout-flow #song-genre-second-wrap[hidden],
+.checkout-flow #duo-genre-modes[hidden]{display:none!important}
+.checkout-flow .order-review-list{border:1px solid #eee0e6;border-radius:13px;margin:19px 0;overflow:hidden}
+.checkout-flow .order-review-list>div{display:grid;grid-template-columns:minmax(136px,30%) minmax(0,1fr);padding:13px 17px;border-bottom:1px solid #eee5e9;gap:14px;align-items:start}
+.checkout-flow .order-review-list>div:last-child{border-bottom:0}
+.checkout-flow .order-review-list dt{font-size:12px;color:#987e8c;font-weight:700;line-height:1.7}
+.checkout-flow .order-review-list dd{margin:0;color:#423443;font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.8}
+.payment-page-layout{display:block;max-width:630px;margin:0 auto}
+.payment-page-layout .payment-entry{width:100%;margin:auto}
+.payment-page-layout .payment-total-line{display:flex;justify-content:space-between;gap:14px;padding:13px 0 19px;border-bottom:1px solid #e8dce2;margin:0 0 19px;align-items:baseline}
+.payment-page-layout .payment-total-line strong{font-size:19px;color:#765268;white-space:nowrap}
+.payment-shell{width:min(780px,calc(100% - 32px))}
+@media(max-width:570px){.checkout-flow .order-review-list>div{grid-template-columns:1fr;gap:2px;padding:12px 14px}.checkout-flow .inline-choice-section{margin-top:17px;padding-top:19px}}

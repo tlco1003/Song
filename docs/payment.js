@@ -32,7 +32,7 @@ function disableCheckout(reason){
 async function init(){
  const draft=readDraft();
  if(!draft){
-  $('payment-product').textContent='노래 선택이 필요해요.';
+  $('payment-price').textContent='주문 확인 필요';
   disableCheckout('먼저 사연과 음악 취향, 상품 및 장르를 선택해 주세요.');
   return;
  }
@@ -51,9 +51,6 @@ async function init(){
   const expectedCount=draft.selectedProduct==='audio_duo'?2:1;
   if(!chosen||!Number.isSafeInteger(chosen.amountKrw)||!lines||lines.length!==expectedCount
     ||!draft.genreSelection.genres.every(g=>allowed.has(g)))throw Error('invalid selection');
-  $('payment-product').textContent=chosen.name;
-  $('payment-song-title').textContent=draft.story.recipient;
-  $('payment-song-genres').textContent=lines.join('\n');
   $('payment-price').textContent=won.format(chosen.amountKrw)+(chosen.priceKind==='starting_at'?'부터':'');
   $('payment-quote-notice').hidden=!chosen.quoteRequired;
   if(chosen.quoteRequired){

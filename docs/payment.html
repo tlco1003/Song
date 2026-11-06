@@ -10,8 +10,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="checkout.css?v=20261105-payment-layout-01">
-<script defer src="payment.js?v=20261106-order-review-01"></script>
+<link rel="stylesheet" href="checkout.css?v=20261106-streamlined-02">
+<script defer src="payment.js?v=20261106-streamlined-02"></script>
 </head>
 <body>
 <header class="site-header"><div class="frame header-inner">
@@ -22,23 +22,15 @@
  <div class="frame payment-shell">
   <header class="checkout-intro">
    <span class="small-caps">SECURE PAYMENT</span>
-   <h1>마지막으로 <em>주문을 확인해 주세요.</em></h1>
+   <h1>간편하게 <em>결제 정보를 입력해 주세요.</em></h1>
    <p>선물 받을 이메일과 결제수단을 선택해 주세요.</p>
   </header>
   <div class="payment-page-layout">
-   <section class="checkout-card payment-summary" aria-labelledby="payment-order-title">
-    <span class="small-caps">ORDER SUMMARY</span>
-    <h2 id="payment-order-title">주문한 노래</h2>
-    <div class="preview-group"><span class="preview-label">상품</span><strong id="payment-product">상품 확인 중</strong></div>
-    <div class="preview-group"><span class="preview-label">받는 사람</span><strong id="payment-song-title">받는 사람 확인 중</strong></div>
-    <div class="preview-group"><span class="preview-label">완성곡별 장르</span><p id="payment-song-genres" class="order-song-genres">장르 선택 확인 중</p></div>
-    <div class="price-row"><span>결제 예정 금액</span><strong id="payment-price">금액 확인 중</strong></div>
-    <p id="payment-quote-notice" class="small-explain" hidden>뮤직비디오 상품은 제작 범위를 확정한 후 최종 금액을 안내해 드립니다.</p>
-    <a class="edit-link" href="checkout.html?stage=review">← 선택한 노래 다시 확인하기</a>
-   </section>
    <section class="checkout-card payment-entry" aria-labelledby="payment-method-title">
     <span class="small-caps">PAYMENT DETAILS</span>
     <h2 id="payment-method-title">결제 정보</h2>
+    <div class="payment-total-line" aria-live="polite"><span>결제 예정 금액</span><strong id="payment-price">금액 확인 중</strong></div>
+    <p id="payment-quote-notice" class="small-explain" hidden>뮤직비디오는 제작 범위에 따른 개별 견적이 확정된 뒤 결제할 수 있어요.</p>
     <label for="delivery-email" class="form-label">완성곡을 받을 이메일</label>
     <input id="delivery-email" type="email" inputmode="email" autocomplete="email" maxlength="254" placeholder="name@example.com" required>
     <label for="delivery-email-again" class="form-label">이메일 주소 확인</label>

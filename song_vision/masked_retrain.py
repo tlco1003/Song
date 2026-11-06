@@ -139,7 +139,7 @@ def _val_metrics(model, loader, device):
 def masked_retrain(dataset: Path, checkpoint: Path, epochs: int = 36,
                    batch_size: int = 8, lr: float = .0003, device: str = "cpu",
                    seed: int = 42, patience: int = 10,
-                   min_epochs: int = 20, min_delta: float = .0002) -> dict:
+                   min_epochs: int = 1, min_delta: float = .0002) -> dict:
     if (not 1 <= epochs <= 50 or not 2 <= batch_size <= 64 or not 1e-7 <= lr <= 1e-2
             or not 0 <= patience <= epochs or not 1 <= min_epochs <= epochs
             or not 0 <= min_delta <= .1):

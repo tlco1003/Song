@@ -48,3 +48,35 @@ Source/license was verified from the official page. Code/CI are implemented and 
 
 ## Scientific caveats
 Even passing trainer tests only means video/audio sync and optimization code ran. A lower MAE or a positive audio sensitivity is NOT objective phoneme-to-mouth synchronization, identity consistency, video generation quality, Korean singer generalization or consent to commercial face swapping. No customer jobs are enabled.
+
+## 2026-11-06 — 실행 검증 완료 (실제 원본 / 실제 가창 프레임)
+
+- 실행 링크: https://github.com/tlco1003/Song/actions/runs/42222592317
+- GitHub Actions 전체 결론 `success`; 최종 학습, 암호화 아티팩트 업로드, 별도 연구 Vault Git 브랜치 저장 단계 모두 성공.
+- 원본 세 파일 Zenodo 공식 MD5 **모두 일치**:
+  - 01: `0f7ba20f3a7278d5a662a7e30f44c942`, 502,513,588 bytes
+  - 02: `8e426ef4134abe1dff4d2a8262abe8a9`, 553,420,328 bytes
+  - 03: `2d686591f8760f8041d2dc75e8234828`, 508,655,610 bytes
+- 학습 출연자 [01,02]의 가창 40개, 학습 3000 프레임. 학습에 포함되지 않은 출연자 [03]의 가창 20개, 독립 검증 1500 프레임.
+- 학습 최대 24 epoch 요청 → 실제 19 epoch 실행 후 조기 종료 (best epoch 12).
+- best epoch 12: trainLoss `0.0380804`, valMaskedMAE `0.0740105`, copyReferenceMaskedMAE `0.0500151`, maskedInputMAE `0.1595127`.
+- shuffledAudioMaskedMAE `0.0787299`, audioSensitivity `0.0241283`, correctVsShuffledMAEGain `+0.0047194`.
+- 진단 플래그 `WORSE_THAN_COPY_REFERENCE`.
+- 모델이 처음 보는 출연자의 입술을 예측한 오차는 단순 참조 입술 복사 기준보다 약 **47.98% 더 큼**. **실제 가창 립싱크 모델의 품질 게이트 실패.**
+- 맞는 오디오와 순서를 바꾼 오디오의 오차 차이는 양수이지만, 발음 시점 정합성·한국어 노래·치아·혀 생성·상용 고화질 얼굴 변형 성공을 의미하지 않는다.
+
+### 실제 연구 모델 보존과 복원 증명
+- 영구 보존 브랜치 `research/song-vision-vault` 커밋 `eb4fc908ccb8fc221792c4c7afe120363c215ad8`.
+- 암호화 모델 파일 `encrypted/ravdess-actors-01-02-03/song-ravdess-3actors-run-42222592317-attempt-1.svault`
+- 공개 암호문 크기 `5,292,662` bytes, SHA-256 `f968ff03cea6cd2d596a430a48d901b6767b8290cf4f6683557080e850e20f68`.
+- 연구 메타데이터 `.svault.manifest.json` 별도 저장; 상업 이용 불허, 데이터셋 3 actors, 독립 검증·검증 수치 포함.
+- Actions 부가 백업 artifact ID `13505017211`, 90일 보존 설정. 별도 Git 브랜치 보존은 해당 보존기간과 무관하다.
+- **실제 비공개 복구 테스트 성공**: 기존 별도 X25519 개인키로 인증 암호화 봉투 복호화, 체크포인트 `4,284,829` bytes 추출, `torch.load(weights_only=True)` 성공.
+- 복구 모델 `song-vision-masked-audio-v2`, epoch 12, `stateDict` 28개 텐서, 총 파라미터 1,068,683개, `canAcceptPaidJobs=false` 일치.
+- 원본 영상과 가창 WAV·가수 얼굴 이미지는 연구 Vault에 포함되지 않는다. 복원용 개인키도 GitHub에 보관하지 않는다.
+- 이전에 보관한 36 epoch Actor01 연구 가중치는 다른 암호화 파일로 그대로 유지한다.
+- RAVDESS 원본 `CC BY-NC-SA 4.0` 권리 범위만을 따른 **비상업 연구용** 결과. SONG 고객 영상 제작/유료 음원 서비스에 모델을 연결하지 않는다.
+
+### 다음 연구 판단
+- 동일 출연자에서의 검증 오차 감소와 독립 출연자에 대한 일반화는 다른 과제다. 이번 독립 출연자 성적을 기존 Actor01 단독 연구 성적과 직접 동일 기준으로 비교하면 안 된다.
+- 추가 데이터 수집 이전에도 발음별 viseme 정답·중립 참조 이미지·아래턱 및 입술 실제 랜드마크와의 대응 손실, 비디오 시간 일관성 같은 평가 체계를 개선해야 한다.

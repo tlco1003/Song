@@ -34,7 +34,7 @@ jobs:
           python-version: '3.11'
       - name: Install FFmpeg, locally-run PyTorch and MediaPipe
         run: |
-          sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ffmpeg
+          sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends ffmpeg libgles2 libegl1 libgl1 libglib2.0-0
           python -m pip install -q torch --index-url https://download.pytorch.org/whl/cpu
           python -m pip install -q -r song_vision/requirements-geometry.txt
       - name: Test face motion geometry, joint gradients and research-only vault
@@ -48,6 +48,15 @@ jobs:
             'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task' \
             --output "$LOCAL_FACE_TASK"
           echo '64184e229b263107bc2b804c6625db1341ff2bb731874b0bcc2fe6544e0bc9ff  '"$LOCAL_FACE_TASK" | sha256sum --check
+      - name: Preflight offline MediaPipe C++ bindings and face model before large data download
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from song_vision.face_geometry import LocalFaceLandmarker
+          with LocalFaceLandmarker(Path('face_landmarker.task')) as detector:
+              assert detector.model is not None
+          print('SONG_REAL_FACE_LANDMARKER_PREFLIGHT=PASS')
+          PY
       - name: Research-only training - lip mouth jaw and cheek surface motion
         run: |
           python -m song_vision.external_ravdess_face_joint \

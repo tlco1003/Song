@@ -12,6 +12,8 @@ import {storePrivateOrderDraft} from './private-draft-store.mjs';
 import {hashPrivateDeliveryToken} from './private-delivery-invitation.mjs';
 import {upgradePriceKrw} from './commercial-rights-upgrade.mjs';
 import {LOCAL_STAGING_HTML,LOCAL_STAGING_SCRIPT} from './local-staging-ui.mjs';
+import {verifyResendDeliveryWebhook,recordResendDeliveryWebhook}
+ from './resend-delivery-events.mjs';
 
 // Single-operator local MVP. Public multi-user deployment requires an
 // authenticated OAuth PKCE flow and per-user Suno credential vault.
@@ -176,7 +178,7 @@ function limited(req,max=15){
   if(++item.count>max)throw new AppError(429,'시간당 생성 요청 한도를 초과했습니다.');
   requests.set(ip,item);
 }
-async function handle(req,res,customerAccess,staging){
+async function handle(req,res,customerAccess,staging,notificationEvents){
   const localStagingAvailable=staging!==null&&staging!==undefined
     &&isLocal&&process.env.NODE_ENV!=='production'
     &&process.env.WITHU_STAGING_ENABLED==='true';
@@ -255,6 +257,22 @@ async function handle(req,res,customerAccess,staging){
   if(pathname.startsWith('/api/')){
     // Customer payment-related routes must fail closed until a durable,
     // licensed commercial fulfillment implementation passes verification.
+    if(req.method==='POST'&&pathname==='/api/webhooks/resend'){
+      if(typeof notificationEvents?.recordDeliveryStatusAtomic!=='function'
+        ||!process.env.RESEND_WEBHOOK_SIGNING_SECRET)
+        throw new AppError(503,'서명된 이메일 수신 상태 추적 기능이 준비되지 않았습니다.');
+      const rawBody=await binaryBody(req,64000);
+      let verified;
+      try{
+       verified=verifyResendDeliveryWebhook({
+        rawBody,headers:req.headers,signingSecret:process.env.RESEND_WEBHOOK_SIGNING_SECRET
+       });
+      }catch(_){throw new AppError(403,'유효한 이메일 발송사 서명이 아닙니다.');}
+      await recordResendDeliveryWebhook({
+       verifiedEvent:verified,deliveryStore:notificationEvents
+      });
+      return json(res,200,{acknowledged:true});
+    }
     if(req.method==='GET'&&pathname==='/api/commerce/readiness')
       return json(res,200,publicCommerceReadiness());
     if(req.method==='GET'&&pathname==='/api/commerce/catalog')
@@ -510,11 +528,11 @@ async function handle(req,res,customerAccess,staging){
   createReadStream(full).on('error',()=>res.destroy()).pipe(res);
   return;
 }
-export function createApp({customerAccess=null,staging=null}={}){
+export function createApp({customerAccess=null,staging=null,notificationEvents=null}={}){
   if(staging&&(process.env.NODE_ENV==='production'||!isLocal
     ||process.env.WITHU_STAGING_ENABLED!=='true'))
    throw new Error('Staging cannot be attached to a production/public server');
-  return http.createServer((req,res)=>{void handle(req,res,customerAccess,staging).catch(error=>{
+  return http.createServer((req,res)=>{void handle(req,res,customerAccess,staging,notificationEvents).catch(error=>{
     if(!res.headersSent)json(res,error instanceof AppError?error.status:500,{
       error:error instanceof AppError?error.message:'서버 처리 오류가 발생했습니다.'
     });else res.destroy();

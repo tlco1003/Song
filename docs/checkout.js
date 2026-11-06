@@ -52,6 +52,13 @@ function promotionFor(productId){
  return {regular:comparison,discountRate:Math.round((1-current/comparison)*1000)/10};
 }
 function showPrices(){
+ // Show the creator's publicly declared standard production list price,
+ // explicitly distinguished in adjacent copy from a historical selling price.
+ for(const node of document.querySelectorAll('[data-reference-for]')){
+  const amount=prices?.promotion?.plannedRegularPricesKrw?.[node.dataset.referenceFor];
+  node.textContent=Number.isSafeInteger(amount)&&amount>0?
+   '정상가 '+won.format(amount):'정상가 확인 중';
+ }
  for(const node of document.querySelectorAll('[data-price-for]')){
   node.textContent=priceText(prices?.products.find(p=>p.id===node.dataset.priceFor));
  }

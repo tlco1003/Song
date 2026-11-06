@@ -10,6 +10,7 @@
  */
 import {normalizeKoreanMobile,normalizeDeliveryChannel}
  from './customer-notification-contact.mjs';
+import {composeCompletedMusicEmail} from './withu-customer-email-template.mjs';
 
 const BIZGO_URL='https://mars.ibapi.kr/api/comm/v1/send/omni';
 const RESEND_URL='https://api.resend.com/emails';
@@ -123,10 +124,10 @@ export function createResendTransactionalMailer({
    const apiKey=configField(config.RESEND_API_KEY,'RESEND_API_KEY');
    const from=configField(config.WITHU_FROM_EMAIL,'WITHU_FROM_EMAIL');
    const key=requireIdempotencyKey(idempotencyKey);
+   const composed=composeCompletedMusicEmail({listeningUrl:url});
    const body={
-    from,to:[to],subject:subject||'WITHU · 주문하신 노래가 완성됐어요',
-    text:'WITHU 노래가 완성됐어요.\n본인 전용 나의 노래함 링크:\n'+url+
-      '\n다른 사람에게 공유하지 마세요.'
+    from,to:[to],subject:subject||composed.subject,
+    text:composed.text,html:composed.html
    };
    const result=await jsonResponse(await fetcher(RESEND_URL,{
     method:'POST',

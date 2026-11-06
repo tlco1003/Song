@@ -27,7 +27,7 @@ diffusion video generation. There is no facial-recognition identification.
 python -m venv .venv
 . .venv/bin/activate
 pip install -r song_vision/requirements.txt
-python -m unittest song_vision.test_engine -v
+python -m unittest discover -s song_vision -p 'test_*.py' -v
 ```
 
 ### 1. Prepare synchronized and authorized singing footage

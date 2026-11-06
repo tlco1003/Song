@@ -88,7 +88,7 @@ export function composeServerMusicStyle({
  })[speechStyle]||'Natural Korean syllable stress and spoken rhythm.';
  const second=mode==='same'&&songIndex===2?
   'Create an independently composed melody and arrangement in the same genre; do not deliver a duplicate version of track one.':'';
- return [
+ const stylePreset=[
   'Compose an original Korean song, not a cover. Never reproduce a known melody, lyric, vocal identity or signature recording.',
   'Chosen genre: '+genre+'. '+genreText,
   eraText?'Era-inspired, not song-copied: '+eraText:'',
@@ -97,4 +97,6 @@ export function composeServerMusicStyle({
   'Preserve the selected genre and customer story over era assumptions.',
   second
  ].filter(Boolean).join('\n');
+ if(stylePreset.length>1000)throw new AppError(503,'Music style preset must be within 1000 characters');
+ return stylePreset;
 }

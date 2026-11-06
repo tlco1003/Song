@@ -154,14 +154,36 @@ $('checkout-prev').addEventListener('click',()=>{
  const previous=steps[steps.indexOf(currentStage)-1];
  if(previous)show(previous,{push:true});
 });
-$('go-payment').addEventListener('click',event=>{
- if(!canAdvance()){event.preventDefault();return;}
+$('go-payment').addEventListener('click',async event=>{
+ event.preventDefault();
+ if(!canAdvance())return;
  if(selectedPrice()?.quoteRequired){
-  event.preventDefault();
-  error('뮤직비디오 제작 금액은 개별 견적 확정 후 결제할 수 있어요. 현재는 결제 단계로 진행할 수 없습니다.');
+  error('뮤직비디오는 개별 견적 확정 후 결제할 수 있어요. 현재는 결제 단계로 진행할 수 없습니다.');
   return;
  }
- // The separate payment page validates this saved draft once more.
+ const target=$('go-payment').href;
+ const payload={selectedProduct:chosenProduct(),genreSelection:genreSelection(),story:draft.story};
+ $('go-payment').setAttribute('aria-busy','true');
+ try{
+  // If deployed with the Node backend, keep AI lyric prompt and style server-only.
+  // GitHub Pages has no API; the payment information page still opens.
+  const response=await fetch('api/commerce/drafts',{
+   method:'POST',headers:{'Content-Type':'application/json'},
+   body:JSON.stringify(payload),credentials:'same-origin',signal:AbortSignal.timeout(3500)
+  });
+  if(response.ok){
+   const data=await response.json();
+   if(typeof data.draftId==='string'&&/^[a-f0-9-]{36}$/.test(data.draftId)){
+    draft={...draft,serverDraftId:data.draftId,savedAt:Date.now()};
+    sessionStorage.setItem(KEY,JSON.stringify(draft));
+   }
+  }
+ }catch(_){
+  // A disconnected server does not break customer review -> payment navigation.
+ }finally{
+  $('go-payment').removeAttribute('aria-busy');
+  window.location.assign(target);
+ }
 });
 for(const radio of document.querySelectorAll('input[name="product"]')){
  radio.addEventListener('change',()=>{

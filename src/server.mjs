@@ -7,6 +7,8 @@ import {AppError,validateLyricInput,buildSunoPackage} from './lib.mjs';
 import {makeLyrics,createSunoSong,SUNO_MCP_URL} from './providers.mjs';
 import {generateCoverImage} from './cover-image.mjs';
 import {publicCommerceReadiness,publicPriceCatalog} from './commerce.mjs';
+import {prepareServerOrderDraft} from './order-draft-preparation.mjs';
+import {storePrivateOrderDraft} from './private-draft-store.mjs';
 
 // Single-operator local MVP. Public multi-user deployment requires an
 // authenticated OAuth PKCE flow and per-user Suno credential vault.
@@ -57,6 +59,25 @@ async function handle(req,res){
       return json(res,200,publicCommerceReadiness());
     if(req.method==='GET'&&pathname==='/api/commerce/catalog')
       return json(res,200,publicPriceCatalog());
+    if(req.method==='POST'&&pathname==='/api/commerce/drafts'){
+      // This does not authorize a charge or expose prompts to the browser.
+      // Only private encrypted storage is supported; missing config fails closed.
+      let originHost='';
+      try{if(req.headers.origin)originHost=new URL(req.headers.origin).host;}
+      catch(_){throw new AppError(403,'올바르지 않은 주문 요청 출처입니다.');}
+      if((originHost&&originHost!==req.headers.host)
+         ||req.headers['sec-fetch-site']==='cross-site')
+        throw new AppError(403,'같은 사이트에서 제출한 주문만 받습니다.');
+      limited(req,10);
+      const prepared=prepareServerOrderDraft(await jsonBody(req,12000));
+      const stored=await storePrivateOrderDraft(prepared,{
+        rootDir:process.env.WITHU_ORDER_DRAFT_DIR,
+        encryptionKey:process.env.WITHU_ORDER_DRAFT_ENCRYPTION_KEY
+      });
+      return json(res,201,{
+        draftId:stored.id,expiresAt:stored.expiresAt,status:'pending_payment'
+      });
+    }
     if(pathname==='/api/commerce/orders'||pathname.startsWith('/api/commerce/orders/'))
       throw new AppError(503,'자동 음악 제작·결제·이메일 발송 서비스는 준비 중이며 현재 주문을 받지 않습니다.');
     // Never return customer lyrics or accept edits without a durable,

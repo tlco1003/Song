@@ -331,3 +331,23 @@
  .checkout-flow .gift-choice .creator-list-price{font-size:10px}
  .checkout-flow .gift-choice .choice-price-stack .choice-side{font-size:14px}
 }
+
+/* Checkout delivery preference: one email, one mobile and explicit notification channel. */
+.payment-entry .delivery-channel-options{border:0;min-width:0;padding:0;margin:19px 0}
+.payment-entry .delivery-channel-options legend{font-size:13px;font-weight:700;color:#59435b;padding:0 0 11px}
+.payment-entry .delivery-channel-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.payment-entry .delivery-channel-choice{position:relative;display:block;cursor:pointer}
+.payment-entry .delivery-channel-choice input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.payment-entry .delivery-channel-choice>span{height:100%;min-height:77px;display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center;text-align:center;border:1px solid #e1d0d9;border-radius:10px;background:#fffafc;padding:11px 8px;color:#685064;box-sizing:border-box}
+.payment-entry .delivery-channel-choice strong{font-size:12px;font-weight:700}
+.payment-entry .delivery-channel-choice small{font-size:10px;color:#8c7688}
+.payment-entry .delivery-channel-choice input:checked+span{border:2px solid #966b85;background:#f6e7ef;box-shadow:0 3px 13px #91647e21;color:#57384f}
+.payment-entry .delivery-channel-choice input:focus-visible+span{outline:3px solid #976d8d;outline-offset:2px}
+.payment-entry #delivery-phone-hint{margin:5px 0 12px;font-size:11px}
+.payment-entry #delivery-channel-hint{font-size:11px;line-height:1.75;margin:11px 0}
+.payment-entry input[aria-invalid="true"]{border-color:#b34765;box-shadow:0 0 0 1px #b34765}
+@media(max-width:410px){
+ .payment-entry .delivery-channel-grid{gap:5px}
+ .payment-entry .delivery-channel-choice>span{padding:10px 5px;min-height:70px}
+ .payment-entry .delivery-channel-choice strong{font-size:11px}
+}

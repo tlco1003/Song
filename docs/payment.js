@@ -87,17 +87,53 @@ for(const item of document.querySelectorAll('input[name="paymentMethod"]')){
   $('payment-method-hint').textContent=(methods[selected]||'결제수단')+'를 선택했어요.';
  });
 }
-for(const id of ['delivery-email','delivery-email-again']){
- $(id).addEventListener('blur',()=>{
-  const first=$('delivery-email').value.trim(),second=$('delivery-email-again').value.trim();
-  if(first&&second&&first.toLowerCase()!==second.toLowerCase()){
-   $('payment-method-hint').textContent='두 이메일 주소가 일치하지 않습니다.';
-  }else{
-   const selected=document.querySelector('input[name="paymentMethod"]:checked')?.value;
-   $('payment-method-hint').textContent=(methods[selected]||'결제수단')+'를 선택했어요.';
-  }
- });
+
+const channels=Object.freeze({
+ email:'완성된 노래를 이메일의 전용 링크로 알려드려요.',
+ sms:'제작 완료 후 휴대전화 문자로 나의 노래함 링크를 보내드려요.',
+ kakao:'제작 완료 후 승인된 카카오 알림톡으로 나의 노래함 링크를 보내드려요.'
+});
+function normalizedPhone(value){
+ const digits=String(value||'').replace(/[\s-]/g,'');
+ return /^01[016789]\d{7,8}$/.test(digits)?digits:null;
 }
+function selectedDeliveryChannel(){
+ const channel=document.querySelector('input[name="deliveryChannel"]:checked')?.value;
+ return Object.hasOwn(channels,channel)?channel:null;
+}
+function validateContactFields({showError=false}={}){
+ const email=$('delivery-email').value.trim();
+ const phone=$('delivery-phone').value.trim();
+ const channel=selectedDeliveryChannel();
+ const emailValid=/^[^\s@]{1,64}@[^\s@]{1,190}\.[^\s@]{2,}$/u.test(email)
+  &&email.length<=254;
+ const phoneValid=normalizedPhone(phone)!==null;
+ const valid=emailValid&&phoneValid&&channel;
+ if(showError){
+  $('delivery-email').setAttribute('aria-invalid',String(!emailValid));
+  $('delivery-phone').setAttribute('aria-invalid',String(!phoneValid));
+  $('delivery-phone-hint').textContent=phoneValid?
+   '선택한 연락 방법으로 안내를 받을 수 있어요.':
+   '010으로 시작하는 국내 휴대전화 번호를 정확히 입력해 주세요.';
+  $('delivery-channel-hint').textContent=
+   !emailValid?'이메일 주소를 확인해 주세요.':
+   !phoneValid?'휴대전화 번호를 확인해 주세요.':
+   channels[channel]||'알림 수신 방법을 선택해 주세요.';
+ }else{
+  $('delivery-channel-hint').textContent=channels[channel]||'알림 수신 방법을 선택해 주세요.';
+ }
+ return Boolean(valid);
+}
+for(const id of ['delivery-email','delivery-phone']){
+ $(id).addEventListener('blur',()=>{validateContactFields({showError:true});});
+ $(id).addEventListener('input',()=>{validateContactFields();});
+}
+for(const item of document.querySelectorAll('input[name="deliveryChannel"]')){
+ item.addEventListener('change',()=>{validateContactFields({showError:true});});
+}
+// At the future PG checkout boundary, the server MUST independently validate
+// customerEmail, customerPhone, deliveryChannel and consent; these browser
+// values are NEVER trusted as payment or identity verification.
 // Intentionally no form submit / redirect / PG SDK call. Real payments require
 // server-side order creation, PG verification, contract and policies.
 $('confirm-checkout').disabled=true;

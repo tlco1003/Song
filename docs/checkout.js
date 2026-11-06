@@ -87,6 +87,7 @@ function saveChoices(){
  catch(_){/* Invalid selection is not persisted as a valid production request. */}
  const next={...draft,selectedProduct:chosenProduct(),genreSelection:selected,
    sharedStyleNotes:'',
+   singleGenreBlend:$('single-genre-blend').checked,
    duoGenreChoice:{
      mode:document.querySelector('input[name="duoGenreMode"]:checked')?.value||'same',
      first:$('song-genre-first').value,second:$('song-genre-second').value
@@ -101,10 +102,14 @@ function saveChoices(){
 function renderGenres(){
  const duo=chosenProduct()==='audio_duo';
  $('video-inline-options').hidden=chosenProduct()!=='audio_video';
- const different=duo&&document.querySelector('input[name="duoGenreMode"]:checked')?.value==='different';
+ const mode=document.querySelector('input[name="duoGenreMode"]:checked')?.value;
+ const secondary=duo?['different','blend'].includes(mode):$('single-genre-blend').checked;
  $('duo-genre-modes').hidden=!duo;
- $('song-genre-second-wrap').hidden=!different;
- $('song-genre-second').disabled=!different||!genres;
+ $('single-genre-blend-wrap').hidden=duo;
+ $('song-genre-second-wrap').hidden=!secondary;
+ $('song-genre-second').disabled=!secondary||!genres;
+ $('song-genre-second-legend').textContent=duo&&mode==='different'?'두 번째 완성곡 장르':'함께 섞을 추가 장르';
+ $('selected-primary-genre').textContent=validGenre(draft?.genre)?draft.genre:'기본 장르 확인 중';
  for(const [id,tilesId] of [['song-genre-first','song-genre-first-tiles'],['song-genre-second','song-genre-second-tiles']]){
   for(const radio of $(tilesId).querySelectorAll('input[type="radio"]'))
    radio.checked=radio.value===$(id).value;
@@ -112,12 +117,13 @@ function renderGenres(){
  try{
   const selection=genreSelection();
   $('genre-plan-preview').classList.remove('invalid');
-  $('genre-plan-preview').textContent=genreLabels(selection).join('\n')+'\n각 완성곡마다 별도의 스타일로 제작됩니다.';
+  $('genre-plan-preview').textContent=genreLabels(selection).join('\n')+
+   (selection.mode==='blend'?'\n두 장르를 한 곡 안에 섞어요. 추가금은 주문당 5,000원':'\n각 완성곡마다 별도로 제작됩니다.');
  }catch(e){
   $('genre-plan-preview').classList.add('invalid');
   $('genre-plan-preview').textContent=e.message;
  }
- saveChoices();
+ saveChoices();showPrices();
 }
 function stages(){
  return ['product','review'];

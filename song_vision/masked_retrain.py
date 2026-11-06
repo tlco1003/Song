@@ -136,11 +136,14 @@ def _val_metrics(model, loader, device):
     return metrics
 
 
-def masked_retrain(dataset: Path, checkpoint: Path, epochs: int = 4,
+def masked_retrain(dataset: Path, checkpoint: Path, epochs: int = 36,
                    batch_size: int = 8, lr: float = .0003, device: str = "cpu",
-                   seed: int = 42) -> dict:
-    if not 1 <= epochs <= 50 or not 2 <= batch_size <= 64 or not 1e-7 <= lr <= 1e-2:
-        raise ValueError("Invalid research training parameters")
+                   seed: int = 42, patience: int = 10,
+                   min_epochs: int = 20, min_delta: float = .0002) -> dict:
+    if (not 1 <= epochs <= 50 or not 2 <= batch_size <= 64 or not 1e-7 <= lr <= 1e-2
+            or not 0 <= patience <= epochs or not 1 <= min_epochs <= epochs
+            or not 0 <= min_delta <= .1):
+        raise ValueError("Invalid research training / early-stop parameters")
     if torch.device(device).type == "cuda" and not torch.cuda.is_available():
         raise ValueError("Requested CUDA but no GPU is available")
     torch.set_num_threads(min(torch.get_num_threads(), 2))
@@ -156,6 +159,8 @@ def masked_retrain(dataset: Path, checkpoint: Path, epochs: int = 4,
     model = MaskedSingingMouthNet().to(device)
     opt = torch.optim.AdamW(model.parameters(), lr=lr)
     history, best = [], float("inf")
+    significant_best, no_improvement = float("inf"), 0
+    early_stopped = False
     for epoch in range(epochs):
         model.train()
         loss_total, processed = 0., 0
@@ -184,6 +189,21 @@ def masked_retrain(dataset: Path, checkpoint: Path, epochs: int = 4,
                 "commerciallyValidated": False,
                 "status": "research_only_unvalidated_checkpoint",
             }, checkpoint)
+        if metrics["valMaskedMAE"] < significant_best - min_delta:
+            significant_best = metrics["valMaskedMAE"]
+            no_improvement = 0
+        else:
+            no_improvement += 1
+        if patience > 0 and epoch + 1 >= min_epochs and no_improvement >= patience:
+            early_stopped = True
+            print("SONG_MASKED_EARLY_STOP=" + json.dumps({
+                "epoch": epoch + 1,
+                "patience": patience,
+                "minEpochs": min_epochs,
+                "minDelta": min_delta,
+                "bestValidationMAE": best,
+            }), flush=True)
+            break
     final = min(history, key=lambda item: item["valMaskedMAE"])
     diagnostics = []
     if final["valMaskedMAE"] >= final["copyReferenceMaskedMAE"]:
@@ -201,6 +221,11 @@ def masked_retrain(dataset: Path, checkpoint: Path, epochs: int = 4,
         "trainClips": clips["train"], "valClips": clips["val"],
         "trainFrames": len(train_data), "valFrames": len(val_data),
         "bestEpoch": final["epoch"], "bestMetrics": final,
+        "requestedEpochs": epochs, "completedEpochs": len(history),
+        "earlyStopped": early_stopped,
+        "earlyStoppingPatience": patience,
+        "earlyStoppingMinEpochs": min_epochs,
+        "earlyStoppingMinDelta": min_delta,
         "history": history, "diagnosticFlags": diagnostics,
         "canAcceptPaidJobs": False,
         "checkpointSha256": hashlib.sha256(checkpoint.read_bytes()).hexdigest(),
@@ -230,13 +255,18 @@ def main():
     parser = argparse.ArgumentParser(description="Local masked-reference audio-mouth retrain")
     parser.add_argument("--dataset", type=Path, required=True)
     parser.add_argument("--checkpoint", type=Path, required=True)
-    parser.add_argument("--epochs", type=int, default=4)
+    parser.add_argument("--epochs", type=int, default=36)
+    parser.add_argument("--patience", type=int, default=10)
+    parser.add_argument("--min-epochs", type=int, default=20)
+    parser.add_argument("--min-delta", type=float, default=.0002)
     parser.add_argument("--batch-size", type=int, default=8)
     parser.add_argument("--lr", type=float, default=.0003)
     parser.add_argument("--device", default="cpu")
     args = parser.parse_args()
     report = masked_retrain(args.dataset, args.checkpoint, args.epochs,
-                            args.batch_size, args.lr, args.device)
+                            args.batch_size, args.lr, args.device,
+                            patience=args.patience, min_epochs=args.min_epochs,
+                            min_delta=args.min_delta)
     print("SONG_MASKED_TRAIN_RESULT=" + json.dumps({
         "modelVersion": MASKED_MODEL_VERSION,
         "bestMetrics": report["bestMetrics"],

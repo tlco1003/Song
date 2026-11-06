@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "clips": [
+    {
+      "id": "authorized-singer-take-01",
+      "split": "train",
+      "video": "/path/to/authorized-take-01.mp4",
+      "vocals": "/path/to/authorized-take-01-vocals.wav",
+      "consent": "/path/to/verified-training-consent.json",
+      "audioOffsetMs": 0,
+      "maxSeconds": 30
+    },
+    {
+      "id": "authorized-singer-take-02",
+      "split": "val",
+      "video": "/path/to/authorized-take-02.mp4",
+      "vocals": "/path/to/authorized-take-02-vocals.wav",
+      "consent": "/path/to/verified-training-consent.json",
+      "audioOffsetMs": 0,
+      "maxSeconds": 30
+    }
+  ]
+}

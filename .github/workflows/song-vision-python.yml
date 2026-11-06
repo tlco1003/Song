@@ -20,8 +20,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - run: ffmpeg -version && ffprobe -version
       - run: python -m pip install --upgrade pip
       - run: pip install torch --index-url https://download.pytorch.org/whl/cpu
       - run: pip install -r song_vision/requirements.txt
       - run: python -m unittest discover -s song_vision -p 'test_*.py' -v
       - run: python -m song_vision --help
+      - run: python -m song_vision.real_training --help

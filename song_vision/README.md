@@ -21,6 +21,12 @@ This is a **research baseline**. It does not implement LivePortrait, MuseTalk,
 a full facial foundation model, trained customer-identity transfer, or high-grade
 diffusion video generation. There is no facial-recognition identification.
 
+## v2: synchronization-aware real singer training pipeline
+
+The executable `python -m song_vision.real_training` workflow accepts *actual* singer video and its synchronized isolated vocals, normalizes 25fps input, separates train/validation by clip, reports audio-sensitivity diagnostics, and saves the best checkpoint. A two-clip **synthetic** end-to-end test exercises the complete data path. It does not supply a real licensed singer dataset or validated video quality.
+
+See [`docs/SONG_VISION_SYNC_TRAINING_V2.md`](../docs/SONG_VISION_SYNC_TRAINING_V2.md) for exact commands, manifest schema, licensing/consent safeguards and limitations.
+
 ## Local setup (Python 3.11+ and ffmpeg on PATH)
 
 ```sh

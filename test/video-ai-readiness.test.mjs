@@ -6,6 +6,9 @@ test('self-hosted video model status is explicit and noncommercial',()=>{
  const state=songVisionReadiness();
  assert.equal(state.externalVideoApiRequired,false);
  assert.equal(state.researchCliAvailable,true);
+ assert.equal(state.synchronizedVideoVocalTrainingPipeline,true);
+ assert.equal(state.clipDisjointValidationImplemented,true);
+ assert.equal(state.realSingerTrainingDataProvided,false);
  assert.equal(state.canAcceptCustomerJobs,false);
  assert.equal(state.customerFaceSwapModelReady,false);
  assert.equal(state.commercialReadiness,'blocked');

@@ -21,14 +21,27 @@ function getDraft(){
 function chosenProduct(){return document.querySelector('input[name="product"]:checked')?.value||'audio';}
 function selectedPrice(){return prices?.products.find(p=>p.id===chosenProduct())||null;}
 function priceText(product){return product?(won.format(product.amountKrw)+(product.priceKind==='starting_at'?'부터':'')):'가격 확인 중';}
+function mixFee(){
+ const fee=prices?.addOns?.genreBlend?.amountKrw;
+ if(fee!==5000)return null;
+ try{return genreSelection().mode==='blend'?fee:0;}
+ catch(_){return 0;}
+}
+function totalText(){
+ const product=selectedPrice(),fee=mixFee();
+ if(!product||fee===null)return '가격 확인 중';
+ return won.format(product.amountKrw+fee)+(product.priceKind==='starting_at'?'부터':'');
+}
 function showPrices(){
  for(const node of document.querySelectorAll('[data-price-for]')){
   node.textContent=priceText(prices?.products.find(p=>p.id===node.dataset.priceFor));
  }
- $('order-price').textContent=priceText(selectedPrice());
+ $('order-price').textContent=totalText();
+ $('selection-total').textContent=totalText();
+ $('selection-addon').textContent=mixFee()===5000?'장르 믹스 추가금 +5,000원 포함':'장르 믹스는 선택 시 +5,000원';
  $('order-pricing-notice').textContent=selectedPrice()?.quoteRequired?
   '뮤직비디오는 시작가입니다. 길이와 편집·수정 범위에 따라 개별 견적을 먼저 확정합니다.':
-  '선택한 완성곡과 가사가 함께 제공됩니다.';
+  (mixFee()===5000?'장르 믹스 +5,000원 포함 · ':'')+'맞춤 가사와 MP3 음원을 함께 제공해요.';
 }
 function error(message){
  $('checkout-message').textContent=message;
@@ -39,9 +52,19 @@ function genreSelection(){
  if(!genres)throw Error('음악 장르를 아직 불러오지 못했어요.');
  const first=$('song-genre-first').value;
  if(!validGenre(first))throw Error('첫 번째 장르를 선택해 주세요.');
- if(chosenProduct()!=='audio_duo')return {mode:'single',genres:[first]};
+ if(chosenProduct()!=='audio_duo'){
+  if(!$('single-genre-blend').checked)return {mode:'single',genres:[first]};
+  const second=$('song-genre-second').value;
+  if(!validGenre(second)||first===second)throw Error('기본 장르와 다른 추가 장르를 선택해 주세요.');
+  return {mode:'blend',genres:[first,second]};
+ }
  const mode=document.querySelector('input[name="duoGenreMode"]:checked')?.value;
  if(mode==='same')return {mode:'same',genres:[first]};
+ if(mode==='blend'){
+  const second=$('song-genre-second').value;
+  if(!validGenre(second)||first===second)throw Error('섞을 추가 장르를 선택해 주세요.');
+  return {mode:'blend',genres:[first,second]};
+ }
  const second=$('song-genre-second').value;
  if(mode!=='different'||!validGenre(second)||first===second)
   throw Error('두 장르로 각각 제작하려면 서로 다른 장르 2개를 선택해 주세요.');
@@ -49,6 +72,11 @@ function genreSelection(){
 }
 function genreLabels(s){
  if(s.mode==='single')return ['1곡 · '+s.genres[0]];
+ if(s.mode==='blend'){
+  const text=s.genres[0]+' + '+s.genres[1]+' (믹스)';
+  return chosenProduct()==='audio_duo'?
+   ['1곡 · '+text,'2곡 · '+text+' (다른 편곡)']:['1곡 · '+text];
+ }
  if(s.mode==='same')return ['1곡 · '+s.genres[0],'2곡 · '+s.genres[0]+' (다른 멜로디·편곡)'];
  return ['1곡 · '+s.genres[0],'2곡 · '+s.genres[1]];
 }

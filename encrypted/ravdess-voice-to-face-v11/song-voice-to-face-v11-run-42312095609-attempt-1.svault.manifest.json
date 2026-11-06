@@ -1,0 +1,66 @@
+{
+  "acousticCueNames": [
+    "dBFSRelativeLevel",
+    "dBFSSlope40ms",
+    "positiveSpectralFlux",
+    "spectralCentroid",
+    "lowBandFraction",
+    "midBandFraction",
+    "highBandFraction",
+    "spectralFlatness"
+  ],
+  "bestEpoch": 2,
+  "bestMetrics": {
+    "articulatoryFaceMAE": 0.0885959,
+    "copiedReferenceMouthMAE": 0.0553422,
+    "epoch": 2,
+    "facialMotionMAE": 0.0758853,
+    "matchedVsShiftedVoiceGain": 0.0342662,
+    "mouthMAE": 0.0805542,
+    "soundControlsSensitivity": 0.0097313,
+    "staticFaceMotionMAE": 0.0855572,
+    "temporalFaceChangeMAE": 0.0310147,
+    "trainJointLoss": 0.0958321,
+    "visualResponseToVoice": 0.0389379
+  },
+  "canAcceptPaidJobs": false,
+  "commercialUseAllowed": false,
+  "diagnosticFlags": [
+    "LIP_RECONSTRUCTION_WORSE_THAN_COPY"
+  ],
+  "encryptedFilename": "song-voice-to-face-v11-run-42312095609-attempt-1.svault",
+  "encryptedSha256": "fdb33ebb441da8dd45ab8bfec83e259bf1618c45a61b957d9f572fd0eee43298",
+  "epochsCompleted": 6,
+  "generatesAudio": false,
+  "license": "CC-BY-NC-SA-4.0",
+  "lipSyncQualityValidated": false,
+  "preparedFaceLabels": {
+    "train": {
+      "total": 3000,
+      "valid": 3000
+    },
+    "val": {
+      "total": 1500,
+      "valid": 1500
+    }
+  },
+  "rawSingerVideoVocalNotPublic": true,
+  "source": "https://zenodo.org/records/1188976",
+  "sourceMd5Verified": {
+    "01": "0f7ba20f3a7278d5a662a7e30f44c942",
+    "02": "8e426ef4134abe1dff4d2a8262abe8a9",
+    "03": "2d686591f8760f8041d2dc75e8234828"
+  },
+  "study": "song-pronunciation-intensity-to-visible-face-v11",
+  "trainActors": [
+    "01",
+    "02"
+  ],
+  "trainAudioFaceSamples": 2960,
+  "trainRecordings": 40,
+  "unseenValidationActors": [
+    "03"
+  ],
+  "validationAudioFaceSamples": 1480,
+  "validationRecordings": 20
+}

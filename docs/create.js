@@ -2,16 +2,10 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const STORY_KEY='withu-story-steps-v1',ORDER_KEY='withu-order-draft-v1';
-const MAX_AGE=30*60*1000,STEP_COUNT=7;
+const MAX_AGE=30*60*1000,STEP_COUNT=6;
 const INPUTS=['recipient','memory','message','gratitudeApology','occasion',
  'recipientAgeGroup','relativePosition','speechStyle','genre','mood','eraPreference','lyricLength'];
-const STEPS=['누구에게 전할까요?','소중한 추억','꼭 전할 말','고마움과 미안함','말투와 관계','장르와 분위기','선택 내용 확인'];
-const VALUES=Object.freeze({
- recipientAgeGroup:{unknown:'선택 안 함',under20:'10대 이하','20s':'20대','30s':'30대','40s':'40대','50s':'50대','60s':'60대','70plus':'70대 이상'},
- relativePosition:{unknown:'자연스럽게',older:'윗사람',peer:'친구·동등한 사이',younger:'아랫사람'},
- speechStyle:{auto:'사연에 맞게 자연스럽게',casual:'친근한 반말',polite:'따뜻한 존댓말',mixed:'반말과 존댓말을 함께'},
- eraPreference:{auto:'나이대에 맞게',none:'시대 상관없음','1960s':'1960년대','1970s':'1970년대','1980s':'1980년대','1990s':'1990년대','2000s':'2000년대','2010s':'2010년대','2020s':'2020년대'}
-});
+const STEPS=['누구에게 전할까요?','소중한 추억','꼭 전할 말','고마움과 미안함','말투와 관계','장르와 분위기'];
 let step=1;
 function story(){return Object.fromEntries(INPUTS.map(id=>[id,$(id).value]));}
 function restore(){
@@ -46,19 +40,11 @@ function validStep(n){
  if(n===6&&(!$('genre').value||!$('mood').value)){
   error('음악 장르와 분위기를 선택해 주세요.');return false;
  }
- if(n===7&&(story().memory+story().message+story().gratitudeApology).trim().length<10){
+ if(n===6&&(story().memory+story().message+story().gratitudeApology).trim().length<10){
   error('가사 제작을 위해 추억이나 전할 말을 10자 이상 적어 주세요.');
   return false;
  }
  return true;
-}
-function renderSummary(){
- const answers=story();
- for(const field of ['recipient','occasion','memory','message','gratitudeApology',
-  'recipientAgeGroup','relativePosition','speechStyle','genre','mood','eraPreference']){
-  const label=VALUES[field]?.[answers[field]]||answers[field]?.trim()||'선택 안 함';
-  $('review-'+field).textContent=label;
- }
 }
 function showStep(n,{push=false}={}){
  step=Math.max(1,Math.min(STEP_COUNT,Number(n)||1));
@@ -71,7 +57,6 @@ function showStep(n,{push=false}={}){
  $('create-progress').setAttribute('aria-valuenow',String(step));
  $('create-progress-fill').style.width=(step/STEP_COUNT*100)+'%';
  error('');
- if(step===STEP_COUNT)renderSummary();
  if(push){
   const url=new URL(location.href);
   url.searchParams.set('step',String(step));
@@ -106,7 +91,7 @@ for(const [radioName,id] of [['genreChoice','genre'],['moodChoice','mood'],['era
 }
 $('story-form').addEventListener('submit',event=>event.preventDefault());
 $('go-create').addEventListener('click',event=>{
- if(step!==7||!validStep(1)||!validStep(6)||!validStep(7)){
+ if(step!==STEP_COUNT||!validStep(1)||!validStep(6)){
   event.preventDefault();return;
  }
  const answers=story();

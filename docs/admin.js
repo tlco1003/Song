@@ -164,7 +164,11 @@ $('admin-mark-paid').addEventListener('click',run(markPaid));
 $('admin-finalize').addEventListener('click',run(finish));
 $('admin-outbox').addEventListener('click',run(showOutbox));
 $('admin-simulate-upgrade').addEventListener('click',run(upgrade));
-if(location.hostname!=='127.0.0.1'){
- status('화면 구성은 확인할 수 있지만 공개 호스팅에서는 실제 고객 업로드가 불가능합니다. 로컬 관리자 테스트 서버 또는 비공개 운영 서버가 필요해요.');
+if(!['127.0.0.1','localhost','::1'].includes(location.hostname)){
+ // Do not let an operator type a real admin secret on public GitHub Pages.
+ // GitHub Pages cannot authenticate customers or accept private audio.
+ $('admin-key').disabled=true;
+ for(const button of document.querySelectorAll('button'))button.disabled=true;
+ status('화면 미리보기 전용입니다. 공개 사이트에는 관리자 키를 입력할 수 없습니다. 실제 고객별 등록은 보호된 로컬/운영 서버에서 진행합니다.');
 }
 })();

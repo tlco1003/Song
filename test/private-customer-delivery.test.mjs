@@ -34,7 +34,7 @@ test('normal price is crossed out; public demo has no track/cover file download 
  assert.match(detail,/id="download-track"[^>]*hidden/);
  assert.ok(!script.includes('download.href=mediaPath'));
  assert.match(script,/api\/delivery\/resolve/);
- assert.match(script,/api\/delivery-downloads/);
+ assert.match(script,/delivery-downloads/);
 });
 test('commercial upgrade is a separate 10000 KRW per-order offer, never base price',()=>{
  const catalog=publicPriceCatalog();

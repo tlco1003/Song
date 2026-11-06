@@ -57,3 +57,18 @@ python -m song_vision.research_checkpoint_vault decrypt \
 - 공개 Actions에는 개인키가 없기 때문에 암호화된 모델에서 자동으로 다음 학습을 이어받지 않는다. 소유자가 개인키로 모델을 복구한 비공개 학습 환경이 필요하다.
 - 다음 원본 데이터 학습을 처음부터 하는 대신, 복구한 파일을 `--init-checkpoint /private/restored-song-vision-research/research-model.pt`로 지정해 가중치를 재사용할 수 있다.
 - 여전히 RAVDESS 비상업 연구 전용이며 고객용 서비스로 연결 불가.
+
+## 2026-11-06 실제 영구 백업 및 복원 확인
+- 데이터: RAVDESS Actor 01 노래 20클립, train/val 각 750 프레임, 36 epoch, best epoch 36.
+- 작업 성공: https://github.com/tlco1003/Song/actions/runs/42202442871
+- 암호화 연구 백업 브랜치 커밋: 7a90f3c6f95e2b6e0d8f8b63ab6869be43b4a905
+- 파일: `encrypted/ravdess-actor-01/song-ravdess-research-run-42202442871-attempt-1.svault`
+- 파일 크기: 5,291,640 bytes.
+- 파일 SHA-256: `e3e9a17796b6e094d9cff9a3409da966549ce9fd6ada1cece25fe3ecdc0294dc`.
+- 별도 manifest: 동일 폴더의 `.svault.manifest.json`, 출처·라이선스·검증수치·원본 불포함 여부.
+- 긴급 백업 GitHub Actions artifact ID: `13494818246`, expires_at `2027-02-04T10:24:34Z`. 이 기간 뒤에도 Git 브랜치의 암호문 파일은 별도로 유지.
+- **실제 복원 검증:** 사용자가 보관할 X25519 개인키로 AES-GCM 봉투 복호화 성공, ZIP 내부에서 `research-model.pt` 4,284,595 bytes, 보고서, 라이선스 표시 확인.
+- **PyTorch 재로드 검증:** `torch.load(..., weights_only=True)` 성공, `modelVersion=song-vision-masked-audio-v2`, `epoch=36`, `stateDict` 텐서 항목 28개 확인.
+- 원본 라이선스 CC BY-NC-SA 4.0 / 상업 사용 불허 / `canAcceptPaidJobs=false` 유지.
+- 앞선 실행 42198736005의 가중치는 저장하지 않아 복구할 수 없지만, **이번 새 실행 42202442871의 체크포인트는 장기 보존됨**.
+- 모델 저장과 복구 검증은 성공했지만, 발음 정확도는 여전히 참조 입술 복사 기준보다 떨어져 제품 품질 합격을 의미하지 않음.

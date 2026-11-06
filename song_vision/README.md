@@ -5,6 +5,10 @@ video-generation API. The **model has no trained weights in Git** and cannot
 produce a convincing singing video until suitable authorized data have been
 prepared, training completed and the resulting quality independently evaluated.
 
+## v4: Korean visemes, manual vocal alignment and controlled lip geometry
+
+The offline [local annotation editor](annotation_editor.html) lets an operator listen to an isolated vocal, mark individual Korean-syllable boundaries, insert explicit rests and export a **file-hash-bound** timing JSON without uploading it. The Python [viseme_timeline.py](viseme_timeline.py) validates the reviewer, timing and audio hash and generates conservative opening/width targets for all 21 Korean vowels with approximate bilabial closure and short transitions. The existing [face_geometry.py](face_geometry.py) supports optional **--timeline**; without it, the legacy RMS-only warp remains available. No automatic phoneme recognition, singing-accurate lip sync or trained customer face swapping is claimed. Full Korean usage guide: [docs/SONG_VISION_KOREAN_VISEME_V4.md](../docs/SONG_VISION_KOREAN_VISEME_V4.md).
+
 ## v3: facial surface geometry and offline lip-warp experiments
 
 See [`docs/SONG_VISION_FACE_GEOMETRY_V3.md`](../docs/SONG_VISION_FACE_GEOMETRY_V3.md). New commands: `python -m song_vision.face_geometry analyze-face` (eye, nose, lip, chin surface coordinates) and `python -m song_vision.face_geometry warp-video` (RMS-driven **approximate** mouth displacement over an authorized singer video). This geometry preview cannot reproduce exact Korean phonemes or determine true skull/jaw/teeth/tongue anatomy; model weights for the landmark detector are a separately downloaded Google offline model, **not** a newly trained SONG model. Existing custom neural net training remains separate.

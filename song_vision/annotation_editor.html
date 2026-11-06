@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SONG-Vision | 로컬 한국어 음절 타이밍 편집기</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:#222;background:#f4f4f7}
+*{box-sizing:border-box}
+body{max-width:940px;margin:20px auto;padding:0 14px}
+h1{font-size:1.55rem}h2{font-size:1.12rem}
+section{background:white;border:1px solid #dddfe5;border-radius:13px;padding:16px;margin:13px 0}
+label{display:block;margin:9px 0;font-weight:600}
+input,textarea,button{font:inherit}input[type=text],input[type=number],textarea{width:100%;padding:9px;border:1px solid #bdc3cd;border-radius:8px}
+textarea{min-height:80px;resize:vertical}
+button{border:1px solid #aaa;border-radius:8px;background:#fafafb;padding:8px 12px;margin:4px 4px 4px 0;cursor:pointer}
+button.primary{background:#212d43;color:#fff;border-color:#212d43}
+button:disabled{opacity:.4;cursor:not-allowed}
+small,.muted{color:#565b66}audio{width:100%}canvas{width:100%;height:90px;background:#fafbfd;border:1px solid #d4d8df;border-radius:8px}
+.tablewrap{overflow-x:auto}table{width:100%;border-collapse:collapse}td,th{padding:8px 6px;border-bottom:1px solid #ddd;text-align:left}
+tr.selected{background:#e8f1ff}td input{width:100px;min-width:90px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.row>*{flex-shrink:0}
+#status{white-space:pre-wrap;background:#f5f7fa;border:1px solid #dde3ee;padding:12px;border-radius:8px;min-height:60px}
+</style>
+</head>
+<body>
+<h1>SONG-Vision · 한국어 가창 타이밍 편집기</h1>
+<p>개발자용 오프라인 실험 도구. 보컬 파일과 가사 정보를 브라우저에서만 처리합니다. <strong>자동 음성 인식/강제 정렬이 아니므로 실제 발음에 맞는 구간을 직접 듣고 표시해야 합니다.</strong></p>
+<section>
+<h2>① 보컬 파일 선택</h2>
+<label for="vocalFile">노래 전체가 아닌 해당 곡의 분리된 보컬 WAV/MP3</label>
+<input type="file" id="vocalFile" accept="audio/*,.wav,.mp3,.m4a">
+<audio id="player" controls preload="metadata"></audio>
+<canvas id="waveform" width="920" height="110" aria-label="재생 위치 및 음원 파형"></canvas>
+<div class="row">
+<button id="back" type="button">-0.1초</button>
+<button id="forth" type="button">+0.1초</button>
+<button id="play" type="button">재생 / 일시정지</button>
+<strong id="playhead">00:00.000</strong>
+</div>
+<p class="muted" id="fileInfo">음원을 먼저 선택하세요.</p>
+</section>
+<section>
+<h2>② 가사에서 음절 만들기</h2>
+<label for="lyrics">정렬할 한국어 가사</label>
+<textarea id="lyrics" placeholder="예: 엄마 사랑해요"></textarea>
+<button id="makeSyllables" class="primary" type="button">음절 목록 만들기</button>
+<p class="muted">한글 완성형 음절만 분리합니다. 실제 발음이 표기와 다르면 내보낸 JSON의 onset/vowel/coda를 검토·수정해야 합니다. 쉼은 별도 추가하세요.</p>
+</section>
+<section>
+<h2>③ 음절별 종료 시점 표시</h2>
+<p>가사를 들으며 해당 음절을 선택하고, 노래가 다음 음절로 넘어갈 때 <strong>현재 재생 시점을 종료 시점으로 표시</strong>를 누르세요. 시작 시간은 앞 구간의 종료 시간으로 자동 연결됩니다. 모든 중간 구간을 표시해야 JSON을 만들 수 있습니다.</p>
+<div class="row">
+<button type="button" class="primary" id="mark">선택한 구간 종료 표시</button>
+<button type="button" id="previous">이전 음절</button>
+<button type="button" id="next">다음 음절</button>
+<button type="button" id="insertRest">선택 뒤에 쉼 추가</button>
+<button type="button" id="insertRestBefore">선택 앞에 쉼 추가</button>
+<button type="button" id="deleteRest">선택한 쉼 삭제</button>
+</div>
+<div class="tablewrap"><table><thead><tr><th>순서</th><th>음절/쉼</th><th>시작(s)</th><th>종료(s)</th><th>선택</th></tr></thead><tbody id="rows"></tbody></table></div>
+</section>
+<section>
+<h2>④ 직접 확인 후 JSON 저장</h2>
+<label for="reviewer">타이밍을 확인한 작업자</label>
+<input id="reviewer" type="text" maxlength="120" placeholder="예: song-operator">
+<label><input type="checkbox" id="reviewed"> 모든 음절의 실제 발음 시점을 직접 듣고 검토했습니다.</label>
+<button class="primary" type="button" id="export">검증된 시간표 JSON 저장</button>
+<p class="muted">브라우저가 보컬 파일의 SHA-256을 계산해 시간표에 포함합니다. 따라서 다른 음원으로 바꿔치기하면 엔진에서 거절됩니다. 외부로 파일을 전송하지 않습니다.</p>
+<div id="status" role="status">준비됨.</div>
+</section>
+<script>
+'use strict';
+(() => {
+const $ = id => document.getElementById(id);
+const audio = $('player');
+let audioFile = null, fileUrl = null, fileHash = null, items = [], boundaries = [], selected = 0, fullDuration = 0, sampled = null;
+const say = message => $('status').textContent = message;
+const stamp = t => Number.isFinite(t) ? String(Math.floor(t/60)).padStart(2,'0')+':'+(t%60).toFixed(3).padStart(6,'0') : '--:--.---';
+const second = value => Math.round(value*1000000)/1000000;
+const validRange = (value,a,b) => Number.isFinite(value) && value > a && value < b;
+async function digest(file) {
+  if (!crypto?.subtle) throw new Error('SHA-256을 사용할 수 없는 환경입니다. localhost 또는 보안 브라우저에서 열어주세요.');
+  const bytes = await file.arrayBuffer();
+  const result = await crypto.subtle.digest('SHA-256',bytes);
+  return Array.from(new Uint8Array(result)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+function renderWave() {
+  const cv=$('waveform'),ctx=cv.getContext('2d');ctx.clearRect(0,0,cv.width,cv.height);
+  ctx.fillStyle='#f7f9fc';ctx.fillRect(0,0,cv.width,cv.height);
+  ctx.strokeStyle='#8592a6';ctx.lineWidth=1;ctx.beginPath();
+  if (sampled) {
+    for (let x=0; x<cv.width; x++) {
+      const sample = sampled[Math.floor(x/cv.width*sampled.length)]||0;
+      const y=cv.height/2, amp=Math.max(1,sample*cv.height*.46);
+      ctx.moveTo(x,y-amp);ctx.lineTo(x,y+amp);
+    }
+  }
+  ctx.stroke();
+  for (let i=1; i<boundaries.length-1; i++) {
+    if (boundaries[i]===null||!fullDuration) continue;
+    ctx.strokeStyle='#77a6dd';ctx.beginPath();const x=cv.width*boundaries[i]/fullDuration;
+    ctx.moveTo(x,0);ctx.lineTo(x,cv.height);ctx.stroke();
+  }
+  if (fullDuration) {
+    ctx.strokeStyle='#d32f49';ctx.lineWidth=2;ctx.beginPath();
+    const x=cv.width*(audio.currentTime||0)/fullDuration;
+    ctx.moveTo(x,0);ctx.lineTo(x,cv.height);ctx.stroke();
+  }
+}
+async function sampleWave(file) {
+  sampled=null;
+  try {
+    const context=new (window.AudioContext||window.webkitAudioContext)();
+    const data=await file.arrayBuffer();
+    const buffer=await context.decodeAudioData(data.slice(0));
+    const ch=buffer.getChannelData(0), bins=920, result=new Float32Array(bins);
+    for(let j=0;j<bins;j++){
+      const lo=Math.floor(j*ch.length/bins),hi=Math.max(lo+1,Math.floor((j+1)*ch.length/bins));
+      let max=0;for(let k=lo;k<hi;k+=Math.max(1,Math.floor((hi-lo)/50))) max=Math.max(max,Math.abs(ch[k]));
+      result[j]=max;
+    }
+    sampled=result; await context.close();
+  }catch(_){say('음원 파형을 해독하지 못했지만 오디오 재생과 수동 시간표 편집은 가능할 수 있어요.');}
+  renderWave();
+}
+$('vocalFile').addEventListener('change',async event=>{
+  const file=event.target.files?.[0];
+  if(!file)return;
+  if(file.size>100*1024*1024){say('100MB를 넘는 파일은 이 로컬 편집기에서 거절합니다.');return;}
+  if(fileUrl)URL.revokeObjectURL(fileUrl);
+  audioFile=file;fileHash=null;fullDuration=0;items=[];boundaries=[];selected=0;
+  fileUrl=URL.createObjectURL(file);audio.src=fileUrl;
+  say('파일 SHA-256 계산 중...');
+  try{fileHash=await digest(file);}catch(error){say(error.message);}
+  await sampleWave(file);
+  $('fileInfo').textContent=file.name+' · '+(file.size/1024/1024).toFixed(2)+' MB'+(fileHash?' · SHA256 '+fileHash.slice(0,12)+'…':'');
+  display();
+});
+audio.addEventListener('loadedmetadata',()=>{
+  if(!Number.isFinite(audio.duration)||audio.duration<=0) {say('음원 길이를 읽지 못했습니다.');return;}
+  fullDuration=second(audio.duration);
+  if(items.length)boundaries=[0,...Array(items.length-1).fill(null),fullDuration];
+  say('음원 길이 '+stamp(fullDuration)+' 확인됨. 한국어 음절별 시점을 직접 표시하세요.');
+  display();renderWave();
+});
+audio.addEventListener('timeupdate',()=>{$('playhead').textContent=stamp(audio.currentTime);renderWave();});
+$('waveform').addEventListener('click',event=>{
+  if(!fullDuration)return;
+  const rect=event.currentTarget.getBoundingClientRect();
+  const fraction=Math.max(0,Math.min(1,(event.clientX-rect.left)/rect.width));
+  audio.currentTime=fraction*fullDuration;renderWave();
+});
+$('back').onclick=()=>audio.currentTime=Math.max(0,audio.currentTime-.1);
+$('forth').onclick=()=>audio.currentTime=Math.min(fullDuration,audio.currentTime+.1);
+$('play').onclick=()=>audio.paused?audio.play().catch(e=>say(e.message)):audio.pause();
+$('makeSyllables').onclick=()=>{
+  if(!fullDuration)return say('먼저 보컬 파일을 선택하세요.');
+  const characters=Array.from($('lyrics').value).filter(ch=>/^[가-힣]$/u.test(ch));
+  if(!characters.length)return say('한국어 완성형 음절을 하나 이상 입력하세요.');
+  if(characters.length>1000)return say('1000음절 이하의 구간만 지원합니다.');
+  items=characters.map(syllable=>({kind:'syllable',syllable}));
+  boundaries=[0,...Array(items.length-1).fill(null),fullDuration];selected=0;
+  say(characters.length+'개 음절이 등록됐습니다. 타이밍은 자동 추정하지 않았습니다. 직접 표시하세요.');display();
+};
+function display(){
+  const tbody=$('rows');tbody.textContent='';
+  items.forEach((item,i)=>{
+    const tr=document.createElement('tr');if(i===selected)tr.className='selected';
+    const a=document.createElement('td');a.textContent=String(i+1);
+    const b=document.createElement('td');b.textContent=item.kind==='rest'?'(쉼)':item.syllable;
+    const c=document.createElement('td');c.textContent=boundaries[i]===null?'미표시':boundaries[i].toFixed(3);
+    const d=document.createElement('td');
+    if(i===items.length-1){d.textContent=fullDuration.toFixed(3);}
+    else{
+      const input=document.createElement('input');input.type='number';input.step='.001';input.min='0';input.max=String(fullDuration);
+      input.placeholder='미표시';input.value=boundaries[i+1]===null?'':boundaries[i+1].toFixed(3);
+      input.addEventListener('change',()=>{const value=Number(input.value);if(input.value.trim()===''){boundaries[i+1]=null;say('경계 표시를 취소했어요.');display();return;}markBoundary(i,value);});
+      d.appendChild(input);
+    }
+    const e=document.createElement('td'),button=document.createElement('button');button.textContent=i===selected?'선택됨':'선택';button.onclick=()=>{selected=i;display();};
+    e.appendChild(button);tr.append(a,b,c,d,e);tbody.appendChild(tr);
+  });renderWave();
+}
+function markBoundary(i,value){
+ if(i>=items.length-1)return say('마지막 구간은 음원 종료 시점으로 끝납니다.');
+ const previous=boundaries[i],next=boundaries[i+2];
+ if(previous===null) return say('앞 구간의 종료 시점부터 순서대로 표시하세요.');
+ if(!validRange(value,previous+.019,next===null?fullDuration-.019:next-.019))return say('다음 구간보다 늦거나 이전 구간보다 이른 시간을 설정할 수 없습니다. 최소 구간 0.02초.');
+ boundaries[i+1]=second(value);selected=Math.min(i+1,items.length-1);say('시점 '+stamp(value)+' 기록됨. 다음 음절을 선택해 주세요.');display();
+}
+$('mark').onclick=()=>{if(!items.length)return say('음절을 먼저 만드세요.');markBoundary(selected,audio.currentTime);};
+$('previous').onclick=()=>{selected=Math.max(0,selected-1);display();};
+$('next').onclick=()=>{selected=Math.min(items.length-1,selected+1);display();};
+function insertRest(index){
+ if(!items.length)return say('음절을 먼저 만드세요.');
+ items.splice(index,0,{kind:'rest'});
+ if(index===items.length-1)boundaries.splice(index,0,null);
+ else boundaries.splice(index+1,0,null);
+ selected=index;say('쉼 구간이 추가됐습니다. 관련 경계를 다시 표시하세요.');display();
+}
+$('insertRest').onclick=()=>insertRest(selected+1);
+$('insertRestBefore').onclick=()=>insertRest(selected);
+$('deleteRest').onclick=()=>{
+ if(!items.length||items[selected].kind!=='rest')return say('선택한 구간은 쉼이 아니에요.');
+ if(items.length===1)return say('마지막 구간을 지울 수 없습니다.');
+ const wasLast=selected===items.length-1;
+ items.splice(selected,1);boundaries.splice(wasLast?selected:selected+1,1);
+ selected=Math.min(selected,items.length-1);say('쉼 구간을 삭제했어요.');display();
+};
+$('export').onclick=()=>{
+ try{
+ if(!fileHash||!fullDuration||!items.length)throw Error('음원, SHA256, 음절을 먼저 준비하세요.');
+ if(!$('reviewed').checked)throw Error('실제 음절 발음 타이밍을 직접 검토했다는 확인이 필요합니다.');
+ const reviewer=$('reviewer').value.trim();
+ if(!reviewer)throw Error('작업자 이름을 입력해 주세요.');
+ const segments=[];
+ for(let i=0;i<items.length;i++){
+   const start=boundaries[i],end=boundaries[i+1];
+   if(start===null||end===null||end-start<.02)throw Error((i+1)+'번째 구간 시점을 올바르게 표시해 주세요 (최소 0.02초).');
+   segments.push({kind:items[i].kind,startSeconds:second(start),endSeconds:second(end),...(items[i].kind==='syllable'?{syllable:items[i].syllable}:{})});
+ }
+ const result={schemaVersion:1,alignmentMethod:'human_reviewed',verified:true,verifiedBy:reviewer,
+   timeBase:'vocal_file_seconds',vocalSha256:fileHash,durationSeconds:fullDuration,segments};
+ const bytes=new Blob([JSON.stringify(result,null,2)],{type:'application/json;charset=utf-8'});
+ const uri=URL.createObjectURL(bytes),a=document.createElement('a');a.href=uri;a.download='song-vision-korean-viseme-timeline.json';document.body.appendChild(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(uri),1000);
+ say('시간표를 저장했어요. 임의의 자동 타이밍이 아니라 직접 표시한 경계만 사용했습니다.');
+ }catch(error){say(error.message);}
+};
+window.addEventListener('pagehide',()=>{audio.pause();if(fileUrl)URL.revokeObjectURL(fileUrl);});
+})();
+</script>
+</body>
+</html>

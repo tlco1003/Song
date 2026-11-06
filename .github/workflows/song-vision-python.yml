@@ -31,3 +31,4 @@ jobs:
       - run: python -m song_vision.face_geometry --help
       - run: python -m song_vision.face_geometry analyze-face --help
       - run: python -m song_vision.face_geometry warp-video --help
+      - run: python -m song_vision.viseme_timeline --help

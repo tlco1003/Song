@@ -18,6 +18,7 @@ import cv2
 import numpy as np
 
 from .core import SAMPLE_RATE, assert_consent, decode_audio
+from .viseme_timeline import load_timeline, sample_frames, verify_audio_file
 
 VERSION = "song-face-geometry-v1"
 MIN_POINTS = 478
@@ -211,12 +212,13 @@ def audio_to_opening_curve(waveform: np.ndarray, seconds: float,
 
 
 def deform_lips(frame: np.ndarray, points: np.ndarray, target_open_ratio: float,
-                strength: float = 1.) -> np.ndarray:
+                strength: float = 1., target_width_scale: float = 1.) -> np.ndarray:
     """Local soft ROI warp. Does not synthesize teeth, tongue or new visemes."""
     pts = _check_points(points)
     if frame.ndim != 3 or frame.shape[2] != 3:
         raise ValueError("Expected BGR frame")
-    if not 0 <= strength <= 2 or not 0 <= target_open_ratio <= .5:
+    if (not 0 <= strength <= 2 or not 0 <= target_open_ratio <= .5
+            or not 0.7 <= target_width_scale <= 1.3):
         raise ValueError("Unbounded mouth movement")
     h, w = frame.shape[:2]
     xy = _xy_px(pts, w, h)
@@ -232,7 +234,8 @@ def deform_lips(frame: np.ndarray, points: np.ndarray, target_open_ratio: float,
         raise ValueError("Invalid input lip position")
     dy = float(np.clip((target_open_ratio - observed_ratio) * width * strength,
                        -.12 * width, .12 * width))
-    if abs(dy) < .08:
+    width_factor = 1. + (target_width_scale - 1.) * strength
+    if abs(dy) < .08 and abs(width_factor - 1.) < .003:
         return frame.copy()
     rx, ry = max(8., .85 * width), max(8., .66 * width)
     x1, x2 = max(0, int(center_x - rx)), min(w, int(center_x + rx + 1))
@@ -250,7 +253,12 @@ def deform_lips(frame: np.ndarray, points: np.ndarray, target_open_ratio: float,
     # lower lip moves down. This is intentionally a limited 2D approximation.
     displacement_y = (-.4 * upper_field + .6 * lower_field) * dy
     local = frame[y1:y2, x1:x2]
-    map_x = (xx - x1).astype(np.float32)
+    # Horizontal inverse remap changes projected lip width in a bounded ROI.
+    # This cannot reconstruct true lip protrusion or teeth/tongue occlusion.
+    lip_field = np.exp(-.5 * (((xx - center_x) / (width * .56)) ** 2
+                                 + ((yy - center_y) / (width * .32)) ** 2))
+    x_displacement = (xx - center_x) * (1. - 1. / width_factor) * lip_field
+    map_x = (xx - x1 - x_displacement).astype(np.float32)
     map_y = (yy - y1 - displacement_y).astype(np.float32)
     warped = cv2.remap(local, map_x, map_y, interpolation=cv2.INTER_LINEAR,
                        borderMode=cv2.BORDER_REFLECT_101)
@@ -285,7 +293,8 @@ def inspect_image(image_path: Path, model_path: Path, json_path: Path,
 
 def animate_video(template: Path, vocals: Path, mix: Path, model_path: Path,
                   consent_record: Path, output: Path, seconds: float = 10.,
-                  start: float = 0., strength: float = 1.):
+                  start: float = 0., strength: float = 1.,
+                  timeline_path: Path | None = None):
     """Offline preview; operator must verify actual rights beyond consent JSON."""
     assert_consent(consent_record, scope="video_edit")
     if not 1. <= seconds <= 30. or start < 0 or not 0 <= strength <= 2:
@@ -304,7 +313,16 @@ def animate_video(template: Path, vocals: Path, mix: Path, model_path: Path,
         raise ValueError("Template video invalid")
     if frame_count / fps + .02 < seconds:
         raise ValueError("Video template shorter than preview; no looping hidden")
-    curve = audio_to_opening_curve(waveform, seconds, start, fps=25)
+    if timeline_path is not None:
+        timeline = load_timeline(timeline_path)
+        verify_audio_file(timeline, vocals)
+        controls = sample_frames(timeline, start, seconds, fps=25)
+        control_mode = "human_reviewed_korean_viseme_timeline"
+    else:
+        curve = audio_to_opening_curve(waveform, seconds, start, fps=25)
+        controls = [{"openingRatio": float(value), "widthScale": 1.}
+                    for value in curve]
+        control_mode = "rms_amplitude_only"
     output.parent.mkdir(parents=True, exist_ok=True)
     seen = 0
     with tempfile.TemporaryDirectory(prefix="song-geometry-") as tmp:
@@ -314,7 +332,7 @@ def animate_video(template: Path, vocals: Path, mix: Path, model_path: Path,
             raise RuntimeError("OpenCV MP4 codec not available")
         try:
             with LocalFaceLandmarker(model_path, video=True) as scanner:
-                for i, opening in enumerate(curve):
+                for i, control in enumerate(controls):
                     video_second = i / 25.
                     cap.set(cv2.CAP_PROP_POS_MSEC, video_second * 1000.)
                     ok, frame = cap.read()
@@ -324,7 +342,9 @@ def animate_video(template: Path, vocals: Path, mix: Path, model_path: Path,
                     if detection is None:
                         raise ValueError(f"Face tracking failed at frame {i}")
                     points, _ = detection
-                    new_frame = deform_lips(frame, points, float(opening), strength)
+                    new_frame = deform_lips(
+                        frame, points, float(control["openingRatio"]), strength,
+                        target_width_scale=float(control["widthScale"]))
                     writer.write(new_frame)
                     seen += 1
         finally:
@@ -353,6 +373,9 @@ def animate_video(template: Path, vocals: Path, mix: Path, model_path: Path,
         "durationSeconds": seconds,
         "customerFaceReplaced": False,
         "boneMeasurementsAvailable": False,
+        "controlMode": control_mode,
+        "lipSyncVerified": False,
+        "alignmentProvenance": "manual_timings" if timeline_path else "none",
         "modelFileSha256": hashlib.sha256(model_path.read_bytes()).hexdigest(),
     }
     output.with_suffix(".geometry.json").write_text(json.dumps(report, indent=2),
@@ -379,6 +402,7 @@ def main():
     video.add_argument("--seconds", type=float, default=10.)
     video.add_argument("--start", type=float, default=0.)
     video.add_argument("--strength", type=float, default=1.)
+    video.add_argument("--timeline", type=Path, help="Verified Korean syllable timing JSON")
     args = parser.parse_args()
     if args.command == "analyze-face":
         report = inspect_image(args.image, args.model, args.output_json,
@@ -386,7 +410,7 @@ def main():
     else:
         report = animate_video(args.template, args.vocals, args.mix, args.model,
                                args.consent_record, args.output, args.seconds,
-                               args.start, args.strength)
+                               args.start, args.strength, args.timeline)
     print(json.dumps(report, ensure_ascii=False, indent=2))
 
 

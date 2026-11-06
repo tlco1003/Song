@@ -1,0 +1,35 @@
+{
+  "archive": "song-ravdess-3actors-run-42222592317-attempt-1.svault",
+  "bestMetrics": {
+    "audioSensitivity": 0.0241283,
+    "copyReferenceMaskedMAE": 0.0500151,
+    "correctVsShuffledMAEGain": 0.0047194,
+    "epoch": 12,
+    "maskedInputMAE": 0.1595127,
+    "shuffledAudioMaskedMAE": 0.0787299,
+    "trainLoss": 0.0380804,
+    "valMaskedMAE": 0.0740105
+  },
+  "commercialUseAllowed": false,
+  "customerJobsEnabled": false,
+  "dataset": "RAVDESS-Actors-01-02-03",
+  "diagnosticFlags": [
+    "WORSE_THAN_COPY_REFERENCE"
+  ],
+  "encryptedFileSha256": "f968ff03cea6cd2d596a430a48d901b6767b8290cf4f6683557080e850e20f68",
+  "holdoutActors": [
+    "03"
+  ],
+  "holdoutFrames": 1500,
+  "holdoutRecordings": 20,
+  "keyHeldOutsideGithub": true,
+  "license": "CC-BY-NC-SA-4.0",
+  "rawMediaStoredInVault": false,
+  "researchUseOnly": true,
+  "trainActors": [
+    "01",
+    "02"
+  ],
+  "trainFrames": 3000,
+  "trainingRecordings": 40
+}

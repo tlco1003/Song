@@ -24,7 +24,8 @@
       "lyricsFile": "lyrics-papa.txt",
       "genre": "어쿠스틱 감성 발라드",
       "genreSource": "editorial",
-      "productType": "audio_video"
+      "productType": "audio_video",
+            "lyricsOffsetSeconds": 1
     },
     {
       "id": "song-cinderella-laundry",
@@ -39,6 +40,7 @@
       "genreSource": "prompt",
       "coverImage": "covers/cinderella-laundry.webp",
       "productType": "audio_with_cover",
+      "lyricsOffsetSeconds": 1,
       "coverTheme": "장난스럽고 낭만적인 동전 세탁소의 신데렐라"
     },
     {
@@ -50,6 +52,7 @@
       "genre": "80s 일본 시티팝",
       "genreSource": "prompt",
       "productType": "audio_with_cover",
+      "lyricsOffsetSeconds": 1,
       "coverTheme": "여름의 일본 여행, 백조가 있는 호수, 디즈니랜드의 불빛과 레트로 시티팝"
     },
     {
@@ -62,7 +65,8 @@
       "genre": "어쿠스틱 팝",
       "genreSource": "editorial",
       "coverImage": "covers/self-lantern.webp",
-      "productType": "audio_with_cover"
+      "productType": "audio_with_cover",
+      "lyricsOffsetSeconds": 1
     },
     {
       "id": "song-taehwan",
@@ -74,7 +78,8 @@
       "genre": "로맨틱 발라드",
       "genreSource": "editorial",
       "coverImage": "covers/taehwan-main.webp",
-      "productType": "audio_with_cover"
+      "productType": "audio_with_cover",
+      "lyricsOffsetSeconds": 1
     },
     {
       "id": "song-jeongmi",
@@ -87,6 +92,7 @@
       "genreSource": "editorial",
       "coverImage": "covers/friend-memory.webp",
       "productType": "audio_with_cover"
+      "lyricsOffsetSeconds": 1,
     },
     {
       "id": "song-romantic-wedding",
@@ -97,7 +103,8 @@
       "genre": "웨딩 발라드 · 듀엣",
       "genreSource": "editorial",
       "coverImage": "covers/romantic-wedding.webp",
-      "productType": "audio_with_cover"
+      "productType": "audio_with_cover",
+      "lyricsOffsetSeconds": 1
     },
     {
       "id": "song-sprout",
@@ -109,7 +116,8 @@
       "genre": "희망 팝 발라드",
       "genreSource": "editorial",
       "coverImage": "covers/sprout.webp",
-      "productType": "audio_with_cover"
+      "productType": "audio_with_cover",
+      "lyricsOffsetSeconds": 1
     },
     {
       "id": "song-am630",
@@ -121,7 +129,8 @@
       "genre": "새벽 감성 발라드",
       "genreSource": "editorial",
       "coverImage": "covers/am630.webp",
-      "productType": "audio_with_cover"
+      "productType": "audio_with_cover",
+      "lyricsOffsetSeconds": 1
     }
   ]
 }

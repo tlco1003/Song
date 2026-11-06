@@ -12,8 +12,10 @@ export function validateDedicationChoice({dedicationOutro=false,dedicationText='
   if(dedicationText.trim())throw new Error('Dedication text requires a selected paid add-on');
   return Object.freeze({enabled:false,text:''});
  }
+ if(/[<>\r\n\u0000-\u001f]/u.test(dedicationText))
+  throw new Error('Dedication message contains unsupported control characters');
  const text=dedicationText.trim().replace(/\s+/g,' ');
- if(text.length<4||text.length>70||/[<>\r\n\u0000-\u001f]/u.test(text))
+ if(text.length<4||text.length>70)
   throw new Error('Dedication text must be 4 to 70 printable characters');
  return Object.freeze({enabled:true,text});
 }

@@ -11,6 +11,7 @@ import {prepareServerOrderDraft} from './order-draft-preparation.mjs';
 import {storePrivateOrderDraft} from './private-draft-store.mjs';
 import {hashPrivateDeliveryToken} from './private-delivery-invitation.mjs';
 import {upgradePriceKrw} from './commercial-rights-upgrade.mjs';
+import {LOCAL_STAGING_HTML,LOCAL_STAGING_SCRIPT} from './local-staging-ui.mjs';
 
 // Single-operator local MVP. Public multi-user deployment requires an
 // authenticated OAuth PKCE flow and per-user Suno credential vault.
@@ -150,6 +151,15 @@ function harden(res){
   res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; frame-src https://suno.com https://*.suno.com; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'");
   res.setHeader('Permissions-Policy','camera=(self), microphone=(self)');
 }
+async function binaryBody(req,limit=25*1024*1024){
+ let size=0;const chunks=[];
+ for await(const chunk of req){
+  size+=chunk.length;
+  if(size>limit)throw new AppError(413,'Test audio file exceeds the maximum size');
+  chunks.push(chunk);
+ }
+ return Buffer.concat(chunks);
+}
 async function jsonBody(req,limit=50000){
   let size=0;const chunks=[];
   for await(const chunk of req){size+=chunk.length;if(size>limit)throw new AppError(413,'입력 내용이 너무 큽니다.');chunks.push(chunk);}
@@ -166,10 +176,80 @@ function limited(req,max=15){
   if(++item.count>max)throw new AppError(429,'시간당 생성 요청 한도를 초과했습니다.');
   requests.set(ip,item);
 }
-async function handle(req,res,customerAccess){
+async function handle(req,res,customerAccess,staging){
+  const localStagingAvailable=staging!==null&&staging!==undefined
+    &&isLocal&&process.env.NODE_ENV!=='production'
+    &&process.env.WITHU_STAGING_ENABLED==='true';
+  if(localStagingAvailable){
+   const remote=req.socket.remoteAddress||'';
+   if(!['127.0.0.1','::1','::ffff:127.0.0.1'].includes(remote))
+    throw new AppError(403,'Local test page is available only on loopback');
+  }
+
   harden(res);
   const u=new URL(req.url,'http://'+host+':'+port);
   const pathname=u.pathname;
+  // Local staging has NO live payment authority and no public production route.
+  if(localStagingAvailable&&req.method==='GET'&&pathname==='/_staging'){
+   res.writeHead(200,{
+    'Content-Type':'text/html; charset=utf-8',
+    'Cache-Control':'private, no-store'
+   });
+   return res.end(LOCAL_STAGING_HTML);
+  }
+  if(localStagingAvailable&&req.method==='GET'&&pathname==='/_staging.js'){
+   res.writeHead(200,{
+    'Content-Type':'text/javascript; charset=utf-8',
+    'Cache-Control':'private, no-store'
+   });
+   return res.end(LOCAL_STAGING_SCRIPT);
+  }
+  if(pathname.startsWith('/api/_staging/')){
+   if(!localStagingAvailable)throw new AppError(404,'Staging API is disabled');
+   if(req.method==='POST')sameOriginPost(req);
+   limited(req,120);
+   try{staging.verifyAdmin(req.headers['x-withu-test-key']);}
+   catch(_){throw new AppError(403,'Local staging operator key required');}
+   if(req.method==='GET'&&pathname==='/api/_staging/outbox')
+    return json(res,200,{messages:staging.listTestOutbox({
+     adminKey:req.headers['x-withu-test-key']
+    })});
+   if(req.method==='POST'&&pathname==='/api/_staging/orders'){
+    const data=await jsonBody(req,15000);
+    return json(res,201,await staging.createTestOrder({
+     draft:data?.draft,contact:data?.contact,
+     adminKey:req.headers['x-withu-test-key']
+    }));
+   }
+   if(req.method==='POST'&&pathname==='/api/_staging/audio'){
+    const contentType=String(req.headers['content-type']||'');
+    if(contentType!=='application/octet-stream')
+     throw new AppError(415,'Audio upload requires an octet-stream body');
+    const fileName=req.headers['x-withu-audio-name'];
+    const buffer=await binaryBody(req,25*1024*1024);
+    const result=await staging.uploadTestAudio({
+     fileName,data:buffer,adminKey:req.headers['x-withu-test-key']
+    });
+    return json(res,201,result);
+   }
+   const pay=/^\/api\/_staging\/orders\/(test_[a-f0-9-]{36})\/simulate-payment$/.exec(pathname);
+   if(req.method==='POST'&&pay){
+    await jsonBody(req,256);
+    return json(res,200,staging.simulatePayment({
+     orderId:pay[1],adminKey:req.headers['x-withu-test-key']
+    }));
+   }
+   const finish=/^\/api\/_staging\/orders\/(test_[a-f0-9-]{36})\/finish$/.exec(pathname);
+   if(req.method==='POST'&&finish){
+    const body=await jsonBody(req,20000);
+    return json(res,200,await staging.finishManualTestOrder({
+     orderId:finish[1],songs:body?.songs,
+     adminKey:req.headers['x-withu-test-key'],
+     localOrigin:'http://127.0.0.1:'+req.socket.localPort+'/'
+    }));
+   }
+   throw new AppError(404,'Unsupported local staging action');
+  }
   // Public health check: no user data, credentials, providers, or capability claims.
   if(req.method==='GET'&&pathname==='/healthz')return json(res,200,{status:'ok',service:'withu-api'});
   if(pathname.startsWith('/api/')){
@@ -430,8 +510,11 @@ async function handle(req,res,customerAccess){
   createReadStream(full).on('error',()=>res.destroy()).pipe(res);
   return;
 }
-export function createApp({customerAccess=null}={}){
-  return http.createServer((req,res)=>{void handle(req,res,customerAccess).catch(error=>{
+export function createApp({customerAccess=null,staging=null}={}){
+  if(staging&&(process.env.NODE_ENV==='production'||!isLocal
+    ||process.env.WITHU_STAGING_ENABLED!=='true'))
+   throw new Error('Staging cannot be attached to a production/public server');
+  return http.createServer((req,res)=>{void handle(req,res,customerAccess,staging).catch(error=>{
     if(!res.headersSent)json(res,error instanceof AppError?error.status:500,{
       error:error instanceof AppError?error.message:'서버 처리 오류가 발생했습니다.'
     });else res.destroy();

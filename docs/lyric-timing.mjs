@@ -87,11 +87,14 @@ export function serializeTimedLyrics(lines,times){
  * This does not identify the sung word: it uses the actual media clock
  * and the original intro/outro weighting from the WITHU homepage.
  */
-export function approximateLyricIndexAt(count,currentTime,duration){
+export function approximateLyricIndexAt(count,currentTime,duration,offsetSeconds=0){
  if(!Number.isInteger(count)||count<1||!Number.isFinite(currentTime)||
-    !Number.isFinite(duration)||duration<=0)return -1;
+    !Number.isFinite(duration)||duration<=0||!Number.isFinite(offsetSeconds))return -1;
  const intro=Math.min(14,Math.max(4,duration*0.035));
  const outro=Math.min(13,duration*0.025);
- const progress=Math.max(0,Math.min(1,(currentTime-intro)/Math.max(1,duration-intro-outro)));
+ // A positive offset delays the lyric line. Zero retains the old song behavior.
+ const adjustedTime=currentTime-offsetSeconds;
+ if(offsetSeconds>0&&adjustedTime<intro)return -1;
+ const progress=Math.max(0,Math.min(1,(adjustedTime-intro)/Math.max(1,duration-intro-outro)));
  return Math.max(0,Math.min(count-1,Math.floor(progress*count)));
 }

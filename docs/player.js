@@ -134,17 +134,20 @@ function drawLyrics(text){
 function advanceLyrics(){
  // Keep the actual audible media as the master clock for MP3 and MP4.
  if(!visibleLyrics.length||playbackPlayer.hidden)return;
+ const t=tracks[current];
+ // Per-track adjustment only. Positive values delay lyrics; negative values advance them.
+ const offset=Number.isFinite(t?.lyricsOffsetSeconds)&&Math.abs(t.lyricsOffsetSeconds)<=30
+  ?t.lyricsOffsetSeconds:0;
  if(lyricCueSeconds){
-  setActiveLine(cueIndexAt(lyricCueSeconds,playbackPlayer.currentTime));
+  setActiveLine(cueIndexAt(lyricCueSeconds,playbackPlayer.currentTime-offset));
   return;
  }
- // Published songs without manual cue data retain the original automatic
- // lyric progression. Unlike real cues this is an approximation, not ASR.
- const t=tracks[current];
+ // Untimed lyrics retain the original approximate auto-scroll.
  const duration=Number.isFinite(playbackPlayer.duration)&&playbackPlayer.duration>0
   ?playbackPlayer.duration:t?.durationSeconds;
- const estimated=approximateLyricIndexAt(visibleLyrics.length,playbackPlayer.currentTime,duration);
+ const estimated=approximateLyricIndexAt(visibleLyrics.length,playbackPlayer.currentTime,duration,offset);
  if(estimated>=0)setActiveLine(estimated);
+ else setActiveLine(-1);
 }
 function showPlayer(kind,hasSeparateAudio=false){
  audio.hidden=kind==='none'||(kind==='video'&&!hasSeparateAudio);

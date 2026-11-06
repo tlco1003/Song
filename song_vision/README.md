@@ -5,6 +5,10 @@ video-generation API. The **model has no trained weights in Git** and cannot
 produce a convincing singing video until suitable authorized data have been
 prepared, training completed and the resulting quality independently evaluated.
 
+## v6: masked-reference training to investigate audio-conditioning failure
+
+The experimental [masked_retrain.py](masked_retrain.py) network removes the central mouth from the reference image **before** the encoder sees it, then fuses an explicit 80-bin Mel acoustic embedding with skin/face context. It learns inpainting from matched singer/audio frames, evaluates matched-versus-shuffled audio losses, reference-copy baseline and audio sensitivity, and saves a distinct **unvalidated** checkpoint. The isolated RAVDESS research pipeline is in [external_ravdess_retrain.py](external_ravdess_retrain.py); its research weights and video data are removed after the temporary CI runner finishes. Results do not authorize commercial use. Full technical guide: [docs/SONG_VISION_MASKED_RETRAIN_V6.md](../docs/SONG_VISION_MASKED_RETRAIN_V6.md).
+
 ## v4: Korean visemes, manual vocal alignment and controlled lip geometry
 
 The offline [local annotation editor](annotation_editor.html) lets an operator listen to an isolated vocal, mark individual Korean-syllable boundaries, insert explicit rests and export a **file-hash-bound** timing JSON without uploading it. The Python [viseme_timeline.py](viseme_timeline.py) validates the reviewer, timing and audio hash and generates conservative opening/width targets for all 21 Korean vowels with approximate bilabial closure and short transitions. The existing [face_geometry.py](face_geometry.py) supports optional **--timeline**; without it, the legacy RMS-only warp remains available. No automatic phoneme recognition, singing-accurate lip sync or trained customer face swapping is claimed. Full Korean usage guide: [docs/SONG_VISION_KOREAN_VISEME_V4.md](../docs/SONG_VISION_KOREAN_VISEME_V4.md).

@@ -19,6 +19,8 @@ export function songVisionReadiness() {
     operatorAlignmentRequired: true,
     acousticForcedAlignmentImplemented: false,
     realSingerVisemeQualityValidated: false,
+    maskedReferenceRetrainingAvailable: true,
+    maskedReferenceRealSingerQualityValidated: false,
     phonemeAccurateLipsyncVerified: false,
     actualBoneStructureEstimation: false,
     clipDisjointValidationImplemented: true,

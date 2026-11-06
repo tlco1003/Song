@@ -134,6 +134,13 @@ for(const item of document.querySelectorAll('input[name="deliveryChannel"]')){
 // At the future PG checkout boundary, the server MUST independently validate
 // customerEmail, customerPhone, deliveryChannel and consent; these browser
 // values are NEVER trusted as payment or identity verification.
+// The test route is a separate, privileged loopback server. Never present
+// a mock "paid" result on public GitHub Pages or production domains.
+if(['127.0.0.1','localhost','::1'].includes(location.hostname)){
+ void fetch('/_staging',{method:'GET',cache:'no-store',credentials:'same-origin'})
+  .then(r=>{if(r.ok)$('local-staging-test').hidden=false;})
+  .catch(()=>{});
+}
 // Intentionally no form submit / redirect / PG SDK call. Real payments require
 // server-side order creation, PG verification, contract and policies.
 $('confirm-checkout').disabled=true;

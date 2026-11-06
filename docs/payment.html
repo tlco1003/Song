@@ -10,8 +10,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="checkout.css?v=20261106-contact-channel-01">
-<script defer src="payment.js?v=20261106-contact-channel-01"></script>
+<link rel="stylesheet" href="checkout.css?v=20261106-local-test-02">
+<script defer src="payment.js?v=20261106-local-test-02"></script>
 </head>
 <body>
 <header class="site-header"><div class="frame header-inner">
@@ -59,6 +59,11 @@
     <label class="consent-row"><input id="consent-service" type="checkbox" disabled><span>이용약관과 취소·환불 조건 확인 (결제 이용 시 제공)</span></label>
     <button id="confirm-checkout" type="button" class="checkout-button" disabled>현재 결제를 이용할 수 없습니다</button>
     <p class="payment-unavailable" id="payment-unavailable" role="status">현재는 결제를 이용할 수 없습니다. 정식 주문이 가능해지면 이곳에서 진행할 수 있어요.</p>
+    <aside id="local-staging-test" class="payment-test-only" hidden>
+     <strong>로컬 관리자 전용 기능 테스트</strong>
+     <p>실제 결제가 되지 않는 시험 주문으로 제작 완료와 메일 링크, 본인 노래 재생을 확인해요.</p>
+     <a href="/_staging" class="detail-sample-link">가짜 결제완료·관리자 업로드 시험 화면 열기</a>
+    </aside>
     <p class="small-explain">기본 제작비에는 전용 링크를 통한 감상만 포함됩니다. 원본 파일과 상업적 이용 옵션은 제작 완료 후 별도로 선택할 수 있어요.</p>
     <p class="small-explain">현재 입력한 정보는 결제나 주문 접수에 사용되지 않습니다.</p>
    </section>

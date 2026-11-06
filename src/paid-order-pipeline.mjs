@@ -10,6 +10,7 @@
 
 import {ORDER_STATES,publicPriceCatalog} from './commerce.mjs';
 import {buildSongProductionPlan,verifyPaidSongPlan} from './song-production-plan.mjs';
+import {quoteOrderAmount} from './order-pricing.mjs';
 
 export const FULFILLMENT_ROUTE=Object.freeze({
   HUMAN:'manual_operator',
@@ -28,12 +29,11 @@ function serverAmount(order){
   const amount=order?.amountKrw;
   if(!Number.isSafeInteger(amount)||amount<=0||order.currency!=='KRW')
     throw new Error('Missing server-owned KRW amount');
-  const product=publicPriceCatalog().products.find(item=>item.id===order.productId);
-  if(!product)throw new Error('Unknown server product');
-  if(product.priceKind==='fixed'&&amount!==product.amountKrw)
-    throw new Error('Stored price differs from server catalog');
-  if(product.priceKind==='starting_at'){
-    if(product.quoteRequired!==true||amount<product.amountKrw
+  const quote=quoteOrderAmount({productId:order.productId,genreSelection:order.genreSelection});
+  if(quote.priceKind==='fixed'&&amount!==quote.amountKrw)
+    throw new Error('Stored price differs from server catalog and selected genre blend');
+  if(quote.priceKind==='starting_at'){
+    if(quote.quoteRequired!==true||amount<quote.amountKrw
       ||order.adminApprovedQuote!==true||typeof order.quoteId!=='string'
       ||!order.quoteId.trim())
       throw new Error('Video requires approved server-side quote before charge');

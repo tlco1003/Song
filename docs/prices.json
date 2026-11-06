@@ -27,5 +27,15 @@
       "quoteRequired": true,
       "description": "노래 1곡과 협의한 분량의 뮤직비디오 제작. 길이·품질·장면·수정횟수에 따라 개별 견적 확정"
     }
-  ]
+  ],
+  "addOns": {
+    "genreBlend": {
+      "id": "genre_blend",
+      "name": "두 장르를 한 곡에 섞기",
+      "amountKrw": 5000,
+      "priceKind": "fixed",
+      "chargeUnit": "per_order",
+      "description": "주문당 5,000원 추가, 한 곡 안에 두 개의 장르 혼합. 2곡 상품에서는 두 곡 모두 적용."
+    }
+  }
 }

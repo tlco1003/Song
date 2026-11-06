@@ -6,6 +6,7 @@
 import {validateLyricInput,buildLyricPrompt,AppError} from './lib.mjs';
 import {normalizeGenreSelection} from './song-production-plan.mjs';
 import {composeServerMusicStyle} from './music-style-library.mjs';
+import {quoteOrderAmount} from './order-pricing.mjs';
 
 export function prepareServerOrderDraft(request){
  if(!request||typeof request!=='object'||Array.isArray(request)
@@ -20,27 +21,32 @@ export function prepareServerOrderDraft(request){
   throw new AppError(400,'사연 입력값이 없습니다.');
  // Checkout's final genre overrides the earlier wizard genre.
  const input=validateLyricInput({...request.story,genre:selected.genres[0]});
- const kinds=selected.mode==='same'?[selected.genres[0],selected.genres[0]]:selected.genres;
+ const count=request.selectedProduct==='audio_duo'?2:1;
+ const kinds=selected.mode==='blend'?Array(count).fill(selected.genres[0]):
+  selected.mode==='same'?[selected.genres[0],selected.genres[0]]:selected.genres;
+ const blendGenre=selected.mode==='blend'?selected.genres[1]:null;
  const songStyles=kinds.map((genre,i)=>{
   const style=composeServerMusicStyle({
    genre,mood:input.mood,eraPreference:input.eraPreference,
    recipientAgeGroup:input.delivery.recipientAgeGroup,
-   speechStyle:input.delivery.speechStyle,songIndex:i+1,mode:selected.mode
+   speechStyle:input.delivery.speechStyle,songIndex:i+1,mode:selected.mode,blendGenre
   });
   if(style.length>1000)
    throw new AppError(503,'서버 스타일 지시문은 1000자 이하여야 합니다.');
-  return Object.freeze({index:i+1,genre,style});
+  return Object.freeze({index:i+1,genre,
+   ...(blendGenre?{blendGenres:Object.freeze([genre,blendGenre])}:{}),style});
  });
  return Object.freeze({
   schemaVersion:1,
   status:'awaiting_verified_payment',
   productId:request.selectedProduct,
   genreSelection:selected,
+  amountBreakdown:quoteOrderAmount({productId:request.selectedProduct,genreSelection:selected}),
   title:(input.brief?.recipient||'나의 이야기')+'에게',
   story:input.brief,
   delivery:input.delivery,
   mood:input.mood,eraPreference:input.eraPreference,lyricLength:input.lyricLength,
-  lyricPrompt:buildLyricPrompt(input),
+  lyricPrompt:buildLyricPrompt(input)+(blendGenre?'\n선택한 혼합 음악 장르: '+blendGenre+'. 메인 장르 '+selected.genres[0]+'에 어울리는 내용으로 자연스럽게 가사를 구성해라.':''),
   songStyles:Object.freeze(songStyles),
   generatedLyrics:null,
   verifiedPaid:false

@@ -11,7 +11,7 @@ export const moods = ['따뜻한','설레는','감동적인','애절한','희망
 export const lyricLengths=['short','full'];
 export const eraPreferences=['auto','none','1960s','1970s','1980s','1990s','2000s','2010s','2020s'];
 export const recipientAgeGroups=['unknown','under20','20s','30s','40s','50s','60s','70plus'];
-export const relativePositions=['unknown','older','peer','younger'];
+export const relativePositions=['unknown','family','friend','lover','spouse','colleague','mentor','other','older','peer','younger'];
 export const speechStyles=['auto','casual','polite','mixed'];
 
 function normalizeDelivery(input) {
@@ -93,6 +93,7 @@ export function buildLyricPrompt(input) {
     '음악 장르: '+genre+'. 분위기: '+mood+'. 시대 선택: '+eraPreference+'. 출력 길이: '+(lyricLength==='full'?'full (3~4분 분량 가사)':'short (30초 분량)'),
     '고객의 다섯 질문과 답변 JSON: '+JSON.stringify(brief??{legacyStory:story}),
     '화자·받는 사람의 관계 및 평소 말투 JSON: '+JSON.stringify(delivery??{speechStyle:'auto',recipientAgeGroup:'unknown',relativePosition:'unknown'}),
+    '관계 유형(family/friend/lover/spouse/colleague/mentor/other)은 사연의 화자 관계를 뜻하며 말투는 speechStyle만 따른다. 나이 또는 관계만으로 존댓말·반말을 임의로 강제하지 마라.',
     '고객 사연 원문 JSON: '+JSON.stringify(story),
     '위 규칙에 따라 가사만 완성해라. 사연이 아닌 새로운 사건을 지어내지 마라.'
   ].join('\n');

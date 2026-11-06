@@ -70,14 +70,16 @@ export function resolveEraChoice({eraPreference='auto',recipientAgeGroup='unknow
 }
 export function composeServerMusicStyle({
  genre,mood='따뜻한',eraPreference='auto',recipientAgeGroup='unknown',
- speechStyle='auto',songIndex=1,mode='single'
+ speechStyle='auto',songIndex=1,mode='single',blendGenre=null
 }={}, {privateDirectory=process.env.WITHU_PRIVATE_STYLE_DIR||null}={}){
- if(!GENRE_KEYS.includes(genre)||!Object.hasOwn(MOODS,mood))
+ if(!GENRE_KEYS.includes(genre)||!Object.hasOwn(MOODS,mood)
+  ||(blendGenre!==null&&(!GENRE_KEYS.includes(blendGenre)||blendGenre===genre)))
   throw new AppError(400,'Invalid genre or mood');
  if(!Number.isSafeInteger(songIndex)||songIndex<1||songIndex>2)
   throw new AppError(400,'Invalid song index');
  const era=resolveEraChoice({eraPreference,recipientAgeGroup});
  const genreText=privateRecipe('genre',genre,privateDirectory)||GENERIC_GENRES[genre];
+ const blendText=blendGenre?(privateRecipe('genre',blendGenre,privateDirectory)||GENERIC_GENRES[blendGenre]):'';
  const eraText=era==='none'?'':privateRecipe('era',era,privateDirectory)||GENERIC_ERAS[era];
  const moodText=privateRecipe('mood',mood,privateDirectory)||MOODS[mood];
  const phrasing=Object.freeze({
@@ -86,11 +88,12 @@ export function composeServerMusicStyle({
   polite:'Respect polite Korean sentence endings.',
   mixed:'Respect the mixed speech style in the approved lyric.'
  })[speechStyle]||'Natural Korean syllable stress and spoken rhythm.';
- const second=mode==='same'&&songIndex===2?
-  'Create an independently composed melody and arrangement in the same genre; do not deliver a duplicate version of track one.':'';
+ const second=['same','blend'].includes(mode)&&songIndex===2?
+  'Make this second paid track independently melodic and arranged, never a duplicate of track one.':'';
  const stylePreset=[
   'Compose an original Korean song, not a cover. Never reproduce a known melody, lyric, vocal identity or signature recording.',
-  'Chosen genre: '+genre+'. '+genreText,
+  'Chosen primary genre: '+genre+'. '+genreText,
+  blendGenre?'Blend in '+blendGenre+' while retaining the primary identity: '+blendText:'',
   eraText?'Era-inspired, not song-copied: '+eraText:'',
   moodText,phrasing,
   'Use original, lyrics-led melodic contour, intentional pauses, and a coherent opening/build/climax/resolution.',

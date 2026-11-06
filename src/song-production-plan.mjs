@@ -25,8 +25,12 @@ export function normalizeGenreSelection(productId,genreSelection){
  if(!Array.isArray(genres)||genres.some(x=>typeof x!=='string'||!selectedKeys.has(x)))
   throw new Error('Invalid selected music genre');
  if(count===1){
-  if(mode!=='single'||genres.length!==1)
-   throw new Error('Single-song product requires exactly one genre');
+  if(!((mode==='single'&&genres.length===1)
+    ||(mode==='blend'&&genres.length===2&&genres[0]!==genres[1])))
+   throw new Error('Single-song product requires one genre or a valid two-genre blend');
+ }else if(mode==='blend'){
+  if(genres.length!==2||genres[0]===genres[1])
+   throw new Error('Blended duo requires two distinct genres');
  }else if(mode==='same'){
   if(genres.length!==1)
    throw new Error('Two songs in one genre require exactly one selected genre');
@@ -52,15 +56,16 @@ export function buildSongProductionPlan(order){
  const recipientAgeGroup=order.story?.recipientAgeGroup||order.recipientAgeGroup||'unknown';
  const speechStyle=order.story?.speechStyle||order.speechStyle||'auto';
  const eraPreference=order.eraPreference||order.story?.eraPreference||'auto';
- const genres=selected.mode==='same'?
-  [selected.genres[0],selected.genres[0]]:selected.genres;
+ const genres=['same','blend'].includes(selected.mode)&&count===2?
+  [selected.genres[0],selected.genres[0]]:selected.mode==='blend'?[selected.genres[0]]:selected.genres;
+ const blendGenre=selected.mode==='blend'?selected.genres[1]:null;
  const title=order.songTitle.trim();
  return Object.freeze({
   version:2,productId,mode:selected.mode,
   songs:Object.freeze(genres.map((genre,index)=>{
    const base=composeServerMusicStyle({
     genre,mood:order.mood||'따뜻한',eraPreference,recipientAgeGroup,
-    speechStyle,songIndex:index+1,mode:selected.mode
+    speechStyle,songIndex:index+1,mode:selected.mode,blendGenre
    });
    // Customer notes are quoted DATA; they may refine approved choices but
    // may never replace internal instructions or read server secrets.
@@ -69,7 +74,8 @@ export function buildSongProductionPlan(order){
      JSON.stringify(order.sharedStyleNotes.trim()):'';
    const stylePrompt=[base,customerNotes].filter(Boolean).join('\n');
    if(stylePrompt.length>1000)throw new Error('Server music style prompt exceeds 1000 characters');
-   return Object.freeze({index:index+1,genre,title,lyrics:order.confirmedLyrics,stylePrompt});
+   return Object.freeze({index:index+1,genre,title,lyrics:order.confirmedLyrics,
+    ...(blendGenre?{blendGenres:Object.freeze([genre,blendGenre])}:{}),stylePrompt});
   }))
  });
 }

@@ -9,7 +9,7 @@
  */
 
 import {ORDER_STATES,publicPriceCatalog} from './commerce.mjs';
-import {buildSongProductionPlan,verifyPaidSongPlan} from './song-production-plan.mjs';
+import {buildSongProductionPlan,verifyPaidSongPlan,normalizeGenreSelection} from './song-production-plan.mjs';
 import {quoteOrderAmount} from './order-pricing.mjs';
 
 export const FULFILLMENT_ROUTE=Object.freeze({
@@ -42,6 +42,19 @@ function serverAmount(order){
       throw new Error('Video requires approved server-side quote before charge');
   }
   return amount;
+}
+export function deriveUnpaidProductionIntent(order){
+ const selected=normalizeGenreSelection(order.productId,order.genreSelection);
+ const amountKrw=serverAmount(order);
+ const hasConfirmedLyrics=typeof order.confirmedLyrics==='string'&&Boolean(order.confirmedLyrics.trim());
+ if(!hasConfirmedLyrics&&(typeof order.privateDraftId!=='string'
+   ||!/^[a-f0-9-]{36}$/i.test(order.privateDraftId)))
+  throw new Error('Encrypted private draft required before payment, never browser prompts');
+ return Object.freeze({
+  version:1,status:'prepare_lyrics_after_verified_payment',
+  productId:order.productId,genreSelection:selected,amountKrw,
+  privateDraftId:order.privateDraftId||null
+ });
 }
 function ensurePorts(orders,payments){
   if(typeof orders?.getById!=='function'||typeof orders.confirmPaidAndEnqueueAtomic!=='function'
@@ -85,9 +98,12 @@ async function finalizeVerifiedPayment({orders,order,payment,paymentKey,settings
   if(!paymentMatches(order,payment,paymentKey))
     throw new Error('PG status, order ID, key, currency or amount did not match');
   const route=chooseFulfillmentRoute(settings);
-  // Validate and freeze the customer's approved per-track genres BEFORE recording payment.
-  // The order store must persist this songPlan in the SAME transaction as PAID + outbox.
-  const songPlan=buildSongProductionPlan(order);
+  // The customer cannot have confirmed AI-generated lyrics before paying.
+  // Persist a protected, immutable production intent with the paid-outbox.
+  // Build the final song plan ONLY after post-payment lyric generation.
+  const productionIntent=deriveUnpaidProductionIntent(order);
+  const songPlan=typeof order.confirmedLyrics==='string'&&order.confirmedLyrics.trim()
+    ?buildSongProductionPlan(order):null;
   // REQUIRED ADAPTER CONTRACT: the payment transition and job-outbox insertion
   // must happen in ONE DATABASE TRANSACTION with unique (orderId, 'fulfillment')
   // to survive retries, webhook duplication, concurrent requests and crashes.
@@ -95,7 +111,7 @@ async function finalizeVerifiedPayment({orders,order,payment,paymentKey,settings
     orderId:order.id, paymentKey, amountKrw:order.amountKrw,
     expectedState:ORDER_STATES.PAYMENT_PENDING,
     nextState:ORDER_STATES.PAID, route, jobKey:'fulfill:'+order.id,
-    songPlan
+    songPlan,productionIntent
   });
   if(!result||!['created','duplicate'].includes(result.outcome))
     throw new Error('Durable paid/outbox transaction did not complete');
@@ -125,7 +141,8 @@ export async function confirmCheckoutAndQueue({
   if(order.state!==ORDER_STATES.PAYMENT_PENDING)
     throw new Error('Order not awaiting payment');
   const amount=serverAmount(order);
-  buildSongProductionPlan(order);
+  deriveUnpaidProductionIntent(order);
+  if(order.confirmedLyrics)buildSongProductionPlan(order);
   if(claimedAmountKrw!==amount)throw new Error('Client and server amount mismatch');
   // A payment gateway adapter must call the official confirm endpoint with
   // the server-owned amount and keep its secret key server-side.
@@ -152,7 +169,8 @@ export async function reconcileDepositAndQueue({
     throw new Error('Order not awaiting deposit');
   if(order.issuedPaymentKey!==paymentKey)
     throw new Error('Unknown payment key for deposit');
-  buildSongProductionPlan(order);
+  deriveUnpaidProductionIntent(order);
+  if(order.confirmedLyrics)buildSongProductionPlan(order);
   const payment=await payments.retrieve({paymentKey,orderId});
   return finalizeVerifiedPayment({orders,order,payment,paymentKey,settings});
 }

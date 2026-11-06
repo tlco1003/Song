@@ -51,6 +51,11 @@ export function commercialMode(env=process.env){
  if(live&&env.WITHU_LIVE_PAYMENTS_ENABLED!=='true')return null;
  if(!/^https:\/\/[^/]+\/?$/.test(env.WITHU_PUBLIC_BASE_URL||''))return null;
  if(!env.WITHU_FROM_EMAIL||!env.RESEND_API_KEY)return null;
+ if(!/^[a-f0-9]{64}$/i.test(env.WITHU_LINK_ENCRYPTION_KEY||''))return null;
+ if(!/^[A-Za-z0-9_-]{10,200}$/.test(env.WITHU_ADMIN_UID||'')
+  ||!env.WITHU_OPERATOR_EMAIL||!env.WITHU_STORAGE_BUCKET
+  ||!env.WITHU_FIREBASE_WEB_API_KEY||!env.WITHU_FIREBASE_AUTH_DOMAIN
+  ||!env.WITHU_FIREBASE_PROJECT_ID)return null;
  return {mode,clientKey:publicKey};
 }
 export function assertValidPreparedOrder(draft){

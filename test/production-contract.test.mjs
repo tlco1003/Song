@@ -23,7 +23,12 @@ test('only exact paid Toss order, amount, currency and status can unlock music',
 test('real charges require explicit mode, matching public/secret prefixes and origin',()=>{
  const env={WITHU_PAYMENT_MODE:'live',TOSS_CLIENT_KEY:'live_gck_some',
   TOSS_SECRET_KEY:'live_gsk_some',WITHU_PUBLIC_BASE_URL:'https://music.example/',
-  RESEND_API_KEY:'re_secret',WITHU_FROM_EMAIL:'WITHU <music@example.com>'};
+  RESEND_API_KEY:'re_secret',WITHU_FROM_EMAIL:'WITHU <music@example.com>',
+  WITHU_LINK_ENCRYPTION_KEY:'a'.repeat(64),WITHU_ADMIN_UID:'user1234567890',
+  WITHU_OPERATOR_EMAIL:'owner@example.com',WITHU_STORAGE_BUCKET:'song-example.appspot.com',
+  WITHU_FIREBASE_WEB_API_KEY:'firebase-public-key',
+  WITHU_FIREBASE_AUTH_DOMAIN:'song-example.firebaseapp.com',
+  WITHU_FIREBASE_PROJECT_ID:'song-example'};
  assert.equal(commercialMode(env),null);
  assert.equal(commercialMode({...env,WITHU_LIVE_PAYMENTS_ENABLED:'true'}).mode,'live');
  assert.equal(commercialMode({...env,WITHU_PAYMENT_MODE:'test'}),null);

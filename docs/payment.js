@@ -64,6 +64,14 @@ async function configure(){
   return;
  }
  const cfg=await response.json();
+ for(const option of document.querySelectorAll('input[name="deliveryChannel"]')){
+  if(!['email'].includes(option.value)
+    &&!(cfg.deliveryChannels||[]).includes(option.value)){
+   option.disabled=true;
+   const note=option.closest('label')?.querySelector('small');
+   if(note)note.textContent='추후 연동 예정';
+  }
+ }
  if(cfg.canCharge!==true||typeof cfg.tossClientKey!=='string'
   ||typeof window.TossPayments!=='function'){
   message('결제기관과 운영 서버의 설정이 아직 완료되지 않았습니다.');

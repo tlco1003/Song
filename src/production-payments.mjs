@@ -105,7 +105,7 @@ export async function handleProductionPayments(req,res,{db,env,fetcher}){
     authDomain:env.WITHU_FIREBASE_AUTH_DOMAIN,
     projectId:env.WITHU_FIREBASE_PROJECT_ID
    }:null,
-   upgradeKrw:UPGRADE_PRICE});
+   deliveryChannels:['email'],upgradeKrw:UPGRADE_PRICE});
   return true;
  }
  if(req.method==='POST'&&path==='/api/orders'){
@@ -115,6 +115,11 @@ export async function handleProductionPayments(req,res,{db,env,fetcher}){
    stop(400,'이용약관과 개인정보 처리 동의를 완료해 주세요.');
   const draft=prepareServerOrderDraft(input.draft);
   const contact=validateCheckoutDeliveryContact(input.contact);
+  // Until a contracted Bizgo account and approved Alimtalk template are
+  // deployed, no customer may choose an SMS/Kakao channel and receive
+  // only email without explicit consent.
+  if(contact.deliveryChannel!=='email')
+   stop(422,'현재 이메일 발송만 지원합니다. 이메일을 선택해 주세요.');
   const quote=draft.amountBreakdown;
   if(quote.quoteRequired||input.clientAmount!==quote.amountKrw)
    stop(409,'서버 기준 주문 가격을 다시 확인해 주세요.');

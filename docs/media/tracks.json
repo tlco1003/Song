@@ -26,7 +26,7 @@
       "genre": "어쿠스틱 감성 발라드",
       "genreSource": "editorial",
       "productType": "audio_video",
-      "lyricsOffsetSeconds": 1
+      "lyricsOffsetSeconds": -0.3
     },
     {
       "id": "song-cinderella-laundry",
@@ -42,6 +42,7 @@
       "coverImage": "covers/cinderella-laundry.webp",
       "productType": "audio_with_cover",
       "lyricsOffsetSeconds": 1,
+            "lyricsOffsetAnchors": [-1],
       "coverTheme": "장난스럽고 낭만적인 동전 세탁소의 신데렐라"
     },
     {

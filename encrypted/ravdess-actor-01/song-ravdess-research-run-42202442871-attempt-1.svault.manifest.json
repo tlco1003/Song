@@ -1,0 +1,25 @@
+{
+  "archive": "song-ravdess-research-run-42202442871-attempt-1.svault",
+  "encryptedFileSha256": "e3e9a17796b6e094d9cff9a3409da966549ce9fd6ada1cece25fe3ecdc0294dc",
+  "modelVersion": "song-vision-masked-audio-v2",
+  "license": "CC-BY-NC-SA-4.0",
+  "commercialUseAllowed": false,
+  "userOwnedPrivateKeyRequired": true,
+  "source": "https://zenodo.org/records/1188976",
+  "trainFrameCount": 750,
+  "valFrameCount": 750,
+  "bestMetrics": {
+    "epoch": 36,
+    "trainLoss": 0.0315821,
+    "valMaskedMAE": 0.0509698,
+    "copyReferenceMaskedMAE": 0.0456015,
+    "maskedInputMAE": 0.1556235,
+    "shuffledAudioMaskedMAE": 0.0552098,
+    "audioSensitivity": 0.0263404,
+    "correctVsShuffledMAEGain": 0.00424
+  },
+  "diagnosticFlags": [
+    "WORSE_THAN_COPY_REFERENCE"
+  ],
+  "noRawFaceOrAudioFilesInArchive": true
+}

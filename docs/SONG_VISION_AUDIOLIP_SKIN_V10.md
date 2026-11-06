@@ -47,3 +47,18 @@
 - 코드: `song_vision/facial_articulation_v10.py`, `song_vision/external_ravdess_face_articulation_v10.py`, `song_vision/test_facial_articulation_v10.py`.
 - CI workflow: `.github/workflows/song-vision-face-articulation-v10.yml`.
 - 최종 성능은 **실제 GitHub Actions 학습 로그 및 암호화 백업의 존재를 확인하기 전에는 성공으로 기록하지 않는다.**
+
+## 피부 표면 변화와 실제 안면 근육의 관계 — 검증된 이론적 근거
+
+- FACS(Action Units)는 **보이는** 표정 운동을 정량화하는 관찰 체계다. 얼굴 피부에서 보이는 변화가 특정 근육 작용과 관련될 수 있지만, 영상만으로 그 근육의 실제 생리학적 힘이나 활성도를 수치 계측하는 도구는 아니다. 원저자 설명: https://www.paulekman.com/facial-action-coding-system/
+- 눈 주변 orbicularis oculi는 볼 올림과 눈 주위 조임/눈꺼풀 좁힘에 관련되고, 입둘레근 orbicularis oris는 입술 압착·모음/오므림에, zygomaticus major는 입꼬리 당김에 관련된다. 표정 움직임 리뷰: https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2020.00920/full
+- **A biomechanical modeling study of the effects of the orbicularis oris muscle and jaw posture on lip shape** (2013), https://pubmed.ncbi.nlm.nih.gov/23811472/ — 입둘레근 배치·턱 자세가 입술 오므림, 닫힘, 돌출 형태의 차이에 영향을 주는 계산 모델 분석.
+- **The Natural Statistics of Audiovisual Speech** (2009), DOI https://doi.org/10.1371/journal.pcbi.1000436 — 입 열림, 음향 포락선, 스펙트럼과 시간적 상관관계 연구. 입 모양이 실제 음성 파형을 고유하게 결정한다는 의미는 아니다.
+- **Modulation transfer functions for audiovisual speech** (2022), https://pmc.ncbi.nlm.nih.gov/articles/PMC9295967/ — 얼굴 운동과 음성 진폭 변화의 서로 다른 시간 척도. 눈 깜박임처럼 일부 신호는 음향과 직접 연결되지 않는다.
+- **How the motor aspect of speaking influences the blink rate** (2021), DOI https://doi.org/10.1371/journal.pone.0258322 — 말하기의 복잡한 안면 운동이 눈 깜박임 빈도와 연관될 수 있지만, 단순 음향 듣기/입술 동작만으로 설명되지 않는다는 실험.
+
+### 코드에서 이 근거를 사용하는 방법
+- 입술/턱·볼·눈 영역의 예측 지표를 분리하고 입술 및 턱 움직임을 더 강하게 가중한다.
+- 피부의 다중 부위는 개별 움직임 정답으로 학습하며 입술 오므림과 입꼬리 당김 사이의 구별을 보존한다.
+- 눈 깜박임이 소리로 100% 예측돼야 한다는 강제 손실을 두지 않는다. 눈 영역 예측 오차는 별도 보고.
+- 말하기 연구의 시간 차이를 **가창 전반의 고정 지연으로 가정하지 않는다**. ±시간 차이의 가능성을 고려해 실제 가창 데이터에서 맞는 시점과 320ms 어긋난 시점을 시험한다.

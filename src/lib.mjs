@@ -27,7 +27,11 @@ function normalizeDelivery(input) {
 }
 
 export const songOccasions=['감사','생일','축하','결혼','사랑·고백','사과·화해','위로·응원','추억·그리움','기타'];
-export const lyricPolicy=readFileSync(new URL('../가사 프롬프트.md',import.meta.url),'utf8');
+// Production may mount the proprietary lyric policy outside this public checkout.
+// An explicitly configured private file must exist; there is no silent fallback.
+export const lyricPolicy=readFileSync(
+ process.env.WITHU_PRIVATE_LYRIC_POLICY_FILE||new URL('../가사 프롬프트.md',import.meta.url),'utf8'
+);
 
 function boundedText(value,label,max) {
   if(value!=null&&typeof value!=='string')throw new AppError(400,label+'은 문자열이어야 합니다.');

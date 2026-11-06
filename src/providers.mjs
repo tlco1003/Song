@@ -37,18 +37,26 @@ export function responseText(result){
     .flatMap(item=>item.content??[]).filter(part=>part?.type==='output_text')
     .map(part=>part.text||'').join('\n').trim();
 }
+export async function makeLyricsFromPrivatePrompt({prompt,lyricLength='full'},env=process.env){
+ if(typeof prompt!=='string'||prompt.length<40||prompt.length>50000
+  ||!['full','short'].includes(lyricLength))
+  throw new AppError(400,'비공개 작사 지시문이나 출력 길이가 유효하지 않습니다.');
+ const model=modelName(env,'OPENAI_LYRICS_MODEL','gpt-6-astra');
+ const result=await callOpenAI({
+  model,input:prompt,max_output_tokens:lyricLength==='full'?4500:1800
+ },env,120000);
+ const lyric=responseText(result).replace(/^\x60\x60\x60(?:text|markdown)?\s*/i,'')
+  .replace(/\s*\x60\x60\x60$/,'').trim();
+ const maximum=lyricLength==='full'?4200:1400;
+ if(lyric.length<12||lyric.length>maximum
+   ||!/\[Verse(?:\s+\d+)?\]/i.test(lyric)||!/\[Chorus\]/i.test(lyric))
+  throw new AppError(502,'AI가 유효한 구성의 가사를 반환하지 않았습니다. 내부에서 재검토해 주세요.');
+ return lyric;
+}
 export async function makeLyrics(input,env=process.env){
-  const model=modelName(env,'OPENAI_LYRICS_MODEL','gpt-6-astra');
-  const result=await callOpenAI({
-    model,
-    input:buildLyricPrompt(input),
-    max_output_tokens:input.lyricLength==='full'?4500:1800
-  },env,120000);
-  const lyric=responseText(result).replace(/^\x60\x60\x60(?:text|markdown)?\s*/i,'').replace(/\s*\x60\x60\x60$/,'').trim();
-  const maximum=input.lyricLength==='full'?4200:1400;
-  if(lyric.length<12||lyric.length>maximum||!/\[Verse(?:\s+\d+)?\]/i.test(lyric)||!/\[Chorus\]/i.test(lyric))
-    throw new AppError(502,'GPT가 올바른 노래 가사 형식을 반환하지 않았습니다. 다시 생성하거나 직접 수정해 주세요.');
-  return lyric;
+ return makeLyricsFromPrivatePrompt({
+  prompt:buildLyricPrompt(input),lyricLength:input.lyricLength
+ },env);
 }
 
 // Uses official Suno MCP through OpenAI Responses remote MCP support.

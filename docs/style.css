@@ -216,3 +216,11 @@ button:focus-visible,a:focus-visible,label:focus-visible,.lyrics-scroll:focus-vi
 .site-header nav .header-my-music:hover{text-decoration:underline;text-underline-offset:4px}
 @media(max-width:690px){.site-header nav .header-my-music{display:inline-flex;align-items:center;white-space:nowrap}}
 @media(max-width:440px){.site-header nav{gap:9px}.site-header nav .header-my-music{font-size:11px}}
+
+/* Keep the customer library prominent on small mobile screens. */
+@media(max-width:690px){
+ .site-header nav a[href="#top"],.site-header nav a[href="#reviews"]{display:none}
+ .site-header .header-create{display:none}
+ .site-header nav .header-my-music{display:inline-flex}
+ .site-header .header-inner{gap:10px}
+}

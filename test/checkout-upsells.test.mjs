@@ -24,7 +24,7 @@ test('seller proposed regular prices remain gated behind independently documente
  assert.equal((100000-29000)/100000*100,71);
  assert.equal((200000-39000)/200000*100,80.5);
  const html=read('docs/checkout.html'),js=read('docs/checkout.js');
- assert.match(html,/출시 특가세일/);
+ assert.match(html,/출시 기념 특가세일/);
  assert.match(html,/data-promo-for="audio"[^>]*hidden/);
  assert.match(html,/data-promo-for="audio_duo"[^>]*hidden/);
  // The creator-defined price is displayed with an explicit explanation,

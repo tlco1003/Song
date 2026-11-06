@@ -206,7 +206,7 @@ function renderPrivateTrackChoices(response){
 async function loadPrivate(token=null){
  // Emailed link: /my-music.html#delivery=<random-token>. A customer who already
  // verified on this device can revisit /my-music.html with the HttpOnly session.
- // The page NEVER trusts token/query/localStorage as proof of a paid order.
+ // A link, query string or browser-side state is NEVER proof of payment.
  privateDeliveryToken=token;
  $('commercial-upgrade-panel').hidden=true;
  $('private-track-list').hidden=true;

@@ -29,3 +29,12 @@ body.admin-body{background:#fcf8fb;color:#493949}
 .admin-warning,.admin-footnote{color:#987482;font-size:12px}
 #admin-production[hidden],#admin-upgrade[hidden]{display:none}
 @media(max-width:720px){.admin-grid,.admin-song-editor{grid-template-columns:1fr}.admin-top{flex-direction:column}.admin-card{padding:19px}.admin-shell{margin-top:20px}}
+
+/* Real authenticated operator workspace */
+#admin-workspace[hidden],#admin-production[hidden],#admin-sign-out[hidden]{display:none!important}
+.admin-story{background:#f9f5f8;border:1px solid #eadfe7;border-radius:10px;padding:15px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;font:13px/1.75 sans-serif;max-height:330px;overflow-y:auto}
+.admin-detail-info{margin:20px 0}
+.admin-detail-info h3{font-size:14px;font-weight:700;color:#68475f}
+.admin-order.active{border:2px solid #986b88;background:#fff8fc}
+.admin-status{font-size:12px;color:#936578}
+.admin-song-card textarea{min-height:240px}

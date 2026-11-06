@@ -139,11 +139,16 @@ def _val_metrics(model, loader, device):
 def masked_retrain(dataset: Path, checkpoint: Path, epochs: int = 36,
                    batch_size: int = 8, lr: float = .0003, device: str = "cpu",
                    seed: int = 42, patience: int = 10,
-                   min_epochs: int = 1, min_delta: float = .0002) -> dict:
+                   min_epochs: int = 1, min_delta: float = .0002,
+                   init_checkpoint: Path | None = None) -> dict:
     if (not 1 <= epochs <= 50 or not 2 <= batch_size <= 64 or not 1e-7 <= lr <= 1e-2
             or not 0 <= patience <= 100 or not 1 <= min_epochs <= epochs
             or not 0 <= min_delta <= .1):
         raise ValueError("Invalid research training / early-stop parameters")
+    if checkpoint.exists():
+        raise FileExistsError("Refusing to replace an existing saved research checkpoint")
+    if init_checkpoint is not None and checkpoint.resolve() == init_checkpoint.resolve():
+        raise ValueError("The warm-start source and new output must be different paths")
     if torch.device(device).type == "cuda" and not torch.cuda.is_available():
         raise ValueError("Requested CUDA but no GPU is available")
     torch.set_num_threads(min(torch.get_num_threads(), 2))
@@ -156,7 +161,16 @@ def masked_retrain(dataset: Path, checkpoint: Path, epochs: int = 36,
         raise ValueError("Audio counterfactual needs >=2 validation frames")
     training = DataLoader(train_data, batch_size=batch_size, shuffle=True, num_workers=0)
     validation = DataLoader(val_data, batch_size=batch_size, shuffle=False, num_workers=0)
-    model = MaskedSingingMouthNet().to(device)
+    # Warm-start retains learned weights but intentionally resets AdamW state.
+    # This is NOT bitwise continuation of the original optimizer trajectory.
+    warm_start_sha256 = None
+    if init_checkpoint is not None:
+        if not init_checkpoint.is_file():
+            raise FileNotFoundError("Operator-supplied prior research checkpoint not found")
+        model = load_masked_model(init_checkpoint, device)
+        warm_start_sha256 = hashlib.sha256(init_checkpoint.read_bytes()).hexdigest()
+    else:
+        model = MaskedSingingMouthNet().to(device)
     opt = torch.optim.AdamW(model.parameters(), lr=lr)
     history, best = [], float("inf")
     significant_best, no_improvement = float("inf"), 0
@@ -187,6 +201,9 @@ def masked_retrain(dataset: Path, checkpoint: Path, epochs: int = 36,
                 "trainingFrames": len(train_data), "validationFrames": len(val_data),
                 "epoch": epoch + 1, "bestValMaskedMAE": best,
                 "commerciallyValidated": False,
+                "initializedFromPriorResearchCheckpoint": bool(warm_start_sha256),
+                "initCheckpointSha256": warm_start_sha256,
+                "optimizerStateRestored": False,
                 "status": "research_only_unvalidated_checkpoint",
             }, checkpoint)
         if metrics["valMaskedMAE"] < significant_best - min_delta:
@@ -222,6 +239,9 @@ def masked_retrain(dataset: Path, checkpoint: Path, epochs: int = 36,
         "trainFrames": len(train_data), "valFrames": len(val_data),
         "bestEpoch": final["epoch"], "bestMetrics": final,
         "requestedEpochs": epochs, "completedEpochs": len(history),
+        "warmStartedFromPriorWeights": bool(warm_start_sha256),
+        "initCheckpointSha256": warm_start_sha256,
+        "optimizerStateRestored": False,
         "earlyStopped": early_stopped,
         "earlyStoppingPatience": patience,
         "earlyStoppingMinEpochs": min_epochs,
@@ -246,6 +266,9 @@ def load_masked_model(path: Path, device: str = "cpu") -> MaskedSingingMouthNet:
     payload = torch.load(path, map_location="cpu", weights_only=True)
     if payload.get("modelVersion") != MASKED_MODEL_VERSION:
         raise ValueError("Expected masked-v2 model checkpoint; v1 weights are not compatible")
+    if (payload.get("status") != "research_only_unvalidated_checkpoint"
+            or payload.get("commerciallyValidated") is not False):
+        raise ValueError("Only research-only, unvalidated SONG checkpoints may initialize this model")
     model = MaskedSingingMouthNet()
     model.load_state_dict(payload["stateDict"], strict=True)
     return model.to(device).eval()
@@ -259,6 +282,8 @@ def main():
     parser.add_argument("--patience", type=int, default=10)
     parser.add_argument("--min-epochs", type=int, default=20)
     parser.add_argument("--min-delta", type=float, default=.0002)
+    parser.add_argument("--init-checkpoint", type=Path,
+                        help="Private restored research-model.pt; fresh AdamW optimizer")
     parser.add_argument("--batch-size", type=int, default=8)
     parser.add_argument("--lr", type=float, default=.0003)
     parser.add_argument("--device", default="cpu")
@@ -266,7 +291,8 @@ def main():
     report = masked_retrain(args.dataset, args.checkpoint, args.epochs,
                             args.batch_size, args.lr, args.device,
                             patience=args.patience, min_epochs=args.min_epochs,
-                            min_delta=args.min_delta)
+                            min_delta=args.min_delta,
+                            init_checkpoint=args.init_checkpoint)
     print("SONG_MASKED_TRAIN_RESULT=" + json.dumps({
         "modelVersion": MASKED_MODEL_VERSION,
         "bestMetrics": report["bestMetrics"],

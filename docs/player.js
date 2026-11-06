@@ -184,7 +184,7 @@ async function select(index,autoPlay=false){
  rawLyrics='';drawLyrics('');
  if(track.lyricsText){rawLyrics=track.lyricsText;drawLyrics(rawLyrics)}
  else if(track.lyricsFile&&fileOK(track.lyricsFile)){
-  readText(fileURL('media/',track.lyricsFile)).then(text=>{
+  readText(fileURL('media/',track.lyricsFile)+'?lyricsUpdated='+Date.now()).then(text=>{
    if(token!==requestId)return;rawLyrics=text;drawLyrics(rawLyrics);advanceLyrics();
   }).catch(()=>{if(token===requestId)drawLyrics('')});
  }

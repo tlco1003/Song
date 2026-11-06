@@ -133,7 +133,7 @@ function loadTrack(item,publicDemo){
  const art=publicDemo&&coverPath(item.coverImage)?item.coverImage:null;
  setArt(art);
  void applyStoredCover();
- if(item.lyricsFile&&publicDemo&&simpleName(item.lyricsFile))void fetchLyrics('media/'+encodeURIComponent(item.lyricsFile));
+ if(item.lyricsFile&&publicDemo&&simpleName(item.lyricsFile))void fetchLyrics('media/'+encodeURIComponent(item.lyricsFile)+'?lyricsUpdated='+Date.now());
  else if(typeof item.lyrics==='string')$('detail-lyrics-text').textContent=item.lyrics;
  else $('detail-lyrics-text').textContent='가사 공개를 준비하고 있어요.';
  // Download is only permitted for the public sample file; authenticated deliveries

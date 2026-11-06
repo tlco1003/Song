@@ -162,7 +162,7 @@ async function loadDemo(id){
 function configurePrivateLicense(response,item){
  const panel=$('commercial-upgrade-panel');
  panel.hidden=false;
- const data=response?.commercialUpgrade||{};
+ const data=item?.commercialUpgrade||response?.commercialUpgrade||{};
  const eligible=data.status==='available'&&data.rightsVerified===true
   &&data.amountKrw===10000;
  const entitled=data.status==='active'&&data.paymentVerified===true
@@ -294,7 +294,8 @@ $('commercial-upgrade-buy').addEventListener('click',async()=>{
   const response=await fetch('api/commerce/commercial-upgrade/checkout',{
    method:'POST',credentials:'same-origin',cache:'no-store',
    headers:{'Content-Type':'application/json'},
-   body:JSON.stringify(privateDeliveryToken?{deliveryToken:privateDeliveryToken}:{})
+   body:JSON.stringify(privateDeliveryToken?
+    {deliveryToken:privateDeliveryToken}:{orderRef:track?.orderRef})
   });
   if(!response.ok)throw Error('payment-unavailable');
   const data=await response.json();

@@ -89,7 +89,7 @@ export function composeServerMusicStyle({
   mixed:'Respect the mixed speech style in the approved lyric.'
  })[speechStyle]||'Natural Korean syllable stress and spoken rhythm.';
  const second=['same','blend'].includes(mode)&&songIndex===2?
-  'Make this second paid track independently melodic and arranged, never a duplicate of track one.':'';
+  'Create an independently composed melody and arrangement for track two, never a duplicate of track one.':'';
  const stylePreset=[
   'Compose an original Korean song, not a cover. Never reproduce a known melody, lyric, vocal identity or signature recording.',
   'Chosen genre: '+genre+'. '+genreText,

@@ -192,7 +192,8 @@ test('one and two song prices must match catalog; premium video requires approve
   orderId,paymentKey,claimedAmountKrw:1,...bad
  }),/Stored price differs from server catalog/);
  assert.equal(bad.getCalls(),0);
- const video=makePorts({productId:'audio_video',amountKrw:300000});
+ const video=makePorts({productId:'audio_video',amountKrw:300000,
+  genreSelection:{mode:'single',genres:['발라드']}});
  await assert.rejects(confirmCheckoutAndQueue({
   orderId,paymentKey,claimedAmountKrw:300000,...video
  }),/Video requires approved server-side quote/);

@@ -27,15 +27,7 @@ test('seller proposed regular prices remain gated behind independently documente
  assert.match(html,/출시 특가세일/);
  assert.match(html,/data-promo-for="audio"[^>]*hidden/);
  assert.match(html,/data-promo-for="audio_duo"[^>]*hidden/);
- // The creator-defined price is displayed with an explicit explanation,
- // never masquerading as an earlier completed sale.
- assert.match(html,/data-reference-for="audio"/);
- assert.match(html,/data-reference-for="audio_duo"/);
- assert.match(html,/종전거래가격을 의미하지 않습니다/);
- assert.match(html,/제작자가 고객의 사연과 가사/);
- assert.match(js,/plannedRegularPricesKrw\?\.\[node\.dataset\.referenceFor\]/);
- assert.match(js,/'정상가 '\+won\.format\(amount\)/);
- assert.doesNotMatch(html,/(?:71|80\.5)%\s*할인/u);
+ assert.doesNotMatch(html,/정상가\s*(?:100,000|200,000)원|(?:71|80\.5)%\s*할인/u);
  assert.match(js,/comparisonPriceVerified!==true/);
  assert.match(js,/comparisonEvidenceByProduct/);
 });

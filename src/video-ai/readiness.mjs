@@ -1,0 +1,28 @@
+/**
+ * Public non-secret status only. Local PyTorch model is not an online paid API.
+ * An operator must train and validate the local model before any commercial use.
+ */
+export const SONG_VISION_MODEL_VERSION = 'song-vision-mouth-v1';
+
+export function songVisionReadiness() {
+  return Object.freeze({
+    engine: 'song-vision-self-hosted',
+    modelVersion: SONG_VISION_MODEL_VERSION,
+    runtime: 'local-python-pytorch',
+    externalVideoApiRequired: false,
+    checkpointIncludedInRepository: false,
+    researchCliAvailable: true,
+    trainedCheckpointVerified: false,
+    customerFaceSwapModelReady: false,
+    videoQualityVerified: false,
+    orderQueueConnected: false,
+    customerUploadsEnabled: false,
+    canAcceptCustomerJobs: false,
+    commercialReadiness: 'blocked',
+    reason: 'Training data, trained checkpoint, quality gate, and authenticated paid job queue are not yet validated.'
+  });
+}
+
+export function assertSongVisionPaidJobReady() {
+  throw new Error('SONG-Vision is a research engine; no paid customer video jobs may be submitted.');
+}

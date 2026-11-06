@@ -1,0 +1,19 @@
+# Never publish customer faces, derived face frames, biometric images,
+# model weights, musical stems or paid deliveries.
+datasets/
+checkpoints/
+outputs/
+private/
+*.pt
+*.pth
+*.ckpt
+*.mp4
+*.mov
+*.wav
+*.mp3
+*.npy
+*.png
+*.jpg
+*.jpeg
+*.quality.json
+__pycache__/

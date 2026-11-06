@@ -1,0 +1,23 @@
+name: SONG Vision research smoke tests
+on:
+  push:
+    paths:
+      - 'song_vision/**'
+      - '.github/workflows/song-vision-python.yml'
+  pull_request:
+    paths:
+      - 'song_vision/**'
+      - '.github/workflows/song-vision-python.yml'
+jobs:
+  model:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r song_vision/requirements.txt
+      - run: python -m unittest song_vision.test_engine -v
+      - run: python -m song_vision --help

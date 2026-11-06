@@ -12,7 +12,8 @@
       "genre": "감성 발라드",
       "genreSource": "editorial",
       "coverImage": "covers/mother-thanks.webp",
-      "productType": "audio_video"
+      "productType": "audio_video",
+      "lyricsOffsetSeconds": 1
     },
     {
       "id": "song-papa",

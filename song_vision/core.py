@@ -311,7 +311,8 @@ def experimental_identity_overlay(frame: np.ndarray, box, portrait_face: np.ndar
 
 def render(template: Path, vocals: Path, mix: Path, checkpoint: Path,
            output: Path, seconds: float, start: float, device: str,
-           identity_photo: Path | None, consent_record: Path | None):
+           identity_photo: Path | None, consent_record: Path | None,
+           face_box: tuple[int, int, int, int] | None = None):
     if not 1 <= seconds <= 30 or start < 0:
         raise ValueError("Research output limited to 1-30 seconds")
     model = load_model(checkpoint, device)
@@ -351,7 +352,7 @@ def render(template: Path, vocals: Path, mix: Path, checkpoint: Path,
                 if not ok:
                     raise ValueError("Could not read requested template frame")
                 observed += 1
-                box = detect_face(frame, detector)
+                box = tuple(face_box) if face_box is not None else detect_face(frame, detector)
                 if box is None:
                     writer.write(frame)
                     continue
@@ -417,6 +418,7 @@ def main():
     p.add_argument("--device", default="cpu")
     p.add_argument("--identity-photo", type=Path)
     p.add_argument("--consent-record", type=Path)
+    p.add_argument("--face-box", type=int, nargs=4, metavar=("X", "Y", "W", "H"))
     args = parser.parse_args()
     if args.command == "prepare":
         print(json.dumps({"preparedFrames": prepare(args.video, args.vocals, args.dataset,
@@ -427,7 +429,7 @@ def main():
     else:
         print(json.dumps(render(args.template, args.vocals, args.mix, args.checkpoint,
                                 args.output, args.seconds, args.start, args.device,
-                                args.identity_photo, args.consent_record)))
+                                args.identity_photo, args.consent_record, args.face_box)))
 
 
 if __name__ == "__main__":

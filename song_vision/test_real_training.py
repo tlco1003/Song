@@ -11,7 +11,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-from song_vision.core import load_model
+from song_vision.core import load_model, render
 from song_vision.real_training import read_manifest, prepare_manifest, train_validated, validate_prepared
 
 
@@ -82,6 +82,12 @@ class RealDataTrainingPipelineTests(unittest.TestCase):
             self.assertEqual(report['trainFrames'], 20)
             self.assertTrue(checkpoint.with_suffix('.training-report.json').exists())
             self.assertIsNotNone(load_model(checkpoint, 'cpu'))
+            output = root / 'research-demo.mp4'
+            quality = render(root / '0.mp4', root / '0.wav', root / '0.wav',
+                             checkpoint, output, 1.0, 0.0, 'cpu', None, None,
+                             face_box=(32, 22, 96, 116))
+            self.assertTrue(output.exists())
+            self.assertEqual(quality['status'], 'research_only_not_commercially_validated')
 
 
 if __name__ == '__main__':

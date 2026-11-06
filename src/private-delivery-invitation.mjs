@@ -15,7 +15,7 @@ export function hashPrivateDeliveryToken(token){
  return createHash('sha256').update(token,'utf8').digest('hex');
 }
 export function issuePrivateDeliveryInvitation({order,origin,selectedSongs}={}){
- if(!order||!['READY_TO_DELIVER','DELIVERED'].includes(order.state)
+ if(!order||![ORDER_STATES.READY_TO_DELIVER,ORDER_STATES.DELIVERED].includes(order.state)
   ||!order.paymentVerifiedAt||typeof order.paymentKey!=='string'||!order.paymentKey
   ||order.recipientVerified!==true||typeof order.customerEmail!=='string'
   ||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(order.customerEmail)
@@ -38,9 +38,10 @@ export function issuePrivateDeliveryInvitation({order,origin,selectedSongs}={}){
 export async function dispatchPrivateListeningEmail({
  invitation,orders,mailer
 }={}){
- if(!invitation||!Array.isArray(orders?.assertFinalSelectedSongs)
-  &&typeof orders?.saveDeliveryTokenHashAtomic!=='function')
-  throw new Error('Private delivery token store required');
+ if(!invitation||typeof invitation.tokenHash!=='string'
+  ||!/^[a-f0-9]{64}$/.test(invitation.tokenHash)
+  ||typeof invitation.deliveryUrl!=='string')
+  throw new Error('Valid private listening invitation required');
  if(typeof orders?.saveDeliveryTokenHashAtomic!=='function'
   ||typeof mailer?.sendPersonalListeningLink!=='function')
   throw new Error('Protected storage and email adapters required');

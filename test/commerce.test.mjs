@@ -47,19 +47,23 @@ test('story and product stages navigate to a separate payment page',()=>{
  assert.ok(!checkout.includes('FUTURE · API 승인 후'));
 });
 
-test('commercial ordering remains disabled and cannot be unlocked by env or user input',()=>{
+test('the legacy local server stays locked, while real Firebase checkout requires configured PG and server proof',()=>{
  const c=publicCommerceReadiness();
  assert.equal(c.canCharge,false);
  assert.equal(c.paymentVerified,false);
- assert.equal(c.musicVerified,false);
- assert.equal(c.licenseVerified,false);
- assert.equal(c.emailVerified,false);
  assert.equal(c.orderStoreVerified,false);
  assert.deepEqual(c.products,['audio','audio_duo','audio_video']);
  assert.match(payment,/id="confirm-checkout"[^>]*disabled/);
- assert.match(paymentJs,/\$\('confirm-checkout'\)\.disabled=true/);
+ assert.match(paymentJs,/fetch\('\/api\/runtime'/);
+ assert.match(paymentJs,/cfg\.canCharge!==true/);
+ assert.match(paymentJs,/fetch\('\/api\/orders'/);
+ assert.match(paymentJs,/widgets\.requestPayment/);
+ const pg=read('src/production-payments.mjs');
+ assert.match(pg,/assertExactTossPayment/);
+ assert.match(pg,/confirmLockUntil/);
+ assert.match(pg,/prepareServerOrderDraft/);
+ assert.ok(!pg.includes('TEST_PAYMENT_COMPLETE_NO_CHARGE'));
 });
-
 test('payment never considered paid without provider proof and server-owned amount',()=>{
  assert.throws(()=>assertOrderTransition(ORDER_STATES.PAYMENT_PENDING,ORDER_STATES.PAID,{}));
  assert.throws(()=>assertOrderTransition(ORDER_STATES.PAYMENT_PENDING,ORDER_STATES.PAID,{verifiedProviderPayment:true}));
@@ -77,34 +81,27 @@ test('commercial music generation and delivery require separately verified proof
  }));
 });
 
-test('six payment methods live on payment page only, with no customer card number collection',()=>{
- const methods=[
-  ['pay-toss','toss_pay','토스페이'],
-  ['pay-kakao','kakao_pay','카카오페이'],
-  ['pay-naver','naver_pay','네이버페이'],
-  ['pay-card','card','신용·체크카드'],
-  ['pay-transfer','transfer','실시간 계좌이체'],
-  ['pay-virtual','virtual_account','가상계좌']
- ];
- for(const [id,value,label] of methods){
-  assert.ok(payment.includes('id="'+id+'"'),id);
-  assert.ok(payment.includes('value="'+value+'"'),value);
+test('Toss v2 payment methods render inside provider-owned widget, not fake clickable payment chips',()=>{
+ assert.match(payment,/https:\/\/js\.tosspayments\.com\/v2\/standard/);
+ assert.match(payment,/id="toss-payment-methods"/);
+ assert.match(payment,/id="toss-payment-agreement"/);
+ assert.match(paymentJs,/widgets\.renderPaymentMethods/);
+ assert.match(paymentJs,/widgets\.renderAgreement/);
+ assert.match(paymentJs,/widgets\.requestPayment/);
+ for(const label of ['토스페이','카카오페이','네이버페이','신용·체크카드','계좌이체']){
   assert.ok(payment.includes(label),label);
-  assert.ok(paymentJs.includes(value),value);
-  assert.ok(!checkout.includes('id="'+id+'"'),id+' leaked to product stage');
  }
- for(const id of ['payment-methods','delivery-email','delivery-phone','delivery-channel-options','consent-delivery','consent-service','payment-price']){
+ for(const id of ['payment-methods','delivery-email','delivery-phone',
+  'delivery-channel-options','consent-delivery','consent-service','payment-price'])
   assert.ok(payment.includes('id="'+id+'"'),id);
- }
  assert.match(payment,/id="confirm-checkout"[^>]*disabled/);
  assert.ok(!payment.includes('id="delivery-email-again"'));
- for(const channel of ['deliver-email','deliver-sms','deliver-kakao'])assert.ok(payment.includes('id="'+channel+'"'));
+ for(const channel of ['deliver-email','deliver-sms','deliver-kakao'])
+  assert.ok(payment.includes('id="'+channel+'"'));
  assert.doesNotMatch(payment,/name="(?:cardNumber|cardCvv|cardPassword|accountPassword)"|autocomplete="cc-number"/i);
- assert.doesNotMatch(paymentJs,/requestPayment\s*\(|api\/payments\/confirm|fetch\s*\(\s*['"]https?:\/\//);
- assert.doesNotMatch(paymentJs,/\.addEventListener\('click'[^\n]*confirm-checkout/);
+ assert.doesNotMatch(paymentJs,/TOSS_SECRET_KEY|paymentStatus:\s*['"]paid['"]/);
  assert.ok(styles.includes('.payment-methods'));
 });
-
 test('catalog prices and advance quote remain unchanged',()=>{
  const catalog=publicPriceCatalog();
  assert.equal(catalog.currency,'KRW');
@@ -120,6 +117,6 @@ test('catalog prices and advance quote remain unchanged',()=>{
  }
  assert.match(checkoutJs,/fetch\('prices.json'/);
  assert.match(checkoutJs,/quoteRequired/);
- assert.match(paymentJs,/chosen\.quoteRequired/);
+ assert.match(paymentJs,/product\.quoteRequired/);
  assert.equal(publicCommerceReadiness().canCharge,false);
 });

@@ -24,7 +24,7 @@ jobs:
       OMP_NUM_THREADS: '2'
       MKL_NUM_THREADS: '2'
       RESEARCH_VAULT_FOLDER: ${{ github.workspace }}/joint-face-study-vault
-      LOCAL_FACE_TASK: ${{ runner.temp }}/face_landmarker.task
+      LOCAL_FACE_TASK: ${{ github.workspace }}/face_landmarker.task
     steps:
       - uses: actions/checkout@v4
         with:

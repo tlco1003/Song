@@ -10,9 +10,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="checkout.css?v=20261105-genre-tiles-01">
-<script defer src="checkout.js?v=20261106-order-review-01"></script>
-<script defer src="checkout-media.js?v=20261105-video-only-01"></script>
+<link rel="stylesheet" href="checkout.css?v=20261106-streamlined-02">
+<script defer src="checkout.js?v=20261106-streamlined-02"></script>
+<script defer src="checkout-media.js?v=20261106-streamlined-02"></script>
 </head>
 <body>
 <header class="site-header"><div class="frame header-inner">
@@ -24,8 +24,8 @@
   <header class="checkout-intro">
    <span class="small-caps">THE PERFECT MUSIC GIFT</span>
    <h1>소중한 마음에 맞는 <em>노래를 골라요.</em></h1>
-   <p id="checkout-progress-label">1 / 3 · 선물 종류</p>
-   <div class="wizard-progress-bar" id="checkout-progress" role="progressbar" aria-label="주문 구성 진행률" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1"><span id="checkout-progress-fill"></span></div>
+   <p id="checkout-progress-label">1 / 2 · 상품과 장르 선택</p>
+   <div class="wizard-progress-bar" id="checkout-progress" role="progressbar" aria-label="주문 구성 진행률" aria-valuemin="1" aria-valuemax="2" aria-valuenow="1"><span id="checkout-progress-fill"></span></div>
   </header>
   <section class="checkout-stage checkout-card" data-checkout-step="product" aria-labelledby="product-title">
    <span class="small-caps">01 · THE GIFT</span>
@@ -49,9 +49,8 @@
     </label>
    </fieldset>
    <p class="small-explain">한 곡 상품에는 최종 선택된 완성곡 1개만 제공돼요. 뮤직비디오 가격은 제작 범위에 따라 별도로 확정됩니다.</p>
-  </section>
-  <section class="checkout-stage checkout-card" data-checkout-step="genre" aria-labelledby="genre-config-heading" hidden>
-   <span class="small-caps">02 · YOUR SOUND</span>
+  <div class="inline-choice-section" id="inline-genre-options" aria-labelledby="genre-config-heading">
+   <span class="small-caps">YOUR SOUND</span>
    <h2 id="genre-config-heading">어떤 장르로 만들까요?</h2>
    <p class="small-explain">선택한 장르는 완성곡마다 적용돼요.</p>
    <fieldset class="duo-genre-modes" id="duo-genre-modes" hidden>
@@ -74,8 +73,8 @@
    <input id="song-shared-notes" type="hidden" value="">
    <div id="genre-plan-preview" class="genre-plan-preview" role="status" aria-live="polite">장르 선택을 불러오는 중이에요.</div>
    <p class="small-explain">음악 생성 과정에서 여러 후보가 나오더라도, 구매한 곡 수만큼 최종 완성곡을 선택해 전달해요.</p>
-  </section>
-  <section class="checkout-stage checkout-card" data-checkout-step="video" aria-labelledby="video-media-title" hidden>
+  </div>
+  <div class="inline-choice-section" id="video-inline-options" hidden>
    <section id="video-media-section" class="video-media-section" aria-labelledby="video-media-title">
       <span class="small-caps">YOUR FACE · YOUR STAGE</span>
       <h3 id="video-media-title">내 얼굴과 영상으로 준비하는 무대</h3>
@@ -122,19 +121,30 @@
       <p class="small-explain">이 무대 화면은 사진을 배치한 디자인 미리보기예요. 사진의 얼굴을 움직이는 가수 영상에 자동으로 교체한 결과는 아닙니다.</p>
       <button id="clear-media-preview" class="media-btn" type="button">모든 얼굴·영상 미리보기 지우기</button>
     </section>
+  </div>
   </section>
   <section class="checkout-stage checkout-card" data-checkout-step="review" aria-labelledby="summary-title" hidden>
    <span class="small-caps">YOUR FINAL CHOICES</span>
    <h2 id="summary-title">주문 내용을 확인해 주세요.</h2>
-   <div class="preview-group"><span class="preview-label">받는 사람</span><strong id="order-title">받는 사람 확인 중</strong></div>
-   <div class="preview-group"><span class="preview-label">선택한 감정 · 시대</span><p id="order-mood-era" class="order-song-genres"></p></div>
-   <div class="preview-group"><span class="preview-label">선택한 상품</span><strong id="order-product">맞춤 노래 1곡</strong></div>
-   <div class="preview-group"><span class="preview-label">완성곡별 장르</span><p id="order-song-genres" class="order-song-genres"></p></div>
+   <p class="small-explain">나의 사연과 원하는 음악을 마지막으로 한 번 확인하고 결제로 넘어가세요.</p>
+   <dl class="order-review-list" aria-label="맞춤 노래 주문 정보">
+    <div><dt>받는 사람</dt><dd id="order-title"></dd></div>
+    <div><dt>선물 상황</dt><dd id="order-occasion"></dd></div>
+    <div><dt>추억과 장면</dt><dd id="order-memory"></dd></div>
+    <div><dt>전하고 싶은 말</dt><dd id="order-message"></dd></div>
+    <div><dt>고맙거나 미안했던 이야기</dt><dd id="order-gratitudeApology"></dd></div>
+    <div><dt>받는 사람의 나이대</dt><dd id="order-recipientAgeGroup"></dd></div>
+    <div><dt>서로의 관계</dt><dd id="order-relativePosition"></dd></div>
+    <div><dt>말투</dt><dd id="order-speechStyle"></dd></div>
+    <div><dt>노래 분위기 · 시대</dt><dd id="order-mood-era"></dd></div>
+    <div><dt>선택한 상품</dt><dd id="order-product"></dd></div>
+    <div><dt>완성곡별 장르</dt><dd id="order-song-genres" class="order-song-genres"></dd></div>
+   </dl>
    <p id="order-style" hidden></p>
-   <div class="price-row"><span>상품 금액</span><strong id="order-price">가격 확인 중</strong></div>
+   <div class="price-row"><span>결제 예정 금액</span><strong id="order-price">가격 확인 중</strong></div>
    <p id="order-pricing-notice" class="small-explain"></p>
-   <p class="small-explain">가사와 장르·시대별 음악 스타일은 결제 확인 후 서버에서 제작하며, 제작용 프롬프트는 고객 화면에 표시되지 않습니다.</p>
-   <a class="edit-link" href="create.html?step=7">← 나의 사연과 선택 다시 확인하기</a>
+   <p class="small-explain">가사와 음악 제작용 내부 프롬프트는 결제 전에 표시되지 않으며, 확인된 결제 이후 서버에서 처리합니다.</p>
+   <a class="edit-link" href="create.html?step=6">← 사연과 음악 취향 수정하기</a>
   </section>
   <p id="checkout-message" role="alert" class="checkout-message" hidden></p>
   <div class="wizard-actions">

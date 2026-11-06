@@ -90,8 +90,8 @@ test('restores the same legacy auto-scroll estimate for songs without real cues'
 });
 test('homepage advances automatically with precise cues first and duration fallback otherwise',()=>{
  const player=read('docs/player.js');
- assert.match(player,/if\(lyricCueSeconds\)\{\s*setActiveLine\(cueIndexAt\(lyricCueSeconds,playbackPlayer\.currentTime\)\)/);
- assert.match(player,/approximateLyricIndexAt\(visibleLyrics\.length,playbackPlayer\.currentTime,duration\)/);
+ assert.match(player,/if\(lyricCueSeconds\)\{\s*setActiveLine\(cueIndexAt\(lyricCueSeconds,playbackPlayer\.currentTime-offset\)\)/);
+ assert.match(player,/approximateLyricIndexAt\(visibleLyrics\.length,playbackPlayer\.currentTime,duration,offset\)/);
  assert.match(player,/audio\.addEventListener\('timeupdate'/);
  assert.doesNotMatch(player,/가사 시간 정보가 없어 자동 이동하지 않아요/);
 });

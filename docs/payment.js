@@ -1,148 +1,139 @@
+/**
+ * WITHU verified order checkout.
+ * Trusted cloud endpoint calculates the price and stores the order BEFORE
+ * the Toss Payments SDK opens. No browser-only paid status is possible.
+ */
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id);
 const KEY='withu-order-draft-v1',MAX_AGE=30*60*1000;
-const won=new Intl.NumberFormat('ko-KR',{style:'currency',currency:'KRW',maximumFractionDigits:0});
-const methods=Object.freeze({
- toss_pay:'토스페이',kakao_pay:'카카오페이',naver_pay:'네이버페이',
- card:'신용·체크카드',transfer:'실시간 계좌이체',virtual_account:'가상계좌'
-});
-function readDraft(){
+const won=n=>new Intl.NumberFormat('ko-KR').format(n)+'원';
+let widgets=null,prepared=null,busy=false,enabled=false,source=null;
+function message(text){$('payment-unavailable').textContent=text;}
+function draft(){
  try{
-  const draft=JSON.parse(sessionStorage.getItem(KEY)||'null');
-  if(!draft||draft.version!==3||!Number.isFinite(draft.savedAt)
-    ||Date.now()-draft.savedAt<0||Date.now()-draft.savedAt>MAX_AGE
-    ||typeof draft.story?.recipient!=='string'||!draft.story.recipient.trim()
-    ||!['audio','audio_duo','audio_video'].includes(draft.selectedProduct)
-    ||!Array.isArray(draft.genreSelection?.genres))return null;
-  return draft;
+  const data=JSON.parse(sessionStorage.getItem(KEY)||'null');
+  if(data?.version!==3||!Number.isFinite(data.savedAt)
+   ||Date.now()-data.savedAt>MAX_AGE||Date.now()-data.savedAt<0
+   ||typeof data.story?.recipient!=='string'
+   ||!['audio','audio_duo'].includes(data.selectedProduct)
+   ||!Array.isArray(data.genreSelection?.genres))return null;
+  return data;
  }catch(_){return null;}
 }
-function genreLabels(selection,productId){
- if(selection.mode==='single'&&selection.genres.length===1)return ['1곡 · '+selection.genres[0]];
- if(selection.mode==='blend'&&selection.genres.length===2&&selection.genres[0]!==selection.genres[1]){
-  const mix=selection.genres.join(' + ')+' (믹스)';
-  return productId==='audio_duo'?['1곡 · '+mix,'2곡 · '+mix]:['1곡 · '+mix];
+function checkContact(){
+ const email=$('delivery-email').value.trim();
+ const phone=$('delivery-phone').value.replace(/[\s-]/g,'');
+ const channel=document.querySelector('input[name="deliveryChannel"]:checked')?.value;
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||email.length>254)
+  throw Error('이메일 주소를 정확히 입력해 주세요.');
+ if(!/^01[016789]\d{7,8}$/.test(phone))
+  throw Error('국내 휴대전화 번호를 정확히 입력해 주세요.');
+ if(!['email','sms','kakao'].includes(channel))
+  throw Error('완성곡 수령 방법을 선택하세요.');
+ if(!$('consent-delivery').checked||!$('consent-service').checked)
+  throw Error('배송 안내·개인정보 및 서비스 약관을 확인하고 동의해 주세요.');
+ return {customerEmail:email,customerPhone:phone,
+  deliveryChannel:channel,deliveryConsent:true};
+}
+async function configure(){
+ const data=draft();
+ if(!data){
+  message('먼저 노래 제작 조건과 상품을 선택해 주세요.');
+  $('payment-price').textContent='주문 정보 확인 필요';
+  return;
  }
- if(selection.mode==='same'&&selection.genres.length===1)return ['1곡 · '+selection.genres[0],'2곡 · '+selection.genres[0]];
- if(selection.mode==='different'&&selection.genres.length===2&&selection.genres[0]!==selection.genres[1])
-  return ['1곡 · '+selection.genres[0],'2곡 · '+selection.genres[1]];
- return null;
-}
-function disableCheckout(reason){
- $('confirm-checkout').disabled=true;
- $('payment-unavailable').textContent=reason;
-}
-async function init(){
- const draft=readDraft();
- if(!draft){
-  $('payment-price').textContent='주문 확인 필요';
-  disableCheckout('먼저 사연과 음악 취향, 상품 및 장르를 선택해 주세요.');
+ source=data;
+ let localPrice;
+ try{
+  const r=await fetch('prices.json',{cache:'no-store'});
+  if(!r.ok)throw Error();
+  const catalog=await r.json();
+  const product=catalog.products.find(p=>p.id===data.selectedProduct);
+  if(!product||product.quoteRequired)throw Error();
+  localPrice=product.amountKrw+
+   (data.genreSelection.mode==='blend'?catalog.addOns.genreBlend.amountKrw:0)+
+   (data.thirdVerse===true?catalog.addOns.thirdVerse.amountKrw:0)+
+   (data.dedicationOutro===true?catalog.addOns.dedicationOutro.amountKrw:0);
+  if(!Number.isSafeInteger(localPrice)||localPrice<1000)throw Error();
+ }catch(_){message('주문 가격을 확인할 수 없습니다.');return;}
+ $('payment-price').textContent=won(localPrice);
+ const response=await fetch('/api/runtime',{cache:'no-store'}).catch(()=>null);
+ if(!response?.ok){
+  message('결제 서버가 연결되어 있지 않습니다. 운영 Firebase Hosting 주소에서 이용해 주세요.');
+  return;
+ }
+ const cfg=await response.json();
+ if(cfg.canCharge!==true||typeof cfg.tossClientKey!=='string'
+  ||typeof window.TossPayments!=='function'){
+  message('결제기관과 운영 서버의 설정이 아직 완료되지 않았습니다.');
   return;
  }
  try{
-  const [catalogResult,genreResult]=await Promise.all([
-   fetch('prices.json',{cache:'no-store'}),
-   fetch('music-genres.json',{cache:'no-store'})
-  ]);
-  if(!catalogResult.ok||!genreResult.ok)throw Error('catalog not loaded');
-  const catalog=await catalogResult.json();
-  const genreCatalog=await genreResult.json();
-  if(catalog.version!==1||catalog.currency!=='KRW'||genreCatalog.version!==2)throw Error('catalog invalid');
-  const chosen=catalog.products.find(p=>p.id===draft.selectedProduct);
-  const allowed=new Set(genreCatalog.genres.filter(g=>g.label===g.id&&!Object.hasOwn(g,'style')).map(g=>g.id));
-  const lines=genreLabels(draft.genreSelection,draft.selectedProduct);
-  const expectedCount=draft.selectedProduct==='audio_duo'?2:1;
-  if(!chosen||!Number.isSafeInteger(chosen.amountKrw)||!lines||lines.length!==expectedCount
-    ||!draft.genreSelection.genres.every(g=>allowed.has(g))
-    ||catalog.addOns?.genreBlend?.amountKrw!==5000
-    ||catalog.addOns?.thirdVerse?.amountKrw!==10000
-    ||catalog.addOns?.dedicationOutro?.amountKrw!==5000
-    ||(draft.thirdVerse!==undefined&&typeof draft.thirdVerse!=='boolean')
-    ||(draft.dedicationOutro!==undefined&&typeof draft.dedicationOutro!=='boolean'))throw Error('invalid selection');
-  if(draft.dedicationOutro===true){
-   const text=String(draft.dedicationText||'').trim().replace(/\s+/g,' ');
-   if(text.length<4||text.length>70||/[<>\r\n\u0000-\u001f]/u.test(text))throw Error('invalid dedication');
-  }else if(String(draft.dedicationText||'').trim())throw Error('orphan dedication');
-  const mode=draft.genreSelection.mode,g=draft.genreSelection.genres;
-  if(!(expectedCount===1?['single','blend'].includes(mode):['same','different','blend'].includes(mode))
-    ||(mode==='blend'&&!(g.length===2&&g[0]!==g[1])))throw Error('invalid genre mode');
-  const total=chosen.amountKrw+(mode==='blend'?catalog.addOns.genreBlend.amountKrw:0)
-   +(draft.thirdVerse===true?catalog.addOns.thirdVerse.amountKrw:0)
-   +(draft.dedicationOutro===true?catalog.addOns.dedicationOutro.amountKrw:0);
-  $('payment-price').textContent=won.format(total)+(chosen.priceKind==='starting_at'?'부터':'');
-  $('payment-quote-notice').hidden=!chosen.quoteRequired;
-  if(chosen.quoteRequired){
-   disableCheckout('뮤직비디오는 개별 견적을 확정한 후 결제할 수 있습니다.');
-  }else{
-   disableCheckout('현재 주문 접수 전입니다. 결제가 가능해지면 이곳에서 결제할 수 있어요.');
-  }
+  const sdk=window.TossPayments(cfg.tossClientKey);
+  widgets=sdk.widgets({customerKey:window.TossPayments.ANONYMOUS});
+  await widgets.setAmount({currency:'KRW',value:localPrice});
+  await widgets.renderPaymentMethods({
+   selector:'#toss-payment-methods',variantKey:'DEFAULT'
+  });
+  await widgets.renderAgreement({
+   selector:'#toss-payment-agreement',variantKey:'AGREEMENT'
+  });
  }catch(_){
-  disableCheckout('주문 정보를 확인할 수 없어요. 이전 화면에서 상품을 다시 선택해 주세요.');
+  message('토스페이먼츠 결제창을 불러오지 못했습니다. 상점 계약과 키를 확인하세요.');
+  return;
+ }
+ prepared={data,localPrice};
+ enabled=true;
+ $('confirm-checkout').disabled=false;
+ $('confirm-checkout').textContent='안전하게 '+won(localPrice)+' 결제하기';
+ message('결제수단을 선택한 뒤 결제하기를 누르세요. 결제 승인 후 제작이 시작됩니다.');
+}
+async function placeOrder(){
+ if(!enabled||!prepared||busy)return;
+ busy=true;
+ const button=$('confirm-checkout');
+ button.disabled=true;
+ try{
+  const contact=checkContact();
+  message('서버에서 주문금액을 검증하는 중이에요.');
+  const r=await fetch('/api/orders',{
+   method:'POST',credentials:'same-origin',cache:'no-store',
+   headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({
+    draft:{
+     selectedProduct:prepared.data.selectedProduct,
+     genreSelection:prepared.data.genreSelection,
+     thirdVerse:prepared.data.thirdVerse===true,
+     dedicationOutro:prepared.data.dedicationOutro===true,
+     dedicationText:prepared.data.dedicationOutro===true?
+      prepared.data.dedicationText||'':'',
+     story:prepared.data.story
+    },
+    contact,clientAmount:prepared.localPrice,
+    termsAccepted:true,privacyAccepted:true
+   })
+  });
+  const record=await r.json();
+  if(!r.ok||!record.orderId||record.amountKrw!==prepared.localPrice)
+   throw Error(record.error||'주문서 가격 검증에 실패했습니다.');
+  message('안전한 결제창을 여는 중이에요.');
+  await widgets.requestPayment({
+   orderId:record.orderId,
+   orderName:record.orderName,
+   successUrl:location.origin+'/payment-success.html',
+   failUrl:location.origin+'/payment-fail.html',
+   customerEmail:contact.customerEmail,
+   customerMobilePhone:contact.customerPhone
+  });
+ }catch(error){
+  message(error.message||'결제창을 열지 못했습니다. 다시 시도해 주세요.');
+  button.disabled=false;busy=false;
  }
 }
-for(const item of document.querySelectorAll('input[name="paymentMethod"]')){
- item.addEventListener('change',()=>{
-  const selected=document.querySelector('input[name="paymentMethod"]:checked')?.value;
-  $('payment-method-hint').textContent=(methods[selected]||'결제수단')+'를 선택했어요.';
- });
+$('confirm-checkout').addEventListener('click',()=>{void placeOrder();});
+for(const id of ['delivery-email','delivery-phone','consent-delivery','consent-service']){
+ $(id).addEventListener('change',()=>{if(!busy&&enabled)message('연락처와 약관을 확인한 뒤 결제할 수 있습니다.');});
 }
-
-const channels=Object.freeze({
- email:'완성된 노래를 이메일의 전용 링크로 알려드려요.',
- sms:'제작 완료 후 휴대전화 문자로 나의 노래함 링크를 보내드려요.',
- kakao:'제작 완료 후 승인된 카카오 알림톡으로 나의 노래함 링크를 보내드려요.'
-});
-function normalizedPhone(value){
- const digits=String(value||'').replace(/[\s-]/g,'');
- return /^01[016789]\d{7,8}$/.test(digits)?digits:null;
-}
-function selectedDeliveryChannel(){
- const channel=document.querySelector('input[name="deliveryChannel"]:checked')?.value;
- return Object.hasOwn(channels,channel)?channel:null;
-}
-function validateContactFields({showError=false}={}){
- const email=$('delivery-email').value.trim();
- const phone=$('delivery-phone').value.trim();
- const channel=selectedDeliveryChannel();
- const emailValid=/^[^\s@]{1,64}@[^\s@]{1,190}\.[^\s@]{2,}$/u.test(email)
-  &&email.length<=254;
- const phoneValid=normalizedPhone(phone)!==null;
- const valid=emailValid&&phoneValid&&channel;
- if(showError){
-  $('delivery-email').setAttribute('aria-invalid',String(!emailValid));
-  $('delivery-phone').setAttribute('aria-invalid',String(!phoneValid));
-  $('delivery-phone-hint').textContent=phoneValid?
-   '선택한 연락 방법으로 안내를 받을 수 있어요.':
-   '010으로 시작하는 국내 휴대전화 번호를 정확히 입력해 주세요.';
-  $('delivery-channel-hint').textContent=
-   !emailValid?'이메일 주소를 확인해 주세요.':
-   !phoneValid?'휴대전화 번호를 확인해 주세요.':
-   channels[channel]||'알림 수신 방법을 선택해 주세요.';
- }else{
-  $('delivery-channel-hint').textContent=channels[channel]||'알림 수신 방법을 선택해 주세요.';
- }
- return Boolean(valid);
-}
-for(const id of ['delivery-email','delivery-phone']){
- $(id).addEventListener('blur',()=>{validateContactFields({showError:true});});
- $(id).addEventListener('input',()=>{validateContactFields();});
-}
-for(const item of document.querySelectorAll('input[name="deliveryChannel"]')){
- item.addEventListener('change',()=>{validateContactFields({showError:true});});
-}
-// At the future PG checkout boundary, the server MUST independently validate
-// customerEmail, customerPhone, deliveryChannel and consent; these browser
-// values are NEVER trusted as payment or identity verification.
-// The test route is a separate, privileged loopback server. Never present
-// a mock "paid" result on public GitHub Pages or production domains.
-if(['127.0.0.1','localhost','::1'].includes(location.hostname)){
- void fetch('/_staging',{method:'GET',cache:'no-store',credentials:'same-origin'})
-  .then(r=>{if(r.ok)$('local-staging-test').hidden=false;})
-  .catch(()=>{});
-}
-// Intentionally no form submit / redirect / PG SDK call. Real payments require
-// server-side order creation, PG verification, contract and policies.
-$('confirm-checkout').disabled=true;
-void init();
+void configure();
 })();

@@ -10,8 +10,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="checkout.css?v=20261106-local-test-02">
-<script defer src="payment.js?v=20261106-local-test-02"></script>
+<link rel="stylesheet" href="checkout.css?v=20261106-production-01">
+<script defer src="https://js.tosspayments.com/v2/standard"></script>
+<script defer src="payment.js?v=20261106-production-01"></script>
 </head>
 <body>
 <header class="site-header"><div class="frame header-inner">
@@ -45,27 +46,18 @@
      </div>
      <p id="delivery-channel-hint" class="small-explain" role="status" aria-live="polite">완성된 노래를 이메일의 전용 링크로 알려드려요.</p>
     </fieldset>
-    <fieldset class="payment-methods" id="payment-methods">
-     <legend>결제수단 선택</legend>
-     <label class="payment-option" for="pay-toss"><input type="radio" id="pay-toss" name="paymentMethod" value="toss_pay" checked><span class="payment-option-copy"><strong>토스페이</strong><small>간편결제</small></span></label>
-     <label class="payment-option" for="pay-kakao"><input type="radio" id="pay-kakao" name="paymentMethod" value="kakao_pay"><span class="payment-option-copy"><strong>카카오페이</strong><small>간편결제</small></span></label>
-     <label class="payment-option" for="pay-naver"><input type="radio" id="pay-naver" name="paymentMethod" value="naver_pay"><span class="payment-option-copy"><strong>네이버페이</strong><small>간편결제</small></span></label>
-     <label class="payment-option" for="pay-card"><input type="radio" id="pay-card" name="paymentMethod" value="card"><span class="payment-option-copy"><strong>신용·체크카드</strong><small>카드 결제</small></span></label>
-     <label class="payment-option" for="pay-transfer"><input type="radio" id="pay-transfer" name="paymentMethod" value="transfer"><span class="payment-option-copy"><strong>실시간 계좌이체</strong><small>은행 계좌</small></span></label>
-     <label class="payment-option" for="pay-virtual"><input type="radio" id="pay-virtual" name="paymentMethod" value="virtual_account"><span class="payment-option-copy"><strong>가상계좌</strong><small>입금 확인 후 제작</small></span></label>
-    </fieldset>
-    <p id="payment-method-hint" class="small-explain">토스페이를 선택했어요.</p>
+    <section class="payment-methods" id="payment-methods" aria-label="실제 결제 수단 선택">
+     <h3>결제수단 선택</h3>
+     <p class="small-explain">토스페이먼츠 결제창에서 신용·체크카드, 토스페이, 카카오페이, 네이버페이와 계좌이체 등 상점에서 승인된 수단을 선택할 수 있어요.</p>
+     <div id="toss-payment-methods" aria-label="결제수단"></div>
+     <div id="toss-payment-agreement" aria-label="결제기관 약관"></div>
+    </section>
     <label class="consent-row"><input id="consent-delivery" type="checkbox"><span>완성곡 안내 및 전용 링크 발송을 위한 이메일·휴대전화 정보 이용에 동의합니다. 광고 메시지는 보내지 않습니다.</span></label>
-    <label class="consent-row"><input id="consent-service" type="checkbox" disabled><span>이용약관과 취소·환불 조건 확인 (결제 이용 시 제공)</span></label>
-    <button id="confirm-checkout" type="button" class="checkout-button" disabled>현재 결제를 이용할 수 없습니다</button>
-    <p class="payment-unavailable" id="payment-unavailable" role="status">현재는 결제를 이용할 수 없습니다. 정식 주문이 가능해지면 이곳에서 진행할 수 있어요.</p>
-    <aside id="local-staging-test" class="payment-test-only" hidden>
-     <strong>로컬 관리자 전용 기능 테스트</strong>
-     <p>실제 결제가 되지 않는 시험 주문으로 제작 완료와 메일 링크, 본인 노래 재생을 확인해요.</p>
-     <a href="/_staging" class="detail-sample-link">가짜 결제완료·관리자 업로드 시험 화면 열기</a>
-    </aside>
+    <label class="consent-row"><input id="consent-service" type="checkbox"><span><a href="terms.html" target="_blank" rel="noopener">서비스 이용약관</a>과 <a href="refund-policy.html" target="_blank" rel="noopener">제작 및 취소·환불 기준</a>, <a href="privacy.html" target="_blank" rel="noopener">개인정보 처리방침</a>을 확인하고 동의합니다.</span></label>
+    <button id="confirm-checkout" type="button" class="checkout-button" disabled>결제 서비스 연결 확인 중</button>
+    <p class="payment-unavailable" id="payment-unavailable" role="status">보안 결제 서버에 연결하고 있어요.</p>
     <p class="small-explain">기본 제작비에는 전용 링크를 통한 감상만 포함됩니다. 원본 파일과 상업적 이용 옵션은 제작 완료 후 별도로 선택할 수 있어요.</p>
-    <p class="small-explain">현재 입력한 정보는 결제나 주문 접수에 사용되지 않습니다.</p>
+    <p class="small-explain">결제 승인이 확인되면 고객 주문과 비공개 작사·음악 제작 절차가 시작됩니다.</p>
    </section>
   </div>
  </div>

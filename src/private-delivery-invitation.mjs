@@ -27,7 +27,7 @@ export function issuePrivateDeliveryInvitation({order,origin,selectedSongs}={}){
   ||site.pathname!=='/'||site.host.length<5)
   throw new Error('Email delivery requires a production HTTPS origin');
  const token=randomBytes(32).toString('base64url');
- const url=new URL('/song.html',site);
+ const url=new URL('/my-music.html',site);
  url.hash='delivery='+token;
  return Object.freeze({
   orderId:order.id,email:order.customerEmail,deliveryUrl:url.href,

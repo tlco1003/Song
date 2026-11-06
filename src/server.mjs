@@ -189,6 +189,35 @@ async function handle(req,res,customerAccess){
       });
     }
 
+    if(req.method==='GET'&&pathname==='/api/delivery/library'){
+      // The existing HttpOnly cookie may be used to reopen "나의 노래함"
+      // without exposing a raw email token in the URL or local storage.
+      if(typeof customerAccess?.getPrivateDeliveryLibrary!=='function')
+        throw new AppError(503,'고객 노래함 저장소가 아직 연결되지 않았습니다.');
+      const sessionId=customerSession(req);
+      // Trusted adapter MUST revalidate session expiry, owner identity and
+      // EVERY requested song's selected-candidate paid-order authorization.
+      const result=await customerAccess.getPrivateDeliveryLibrary({sessionId});
+      if(result?.sessionVerified!==true||result?.verifiedCustomerAccount!==true
+        ||result?.verifiedOriginalPayment!==true||result?.verifiedRecipient!==true
+        ||result?.everyPurchasedTrackAuthorized!==true
+        ||result?.status!=='delivered'
+        ||!Array.isArray(result.tracks)||result.tracks.length<1||result.tracks.length>60)
+        throw new AppError(403,'나의 노래함에 접근할 수 있는 인증이 없습니다.');
+      const right=result.commercialUpgrade||{status:'unavailable'};
+      const active=right.status==='active'&&right.paymentVerified===true
+        &&right.rightsVerified===true&&right.amountKrw===upgradePriceKrw();
+      const available=right.status==='available'&&right.rightsVerified===true
+        &&right.amountKrw===upgradePriceKrw();
+      const tracks=result.tracks.map(item=>safePrivateTrack(item,active));
+      return json(res,200,{
+        status:'delivered',track:tracks[0],tracks,
+        commercialUpgrade:active?
+          {status:'active',paymentVerified:true,rightsVerified:true,amountKrw:10000}:
+          available?{status:'available',rightsVerified:true,amountKrw:10000}:
+          {status:'unavailable',amountKrw:10000}
+      });
+    }
     if(req.method==='POST'&&pathname==='/api/delivery/resolve'){
       sameOriginPost(req);limited(req,20);
       if(typeof customerAccess?.resolvePrivateDelivery!=='function')
@@ -223,9 +252,9 @@ async function handle(req,res,customerAccess){
         throw new AppError(503,'상업적 이용권 결제는 아직 연결되지 않았습니다.');
       const sessionId=customerSession(req);
       const body=await jsonBody(req,1024);
-      const tokenHash=hashPrivateDeliveryToken(body?.deliveryToken);
-      // The adapter verifies original order, visitor, recording provenance,
-      // licence authority, a separate pending PG intent and a fixed KRW price.
+      const tokenHash=body?.deliveryToken==null?null:hashPrivateDeliveryToken(body.deliveryToken);
+      // The adapter verifies this session, its owner and optional delivery token,
+      // recording provenance, licence authority, a separate pending PG intent and fixed price.
       const result=await customerAccess.beginCommercialCheckout({
         sessionId,tokenHash,amountKrw:upgradePriceKrw()
       });
@@ -322,6 +351,7 @@ async function handle(req,res,customerAccess){
     '/lyric-timer.html':'docs/lyric-timer.html',
     '/lyric-timer.js':'docs/lyric-timer.js',
     '/song.html':'docs/song.html',
+    '/my-music.html':'docs/my-music.html',
     '/song.css':'docs/song.css',
     '/song.js':'docs/song.js',
     '/cover-store.js':'docs/cover-store.js',

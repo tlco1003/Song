@@ -11,6 +11,7 @@ const stage=$('player-stage'),cover=$('detail-cover'),coverFallback=$('detail-co
 let track=null,player=audio,coverURL=null,candidateURL=null,candidateBlob=null,hideTimer=null,playing=false,mediaReady=false;
 let isPrivate=false,repeatOne=false;
 let privateDeliveryToken=null,privateTrackChoices=[],privateLicense=null;
+const isCustomerLibrary=document.body?.dataset.withuView==='customer';
 function syncVideo(){
  if(player===video||video.hidden||!video.getAttribute('src'))return;
  if(document.visibilityState==='hidden'||player.paused||player.ended){
@@ -202,32 +203,47 @@ function renderPrivateTrackChoices(response){
  }
  list.hidden=false;
 }
-async function loadPrivate(token){
- // The emailed #delivery= token stays out of HTTP URL paths and browser referrers.
- // The HTTPS server must validate its hash against a verified order, then create
- // an HttpOnly session for /api/delivery-assets/* and any paid download ticket.
+async function loadPrivate(token=null){
+ // Emailed link: /my-music.html#delivery=<random-token>. A customer who already
+ // verified on this device can revisit /my-music.html with the HttpOnly session.
+ // The page NEVER trusts token/query/localStorage as proof of a paid order.
  privateDeliveryToken=token;
  $('commercial-upgrade-panel').hidden=true;
  $('private-track-list').hidden=true;
+ const guest=$('my-music-guest'),customer=$('my-music-customer');
+ if(isCustomerLibrary){
+  customer.hidden=true;
+  guest.hidden=false;
+  $('my-music-guest-title').textContent='나의 노래를 확인하고 있어요.';
+  $('my-music-guest-description').textContent='구매한 노래의 접근 권한을 확인하고 있어요.';
+ }
  try{
-  const r=await fetch('api/delivery/resolve',{
+  const url=token?'api/delivery/resolve':'api/delivery/library';
+  const options=token?{
    method:'POST',
    headers:{'Content-Type':'application/json'},
-   credentials:'same-origin',cache:'no-store',
-   body:JSON.stringify({token})
-  });
-  if(!r.ok)throw Error('unavailable');
+   body:JSON.stringify({token}),
+   credentials:'same-origin',cache:'no-store'
+  }:{
+   method:'GET',credentials:'same-origin',cache:'no-store'
+  };
+  const r=await fetch(url,options);
+  if(!r.ok)throw Error('not_authenticated');
   const j=await r.json();
-  if(j?.status!=='delivered'||typeof j?.track?.file!=='string')throw Error('not delivered');
+  if(j?.status!=='delivered'||typeof j?.track?.file!=='string')throw Error('not_delivered');
   const t=j.track,u=new URL(t.privateMediaUrl||'',location.origin);
-  if(u.origin!==location.origin||!u.pathname.startsWith('/api/delivery-assets/'))throw Error('invalid asset path');
+  if(u.origin!==location.origin||!u.pathname.startsWith('/api/delivery-assets/'))
+   throw Error('invalid_asset_path');
   renderPrivateTrackChoices(j);
   for(const song of privateTrackChoices){
-   if(!simpleName(song?.file)||typeof song.privateMediaUrl!=='string')throw Error('invalid track');
+   if(!simpleName(song?.file)||typeof song.privateMediaUrl!=='string')
+    throw Error('invalid_track');
    const asset=new URL(song.privateMediaUrl,location.origin);
-   if(asset.origin!==location.origin||!asset.pathname.startsWith('/api/delivery-assets/'))throw Error('invalid track asset');
+   if(asset.origin!==location.origin||!asset.pathname.startsWith('/api/delivery-assets/'))
+    throw Error('invalid_track_asset');
   }
   loadTrack(t,false);
+  if(!mediaReady)throw Error('not_ready');
   configurePrivateLicense(j,t);
   const select=$('private-track-choice');
   select.onchange=()=>{
@@ -236,19 +252,41 @@ async function loadPrivate(token){
    loadTrack(privateTrackChoices[index],false);
    configurePrivateLicense(j,privateTrackChoices[index]);
   };
+  if(isCustomerLibrary){
+   guest.hidden=true;
+   customer.hidden=false;
+  }
+  // Keep the email access code out of visible navigation/history after resolve.
+  if(token&&location.hash.startsWith('#delivery='))
+   history.replaceState(null,'',location.pathname+location.search);
  }catch(_){
-  $('detail-title').textContent='음악 선물 전달 준비 중';
-  $('detail-kind').textContent='고객 전용 전달 페이지';
-  $('detail-genre').textContent='인증된 전달 링크가 필요해요';
-  $('detail-not-ready').hidden=false;
+  audio.pause();video.pause();
+  audio.removeAttribute('src');video.removeAttribute('src');
+  track=null;mediaReady=false;isPrivate=false;
+  privateLicense=null;privateTrackChoices=[];
+  $('download-track').hidden=true;
+  $('download-track').removeAttribute('href');
   $('commercial-upgrade-panel').hidden=true;
-  $('detail-lyrics-text').textContent='결제 후 제작이 완료되면 이메일로 받은 전용 링크에서 감상할 수 있어요.';
-  notice('현재 고객 인증·이메일·음원 전달 서버는 아직 연결되지 않았습니다. 공개 예시만 감상할 수 있습니다.');
+  $('private-track-list').hidden=true;
+  if(isCustomerLibrary){
+   customer.hidden=true;guest.hidden=false;
+   $('my-music-guest-title').textContent='아직 표시할 나의 노래가 없어요.';
+   $('my-music-guest-description').textContent=
+    '구매한 곡은 이메일로 받은 고객 전용 감상 링크에서 확인할 수 있어요. 이 기기에서 인증되지 않았거나 링크가 만료되었다면, 해당 이메일 링크를 다시 열어 주세요.';
+  }else{
+   $('detail-title').textContent='음악 선물 전달 준비 중';
+   $('detail-kind').textContent='고객 전용 전달 페이지';
+   $('detail-genre').textContent='인증된 전달 링크가 필요해요';
+   $('detail-not-ready').hidden=false;
+   $('detail-lyrics-text').textContent=
+    '결제 후 제작이 완료되면 이메일로 받은 전용 링크에서 감상할 수 있어요.';
+   notice('현재 고객 인증·이메일·음원 전달 서버는 아직 연결되지 않았습니다.');
+  }
  }
 }
 $('commercial-upgrade-buy').addEventListener('click',async()=>{
  const button=$('commercial-upgrade-buy');
- if(button.disabled||!privateDeliveryToken||privateLicense?.status!=='available'
+ if(button.disabled||privateLicense?.status!=='available'
    ||privateLicense?.rightsVerified!==true||privateLicense?.amountKrw!==10000)return;
  button.disabled=true;
  $('commercial-upgrade-status').textContent='안전한 추가 결제 연결을 확인하는 중이에요.';
@@ -256,7 +294,7 @@ $('commercial-upgrade-buy').addEventListener('click',async()=>{
   const response=await fetch('api/commerce/commercial-upgrade/checkout',{
    method:'POST',credentials:'same-origin',cache:'no-store',
    headers:{'Content-Type':'application/json'},
-   body:JSON.stringify({deliveryToken:privateDeliveryToken})
+   body:JSON.stringify(privateDeliveryToken?{deliveryToken:privateDeliveryToken}:{})
   });
   if(!response.ok)throw Error('payment-unavailable');
   const data=await response.json();
@@ -275,12 +313,26 @@ $('commercial-upgrade-buy').addEventListener('click',async()=>{
 async function init(){
  const params=new URLSearchParams(location.search);
  const delivered=new URLSearchParams(location.hash.slice(1)).get('delivery');
+ if(isCustomerLibrary){
+  // A public demo query never turns an unauthenticated library into a demo.
+  if(delivered&&!/^[A-Za-z0-9_-]{43}$/.test(delivered)){
+   $('my-music-guest-title').textContent='감상 링크를 확인해 주세요.';
+   $('my-music-guest-description').textContent='유효한 이메일 전용 감상 링크로 다시 접속해 주세요.';
+   return;
+  }
+  await loadPrivate(delivered||null);
+  return;
+ }
  if(delivered){
-  if(!/^[A-Za-z0-9_-]{24,160}$/.test(delivered)){notice('유효하지 않은 배송 링크예요.');return;}
+  if(!/^[A-Za-z0-9_-]{43}$/.test(delivered)){
+   notice('유효하지 않은 전달 링크예요.');return;
+  }
   await loadPrivate(delivered);return;
  }
  const requested=params.get('demo')||'song-mother';
- if(!/^song-[a-z0-9-]{1,90}$/.test(requested)){notice('잘못된 예시곡 주소예요.');return;}
+ if(!/^song-[a-z0-9-]{1,90}$/.test(requested)){
+  notice('잘못된 예시곡 주소예요.');return;
+ }
  await loadDemo(requested);
 }
 play.addEventListener('click',event=>{event.stopPropagation();void togglePlay()});

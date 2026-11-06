@@ -18,9 +18,14 @@ test('story and product stages navigate to a separate payment page',()=>{
    'checkout-prev','checkout-next','go-payment','order-title','order-mood-era']){
   assert.ok(checkout.includes('id="'+id+'"'),id);
  }
- for(const stage of ['product','genre','video','review']){
+ for(const stage of ['product','review']){
   assert.ok(checkout.includes('data-checkout-step="'+stage+'"'));
  }
+ assert.ok(!checkout.includes('data-checkout-step="genre"'));
+ assert.ok(!checkout.includes('data-checkout-step="video"'));
+ for(const id of ['inline-genre-options','video-inline-options','order-memory','order-message',
+  'order-gratitudeApology','order-occasion','order-recipientAgeGroup',
+  'order-relativePosition','order-speechStyle'])assert.ok(checkout.includes('id="'+id+'"'),id);
  assert.ok(checkout.includes('href="payment.html"'));
  assert.ok(server.includes("'/payment.html':'docs/payment.html'"));
  assert.ok(server.includes("'/payment.js':'docs/payment.js'"));
@@ -32,6 +37,10 @@ test('story and product stages navigate to a separate payment page',()=>{
  assert.match(checkoutJs,/saveChoices/);
  assert.match(checkoutJs,/stage:currentStage/);
  assert.match(styles,/payment-page-layout/);
+ assert.ok(!payment.includes('payment-summary'));
+ assert.ok(payment.includes('payment-total-line'));
+ assert.ok(!payment.includes('id="payment-song-genres"'));
+ assert.match(create,/href="checkout.html"/);
  assert.ok(!checkout.includes('id="delivery-email"'));
  assert.ok(!checkout.includes('class="prepay-demo"'));
  assert.ok(!checkout.includes('운영자가 직접 제작'));

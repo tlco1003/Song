@@ -58,7 +58,8 @@ test('public creation has no editable lyrics or music style, paid-only editor fa
  assert.ok(!create.includes('id="song-style"'));
  assert.ok(!create.includes('id="copy-lyrics"'));
  assert.ok(!create.includes('id="copy-style"'));
- assert.ok(create.includes('id="review-recipient"'));
+ assert.ok(!create.includes('id="review-recipient"'));
+ assert.ok(read('docs/checkout.html').includes('id="order-title"'));
  assert.ok(!create.includes('id="song-lyrics-preview"'));
  assert.ok(!create.includes('id="generate-lyrics"'));
  assert.ok(!create.includes('id="generated-song-title"'));

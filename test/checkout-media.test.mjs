@@ -36,7 +36,8 @@ test('video package retains device-only photo, video, and native camera controls
   'photo-preview','video-preview','stage-portrait-image','camera-live','open-camera',
   'start-camera-record','stop-camera-record','close-camera','record-timer','camera-feedback','clear-media-preview'];
  for(const id of ids)assert.ok(page.includes('id="'+id+'"'),id);
- assert.match(page,/data-checkout-step="video"[^>]*hidden/);
+ assert.ok(!page.includes('data-checkout-step="video"'));
+ assert.match(page,/id="video-inline-options"[^>]*hidden/);
  assert.match(page,/capture="user"/);
  assert.match(page,/playsinline/);
  assert.match(script,/selectedProduct\(\)==='audio_video'/);
@@ -51,8 +52,9 @@ test('video package retains device-only photo, video, and native camera controls
  assert.match(styles,/\.stage-concept/);
 });
 
-test('video capture is a dedicated optional stage, not part of the payment form',()=>{
- assert.ok(page.includes('data-checkout-step="video"'));
+test('video capture appears inline only when video package selected, not inside payment form',()=>{
+ assert.ok(page.includes('id="video-inline-options"'));
+ assert.ok(!page.includes('data-checkout-step="video"'));
  assert.ok(!payment.includes('id="face-photo"'));
  assert.match(script,/\$\('video-media-section'\)\.hidden=!show/);
  assert.match(script,/withu:checkout-stage/);

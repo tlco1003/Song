@@ -21,7 +21,7 @@ test('public creation collects the original five answers and speech choices',()=
   for(const id of ['recipient','memory','message','gratitudeApology','occasion','recipientAgeGroup','relativePosition','speechStyle','genre','mood','lyricLength']){
     assert.ok(create.includes('id="'+id+'"'),id);
   }
-  for(const id of ['review-recipient','review-memory','review-message','review-genre','review-mood','review-eraPreference','go-create','eraPreference']){
+  for(const id of ['go-create','eraPreference']){
     assert.ok(create.includes('id="'+id+'"'),id);
   }
   assert.match(create,/name="genreChoice"/);
@@ -42,10 +42,12 @@ test('creation routes to WITHU checkout, keeps lyric authoring and avoids extern
   assert.doesNotMatch(createScript,/fetch\('api\/lyrics'|generatedLyrics|generatedFor/);
   assert.match(createScript,/version:3/);
   assert.match(createScript,/titlePreview:answers\.recipient/);
-  assert.match(createScript,/renderSummary/);
+  assert.doesNotMatch(createScript,/renderSummary|review-recipient/);
+  assert.match(createScript,/STEP_COUNT=6/);
+  assert.ok(!create.includes('data-create-step="7"'));
   assert.ok(!/\?lyrics=|\?prompt=|\?style=/.test(create+createScript));
   assert.ok(!create.includes('id="song-lyrics-preview"'));
-  assert.match(create,/상품 선택 후 결제하기/);
+  assert.match(create,/상품 선택하기/);
 });
 test('HTTPS backend serves landing, lyric creation and opt-in mother video routes',()=>{
   for(const line of ["'/create.html':'docs/create.html'","'/create.js':'docs/create.js'","'/create.css':'docs/create.css'"]){

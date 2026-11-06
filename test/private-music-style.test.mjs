@@ -27,7 +27,9 @@ test('public genre catalog has labels only and no music style or music prompt le
  assert.ok(!page.includes('id="copy-style"'));
  assert.ok(!page.includes('id="song-lyrics"'));
  assert.ok(!page.includes('id="copy-lyrics"'));
- assert.ok(page.includes('id="review-recipient"'));
+ assert.ok(!page.includes('id="review-recipient"'));
+ assert.ok(checkout.includes('id="order-memory"'));
+ assert.ok(checkout.includes('id="order-occasion"'));
  assert.ok(!page.includes('id="song-lyrics-preview"'));
  assert.ok(!page.includes('id="generate-lyrics"'));
  assert.ok(!checkout.includes('id="order-lyrics"'));

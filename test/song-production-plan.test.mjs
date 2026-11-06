@@ -84,7 +84,8 @@ test('paid immutable song plan must match original approved genre choice',()=>{
 test('browser remembers genre choice while real payment and email dispatch remain disabled',()=>{
  assert.match(create,/genre:answers.genre,mood:answers.mood,eraPreference:answers.eraPreference/);
  assert.doesNotMatch(create,/stylePrompt|song-style/);
- assert.match(createPage,/id="review-genre"/);
+ assert.ok(!createPage.includes('id="review-genre"'));
+ assert.match(page,/id="order-song-genres"/);
  assert.doesNotMatch(createPage,/id="song-lyrics-preview"/);
  assert.match(script,/duoGenreChoice:/);
  assert.match(script,/genreSelection/);

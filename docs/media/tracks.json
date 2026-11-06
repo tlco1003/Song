@@ -13,7 +13,8 @@
       "genreSource": "editorial",
       "coverImage": "covers/mother-thanks.webp",
       "productType": "audio_video",
-      "lyricsOffsetSeconds": 1
+      "lyricsOffsetSeconds": 1,
+      "lyricsOffsetAnchors": []
     },
     {
       "id": "song-papa",
@@ -25,7 +26,7 @@
       "genre": "어쿠스틱 감성 발라드",
       "genreSource": "editorial",
       "productType": "audio_video",
-            "lyricsOffsetSeconds": 1
+      "lyricsOffsetSeconds": 1
     },
     {
       "id": "song-cinderella-laundry",
@@ -91,8 +92,8 @@
       "genre": "감성 발라드",
       "genreSource": "editorial",
       "coverImage": "covers/friend-memory.webp",
-      "productType": "audio_with_cover"
-      "lyricsOffsetSeconds": 1,
+      "productType": "audio_with_cover",
+      "lyricsOffsetSeconds": 1
     },
     {
       "id": "song-romantic-wedding",

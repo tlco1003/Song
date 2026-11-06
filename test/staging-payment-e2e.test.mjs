@@ -196,3 +196,90 @@ test('wrong media format and nonexistent file cannot be delivered as a bought so
  const noOutbox=await fetch(base+'/api/_staging/outbox',{headers:{'x-withu-test-key':adminKey}});
  assert.equal((await noOutbox.json()).messages.filter(x=>x.listeningUrl).length,0);
 });
+
+test('administrator sees only authorized test customer records, and simulated 10000 KRW unlocks only that order download',async(t)=>{
+ const {base,createAndPay,addAudio,finish,outbox}=await setup(t);
+ const orderA=await createAndPay('first@example.test');
+ const orderB=await createAndPay('second@example.test');
+ const before=await fetch(base+'/api/_staging/orders');
+ assert.equal(before.status,403,'Unverified visitors cannot list customer emails');
+ const authorized=await fetch(base+'/api/_staging/orders',{
+  headers:{'x-withu-test-key':adminKey}
+ });
+ assert.equal(authorized.status,200);
+ const items=(await authorized.json()).orders;
+ assert.equal(items.length,2);
+ assert.equal(items.find(o=>o.orderId===orderA).customerEmail,'first@example.test');
+ assert.equal(items.find(o=>o.orderId===orderB).customerEmail,'second@example.test');
+ assert.equal(items.find(o=>o.orderId===orderA).status,'paid_test_only');
+ assert.deepEqual(items.find(o=>o.orderId===orderA).songGenres,['발라드']);
+ const trackA=await addAudio(),trackB=await addAudio();
+ await finish(orderA,trackA,'첫 번째 고객 개인곡');
+ await finish(orderB,trackB,'두 번째 고객 개인곡');
+ const mails=(await outbox()).filter(x=>x.listeningUrl);
+ const url=mails.find(x=>x.orderId===orderA).listeningUrl;
+ const token=new URLSearchParams(new URL(url).hash.slice(1)).get('delivery');
+ const access=await fetch(base+'/api/delivery/resolve',{
+  method:'POST',headers:{'Content-Type':'application/json'},
+  body:JSON.stringify({token})
+ });
+ assert.equal(access.status,200);
+ const cookie=access.headers.get('set-cookie').split(';')[0];
+ const beforeUpgrade=await access.json();
+ assert.equal(beforeUpgrade.commercialUpgrade.status,'unavailable');
+ assert.equal(beforeUpgrade.track.privateDownloadUrl,undefined);
+ let attempt=await fetch(base+'/api/_staging/orders/'+orderA+'/simulate-upgrade',{
+  method:'POST',headers:{'Content-Type':'application/json'},
+  body:'{}'
+ });
+ assert.equal(attempt.status,403);
+ const upgrade=await fetch(base+'/api/_staging/orders/'+orderA+'/simulate-upgrade',{
+  method:'POST',headers:{'x-withu-test-key':adminKey,'Content-Type':'application/json'},
+  body:'{}'
+ });
+ assert.equal(upgrade.status,200);
+ const flag=await upgrade.json();
+ assert.equal(flag.testOnly,true);
+ assert.equal(flag.commercialLicenseGranted,false);
+ let library=await fetch(base+'/api/delivery/library',{headers:{cookie}});
+ assert.equal(library.status,200);
+ library=await library.json();
+ assert.equal(library.tracks.length,1);
+ assert.equal(library.tracks[0].commercialUpgrade.status,'active');
+ const downloadUrl=library.tracks[0].privateDownloadUrl;
+ assert.match(downloadUrl,/^\/api\/delivery-downloads\/[A-Za-z0-9_-]+$/);
+ let file=await fetch(base+downloadUrl,{headers:{cookie}});
+ assert.equal(file.status,200);
+ assert.ok((await file.arrayBuffer()).byteLength>=44);
+ const bearerB=new URLSearchParams(new URL(mails.find(x=>x.orderId===orderB).listeningUrl).hash.slice(1)).get('delivery');
+ const respB=await fetch(base+'/api/delivery/resolve',{
+  method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:bearerB})
+ });
+ assert.equal(respB.status,200);
+ const cookieB=respB.headers.get('set-cookie').split(';')[0];
+ file=await fetch(base+downloadUrl,{headers:{cookie:cookieB}});
+ assert.equal(file.status,403,'Customer B cannot download customer A file, even after A upgrade');
+ file=await fetch(base+'/api/delivery/library',{headers:{cookie:cookieB}});
+ assert.equal((await file.json()).tracks[0].commercialUpgrade.status,'unavailable');
+});
+test('public preview pages and admin UI never expose paid user data or activate a real payment',async(t)=>{
+ const {base}=await setup(t);
+ for(const page of ['/admin.html','/email-preview.html','/my-music-preview.html']){
+  const r=await fetch(base+page);
+  assert.equal(r.status,200,page);
+  const html=await r.text();
+  assert.ok(html.includes('<!doctype html>'));
+ }
+ const admin=await (await fetch(base+'/admin.html')).text();
+ assert.match(admin,/id="admin-song-editor"/);
+ assert.match(admin,/id="admin-outbox-list"/);
+ assert.match(admin,/id="admin-simulate-upgrade"/);
+ const preview=await (await fetch(base+'/my-music-preview.html')).text();
+ assert.match(preview,/data-withu-view="preview"/);
+ assert.match(preview,/고객 감상 화면 · 시연/);
+ assert.match(preview,/id="preview-file-button"[^>]*disabled/);
+ const fakePayment=(await (await fetch(base+'/email-preview.html')).text());
+ assert.match(fakePayment,/실제 결제완료 메일이 아니며/);
+ assert.match(fakePayment,/href="my-music-preview.html"/);
+ assert.ok(!fakePayment.includes('http://127.0.0.1:3000/_staging'));
+});

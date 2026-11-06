@@ -21,6 +21,8 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 
+from .vocal_acoustics import analyze_vocal_cues, CUE_VERSION
+
 from .core import (
     MODEL_VERSION, PairedSingingFrames, SingingMouthNet, assert_consent,
     audio_features, crop_face, decode_audio, detect_face, face_cascade,
@@ -113,7 +115,7 @@ def check_alignment(vocal_duration: float, video_duration: float,
         raise ValueError(f"{clip_id}: vocal timeline does not cover sufficient video after offset")
 
 
-def prepare_clip(clip: Clip, dataset: Path) -> dict:
+def prepare_clip(clip: Clip, dataset: Path, *, save_acoustic_cues: bool = False) -> dict:
     """CFR normalization, verified local timing, detected or operator-supplied ROI."""
     assert_consent(clip.consent, scope="train_singing")
     out_dir = dataset / clip.split / clip.clip_id
@@ -175,11 +177,17 @@ def prepare_clip(clip: Clip, dataset: Path) -> dict:
         if not cv2.imwrite(str(frames_dir / entry["file"]), frame):
             raise OSError("Failed saving consented face crop")
     np.save(out_dir / "mel.npy", mel, allow_pickle=False)
+    if save_acoustic_cues:
+        cues = analyze_vocal_cues(waveform)
+        if cues.shape[1] != mel.shape[1]:
+            raise ValueError("Vocal acoustic cues must align exactly to Mel timestamps")
+        np.save(out_dir / "vocal-cues-v1.npy", cues, allow_pickle=False)
     consent_data = json.loads(clip.consent.read_text(encoding="utf-8"))
     meta = {
         "schemaVersion": 2, "clipId": clip.clip_id, "split": clip.split,
         "fps": FPS, "audioOffsetMs": clip.audio_offset_ms,
         "frames": collected, "trackingCoverage": round(coverage, 6),
+        "vocalCueSchema": CUE_VERSION if save_acoustic_cues else None,
         "sourceVideoSha256": sha256(clip.video),
         "sourceVocalsSha256": sha256(clip.vocals),
         "consentEvidenceSha256": sha256(clip.consent),
@@ -192,9 +200,11 @@ def prepare_clip(clip: Clip, dataset: Path) -> dict:
             "trackingCoverage": round(coverage, 6), "audioOffsetMs": clip.audio_offset_ms}
 
 
-def prepare_manifest(manifest: Path, dataset: Path) -> list[dict]:
+def prepare_manifest(manifest: Path, dataset: Path, *,
+                     save_acoustic_cues: bool = False) -> list[dict]:
     clips = read_manifest(manifest)
-    return [prepare_clip(clip, dataset) for clip in clips]
+    return [prepare_clip(clip, dataset, save_acoustic_cues=save_acoustic_cues)
+            for clip in clips]
 
 
 def validate_prepared(root: Path) -> dict:

@@ -88,3 +88,16 @@
 .commercial-upgrade-panel #download-track{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
 .commercial-upgrade-panel #commercial-upgrade-status{font-size:12px;margin:14px 0 0}
 @media(max-width:500px){.private-track-list,.commercial-upgrade-panel{padding:19px}.commercial-upgrade-panel .commercial-upgrade-price{flex-wrap:wrap}}
+
+/* Customer-only music box never displays a public sample or a cached order. */
+#my-music-customer[hidden],#my-music-guest[hidden]{display:none!important}
+.my-music-guest{max-width:760px;margin:46px auto 90px;min-height:390px;
+ background:#fffaf6;border-radius:20px;border:1px solid #ecdce6;text-align:center;
+ padding:53px 25px;color:#453344;box-shadow:0 12px 38px #160d1812}
+.my-music-guest-icon{display:grid;place-items:center;margin:23px auto 10px;
+ width:76px;height:76px;border-radius:50%;background:#f4e6ed;color:#9f728d;font-size:33px}
+.my-music-guest h1{font:400 clamp(32px,6vw,48px) "Nanum Brush Script","Gowun Batang",serif;margin:0 0 17px}
+.my-music-guest p{font-size:14px;line-height:1.95;color:#867180;max-width:490px;margin:0 auto 28px;word-break:keep-all}
+.my-music-guest-link{display:inline-flex;text-decoration:none;align-items:center;justify-content:center}
+.my-music-body .detail-heading h1{word-break:keep-all}
+@media(max-width:520px){.my-music-guest{padding:37px 22px;min-height:340px;margin:16px auto 70px}}

@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="checkout.css?v=20261106-delivery-stream-08">
+<link rel="stylesheet" href="checkout.css?v=20261106-promo-bottom-09">
 <script defer src="checkout.js?v=20261106-creator-price-07"></script>
 <script defer src="checkout-media.js?v=20261106-streamlined-02"></script>
 </head>
@@ -34,12 +34,12 @@
     <legend class="screen-reader-only">선물 종류</legend>
     <label class="gift-choice active" for="product-audio">
      <input type="radio" id="product-audio" name="product" value="audio" checked>
-     <span class="choice-body"><strong>맞춤 노래 1곡 <em class="choice-highlight">출시 특가세일</em></strong><small>맞춤 가사 + 음원 1곡 제작 · 이메일 전용 링크로 감상</small></span>
+     <span class="choice-body"><strong>맞춤 노래 1곡</strong><small>맞춤 가사 + 음원 1곡 제작 · 이메일 전용 링크로 감상</small></span>
      <span class="choice-price-stack"><small class="creator-list-price" data-reference-for="audio">정상가 확인 중</small><span class="choice-side" data-price-for="audio">가격 확인 중</span><small data-promo-for="audio" class="verified-price-promotion" hidden></small></span>
     </label>
     <label class="gift-choice" for="product-audio-duo">
      <input type="radio" id="product-audio-duo" name="product" value="audio_duo">
-     <span class="choice-body"><strong>맞춤 노래 2곡 <em class="choice-highlight">출시 특가세일</em></strong><small>맞춤 가사 + 서로 다른 음원 2곡 제작 · 전용 링크 감상 · <s>개별 구매 58,000원</s> → 39,000원 (19,000원 절약)</small></span>
+     <span class="choice-body"><strong>맞춤 노래 2곡</strong><small>맞춤 가사 + 서로 다른 음원 2곡 제작 · 전용 링크 감상 · <s>개별 구매 58,000원</s> → 39,000원 (19,000원 절약)</small></span>
      <span class="choice-price-stack"><small class="creator-list-price" data-reference-for="audio_duo">정상가 확인 중</small><span class="choice-side" data-price-for="audio_duo">가격 확인 중</span><small data-promo-for="audio_duo" class="verified-price-promotion" hidden></small></span>
     </label>
     <label class="gift-choice" for="product-video">
@@ -48,13 +48,6 @@
      <span class="choice-side" data-price-for="audio_video">가격 확인 중</span>
     </label>
    </fieldset>
-   <div class="promotion-note">
-    <strong>출시 기념 특가세일</strong>
-    <p>창작자가 정한 정상 제작가를 안내하고, 출시 기념 특별가로 맞춤 가사와 MP3 음원을 제공해요. 2곡 패키지는 1곡씩 구매하는 금액보다 19,000원 절약할 수 있어요.</p>
-    <p class="creator-price-explanation">표시된 정상가는 WITHU 제작자가 직접 정한 일반 제작 기준가격이며, 기존에 판매했던 종전거래가격을 의미하지 않습니다.</p>
-    <p>AI 도구로 음악 제작을 보조하고, 제작자가 고객의 사연과 가사, 생성된 음원을 직접 검토·수정하고 완성곡을 선정합니다. 제작 완료 후 이메일의 고객 전용 링크로 사이트에서 감상할 수 있어요. 기본 상품에는 원본 파일 제공과 상업적 이용 허락이 포함되지 않습니다.</p>
-    <p id="verified-promotion-claim" hidden></p>
-   </div>
    <p class="small-explain">한 곡 상품에는 최종 선택된 완성곡 1개만 제공돼요. 뮤직비디오 가격은 제작 범위에 따라 별도로 확정됩니다.</p>
   <div class="inline-choice-section" id="inline-genre-options" aria-labelledby="genre-config-heading">
    <span class="small-caps">YOUR SOUND</span>
@@ -151,6 +144,13 @@
       <button id="clear-media-preview" class="media-btn" type="button">모든 얼굴·영상 미리보기 지우기</button>
     </section>
   </div>
+   <div class="promotion-note">
+    <strong>출시 기념 특가세일</strong>
+    <p>창작자가 정한 정상 제작가를 안내하고, 출시 기념 특별가로 맞춤 가사와 MP3 음원을 제공해요. 2곡 패키지는 1곡씩 구매하는 금액보다 19,000원 절약할 수 있어요.</p>
+    <p class="creator-price-explanation">표시된 정상가는 WITHU 제작자가 직접 정한 일반 제작 기준가격이며, 기존에 판매했던 종전거래가격을 의미하지 않습니다.</p>
+    <p>AI 도구로 음악 제작을 보조하고, 제작자가 고객의 사연과 가사, 생성된 음원을 직접 검토·수정하고 완성곡을 선정합니다. 제작 완료 후 이메일의 고객 전용 링크로 사이트에서 감상할 수 있어요. 기본 상품에는 원본 파일 제공과 상업적 이용 허락이 포함되지 않습니다.</p>
+    <p id="verified-promotion-claim" hidden></p>
+   </div>
   </section>
   <section class="checkout-stage checkout-card" data-checkout-step="review" aria-labelledby="summary-title" hidden>
    <span class="small-caps">YOUR FINAL CHOICES</span>

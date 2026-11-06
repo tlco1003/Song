@@ -210,3 +210,9 @@ button:focus-visible,a:focus-visible,label:focus-visible,.lyrics-scroll:focus-vi
 .repeat-control:hover,.repeat-control[aria-pressed="true"]{background:#a8759670;border-color:#f6d2e4}
 .playback-hint{color:#d6c0cf;text-align:center;font-size:11px;line-height:1.7;margin:6px 0 10px}
 @media(max-width:690px){.repeat-control{font-size:11px;padding:7px 9px}}
+
+/* The private music box is the first primary navigation destination. */
+.site-header nav .header-my-music{color:#f7d6e4;font-weight:700;white-space:nowrap;text-decoration:none}
+.site-header nav .header-my-music:hover{text-decoration:underline;text-underline-offset:4px}
+@media(max-width:690px){.site-header nav .header-my-music{display:inline-flex;align-items:center;white-space:nowrap}}
+@media(max-width:440px){.site-header nav{gap:9px}.site-header nav .header-my-music{font-size:11px}}

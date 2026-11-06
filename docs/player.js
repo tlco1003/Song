@@ -1,5 +1,5 @@
 /* WITHU public music letters. Line sync requires real timestamps. */
-import {filterLyricLines,parseLyricDocument,cueIndexAt} from './lyric-timing.mjs';
+import {filterLyricLines,parseLyricDocument,cueIndexAt,approximateLyricIndexAt} from './lyric-timing.mjs';
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id);
@@ -128,13 +128,23 @@ function drawLyrics(text){
  for(const line of visibleLyrics){
   const p=document.createElement('p');p.className='lyric-line';p.textContent=line;root.appendChild(p);
  }
- if(hint)hint.textContent=lyricCueSeconds?'실제 구절 시작 시각에 맞춰 가사가 이동해요.':'가사 시간 정보가 없어 자동 이동하지 않아요. 위아래로 스크롤해 보세요.';
- if(lyricCueSeconds)advanceLyrics();
+ if(hint)hint.textContent=lyricCueSeconds?'실제 가사 시작 시간에 맞춰 자동 이동해요.':'재생 시간에 맞춰 가사가 자동 이동해요. (구절별 시간은 추정치)';
+ advanceLyrics();
 }
 function advanceLyrics(){
- // Audio is the master clock for both MP3 and MP4 songs.
- if(!lyricCueSeconds||!visibleLyrics.length||playbackPlayer.hidden)return;
- setActiveLine(cueIndexAt(lyricCueSeconds,playbackPlayer.currentTime));
+ // Keep the actual audible media as the master clock for MP3 and MP4.
+ if(!visibleLyrics.length||playbackPlayer.hidden)return;
+ if(lyricCueSeconds){
+  setActiveLine(cueIndexAt(lyricCueSeconds,playbackPlayer.currentTime));
+  return;
+ }
+ // Published songs without manual cue data retain the original automatic
+ // lyric progression. Unlike real cues this is an approximation, not ASR.
+ const t=tracks[current];
+ const duration=Number.isFinite(playbackPlayer.duration)&&playbackPlayer.duration>0
+  ?playbackPlayer.duration:t?.durationSeconds;
+ const estimated=approximateLyricIndexAt(visibleLyrics.length,playbackPlayer.currentTime,duration);
+ if(estimated>=0)setActiveLine(estimated);
 }
 function showPlayer(kind,hasSeparateAudio=false){
  audio.hidden=kind==='none'||(kind==='video'&&!hasSeparateAudio);
@@ -200,7 +210,7 @@ async function select(index,autoPlay=false){
   showPlayer(isVideo?'video':'audio',hasSeparateAudio);
   updateRepeat();
   setMediaSession(track,playbackPlayer);
-  status(isVideo?(hasSeparateAudio?'영상은 무음으로 표시되고 노래는 오디오 플레이어로 재생돼요.':'현재는 MP4 영상의 재생 버튼으로 소리와 영상을 함께 감상할 수 있어요. 별도 음원이 연결되면 화면 잠금 재생을 지원해요.'):track.visualMode==='silent-loop'?'영상은 무음으로 반복되고, 아래 재생 버튼으로 원곡을 들을 수 있어요.':'노래를 재생하고 아래에서 가사를 확인해 주세요.');
+  status(isVideo?(hasSeparateAudio?'영상은 무음으로 표시되고 노래는 오디오 플레이어로 재생돼요.':'현재는 MP4 영상의 재생 버튼으로 소리와 영상을 함께 감상할 수 있어요. 별도 음원이 연결되면 화면 잠금 재생을 지원해요.'):track.visualMode==='silent-loop'?'영상은 무음으로 반복되고, 아래 재생 버튼으로 원곡을 들을 수 있어요.':'노래를 재생하면 가사가 자동으로 따라가요.');
   if(autoPlay)void playbackPlayer.play().catch(()=>status('재생 버튼을 눌러 노래를 감상해 주세요.'));
  }else{
   showPlayer('none');

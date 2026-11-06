@@ -21,6 +21,8 @@ export async function generatePaidOrderLyrics({
   throw new Error('Private draft does not match verified order');
  if(JSON.stringify(privateDraft.genreSelection)!==JSON.stringify(order.genreSelection))
   throw new Error('Customer genre choice changed after draft was saved');
+ if((privateDraft.thirdVerse===true)!==(order.thirdVerse===true))
+  throw new Error('Customer third verse option differs from paid order');
  if(typeof lyricProvider!=='function'||typeof orders?.storeGeneratedLyricsAtomic!=='function')
   throw new Error('Trusted lyric provider and transactional order adapter required');
  const lyrics=await lyricProvider({
@@ -29,6 +31,9 @@ export async function generatePaidOrderLyrics({
  if(typeof lyrics!=='string'||lyrics.length<12||lyrics.length>4200
   ||!/\[Verse(?:\s+\d+)?\]/i.test(lyrics)||!/\[Chorus\]/i.test(lyrics))
   throw new Error('Generated lyrics fail the paid-order structure contract');
+ if(privateDraft.thirdVerse===true&&
+   !(['1','2','3'].every(n=>new RegExp('\\[Verse\\s*'+n+'\\]','i').test(lyrics))))
+  throw new Error('Paid third verse requires three distinct Verse sections');
  const result=await orders.storeGeneratedLyricsAtomic({
   orderId:order.id,expectedState:ORDER_STATES.PAID,
   boundDraftId:order.privateDraftId,

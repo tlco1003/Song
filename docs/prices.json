@@ -36,6 +36,21 @@
       "priceKind": "fixed",
       "chargeUnit": "per_order",
       "description": "주문당 5,000원 추가, 한 곡 안에 두 개의 장르 혼합. 2곡 상품에서는 두 곡 모두 적용."
+    },
+    "thirdVerse": {
+      "id": "third_verse",
+      "name": "가사 3절 확장",
+      "amountKrw": 10000,
+      "priceKind": "fixed",
+      "chargeUnit": "per_order",
+      "description": "하나의 공통 사연을 1절·2절·3절로 완성. 2곡 상품에도 한 번만 부과."
     }
+  },
+  "promotion": {
+    "label": "출시 기념 특가세일",
+    "plannedRegularPriceKrw": 100000,
+    "comparisonPriceVerified": false,
+    "comparisonEvidenceId": null,
+    "description": "10만 원은 사업자의 향후 일반가격 계획으로만 저장. 실제 정상가 판매 근거 검증·승인 전에는 취소선 및 할인율 미노출."
   }
 }

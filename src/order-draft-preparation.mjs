@@ -17,10 +17,16 @@ export function prepareServerOrderDraft(request){
  let selected;
  try{selected=normalizeGenreSelection(request.selectedProduct,request.genreSelection);}
  catch(_){throw new AppError(400,'완성곡 수에 맞는 장르를 선택해 주세요.');}
+ if(request.thirdVerse!==undefined&&typeof request.thirdVerse!=='boolean')
+  throw new AppError(400,'3절 추가 옵션이 유효하지 않습니다.');
  if(!request.story||typeof request.story!=='object'||Array.isArray(request.story))
   throw new AppError(400,'사연 입력값이 없습니다.');
  // Checkout's final genre overrides the earlier wizard genre.
  const input=validateLyricInput({...request.story,genre:selected.genres[0]});
+ const thirdVerse=request.thirdVerse===true;
+ const verseInstruction=thirdVerse?
+  '\n유료 3절 확장 옵션: 반드시 [Verse 1], [Verse 2], [Verse 3]의 서로 다른 3절을 작성하라. 사연의 실제 사건만 세 단계로 발전시키고, 후렴과 브리지도 넣되 같은 말로 분량만 채우지 마라. 전체 곡의 실제 러닝타임은 보장하지 않는다.':
+  '\n기본 구성: 원칙적으로 1절·2절·후렴 중심으로 간결하게 구성하라. 사용자가 주문하지 않은 제3절을 억지로 늘리지 마라.';
  const count=request.selectedProduct==='audio_duo'?2:1;
  const kinds=selected.mode==='blend'?Array(count).fill(selected.genres[0]):
   selected.mode==='same'?[selected.genres[0],selected.genres[0]]:selected.genres;
@@ -40,13 +46,13 @@ export function prepareServerOrderDraft(request){
   schemaVersion:1,
   status:'awaiting_verified_payment',
   productId:request.selectedProduct,
-  genreSelection:selected,
-  amountBreakdown:quoteOrderAmount({productId:request.selectedProduct,genreSelection:selected}),
+  genreSelection:selected,thirdVerse,
+  amountBreakdown:quoteOrderAmount({productId:request.selectedProduct,genreSelection:selected,thirdVerse}),
   title:(input.brief?.recipient||'나의 이야기')+'에게',
   story:input.brief,
   delivery:input.delivery,
   mood:input.mood,eraPreference:input.eraPreference,lyricLength:input.lyricLength,
-  lyricPrompt:buildLyricPrompt(input)+(blendGenre?'\n선택한 혼합 음악 장르: '+blendGenre+'. 메인 장르 '+selected.genres[0]+'에 어울리는 내용으로 자연스럽게 가사를 구성해라.':''),
+  lyricPrompt:buildLyricPrompt(input)+verseInstruction+(blendGenre?'\n선택한 혼합 음악 장르: '+blendGenre+'. 메인 장르 '+selected.genres[0]+'에 어울리는 내용으로 자연스럽게 가사를 구성해라.':''),
   songStyles:Object.freeze(songStyles),
   generatedLyrics:null,
   verifiedPaid:false

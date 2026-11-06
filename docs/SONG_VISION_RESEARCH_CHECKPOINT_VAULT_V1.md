@@ -37,3 +37,23 @@ python -m song_vision.research_checkpoint_vault decrypt \
 - `.svault` 암호화가 깨지지 않아도 암호문 자체는 공개 브랜치에 존재한다. 개인키는 비밀로 관리한다.
 - 공개 README에 개인키, 개인 얼굴, 고객 보컬, 개인정보를 올리지 않는다.
 - 암호문 파일의 복호화/무결성 여부는 `song_vision/test_research_checkpoint_vault.py`의 합성 라운드트립 테스트와 실제 암호화 성공 CI 단계로 각각 확인한다.
+
+## 2026-11-06 실제 체크포인트 암호화 저장 성공
+- Actions 실행: https://github.com/tlco1003/Song/actions/runs/42202442871 — training, 90-day encrypted artifact upload, durable Git branch commit 단계 모두 success.
+- 백업 브랜치: https://github.com/tlco1003/Song/tree/research/song-vision-vault/encrypted/ravdess-actor-01
+- 암호화 파일: `song-ravdess-research-run-42202442871-attempt-1.svault` (5,291,640 bytes).
+- 백업 Git 커밋: `7a90f3c6f95e2b6e0d8f8b63ab6869be43b4a905`.
+- Actions artifact: `song-ravdess-encrypted-vault-42202442871-a1` (artifact ID `13494818246`).
+- SHA256(암호화 파일): `e3e9a17796b6e094d9cff9a3409da966549ce9fd6ada1cece25fe3ecdc0294dc` (실제 학습 로그와 Git 모델 매니페스트 일치).
+- 모델 버전 `song-vision-masked-audio-v2`, 36 epoch, train 750 frames, val 750 frames.
+- 검증 valMaskedMAE 0.0509698, reference-copy baseline 0.0456015. 오디오 반응은 있지만 최종 립싱크 품질은 **불합격**.
+- 기존 개인키 파일과 커밋된 X25519 공개키는 연결되는 키쌍임을 로컬에서 확인했다.
+- **실제 Git 암호문을 개인키로 복호화하여 가중치 전체를 재로드하는 통합 검증은 미실행**. 암호화/복호화 단위 라운드트립은 합성 테스트로 검증한다.
+
+## 이후 학습에서 저장된 가중치 활용
+- `song_vision/masked_retrain.py`는 `--init-checkpoint`로 **소유자만 복호화한 연구용 모델**을 초기 가중치로 읽는 선택지를 지원한다.
+- 기존 모델 파일은 덮어쓰지 않고 새 경로에 결과를 저장하도록 fail-closed 처리가 추가되었다.
+- **이는 학습 가중치로 시작하는 warm-start**이고 기존 AdamW 옵티마이저 상태와 RNG/셔플 상태까지 정확히 이어받는 완전한 resume은 아니다.
+- 공개 Actions에는 개인키가 없기 때문에 암호화된 모델에서 자동으로 다음 학습을 이어받지 않는다. 소유자가 개인키로 모델을 복구한 비공개 학습 환경이 필요하다.
+- 다음 원본 데이터 학습을 처음부터 하는 대신, 복구한 파일을 `--init-checkpoint /private/restored-song-vision-research/research-model.pt`로 지정해 가중치를 재사용할 수 있다.
+- 여전히 RAVDESS 비상업 연구 전용이며 고객용 서비스로 연결 불가.

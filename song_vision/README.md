@@ -5,6 +5,10 @@ video-generation API. The **model has no trained weights in Git** and cannot
 produce a convincing singing video until suitable authorized data have been
 prepared, training completed and the resulting quality independently evaluated.
 
+## Research model preservation (NEW)
+
+Training on RAVDESS is licensed CC BY-NC-SA 4.0 and cannot feed paid SONG jobs. The newer research pipeline **encrypts and preserves every completed checkpoint**, including the training report, in the `research/song-vision-vault` branch and a separate 90-day Actions artifact. The private X25519 key is held by the owner outside GitHub, never by the runner. If it is lost, restoration is impossible. See [the research checkpoint vault guide](../docs/SONG_VISION_RESEARCH_CHECKPOINT_VAULT_V1.md). Previous 36-epoch weights had no artifact and cannot be recovered; a fresh research run will create a backup. Raw singer videos, vocals and face crops remain transient.
+
 ## v7: extended training rounds on 20 authorized research-only singing takes
 
 The [diverse research runner](external_ravdess_diverse_retrain.py) now requests **up to 36 epochs** (previously 10) with **minimum 20 epochs, patience 10 and min-delta 0.0002**. The model re-trains **from scratch** because the noncommercial research checkpoint was deliberately destroyed after earlier GitHub Actions jobs. Early stopping ends training only after the minimum when validation does not improve materially. Results are checked against the previous ten-epoch run on the same fixed actor/take split; this cannot prove phoneme-correct singing or commercial readiness. See [extended retraining report](../docs/SONG_VISION_EXTENDED_RETRAIN_V7.md).

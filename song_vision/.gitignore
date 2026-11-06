@@ -21,3 +21,7 @@ __pycache__/
 # Offline pretrained landmark detector weights and all subject data
 *.task
 *.onnx
+
+# Never accidentally commit the user-owned decryption PRIVATE key.
+*PRIVATE_KEY*.pem
+*.private.pem

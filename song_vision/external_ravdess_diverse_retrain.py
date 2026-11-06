@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import subprocess
 import tempfile
@@ -19,6 +20,7 @@ from .external_ravdess_research import (
     ARCHIVE_URL, ORIGINAL_MD5, RECORD_URL, download_public_archive,
 )
 from .masked_retrain import masked_retrain
+from .research_checkpoint_vault import seal
 from .real_training import prepare_manifest
 
 EMOTIONS = ("02", "03", "04", "05", "06")  # calm, happy, sad, angry, fearful
@@ -106,9 +108,15 @@ def prepare_diverse_assets(takes: list[SelectedTake], folder: Path) -> Path:
     return manifest
 
 
-def run_research(epochs: int = 36, patience: int = 10, min_epochs: int = 20):
+def run_research(epochs: int = 36, patience: int = 10, min_epochs: int = 20,
+                 vault_public_key: Path | None = None,
+                 vault_output_dir: Path | None = None):
     if not 1 <= epochs <= 40 or not 1 <= min_epochs <= epochs or not 0 <= patience <= epochs:
         raise ValueError("Invalid research-only epoch or early stopping limits")
+    if vault_public_key is None or vault_output_dir is None:
+        raise ValueError("A durable encrypted research checkpoint backup destination is required")
+    if not vault_public_key.is_file():
+        raise FileNotFoundError("Research-only public key is missing")
     with tempfile.TemporaryDirectory(prefix="song-vision-ravdess-diverse-cc-nc-") as td:
         folder = Path(td)
         archive = folder / "source.zip"
@@ -124,6 +132,44 @@ def run_research(epochs: int = 36, patience: int = 10, min_epochs: int = 20):
                                 seed=42, patience=patience, min_epochs=min_epochs,
                                 min_delta=.0002)
         metrics = report["bestMetrics"]
+        # Save licensed research weights BEFORE temporary raw-media directory cleanup.
+        # The private decryption key exists only with the owner, never on CI.
+        run_id = os.environ.get("GITHUB_RUN_ID", "local-research")
+        attempt = os.environ.get("GITHUB_RUN_ATTEMPT", "1")
+        archive_name = f"song-ravdess-research-run-{run_id}-attempt-{attempt}.svault"
+        encrypted_checkpoint = vault_output_dir / archive_name
+        metadata = {
+            "dataset": "RAVDESS-Actor-01",
+            "license": "CC-BY-NC-SA-4.0",
+            "commercialUseAllowed": False,
+            "checkpointCategory": "research_only_not_lipsync_validated",
+            "githubRunId": str(run_id) + "-attempt-" + str(attempt),
+            "modelVersion": report["modelVersion"],
+            "bestEpoch": int(report["bestEpoch"]),
+            "completedEpochs": int(len(report["history"])),
+            "trainFrameCount": int(report["trainFrames"]),
+            "valFrameCount": int(report["valFrames"]),
+            "sourceRecord": RECORD_URL,
+        }
+        sealed = seal(checkpoint, checkpoint.with_suffix(".report.json"),
+                      vault_public_key, encrypted_checkpoint, metadata)
+        vault_manifest = {
+            "archive": archive_name,
+            "encryptedFileSha256": sealed["encryptedFileSha256"],
+            "modelVersion": sealed["modelVersion"],
+            "license": sealed["license"],
+            "commercialUseAllowed": False,
+            "userOwnedPrivateKeyRequired": True,
+            "source": RECORD_URL,
+            "trainFrameCount": report["trainFrames"],
+            "valFrameCount": report["valFrames"],
+            "bestMetrics": metrics,
+            "diagnosticFlags": report["diagnosticFlags"],
+            "noRawFaceOrAudioFilesInArchive": True,
+        }
+        manifest_file = vault_output_dir / (archive_name + ".manifest.json")
+        with manifest_file.open("x", encoding="utf-8") as handle:
+            json.dump(vault_manifest, handle, ensure_ascii=False, indent=2)
         conclusion = {
             "experiment": "RAVDESS_20_takes_masked_audio_retrain",
             "licensedSource": RECORD_URL,
@@ -151,7 +197,11 @@ def run_research(epochs: int = 36, patience: int = 10, min_epochs: int = 20):
             "facialMediaPublished": False,
             "renderingQualityValidated": False,
             "customerJobsEnabled": False,
-            "temporaryDataDisposedOnJobCompletion": True,
+            "temporaryRawMediaDisposedOnJobCompletion": True,
+            "researchCheckpointEncryptedForPreservation": True,
+            "researchCheckpointPublishedUnencrypted": False,
+            "encryptedArchiveName": archive_name,
+            "encryptedFileSha256": sealed["encryptedFileSha256"],
         }
         print("SONG_DIVERSE_RETRAIN_RESULT=" + json.dumps(conclusion, ensure_ascii=False, sort_keys=True), flush=True)
         return conclusion
@@ -163,11 +213,15 @@ def main():
     parser.add_argument("--epochs", type=int, default=36)
     parser.add_argument("--patience", type=int, default=10)
     parser.add_argument("--min-epochs", type=int, default=20)
+    parser.add_argument("--vault-public-key", type=Path, required=True)
+    parser.add_argument("--vault-output-dir", type=Path, required=True)
     args = parser.parse_args()
     if not args.acknowledge_noncommercial_research:
         parser.error("Noncommercial research acknowledgment required")
     run_research(epochs=args.epochs, patience=args.patience,
-                 min_epochs=args.min_epochs)
+                 min_epochs=args.min_epochs,
+                 vault_public_key=args.vault_public_key,
+                 vault_output_dir=args.vault_output_dir)
 
 
 if __name__ == "__main__":

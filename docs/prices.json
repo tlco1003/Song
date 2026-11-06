@@ -9,7 +9,7 @@
       "amountKrw": 29000,
       "priceKind": "fixed",
       "quoteRequired": false,
-      "description": "고객이 확정한 한 사연·가사로 MP3 1곡과 가사 전달"
+      "description": "고객 사연을 바탕으로 제작한 가사와 음원 1곡을 인증된 전용 웹 링크에서 감상. 파일 제공·상업적 이용 허락은 별도 구매."
     },
     {
       "id": "audio_duo",
@@ -17,7 +17,7 @@
       "amountKrw": 39000,
       "priceKind": "fixed",
       "quoteRequired": false,
-      "description": "고객이 승인한 하나의 사연·가사로 한 장르 2곡 또는 서로 다른 두 장르 각 1곡(MP3 2곡)"
+      "description": "고객 사연을 바탕으로 제작한 가사와 음원 2곡을 인증된 전용 웹 링크에서 감상. 파일 제공·상업적 이용 허락은 별도 구매."
     },
     {
       "id": "audio_video",
@@ -66,6 +66,18 @@
     "comparisonEvidenceByProduct": {
       "audio": null,
       "audio_duo": null
+    }
+  },
+  "postDeliveryUpgrades": {
+    "commercialUseDownload": {
+      "id": "commercial_use_download",
+      "name": "상업적 이용 허락 + 원본 음원 파일",
+      "amountKrw": 10000,
+      "currency": "KRW",
+      "chargeUnit": "per_order",
+      "requiresVerifiedRights": true,
+      "requiresVerifiedUpgradePayment": true,
+      "description": "고객별 주문에 포함된 최종 완성곡을 서버에서 권리 확인한 뒤 별도 결제 확인 시 비독점 상업적 이용 허락 및 원본 음원을 제공. 공개 예시곡에는 미제공."
     }
   }
 }

@@ -7,6 +7,7 @@
  */
 import {randomBytes,createHash} from 'node:crypto';
 import {ORDER_STATES} from './commerce.mjs';
+import {normalizeDeliveryChannel,normalizeKoreanMobile} from './customer-notification-contact.mjs';
 
 const TOKEN_PATTERN=/^[A-Za-z0-9_-]{43}$/;
 export function hashPrivateDeliveryToken(token){
@@ -26,11 +27,17 @@ export function issuePrivateDeliveryInvitation({order,origin,selectedSongs}={}){
  if(site.protocol!=='https:'||site.username||site.password||site.search||site.hash
   ||site.pathname!=='/'||site.host.length<5)
   throw new Error('Email delivery requires a production HTTPS origin');
+ const channel=normalizeDeliveryChannel(order.deliveryChannel||'email');
+ const mobile=channel==='email'?null:normalizeKoreanMobile(order.customerPhone);
+ if(channel!=='email'&&(order.phoneVerified!==true||order.deliveryConsent!==true))
+  throw new Error('Verified mobile recipient and consent are required');
  const token=randomBytes(32).toString('base64url');
  const url=new URL('/my-music.html',site);
  url.hash='delivery='+token;
  return Object.freeze({
-  orderId:order.id,email:order.customerEmail,deliveryUrl:url.href,
+  orderId:order.id,email:order.customerEmail,phone:mobile,
+  deliveryChannel:channel,mobileRecipientVerified:channel==='email'?false:true,
+  deliveryUrl:url.href,
   tokenHash:hashPrivateDeliveryToken(token),
   songCount:selectedSongs.length,needsProtectedTokenPersistence:true
  });
@@ -57,4 +64,44 @@ export async function dispatchPrivateListeningEmail({
  });
  if(!result?.messageId)throw new Error('Email provider did not acknowledge the delivery link');
  return Object.freeze({orderId:invitation.orderId,messageId:result.messageId});
+}
+
+
+/**
+ * Channel-neutral post-production delivery.
+ * Called by a trusted fulfillment worker, NEVER from a public checkout route.
+ * Token must be stored in durable private DB before provider send is attempted.
+ * Provider acknowledgement means accepted for delivery, not physically received.
+ */
+export async function dispatchPrivateListeningNotification({
+ invitation,orders,mailer,mobileNotifier
+}={}){
+ if(!invitation||typeof invitation.orderId!=='string'
+   ||typeof invitation.deliveryUrl!=='string'
+   ||!/^[a-f0-9]{64}$/.test(invitation.tokenHash||''))
+  throw new Error('Verified invitation required');
+ const channel=normalizeDeliveryChannel(invitation.deliveryChannel||'email');
+ if(channel==='email')return dispatchPrivateListeningEmail({invitation,orders,mailer});
+ if(invitation.mobileRecipientVerified!==true)
+  throw new Error('Mobile recipient must be verified before sending');
+ const phone=normalizeKoreanMobile(invitation.phone);
+ if(typeof orders?.saveDeliveryTokenHashAtomic!=='function'
+   ||typeof mobileNotifier?.sendMobileListeningLink!=='function')
+  throw new Error('Private token store and verified mobile provider required');
+ const idempotencyKey='delivery-'+channel+'-'+invitation.orderId;
+ await orders.saveDeliveryTokenHashAtomic({
+  orderId:invitation.orderId,tokenHash:invitation.tokenHash,
+  idempotencyKey:'delivery-access-'+invitation.orderId
+ });
+ const accepted=await mobileNotifier.sendMobileListeningLink({
+  channel,phone,listeningUrl:invitation.deliveryUrl,
+  orderId:invitation.orderId,idempotencyKey
+ });
+ if(accepted?.accepted!==true||typeof accepted.messageId!=='string'
+   ||accepted.messageId.length<5)
+  throw new Error('Notification gateway did not accept the message');
+ return Object.freeze({
+  orderId:invitation.orderId,channel,status:'accepted_for_delivery',
+  messageId:accepted.messageId
+ });
 }

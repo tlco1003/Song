@@ -10,10 +10,11 @@ const allowedProducts=['audio','audio_duo','audio_video'];
 function getDraft(){
  try{
   const value=JSON.parse(sessionStorage.getItem(KEY)||'null');
-  if(!value||value.version!==2||!Number.isFinite(value.savedAt)
+  if(!value||value.version!==3||!Number.isFinite(value.savedAt)
     ||Date.now()-value.savedAt<0||Date.now()-value.savedAt>MAX_AGE
-    ||typeof value.lyrics!=='string'||!value.lyrics.trim()
-    ||typeof value.title!=='string'||!value.title.trim())return null;
+    ||typeof value.story?.recipient!=='string'||!value.story.recipient.trim()
+    ||(String(value.story.memory||'')+String(value.story.message||'')+String(value.story.gratitudeApology||'')).trim().length<10
+    ||typeof value.genre!=='string'||typeof value.mood!=='string')return null;
   return value;
  }catch(_){return null;}
 }
@@ -94,10 +95,10 @@ function stages(){
 }
 function updateReview(){
  draft=getDraft();
- $('order-title').textContent=draft?.title||'제목 없음';
+ $('order-title').textContent=draft?.story?.recipient||'받는 사람 확인 중';
+ $('order-mood-era').textContent=(draft?.mood||'')+' · '+({'auto':'나이대에 맞게','none':'시대 상관없음'}[draft?.eraPreference]||draft?.eraPreference||'시대 미선택');
  $('order-product').textContent=selectedPrice()?.name||'상품 선택';
  $('order-style').textContent='';
- $('order-lyrics').textContent=draft?.lyrics||'가사 없음';
  try{$('order-song-genres').textContent=genreLabels(genreSelection()).join('\n');}
  catch(e){$('order-song-genres').textContent=e.message;}
  showPrices();
@@ -132,7 +133,7 @@ function show(stage,{push=false,focus=false}={}){
  window.dispatchEvent(new CustomEvent('withu:checkout-stage',{detail:{stage:currentStage}}));
 }
 function canAdvance(){
- if(!draft){error('먼저 노래를 만들고 가사를 확정해 주세요. 가사 작성 화면으로 돌아가세요.');return false;}
+ if(!draft){error('먼저 사연과 음악 취향을 선택해 주세요. 7단계 주문 확인 화면으로 돌아가세요.');return false;}
  if(!prices){error('현재 가격을 불러올 수 없어요. 새로고침해 주세요.');return false;}
  // A direct ?stage=review link must never bypass genre validation.
  // Re-validate at every final handoff, including browser history navigation.
@@ -246,7 +247,7 @@ async function init(){
  await Promise.all([loadPrices(),loadGenres()]);
  // The old draft must not be silently promoted into a paid order.
  show(new URLSearchParams(location.search).get('stage')||'product');
- if(!draft)error('아직 작성된 노래가 없어요. 가사를 먼저 확정한 뒤 돌아와 주세요.');
+ if(!draft)error('아직 작성된 사연이 없어요. 나만의 노래 7단계에서 선택 내용을 확인해 주세요.');
 }
 void init();
 })();

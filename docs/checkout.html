@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="checkout.css?v=20261105-genre-tiles-01">
-<script defer src="checkout.js?v=20261105-genre-tiles-01"></script>
+<script defer src="checkout.js?v=20261106-order-review-01"></script>
 <script defer src="checkout-media.js?v=20261105-video-only-01"></script>
 </head>
 <body>
@@ -126,14 +126,14 @@
   <section class="checkout-stage checkout-card" data-checkout-step="review" aria-labelledby="summary-title" hidden>
    <span class="small-caps">YOUR FINAL CHOICES</span>
    <h2 id="summary-title">주문 내용을 확인해 주세요.</h2>
-   <div class="preview-group"><span class="preview-label">노래 제목</span><strong id="order-title">노래 제목</strong></div>
+   <div class="preview-group"><span class="preview-label">받는 사람</span><strong id="order-title">받는 사람 확인 중</strong></div>
+   <div class="preview-group"><span class="preview-label">선택한 감정 · 시대</span><p id="order-mood-era" class="order-song-genres"></p></div>
    <div class="preview-group"><span class="preview-label">선택한 상품</span><strong id="order-product">맞춤 노래 1곡</strong></div>
    <div class="preview-group"><span class="preview-label">완성곡별 장르</span><p id="order-song-genres" class="order-song-genres"></p></div>
    <p id="order-style" hidden></p>
-   <div class="preview-group"><span class="preview-label">확정 가사</span><div id="order-lyrics" class="lyric-preview"></div></div>
    <div class="price-row"><span>상품 금액</span><strong id="order-price">가격 확인 중</strong></div>
    <p id="order-pricing-notice" class="small-explain"></p>
-   <a class="edit-link" href="create.html?step=7">← 가사 다시 확인하기</a>
+   <a class="edit-link" href="create.html?step=7">← 나의 사연과 선택 다시 확인하기</a>
   </section>
   <p id="checkout-message" role="alert" class="checkout-message" hidden></p>
   <div class="wizard-actions">

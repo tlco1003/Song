@@ -10,9 +10,9 @@ const methods=Object.freeze({
 function readDraft(){
  try{
   const draft=JSON.parse(sessionStorage.getItem(KEY)||'null');
-  if(!draft||draft.version!==2||!Number.isFinite(draft.savedAt)
+  if(!draft||draft.version!==3||!Number.isFinite(draft.savedAt)
     ||Date.now()-draft.savedAt<0||Date.now()-draft.savedAt>MAX_AGE
-    ||!draft.lyrics?.trim()||!draft.title?.trim()
+    ||typeof draft.story?.recipient!=='string'||!draft.story.recipient.trim()
     ||!['audio','audio_duo','audio_video'].includes(draft.selectedProduct)
     ||!Array.isArray(draft.genreSelection?.genres))return null;
   return draft;
@@ -33,7 +33,7 @@ async function init(){
  const draft=readDraft();
  if(!draft){
   $('payment-product').textContent='노래 선택이 필요해요.';
-  disableCheckout('먼저 가사를 완성하고 상품과 장르를 선택해 주세요.');
+  disableCheckout('먼저 사연과 음악 취향, 상품 및 장르를 선택해 주세요.');
   return;
  }
  try{
@@ -52,7 +52,7 @@ async function init(){
   if(!chosen||!Number.isSafeInteger(chosen.amountKrw)||!lines||lines.length!==expectedCount
     ||!draft.genreSelection.genres.every(g=>allowed.has(g)))throw Error('invalid selection');
   $('payment-product').textContent=chosen.name;
-  $('payment-song-title').textContent=draft.title;
+  $('payment-song-title').textContent=draft.story.recipient;
   $('payment-song-genres').textContent=lines.join('\n');
   $('payment-price').textContent=won.format(chosen.amountKrw)+(chosen.priceKind==='starting_at'?'부터':'');
   $('payment-quote-notice').hidden=!chosen.quoteRequired;

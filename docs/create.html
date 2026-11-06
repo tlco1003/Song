@@ -10,8 +10,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="create.css?v=20261105-private-style-01">
-<script defer src="create.js?v=20261105-private-style-01"></script>
+<link rel="stylesheet" href="create.css?v=20261106-order-review-01">
+<script defer src="create.js?v=20261106-order-review-01"></script>
 </head>
 <body>
 <header class="site-header"><div class="frame header-inner">
@@ -108,23 +108,30 @@
     <input type="hidden" id="eraPreference" value="auto">
     <input type="hidden" id="lyricLength" value="full">
    </section>
-   <section class="wizard-step creation-card lyrics-preview-card" data-create-step="7" aria-labelledby="question-lyrics" hidden>
+   <section class="wizard-step creation-card order-review-card" data-create-step="7" aria-labelledby="question-review" hidden>
     <span class="wizard-eyebrow">07 · YOUR MUSIC LETTER</span>
-    <h2 id="question-lyrics">AI가 써 준 가사를 <em>확인해 주세요.</em></h2>
-    <p class="wizard-intro">전해주신 이야기를 바탕으로 가사를 만들어요. 노래가 완성된 후 수정이 필요하면 결제 확인된 고객 전용 페이지에서 요청할 수 있습니다.</p>
-    <div class="lyric-result">
-     <strong id="generated-song-title" class="generated-song-title">나의 노래</strong>
-     <div id="song-lyrics-preview" class="song-lyrics-preview" aria-live="polite" aria-label="AI가 작성한 가사">이전 질문을 마치면 AI가 가사를 작성해요.</div>
-    </div>
-    <button type="submit" id="generate-lyrics" class="outline-button" hidden>가사 생성 다시 시도</button>
-    <p id="generation-status" class="action-status" role="status">가사를 준비하고 있어요.</p>
-    <p id="handoff-status" class="action-status" role="status">가사 수정 기능은 결제 완료 고객에게만 제공됩니다.</p>
+    <h2 id="question-review">선택한 내용을 <em>확인해 주세요.</em></h2>
+    <p class="wizard-intro">전해주신 이야기와 음악 취향이 맞는지 확인하세요. 가사와 제작용 음악 프롬프트는 이 화면에 표시되지 않으며, 결제 확인 후 서버에서 처리됩니다.</p>
+    <dl class="story-summary" aria-label="선택한 주문 정보">
+      <div class="story-summary-row"><dt>받는 사람</dt><dd id="review-recipient"></dd></div>
+      <div class="story-summary-row"><dt>선물 상황</dt><dd id="review-occasion"></dd></div>
+      <div class="story-summary-row"><dt>추억과 장면</dt><dd id="review-memory"></dd></div>
+      <div class="story-summary-row"><dt>전하고 싶은 말</dt><dd id="review-message"></dd></div>
+      <div class="story-summary-row"><dt>고맙거나 미안했던 이야기</dt><dd id="review-gratitudeApology"></dd></div>
+      <div class="story-summary-row"><dt>받는 사람의 나이대</dt><dd id="review-recipientAgeGroup"></dd></div>
+      <div class="story-summary-row"><dt>서로의 관계</dt><dd id="review-relativePosition"></dd></div>
+      <div class="story-summary-row"><dt>말투</dt><dd id="review-speechStyle"></dd></div>
+      <div class="story-summary-row"><dt>음악 장르</dt><dd id="review-genre"></dd></div>
+      <div class="story-summary-row"><dt>노래 분위기</dt><dd id="review-mood"></dd></div>
+      <div class="story-summary-row"><dt>선호 시대</dt><dd id="review-eraPreference"></dd></div>
+    </dl>
+    <p class="wizard-intro review-next-note">다음 화면에서 완성곡 수와 상품을 선택한 뒤 결제 정보 페이지로 이동합니다. 결제 전에는 가사 생성이나 수정을 요구하지 않습니다.</p>
    </section>
    <p id="step-error" class="action-status wizard-error" role="alert" hidden></p>
    <div class="wizard-actions">
     <button id="create-prev" type="button" class="wizard-prev" hidden>← 이전</button>
     <button id="create-next" type="button" class="main-create-button">다음으로 <span>→</span></button>
-    <a id="go-create" href="checkout.html" class="main-create-button" hidden aria-disabled="true">상품 선택하기 <span>→</span></a>
+    <a id="go-create" href="checkout.html" class="main-create-button" hidden>상품 선택 후 결제하기 <span>→</span></a>
    </div>
   </form>
  </div>

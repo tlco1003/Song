@@ -42,6 +42,10 @@ test('future checkout creates a pending order from encrypted price, not browser 
  assert.equal(saved.nextState,'payment_pending');
  assert.equal(saved.deliveryChannel,'email');
  assert.equal(saved.privateDraftId,draftId);
+ assert.equal(saved.songTitle,draft.title);
+ assert.equal(saved.mood,draft.mood);
+ assert.equal(saved.eraPreference,draft.eraPreference);
+ assert.equal(saved.story.recipientAgeGroup,draft.delivery.recipientAgeGroup);
  assert.equal(saved.idempotencyKey,'checkout-from-private-draft:'+draftId);
  assert.ok(!JSON.stringify(result).includes('엄마'));
  assert.ok(!JSON.stringify(result).includes('lyricPrompt'));

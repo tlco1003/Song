@@ -18,8 +18,12 @@ function readDraft(){
   return draft;
  }catch(_){return null;}
 }
-function genreLabels(selection){
+function genreLabels(selection,productId){
  if(selection.mode==='single'&&selection.genres.length===1)return ['1곡 · '+selection.genres[0]];
+ if(selection.mode==='blend'&&selection.genres.length===2&&selection.genres[0]!==selection.genres[1]){
+  const mix=selection.genres.join(' + ')+' (믹스)';
+  return productId==='audio_duo'?['1곡 · '+mix,'2곡 · '+mix]:['1곡 · '+mix];
+ }
  if(selection.mode==='same'&&selection.genres.length===1)return ['1곡 · '+selection.genres[0],'2곡 · '+selection.genres[0]];
  if(selection.mode==='different'&&selection.genres.length===2&&selection.genres[0]!==selection.genres[1])
   return ['1곡 · '+selection.genres[0],'2곡 · '+selection.genres[1]];
@@ -47,11 +51,16 @@ async function init(){
   if(catalog.version!==1||catalog.currency!=='KRW'||genreCatalog.version!==2)throw Error('catalog invalid');
   const chosen=catalog.products.find(p=>p.id===draft.selectedProduct);
   const allowed=new Set(genreCatalog.genres.filter(g=>g.label===g.id&&!Object.hasOwn(g,'style')).map(g=>g.id));
-  const lines=genreLabels(draft.genreSelection);
+  const lines=genreLabels(draft.genreSelection,draft.selectedProduct);
   const expectedCount=draft.selectedProduct==='audio_duo'?2:1;
   if(!chosen||!Number.isSafeInteger(chosen.amountKrw)||!lines||lines.length!==expectedCount
-    ||!draft.genreSelection.genres.every(g=>allowed.has(g)))throw Error('invalid selection');
-  $('payment-price').textContent=won.format(chosen.amountKrw)+(chosen.priceKind==='starting_at'?'부터':'');
+    ||!draft.genreSelection.genres.every(g=>allowed.has(g))
+    ||catalog.addOns?.genreBlend?.amountKrw!==5000)throw Error('invalid selection');
+  const mode=draft.genreSelection.mode,g=draft.genreSelection.genres;
+  if(!(expectedCount===1?['single','blend'].includes(mode):['same','different','blend'].includes(mode))
+    ||(mode==='blend'&&!(g.length===2&&g[0]!==g[1])))throw Error('invalid genre mode');
+  const total=chosen.amountKrw+(mode==='blend'?catalog.addOns.genreBlend.amountKrw:0);
+  $('payment-price').textContent=won.format(total)+(chosen.priceKind==='starting_at'?'부터':'');
   $('payment-quote-notice').hidden=!chosen.quoteRequired;
   if(chosen.quoteRequired){
    disableCheckout('뮤직비디오는 개별 견적을 확정한 후 결제할 수 있습니다.');

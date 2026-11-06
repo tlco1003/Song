@@ -35,3 +35,36 @@ Zenodo archive MD5 검증 → 같은 배우 실제 가창 영상 두 개 추출 
 
 ## GitHub 실제 실행 결과
 GitHub Actions 종료 후 실제 valMAE, audioSensitivity, correctVsShuffledMAEGain, 경고 플래그를 이 문서에 기록한다.
+
+## 실제 재학습 결과 A — 2개 가창 클립 / 6 epoch
+GitHub Actions: https://github.com/tlco1003/Song/actions/runs/42195736778
+- RAVDESS 원본 MD5 검증 통과, same Actor 01, train/val 75/75 프레임
+- bestEpoch=6, valMaskedMAE=0.0827416
+- copyReferenceMaskedMAE=0.0612735, maskedInputMAE=0.1598716
+- audioSensitivity=0.0003023, correctVsShuffledMAEGain=0.000002
+- 플래그: WORSE_THAN_COPY_REFERENCE, NO_POSITIVE_AUDIO_ALIGNMENT_GAIN
+- 판정: 데이터 준비/실제 학습은 성공, 발음 연동 품질은 **FAIL**.
+
+## 실제 재학습 결과 B — 다양한 20개 가창 클립 / 10 epoch
+코드: song_vision/external_ravdess_diverse_retrain.py
+GitHub Actions: https://github.com/tlco1003/Song/actions/runs/42196718131
+- RAVDESS 원본 MD5 검증 통과
+- 동일 출연자 Actor 01 / 두 가지 문장 / 다섯 감정 / 두 실연 반복: 10 train, 10 val, 750/750 프레임
+- bestEpoch=7, trainLoss=0.0538161, valMaskedMAE=0.0540299
+- copyReferenceMaskedMAE=0.0456015, maskedInputMAE=0.1556235
+- shuffledAudioMaskedMAE=0.0548436, audioSensitivity=0.0114378
+- correctVsShuffledMAEGain=+0.0008137: 해당 테스트 분할에서는 올바른 오디오를 연결했을 때 평균 오차가 약간 낮았다.
+- 플래그: WORSE_THAN_COPY_REFERENCE
+- 판정: 입력 음성 정보가 모델 출력에 더 크게 반영되기 시작했으나, **참조 입술 복사보다 오차가 커서 실사용 품질은 FAIL**.
+
+## 수치 해석을 위한 주의
+- 2개/20개 실험의 데이터 구성 자체가 다르므로 valMaskedMAE·audioSensitivity를 직접 같은 테스트셋 성능 향상으로 비교해서는 안 된다.
+- v1 전체 이미지 MAE와 v2 가려진 영역 MAE는 지표의 평가 영역이 다르다.
+- 섞은 오디오보다 맞는 오디오에서 오차가 약간 낮다는 사실은 단순히 오디오를 바꿔 넣은 실험의 통계이며, 실제 발음·입술 모양·치아/혀까지 정확한 립싱크라는 증거가 아니다.
+- 모든 원본/얼굴 프레임 및 연구 체크포인트는 임시 GitHub 실행기에만 있었고 공개 저장소/배포 아티팩트에는 게시하지 않았다.
+- RAVDESS는 CC BY-NC-SA 4.0. **연구 가중치를 고객 동영상·유료 서비스에 적용하지 않는다.**
+
+## 상용 제품으로 연결하지 않는 상태
+- 신경망 구조 개선·오디오 반응 확인: 연구 중간결과
+- 가창 비짐/립싱크 정밀도, 독립 가수 성능, 피부/치아/혀 재생성, 고객 얼굴 동일성, 영상 연속성: 미검증
+- SONG canAcceptCustomerJobs=false 유지. PR은 Draft 상태로 연구 코드만 보존.

@@ -98,3 +98,47 @@ export function approximateLyricIndexAt(count,currentTime,duration,offsetSeconds
  const progress=Math.max(0,Math.min(1,(adjustedTime-intro)/Math.max(1,duration-intro-outro)));
  return Math.max(0,Math.min(count-1,Math.floor(progress*count)));
 }
+
+
+/**
+ * Piecewise-linear lyric offset for drawn-out phrases and mid-song timing drift.
+ *
+ * A positive offset delays lyric progression, while a negative offset advances it.
+ * Every anchor is an ABSOLUTE total offset (not an amount added to the base).
+ * The first implicit point is {atSeconds:0, offsetSeconds:baseOffset}.
+ *
+ * Anchors must be in ascending playback time with finite offsets and must never
+ * make the effective lyric clock go backwards. Invalid configurations fall back
+ * to the existing song-wide offset rather than risking broken karaoke scrolling.
+ */
+export function lyricOffsetAtTime(baseOffset,anchors,playbackSeconds){
+ const base=Number.isFinite(baseOffset)&&Math.abs(baseOffset)<=30?baseOffset:0;
+ if(!Array.isArray(anchors)||anchors.length===0||!Number.isFinite(playbackSeconds))return base;
+ let prevAt=0,prevOffset=base;
+ for(let i=0;i<anchors.length;i++){
+  const anchor=anchors[i];
+  const at=anchor?.atSeconds,off=anchor?.offsetSeconds;
+  if(!Number.isFinite(at)||!Number.isFinite(off)||at<0||Math.abs(off)>60||
+     (i>0&&at<=prevAt)||
+     (i===0&&at===0?false:at<=prevAt)||
+     (at>prevAt&&off-prevOffset>=at-prevAt))return base;
+  prevAt=at;prevOffset=off;
+ }
+ // The first point may explicitly override the base offset at playback zero.
+ if(anchors[0].atSeconds===0){
+  prevAt=0;prevOffset=anchors[0].offsetSeconds;
+  if(playbackSeconds<=0)return prevOffset;
+ }else{
+  prevAt=0;prevOffset=base;
+ }
+ for(const anchor of anchors){
+  if(anchor.atSeconds===0)continue;
+  if(playbackSeconds<=anchor.atSeconds){
+   const fraction=Math.max(0,Math.min(1,(playbackSeconds-prevAt)/(anchor.atSeconds-prevAt)));
+   return prevOffset+(anchor.offsetSeconds-prevOffset)*fraction;
+  }
+  prevAt=anchor.atSeconds;
+  prevOffset=anchor.offsetSeconds;
+ }
+ return prevOffset;
+}

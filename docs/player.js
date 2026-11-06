@@ -1,5 +1,5 @@
 /* WITHU public music letters. Line sync requires real timestamps. */
-import {filterLyricLines,parseLyricDocument,cueIndexAt,approximateLyricIndexAt} from './lyric-timing.mjs';
+import {filterLyricLines,parseLyricDocument,cueIndexAt,approximateLyricIndexAt,lyricOffsetAtTime} from './lyric-timing.mjs';
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id);
@@ -136,8 +136,10 @@ function advanceLyrics(){
  if(!visibleLyrics.length||playbackPlayer.hidden)return;
  const t=tracks[current];
  // Per-track adjustment only. Positive values delay lyrics; negative values advance them.
- const offset=Number.isFinite(t?.lyricsOffsetSeconds)&&Math.abs(t.lyricsOffsetSeconds)<=30
+ const baseOffset=Number.isFinite(t?.lyricsOffsetSeconds)&&Math.abs(t.lyricsOffsetSeconds)<=30
   ?t.lyricsOffsetSeconds:0;
+ // Slowly interpolate the extra delay between actual playback-time anchors.
+ const offset=lyricOffsetAtTime(baseOffset,t?.lyricsOffsetAnchors,playbackPlayer.currentTime);
  if(lyricCueSeconds){
   setActiveLine(cueIndexAt(lyricCueSeconds,playbackPlayer.currentTime-offset));
   return;

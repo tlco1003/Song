@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {filterLyricLines,parseLyricDocument,cueIndexAt,formatCueTime,serializeTimedLyrics,approximateLyricIndexAt} from '../docs/lyric-timing.mjs';
+import {filterLyricLines,parseLyricDocument,cueIndexAt,formatCueTime,serializeTimedLyrics,approximateLyricIndexAt,lyricOffsetAtTime} from '../docs/lyric-timing.mjs';
 import {readFileSync} from 'node:fs';
 const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 
@@ -99,7 +99,7 @@ test('homepage advances automatically with precise cues first and duration fallb
 test('mother song has an isolated 1-second lyric delay and no other song changes',()=>{
  const manifest=JSON.parse(read('docs/media/tracks.json'));
  assert.equal(manifest.tracks.find(t=>t.id==='song-mother').lyricsOffsetSeconds,1);
- assert.ok(manifest.tracks.filter(t=>t.id!=='song-mother').every(t=>!Object.hasOwn(t,'lyricsOffsetSeconds')));
+ assert.ok(manifest.tracks.filter(t=>t.id!=='song-mother').every(t=>Number.isFinite(t.lyricsOffsetSeconds)));
  const d=436.8,n=60,intro=Math.min(14,Math.max(4,d*0.035));
  assert.equal(approximateLyricIndexAt(n,intro+0.99,d,1),-1);
  assert.equal(approximateLyricIndexAt(n,intro+1,d,1),0);
@@ -113,4 +113,57 @@ test('mother song has an isolated 1-second lyric delay and no other song changes
  assert.match(player,/t\.lyricsOffsetSeconds/);
  assert.match(player,/approximateLyricIndexAt\(visibleLyrics\.length,playbackPlayer\.currentTime,duration,offset\)/);
  assert.match(player,/else setActiveLine\(-1\)/);
+});
+
+test('optional section anchors interpolate drifting lyric offsets without changing the original base',()=>{
+ const marks=[
+  {atSeconds:180,offsetSeconds:1},
+  {atSeconds:240,offsetSeconds:4},
+  {atSeconds:300,offsetSeconds:4}
+ ];
+ assert.equal(lyricOffsetAtTime(1,[],200),1);
+ assert.equal(lyricOffsetAtTime(0,undefined,200),0);
+ assert.equal(lyricOffsetAtTime(1,marks,0),1);
+ assert.equal(lyricOffsetAtTime(1,marks,180),1);
+ assert.equal(lyricOffsetAtTime(1,marks,210),2.5);
+ assert.equal(lyricOffsetAtTime(1,marks,240),4);
+ assert.equal(lyricOffsetAtTime(1,marks,270),4);
+ assert.equal(lyricOffsetAtTime(1,marks,300),4);
+ assert.equal(lyricOffsetAtTime(1,marks,380),4);
+ assert.equal(approximateLyricIndexAt(55,210,436.8,lyricOffsetAtTime(1,marks,210)),
+              approximateLyricIndexAt(55,207.5,436.8,0));
+ for(let t=180;t<300;t+=0.5){
+  const mapped=t-lyricOffsetAtTime(1,marks,t);
+  const next=(t+0.5)-lyricOffsetAtTime(1,marks,t+0.5);
+  assert.ok(next>mapped,'effective lyric clock must not reverse');
+ }
+});
+
+test('invalid time anchors fail safe to existing single-offset timing',()=>{
+ const bad=[
+  [{atSeconds:100,offsetSeconds:1},{atSeconds:100,offsetSeconds:2}],
+  [{atSeconds:100,offsetSeconds:1},{atSeconds:90,offsetSeconds:2}],
+  [{atSeconds:100,offsetSeconds:1},{atSeconds:101,offsetSeconds:4}],
+  [{atSeconds:100,offsetSeconds:Number.NaN}],
+  [{atSeconds:100,offsetSeconds:100}],
+  [{atSeconds:-1,offsetSeconds:1}],
+  [{atSeconds:100,offsetSeconds:2},null],
+  [{}]
+ ];
+ for(const points of bad)assert.equal(lyricOffsetAtTime(1,points,125),1);
+ assert.equal(lyricOffsetAtTime(1,[{atSeconds:0,offsetSeconds:1},{atSeconds:40,offsetSeconds:2}],20),1.5);
+ const manifest=JSON.parse(read('docs/media/tracks.json'));
+ const mother=manifest.tracks.find(t=>t.id==='song-mother');
+ assert.deepEqual(mother.lyricsOffsetAnchors,[]);
+ assert.equal(mother.lyricsOffsetSeconds,1);
+ assert.equal(lyricOffsetAtTime(mother.lyricsOffsetSeconds,mother.lyricsOffsetAnchors,200),1);
+});
+
+test('homepage reads section offsets from each track without changing audio or exact cues',()=>{
+ const player=read('docs/player.js');
+ assert.match(player,/lyricOffsetAtTime\(baseOffset,t\?\.lyricsOffsetAnchors,playbackPlayer\.currentTime\)/);
+ assert.match(player,/cueIndexAt\(lyricCueSeconds,playbackPlayer\.currentTime-offset\)/);
+ assert.match(player,/approximateLyricIndexAt\(visibleLyrics\.length,playbackPlayer\.currentTime,duration,offset\)/);
+ assert.match(player,/audio\.addEventListener\('timeupdate'/);
+ assert.match(player,/videoPlayer\.addEventListener\('timeupdate'/);
 });

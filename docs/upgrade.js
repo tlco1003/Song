@@ -29,6 +29,7 @@ button.addEventListener('click',async()=>{
   await widgets.requestPayment({
    orderId:record.orderId,orderName:record.orderName,
    successUrl:location.origin+'/payment-success.html?kind=upgrade',
+   customerEmail:record.customerEmail,
    failUrl:location.origin+'/payment-fail.html'
   });
  }catch(e){

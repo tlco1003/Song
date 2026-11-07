@@ -24,7 +24,7 @@ async function confirm(){
   throw Error(result.error||'결제기관 승인 확인에 실패했습니다.');
  if(upgrade){
   title.textContent='원본 음원 옵션 결제가 확인됐어요.';
-  detail.textContent='추가 10,000원 결제를 확인했습니다. 나의 노래함에서 원본 음원을 받을 수 있어요.';
+  detail.textContent='추가 10,000원 결제를 확인했습니다. 이 기기에서 원본 파일을 여러 번 받을 수 있어요. 다시 받기 위한 개인 복구 링크도 입력한 이메일로 전송됩니다. 감상용 공유 링크로는 다른 사람이 다운로드할 수 없습니다.';
   link.textContent='내 노래함에서 다운로드';link.hidden=false;
  }else{
   title.textContent='결제가 완료됐어요!';

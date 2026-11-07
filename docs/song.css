@@ -124,3 +124,6 @@
 #gift-comment-status{font-size:12px;color:#907a89}
 @media(max-width:600px){.gift-sharing-section,.gift-comments-section{padding:20px 16px}}
 .gift-sharing-actions #gift-share-card{border-color:#bc90ab;background:#f8eef5;color:#6c4461;font-weight:700}
+
+.download-recovery-label{display:block;font-size:13px;font-weight:700;margin:15px 0 8px;color:#72566b}
+#download-recovery-email{box-sizing:border-box;border:1px solid #dbc4d0;border-radius:9px;padding:13px 12px;background:white;color:#503a4b;width:100%;font-size:14px}

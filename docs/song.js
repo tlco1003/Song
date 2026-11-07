@@ -314,11 +314,15 @@ $('commercial-upgrade-buy').addEventListener('click',async()=>{
  button.disabled=true;
  $('commercial-upgrade-status').textContent='안전한 추가 결제 연결을 확인하는 중이에요.';
  try{
+  const email=$('download-recovery-email')?.value.trim()||'';
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+   $('commercial-upgrade-status').textContent='원본 파일을 다시 받을 이메일 주소를 입력해 주세요.';
+   button.disabled=false;return;
+  }
   const response=await fetch('api/commerce/commercial-upgrade/checkout',{
    method:'POST',credentials:'same-origin',cache:'no-store',
    headers:{'Content-Type':'application/json'},
-   body:JSON.stringify(privateDeliveryToken?
-    {deliveryToken:privateDeliveryToken}:{orderRef:track?.orderRef})
+   body:JSON.stringify({customerEmail:email})
   });
   if(!response.ok)throw Error('payment-unavailable');
   const data=await response.json();
@@ -337,6 +341,28 @@ $('commercial-upgrade-buy').addEventListener('click',async()=>{
 async function init(){
  const params=new URLSearchParams(location.search);
  const delivered=new URLSearchParams(location.hash.slice(1)).get('delivery');
+ const recovery=new URLSearchParams(location.hash.slice(1)).get('download');
+ if(isCustomerLibrary&&recovery){
+  if(!/^[A-Za-z0-9_-]{43}$/.test(recovery)){
+   $('my-music-guest-description').textContent='원본 파일 복구 링크가 올바르지 않아요.';
+   return;
+  }
+  try{
+   const r=await fetch('/api/delivery/download-auth',{
+    method:'POST',credentials:'same-origin',cache:'no-store',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({token:recovery})
+   });
+   if(!r.ok)throw Error('not_verified');
+   history.replaceState(null,'',location.pathname);
+   await loadPrivate(null);
+  }catch(_){
+   $('my-music-guest-title').textContent='다운로드 권한을 확인할 수 없어요.';
+   $('my-music-guest-description').textContent=
+    '유효한 원본 음원 구매 메일의 링크를 다시 열어 주세요.';
+  }
+  return;
+ }
  if(isCustomerLibrary){
   // A public demo query never turns an unauthenticated library into a demo.
   if(delivered&&!/^[A-Za-z0-9_-]{43}$/.test(delivered)){

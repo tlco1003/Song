@@ -7,8 +7,8 @@
 <title>WITHU · 나의 노래함</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="song.css?v=20261107-social-gift-01">
-<script src="cover-store.js" defer></script><script src="song.js?v=20261107-social-gift-01" defer></script>
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="song.css?v=20261107-owner-download-02">
+<script src="cover-store.js" defer></script><script src="song.js?v=20261107-owner-download-02" defer></script>
 </head>
 <body class="song-detail-body my-music-body" data-withu-view="customer">
 <header class="site-header"><div class="frame header-inner">
@@ -72,6 +72,9 @@
     <h2 id="commercial-title">음원을 더 자유롭게 활용하고 싶다면</h2>
     <p>기본 주문은 링크로 누구에게나 무료 공유하고 반복 감상할 수 있어요. 별도 10,000원 이용권을 결제하면 권리 확인을 마친 완성곡의 원본 파일을 받을 수 있고, 유효한 주문 권한이 있는 동안 횟수 제한 없이 다시 다운로드할 수 있어요.</p>
     <div class="commercial-upgrade-price"><span>상업적 이용 허락 + 원본 음원</span><strong>추가 ₩10,000</strong></div>
+    <label class="download-recovery-label" for="download-recovery-email">다운로드 권한 복구 메일을 받을 주소</label>
+    <input id="download-recovery-email" type="email" autocomplete="email" maxlength="254" placeholder="구매자 이메일 주소">
+    <p class="sharing-caveat">감상 링크는 무료로 공유해도 돼요. 10,000원 구매 후 원본 파일을 다시 받을 수 있는 개인 링크는 여기에 적은 이메일로만 전송돼요. 그 복구 링크는 공유하지 마세요.</p>
     <button type="button" id="commercial-upgrade-buy" class="detail-main-button" disabled>상업적 이용 옵션 준비 중</button>
     <a id="download-track" class="detail-main-button" download hidden>원본 음원 다운로드 · 다시 받기 가능</a>
     <p id="commercial-upgrade-status" role="status">실제 상업적 이용권 판매는 권리 확인 및 결제 연동 후 제공됩니다.</p>

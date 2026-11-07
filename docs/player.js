@@ -173,6 +173,9 @@ async function select(index,autoPlay=false){
  if(coverPath)cover.src=coverPath;
  $('cover-detail-link').href='song.html?demo='+encodeURIComponent(track.id||'');
  $('track-title').textContent=track.title;
+ musicVisual.setAttribute('aria-label',track.title+' 무음 반복 영상');
+ const visualCaption=document.querySelector('.music-visual-caption');
+ if(visualCaption)visualCaption.textContent='WITHU · '+track.title+' · VISUAL LOOP';
  $('track-subtitle').textContent=track.subtitle||'소중한 이야기를 담은 노래';
  $('track-genre').textContent=track.genre||'장르 정보 준비 중';
  $('track-position').textContent=String(current+1).padStart(2,'0')+' / '+String(tracks.length).padStart(2,'0');
@@ -212,7 +215,10 @@ async function select(index,autoPlay=false){
    videoPlayer.loop=hasSeparateAudio||repeatMode==='one';
    videoPlayer.playsInline=true;videoPlayer.src=mediaURL;
   }
-  showPlayer(isVideo?'video':'audio',hasSeparateAudio);
+  // Use the independent full-song MP3 when a decorative silent video is available.
+  // Preserve the original MP4 for the full music-video detail page.
+  const showLoopWithAudio=track.visualMode==='silent-loop'&&hasSeparateAudio;
+  showPlayer(showLoopWithAudio?'audio':isVideo?'video':'audio',hasSeparateAudio);
   updateRepeat();
   setMediaSession(track,playbackPlayer);
   status(isVideo?(hasSeparateAudio?'영상은 무음으로 표시되고 노래는 오디오 플레이어로 재생돼요.':'현재는 MP4 영상의 재생 버튼으로 소리와 영상을 함께 감상할 수 있어요. 별도 음원이 연결되면 화면 잠금 재생을 지원해요.'):track.visualMode==='silent-loop'?'영상은 무음으로 반복되고, 아래 재생 버튼으로 원곡을 들을 수 있어요.':'노래를 재생하면 가사가 자동으로 따라가요.');

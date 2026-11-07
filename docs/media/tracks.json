@@ -11,8 +11,10 @@
       "lyricsFile": "lyrics-mother-song.txt",
       "genre": "감성 발라드",
       "genreSource": "editorial",
-      "visualFile": "2026-11-07 18:08:41.mp4",
-      "visualMode": "silent-loop"
+      "visualFile": "mother-intro-loop.mp4",
+      "visualMode": "silent-loop",
+      "audioFile": "mother-song.mp3",
+      "productType": "audio_video",
       "lyricsOffsetSeconds": 1,
       "lyricsOffsetAnchors": []
     },

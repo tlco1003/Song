@@ -21,6 +21,11 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 
 SOURCES={
+    "RAVDESS-AND-KOREAN-WORD-NORMS-CONTEXTUAL-V16":{
+        "license":"RAVDESS-CC-BY-NC-SA-4.0-AND-WORD-NORM-NSMC-RIGHTS-UNVERIFIED",
+        "urls":["https://zenodo.org/records/1188976",
+                "https://huggingface.co/datasets/jonghwanhyeon/korean-emotion-lexicon",
+                "https://huggingface.co/datasets/e9t/nsmc"]},
     "RAVDESS-FACE-120":{
         "license":"CC-BY-NC-SA-4.0",
         "url":"https://zenodo.org/records/1188976"},
@@ -61,7 +66,7 @@ def seal_study_model(model:Path,report_file:Path,owner_public:Path,
             zipout.writestr("LICENSE_AND_SCOPE.txt",json.dumps(
                 {"source":SOURCES[dataset],"researchOnly":True,
                  "wordNormsAreNotPsychologicalDiagnosis":True,
-                 "commercialRightsForOriginalSourceUnverified":dataset=="KOREAN-EMOTION-WORD-RATINGS"},
+                 "commercialRightsForOriginalSourceUnverified":dataset in ("KOREAN-EMOTION-WORD-RATINGS","RAVDESS-AND-KOREAN-WORD-NORMS-CONTEXTUAL-V16")},
                 indent=2,ensure_ascii=False))
         contents=stream.getvalue()
     ephemeral=X25519PrivateKey.generate()

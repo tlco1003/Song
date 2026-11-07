@@ -13,6 +13,10 @@ import numpy as np
 import torch
 
 from song_vision.face_surface_motion import annotate_face_surface_dataset
+from song_vision.projected_iris_v13 import (
+    IRIS_COUNT, measure_projected_iris, iris_motion_from_private_face_labels,
+)
+from song_vision.test_joint_face_training import fake_points
 from song_vision.phoneme_targets_v13 import (
     CONSONANTS, VOWELS, IGNORE_LABEL, labels_at_second,
     read_reviewed_phone_timeline,
@@ -85,6 +89,24 @@ class SongV13Tests(unittest.TestCase):
         self.assertGreater(len(EXPR_IDS), 12)
         self.assertEqual(STAGES, ("articulation", "prosody", "emotion", "fusion"))
 
+    def test_projected_iris_geometry_is_observed_not_assumed_gaze(self):
+        points = fake_points()
+        baseline = measure_projected_iris(points)
+        self.assertEqual(baseline.shape, (IRIS_COUNT,))
+        shifted = points.copy()
+        shifted[468, 0] += .015
+        measured = measure_projected_iris(shifted)
+        self.assertGreater(measured[0], baseline[0])
+        self.assertAlmostEqual(float(measured[2]), float(baseline[2]), places=5)
+        stacked = np.stack((points, shifted, points))
+        relative, valid = iris_motion_from_private_face_labels(
+            stacked, np.array([True, True, False]))
+        self.assertEqual(relative.shape, (3, IRIS_COUNT))
+        self.assertEqual(valid.tolist(), [True, True, False])
+        self.assertFalse(np.isfinite(np.array([np.nan, 0.])).all())
+        with self.assertRaises(ValueError):
+            measure_projected_iris(np.zeros((20,3), dtype=np.float32))
+
     def test_manual_phone_audio_sha_and_time_gate(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -116,11 +138,12 @@ class SongV13Tests(unittest.TestCase):
                  mel + .1, cues + .1, motion_target + .01,
                  mel * .5, cues * .5,
                  torch.tensor([0, -100]), torch.tensor([-100, 3]),
-                 torch.tensor([2, -100]))
+                 torch.tensor([2, -100]),
+                 torch.rand(2, IRIS_COUNT) * .1, torch.tensor([True, False]))
         expectations = {
             "articulation": ("articulation_head", "articulation_encoder"),
             "prosody": ("prosody_head", "prosody_encoder"),
-            "emotion": ("emotion_head", "emotion_encoder"),
+            "emotion": ("emotion_head", "emotion_encoder", "projected_iris_head"),
             "fusion": ("articulation_head", "backbone"),
         }
         for stage in STAGES:
@@ -129,6 +152,7 @@ class SongV13Tests(unittest.TestCase):
             out = net(face, mel, cues, stage=stage)
             self.assertEqual(out["mouth"].shape, target_mouth.shape)
             self.assertEqual(out["motion"].shape, motion_target.shape)
+            self.assertEqual(out["projectedIrisMotion"].shape, (2, IRIS_COUNT))
             self.assertEqual(out["consonantLogits"].shape, (2, 13))
             self.assertEqual(out["vowelLogits"].shape, (2, 5))
             loss, counts = _stage_loss(net, batch, stage)
@@ -167,6 +191,9 @@ class SongV13Tests(unittest.TestCase):
             self.assertGreater(report["trainReviewedConsonantSamples"], 0)
             self.assertGreater(report["trainReviewedVowelSamples"], 0)
             self.assertFalse(report["canAcceptPaidJobs"])
+            self.assertTrue(report["estimated2dIrisMotionNotPhysicalEyeGaze"])
+            self.assertGreater(report["finalValidation"]["projectedIrisFrameCount"], 0)
+            self.assertIsNotNone(report["finalValidation"]["projectedIrisMotionMAE"])
             self.assertEqual(len(report["history"]), 4)
             self.assertIsNotNone(
                 report["finalValidation"]["reviewedConsonantAccuracy"])

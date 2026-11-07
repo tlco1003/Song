@@ -5,6 +5,10 @@ video-generation API. The **model has no trained weights in Git** and cannot
 produce a convincing singing video until suitable authorized data have been
 prepared, training completed and the resulting quality independently evaluated.
 
+## v13.1: observed pupil / iris-centre motion in the emotion branch
+
+The [2D projected iris estimator](projected_iris_v13.py) adds **four measured iris-center movement proxies** (left/right eye x/y relative to observed eye corners). The emotion stage now also trains a small iris motion head and separately validates measured 2D iris motion. **This is not real 3D eye gaze, pupil dilation, iris physics or inferred mental emotion**; blinking and gaze cannot be uniquely determined from vocal loudness. Missing/invalid iris source labels are masked out rather than fabricated. Earlier v13/v12 and other research checkpoints are retained.
+
 ## v13: RUNNABLE four-stage pronunciation / prosody / emotion / face composer
 
 This new *code*, not only a design document, is in [the four-stage PyTorch trainer](staged_face_v13.py), [human-reviewed phone-time contract](phoneme_targets_v13.py), [official 120-take runner](external_ravdess_v13.py), and [actual test suite](test_staged_face_v13.py). Stage 1 articulation learns lip/jaw visible motion, plus **13 Korean consonant/5 vowel phone classes only if genuinely human-reviewed phone timestamps exist**. Stage 2 learns vocal dynamics/residuals, stage 3 eyes/brow/cheek/skin and RAVDESS *portrayed* emotion, and stage 4 trains the fused decoder. Existing model weights remain in encrypted vault and new weights get their own run-specific encrypted archive. Official RAVDESS English footage has no annotated Korean phonemes, so phone classification is **untrained there**; no invented phone labels. No sound generation or full-face photorealistic skin renderer. Full guide: [v13 research code contract](../docs/SONG_VISION_V13_ACTUAL_FOUR_STAGE_CODE.md).

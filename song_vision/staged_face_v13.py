@@ -39,6 +39,7 @@ from .phoneme_targets_v13 import (
     labels_at_second,
 )
 from .real_training import validate_prepared
+from .projected_iris_v13 import IRIS_COUNT, IRIS_FEATURES, iris_motion_from_private_face_labels
 from .voice_to_face_v11 import VoiceFaceFrames, VocalDrivenFaceNet
 from .vocal_acoustics import CUE_COUNT, CUE_CONTEXT
 
@@ -92,6 +93,7 @@ class StagedFaceFrames(VoiceFaceFrames):
         super().__init__(root)
         self.timelines = {}
         self.acted_labels = {}
+        self.iris_labels = {}
         self.reviewed_consonant_samples = 0
         self.reviewed_vowel_samples = 0
         for folder, *_ in self.records:
@@ -100,6 +102,15 @@ class StagedFaceFrames(VoiceFaceFrames):
             meta = json.loads((folder / "index.json").read_text(encoding="utf-8"))
             clip_id = meta["clipId"]
             self.acted_labels[folder] = _acted_emotion_index(clip_id)
+            with np.load(folder / "face-surface-v1.npz", allow_pickle=False) as detected:
+                iris_value, iris_ok = iris_motion_from_private_face_labels(
+                    detected["surfacePoints"], detected["valid"])
+            if len(iris_value) != len(meta["frames"]):
+                raise ValueError("Unmatched iris/eye motion and vocal video frames")
+            self.iris_labels[folder] = {
+                row["file"]: (iris_value[i].copy(), bool(iris_ok[i]))
+                for i, row in enumerate(meta["frames"])
+            }
             annotation_file = folder / "phones-reviewed-v13.json"
             if annotation_file.exists():
                 self.timelines[folder] = read_reviewed_phone_timeline(
@@ -117,10 +128,13 @@ class StagedFaceFrames(VoiceFaceFrames):
         folder, target, *_ = self.records[index]
         consonant, vowel = labels_at_second(
             self.timelines[folder], float(target["seconds"]))
+        iris_value, iris_valid = self.iris_labels[folder][target["file"]]
         return base + (
             torch.tensor(consonant, dtype=torch.long),
             torch.tensor(vowel, dtype=torch.long),
             torch.tensor(self.acted_labels[folder], dtype=torch.long),
+            torch.from_numpy(iris_value.copy()),
+            torch.tensor(iris_valid, dtype=torch.bool),
         )
 
 
@@ -168,6 +182,7 @@ class StagedSingingFaceNet(nn.Module):
         )
         self.emotion_head = nn.Linear(128, FEATURE_COUNT)
         self.portrayed_emotion_head = nn.Linear(128, len(PORTRAYED_EMOTION_CODES))
+        self.projected_iris_head = nn.Linear(128, IRIS_COUNT)
         self.prosody_gate = nn.Parameter(torch.tensor(-.75))
         self.emotion_gate = nn.Parameter(torch.tensor(-.75))
         self.image_correction = nn.Sequential(
@@ -212,6 +227,7 @@ class StagedSingingFaceNet(nn.Module):
             "consonantLogits": self.consonant_head(a_context),
             "vowelLogits": self.vowel_head(a_context),
             "portrayedEmotionLogits": self.portrayed_emotion_head(e_context),
+            "projectedIrisMotion": 2. * torch.tanh(self.projected_iris_head(e_context)),
         }
 
 
@@ -226,7 +242,8 @@ def configure_stage(model: StagedSingingFaceNet, stage: str):
                          "consonant_head", "vowel_head"),
         "prosody": ("prosody_encoder", "prosody_head"),
         "emotion": ("emotion_face_encoder", "emotion_encoder",
-                    "emotion_head", "portrayed_emotion_head"),
+                    "emotion_head", "portrayed_emotion_head",
+                    "projected_iris_head"),
     }
     if stage != "fusion":
         for name in groups[stage]:
@@ -251,9 +268,21 @@ def _supervised_ce(logits, labels) -> tuple[torch.Tensor, int]:
     return F.cross_entropy(logits[mask], labels[mask]), n
 
 
+def _iris_mae(predicted, observed, observed_valid):
+    if predicted.ndim != 2 or predicted.shape != observed.shape or predicted.shape[1] != IRIS_COUNT:
+        raise ValueError("Projected iris dimensions must be B x 4")
+    if observed_valid.ndim != 1 or len(observed_valid) != len(predicted):
+        raise ValueError("Projected iris validity mask must be per frame")
+    weights = observed_valid.to(dtype=predicted.dtype)
+    if float(weights.sum()) == 0.:
+        return predicted.sum() * 0.
+    return ((predicted - observed).abs().mean(dim=1) * weights).sum() / weights.sum()
+
+
 def _stage_loss(model, batch, stage: str) -> tuple[torch.Tensor, dict]:
     (face, mel, cues, true_mouth, motion_gt, next_mel, next_cues,
-     next_motion, wrong_mel, wrong_cues, consonant, vowel, acted) = batch
+     next_motion, wrong_mel, wrong_cues, consonant, vowel, acted,
+     iris_observed, iris_valid) = batch
     out = model(face, mel, cues, stage=stage)
     phone_c, n_c = _supervised_ce(out["consonantLogits"], consonant)
     phone_v, n_v = _supervised_ce(out["vowelLogits"], vowel)
@@ -272,7 +301,8 @@ def _stage_loss(model, batch, stage: str) -> tuple[torch.Tensor, dict]:
                                    next_motion - motion_gt, PROSODY_IDS)), supervision
     if stage == "emotion":
         return (motion_error(out["motion"], motion_gt, EXPR_IDS) +
-                .12 * acted_loss), supervision
+                .12 * acted_loss +
+                .04 * _iris_mae(out["projectedIrisMotion"], iris_observed, iris_valid)), supervision
     later = model(face, next_mel, next_cues, stage=stage)
     shifted = model(face, wrong_mel, wrong_cues, stage=stage)
     correct = motion_error(out["motion"], motion_gt, ART_IDS)
@@ -284,7 +314,8 @@ def _stage_loss(model, batch, stage: str) -> tuple[torch.Tensor, dict]:
                            next_motion - motion_gt) +
         .07 * F.relu(.015 + correct - wrong) +
         .10 * (phone_c + phone_v) +
-        .04 * acted_loss
+        .04 * acted_loss +
+        .02 * _iris_mae(out["projectedIrisMotion"], iris_observed, iris_valid)
     )
     return loss, supervision
 
@@ -299,11 +330,14 @@ def evaluate_stage(model, loader, stage, device: str) -> dict:
         "matchedVsShiftedAudioGain": 0., "voiceMotionSensitivity": 0.,
     }
     count = 0
+    iris_error_sum = 0.
+    iris_total = 0
     pc_hits = pv_hits = pe_hits = pc_total = pv_total = pe_total = 0
     with torch.no_grad():
         for packed in loader:
             (face, mel, cues, mouth, motion, next_mel, next_cues,
-             future_motion, wrong_mel, wrong_cues, consonant, vowel, acted) = [
+             future_motion, wrong_mel, wrong_cues, consonant, vowel, acted,
+             iris_observed, iris_valid) = [
                 x.to(device) for x in packed
             ]
             out = model(face, mel, cues, stage=stage)
@@ -325,6 +359,10 @@ def evaluate_stage(model, loader, stage, device: str) -> dict:
                 "voiceMotionSensitivity": (wrong - predicted).abs().mean(),
             }
             n = len(face)
+            valid_iris = iris_valid.to(dtype=face.dtype)
+            iris_error_sum += float((((out["projectedIrisMotion"] - iris_observed).abs()
+                                       .mean(dim=1)) * valid_iris).sum())
+            iris_total += int(iris_valid.sum())
             for name, value in values.items():
                 totals[name] += float(value.detach()) * n
             count += n
@@ -355,6 +393,8 @@ def evaluate_stage(model, loader, stage, device: str) -> dict:
         "reviewedVowelAccuracy": round(pv_hits / pv_total, 5) if pv_total else None,
         "actedEmotionFrameCount": pe_total,
         "actedEmotionClassAccuracy": round(pe_hits / pe_total, 5) if pe_total else None,
+        "projectedIrisFrameCount": iris_total,
+        "projectedIrisMotionMAE": round(iris_error_sum / iris_total, 7) if iris_total else None,
     }
 
 
@@ -454,6 +494,8 @@ def train_staged(dataset: Path, checkpoint: Path, *,
         failures.append("EXPRESSION_WORSE_THAN_NEUTRAL")
     if result["matchedVsShiftedAudioGain"] <= .0001:
         failures.append("AUDIO_ALIGNMENT_NOT_PROVEN")
+    if result["projectedIrisFrameCount"] == 0:
+        failures.append("PROJECTED_IRIS_MOVEMENT_NOT_EVALUATED")
     if result["reviewedConsonantFrameCount"] == 0 or result["reviewedVowelFrameCount"] == 0:
         failures.append("EXACT_PHONEME_CLASSIFICATION_NOT_TRAINED_OR_VALIDATED")
     checkpoint.parent.mkdir(parents=True, exist_ok=True)
@@ -462,6 +504,7 @@ def train_staged(dataset: Path, checkpoint: Path, *,
         "stateDict": {k: v.detach().cpu() for k,v in net.state_dict().items()},
         "phonemes": {"consonants": CONSONANTS, "vowels": VOWELS},
         "sourceEmotionLabels": PORTRAYED_EMOTION_NAMES,
+        "projectedIrisFeatures": IRIS_FEATURES,
         "trainedStages": STAGES,
         "status": "research_only_unvalidated_checkpoint",
         "commerciallyValidated": False,
@@ -475,6 +518,7 @@ def train_staged(dataset: Path, checkpoint: Path, *,
         "output": "mouth_pixels_and_visible_face_motion_only_no_audio_generation",
         "speechOrSingingSynthesisImplemented": False,
         "physicalMuscleForceInferred": False,
+        "estimated2dIrisMotionNotPhysicalEyeGaze": True,
         "phonemeClasses": {"consonants": CONSONANTS, "vowels": VOWELS},
         "phonemeSource": "ONLY_HUMAN_REVIEWED_PHONES_WITH_SOURCE_SHA256",
         "trainReviewedConsonantSamples": train_data.reviewed_consonant_samples,
@@ -499,6 +543,7 @@ def train_staged(dataset: Path, checkpoint: Path, *,
             "No exact consonant/vowel accuracy without verified phone timelines",
             "RAVDESS portrayed emotion is an acting label, not psychological ground truth",
             "Facial coefficients are image-derived estimates, not electromyography",
+            "Iris-centre pixel displacement is a 2D projection, not gaze target or pupil dilation",
             "Current decoder predicts mouth pixels, not complete 96x96 facial skin",
             "No claim of universal language performance or commercial suitability",
         ],

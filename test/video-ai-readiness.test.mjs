@@ -33,6 +33,8 @@ test('self-hosted video model status is explicit and noncommercial',()=>{
  assert.equal(state.korean13Consonant5VowelReviewedAnnotationContractAvailable,true);
  assert.equal(state.koreanConsonantVowelTrainingValidated,false);
  assert.equal(state.emotionalSkinMotionFullFaceRendererValidated,false);
+ assert.equal(state.projectedIrisMotionTrainingAvailable,true);
+ assert.equal(state.trueEyeGazeTargetValidated,false);
  assert.equal(state.phonemeAccurateLipsyncVerified,false);
  assert.equal(state.actualBoneStructureEstimation,false);
  assert.equal(state.clipDisjointValidationImplemented,true);

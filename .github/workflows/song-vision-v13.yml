@@ -5,6 +5,7 @@ on:
       - feature/song-vision-self-hosted-v1
     paths:
       - 'song_vision/phoneme_targets_v13.py'
+      - 'song_vision/projected_iris_v13.py'
       - 'song_vision/staged_face_v13.py'
       - 'song_vision/external_ravdess_v13.py'
       - 'song_vision/test_staged_face_v13.py'

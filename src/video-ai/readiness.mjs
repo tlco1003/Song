@@ -40,6 +40,8 @@ export function songVisionReadiness() {
     korean13Consonant5VowelReviewedAnnotationContractAvailable: true,
     koreanConsonantVowelTrainingValidated: false,
     emotionalSkinMotionFullFaceRendererValidated: false,
+    projectedIrisMotionTrainingAvailable: true,
+    trueEyeGazeTargetValidated: false,
     phonemeAccurateLipsyncVerified: false,
     actualBoneStructureEstimation: false,
     clipDisjointValidationImplemented: true,

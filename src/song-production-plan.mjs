@@ -5,7 +5,7 @@
  * the verified paid order. No client-generated songPlan is trusted.
  */
 import {readFileSync} from 'node:fs';
-import {GENRE_KEYS,composeServerMusicStyle} from './music-style-library.mjs';
+import {GENRE_KEYS,ERA_KEYS,composeServerMusicStyle} from './music-style-library.mjs';
 
 const publicCatalog=JSON.parse(readFileSync(new URL('../docs/music-genres.json',import.meta.url),'utf8'));
 if(publicCatalog.version!==2||!Array.isArray(publicCatalog.genres)
@@ -15,6 +15,27 @@ if(publicCatalog.version!==2||!Array.isArray(publicCatalog.genres)
  throw new Error('Public genre catalog must contain labels only');
 const selectedKeys=new Set(GENRE_KEYS);
 const productCounts=Object.freeze({audio:1,audio_duo:2,audio_video:1});
+export const SONG_MOODS=Object.freeze(['따뜻한','감동적인','설레는','애절한','희망찬','신나는']);
+export function normalizeTrackPreferences(productId,preferences,{
+ mood='따뜻한',eraPreference='auto'
+}={}){
+ const count=productCounts[productId];
+ if(!count||!SONG_MOODS.includes(mood)||!ERA_KEYS.includes(eraPreference))
+  throw new Error('Invalid default music preferences');
+ if(preferences!==undefined&&preferences!==null
+  &&(!Array.isArray(preferences)||preferences.length!==count))
+  throw new Error('Each purchased song needs exactly one style selection');
+ const result=Array.from({length:count},(_,i)=>{
+  const raw=preferences?.[i];
+  const values=raw??{mood,eraPreference};
+  if(!values||typeof values!=='object'||Array.isArray(values)
+   ||!SONG_MOODS.includes(values.mood)
+   ||!ERA_KEYS.includes(values.eraPreference))
+   throw new Error('Invalid per-track mood or era');
+  return Object.freeze({mood:values.mood,eraPreference:values.eraPreference});
+ });
+ return Object.freeze(result);
+}
 export function publicMusicGenres(){
  return publicCatalog.genres.map(g=>({id:g.id,label:g.label}));
 }
@@ -45,6 +66,9 @@ export function buildSongProductionPlan(order){
  const {productId,genreSelection}=order;
  const selected=normalizeGenreSelection(productId,genreSelection);
  const count=productCounts[productId];
+ const preferences=normalizeTrackPreferences(productId,order.trackPreferences,{
+  mood:order.mood||'따뜻한',eraPreference:order.eraPreference||'auto'
+ });
  if(typeof order.songTitle!=='string'||!order.songTitle.trim()||order.songTitle.length>100)
   throw new Error('Song title missing or too long');
  if(typeof order.confirmedLyrics!=='string'||!order.confirmedLyrics.trim()
@@ -64,7 +88,8 @@ export function buildSongProductionPlan(order){
   version:2,productId,mode:selected.mode,
   songs:Object.freeze(genres.map((genre,index)=>{
    const base=composeServerMusicStyle({
-    genre,mood:order.mood||'따뜻한',eraPreference,recipientAgeGroup,
+    genre,mood:preferences[index].mood,
+    eraPreference:preferences[index].eraPreference,recipientAgeGroup,
     speechStyle,songIndex:index+1,mode:selected.mode,blendGenre,
     thirdVerse:order.thirdVerse===true,dedicationOutro:order.dedicationOutro===true
    });
@@ -76,6 +101,7 @@ export function buildSongProductionPlan(order){
    const stylePrompt=[base,customerNotes].filter(Boolean).join('\n');
    if(stylePrompt.length>1000)throw new Error('Server music style prompt exceeds 1000 characters');
    return Object.freeze({index:index+1,genre,title,lyrics:order.confirmedLyrics,
+    mood:preferences[index].mood,eraPreference:preferences[index].eraPreference,
     ...(blendGenre?{blendGenres:Object.freeze([genre,blendGenre])}:{}),stylePrompt});
   }))
  });

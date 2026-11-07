@@ -101,7 +101,7 @@ export function composeServerMusicStyle({
  const second=['same','blend'].includes(mode)&&songIndex===2?
   'Create an independently composed melody and arrangement for track two, never a duplicate of track one.':'';
  const parts={
-  opening:'Compose an original Korean song, not a cover. Never reproduce a known melody, lyric, vocal identity or signature recording.',
+  opening:'Begin with a dramatic, emotionally engaging, clear Korean vocal opening. Original song only: never copy known melodies, voices or recordings.',
   genre:'Chosen genre: '+genre+'. '+genreText,
   blend:blendGenre?'Blend in '+blendGenre+' while retaining the primary identity: '+blendText:'',
   era:eraText?'Era-inspired, not song-copied: '+eraText:'',
@@ -128,7 +128,7 @@ export function composeServerMusicStyle({
    'Original melody; lyric-led build, contrast, rests and resolution.';
   stylePreset=assemble({
    ...parts,
-   opening:'Original Korean song; no copied melody, lyric, vocal identity or recording.',
+   opening:'Dramatic, clear Korean vocal entrance. Original song; never copy melodies, voices or recordings.',
    phrasing:'Use the approved Korean speech style.',
    arc:compactArc,
    preserve:'Keep selected genre and real customer story.',

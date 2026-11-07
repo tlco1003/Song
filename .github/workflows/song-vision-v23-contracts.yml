@@ -1,0 +1,41 @@
+name: SONG-Vision v23 lyric text and face-boundary contracts
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/song-vision-v23-contracts.yml"
+      - "song_vision/owner_v22_constrained_viseme.py"
+      - "song_vision/owner_v23_lyrics_safeguarded.py"
+      - "song_vision/test_owner_v23_lyrics_safeguarded.py"
+      - "song_vision/test_owner_v23_site_links.py"
+      - "docs/vision-owner/AM630_v23_TEXT_FIRST_CONSTRAINED_FACE_UNALIGNED.mp4"
+      - "docs/vision-owner/AM630_v23_MOUTH_CLOSEUP_SITE.mp4"
+      - "docs/song-vision-v23-am630.html"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  v23_source_only_contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install geometry libraries
+        run: python -m pip install "numpy>=1.26,<3" "opencv-python-headless>=4.9,<5"
+      - name: Static compile of new viseme and safety source
+        run: |
+          python -m py_compile song_vision/owner_v22_constrained_viseme.py
+          python -m py_compile song_vision/owner_v23_lyrics_safeguarded.py
+          python -m py_compile song_vision/render_am630_v23.py
+      - name: Boundary and verified-text fail-closed contracts
+        run: python -m unittest discover -s song_vision -p "test_owner_v23_lyrics_safeguarded.py" -v
+      - name: Public owner-generated video availability contracts
+        run: python -m unittest discover -s song_vision -p "test_owner_v23_site_links.py" -v
+      - name: Keep research status explicit
+        run: |
+          echo "FACE_EXTERIOR_LOCK_TESTED=true"
+          echo "ACTUAL_KOREAN_SYLLABLE_TIMING_VERIFIED=false"
+          echo "TRUE_3D_ANATOMICAL_SIMULATION=false"

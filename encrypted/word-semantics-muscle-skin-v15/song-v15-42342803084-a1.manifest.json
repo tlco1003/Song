@@ -1,0 +1,98 @@
+{
+  "boneMuscleSkinRepresentation": "2D_anatomy_informed_trainable_proxy_no_actual_EMG_or_skeleton",
+  "canAcceptPaidJobs": false,
+  "commercialUseAllowed": false,
+  "encryptedResearchWeights": {
+    "facial-skin-physics-proxy": {
+      "commercialUseAllowed": false,
+      "file": "song-v15-facial-skin-physics-proxy-42342803084-a1.svault",
+      "provenance": {
+        "license": "CC-BY-NC-SA-4.0",
+        "url": "https://zenodo.org/records/1188976"
+      },
+      "sha256": "9f2e5f957b36dee3400776da63ac63282a62f4fd2ed289c3468d45c04fe66c0e",
+      "sourceDataset": "RAVDESS-FACE-120"
+    },
+    "korean-word-semantics": {
+      "commercialUseAllowed": false,
+      "file": "song-v15-korean-word-semantics-42342803084-a1.svault",
+      "provenance": {
+        "license": "COMMUNITY-CC0-ORIGINAL-PAPER-RIGHTS-UNVERIFIED",
+        "url": "https://huggingface.co/datasets/jonghwanhyeon/korean-emotion-lexicon"
+      },
+      "sha256": "bbb88c67c1e62b0fac6b9fddf60e68f0f780656a73c525ccc8f148fdb694e164",
+      "sourceDataset": "KOREAN-EMOTION-WORD-RATINGS"
+    },
+    "singing-face-motion-v13": {
+      "commercialUseAllowed": false,
+      "file": "song-v15-singing-face-motion-v13-42342803084-a1.svault",
+      "provenance": {
+        "license": "CC-BY-NC-SA-4.0",
+        "url": "https://zenodo.org/records/1188976"
+      },
+      "sha256": "7d46caf679d5f186482287a9ae6686a0e83814101faaeb89339b8c17a2a14bb7",
+      "sourceDataset": "RAVDESS-FACE-120"
+    }
+  },
+  "holdoutFaceFrames": 2960,
+  "measuredWordAffectModelBestMAE": 0.174922,
+  "originalRecordedAudioFaceVisualResults": {
+    "actualFaceSkinPhotorealismValidated": false,
+    "correctOriginalVocalFullFaceROIMAE": 0.046262,
+    "correctVocalBetterThanShifted": true,
+    "correctVocalVsWrongVocalGain": 0.000165,
+    "countHeldoutVideoFrames": 40,
+    "faceWarpBetterThanStaticCopy": true,
+    "mismatched320msVocalROIMAE": 0.046427,
+    "regionMAE": {
+      "browsEyes": 0.0324438,
+      "cheekZygomatic": 0.0460913,
+      "lipsChin": 0.05861
+    },
+    "staticReferenceROIMAE": 0.0463861
+  },
+  "performedRealActorSourceChecksums": {
+    "01": "0f7ba20f3a7278d5a662a7e30f44c942",
+    "02": "8e426ef4134abe1dff4d2a8262abe8a9",
+    "03": "2d686591f8760f8041d2dc75e8234828"
+  },
+  "primaryWordResearch": "https://www.kci.go.kr/kciportal/landing/article.kci?arti_id=ART000958746",
+  "realVideoSource": "https://zenodo.org/records/1188976",
+  "realWordNormSource": "https://huggingface.co/datasets/jonghwanhyeon/korean-emotion-lexicon/resolve/main/5-level.csv",
+  "singerHoldout": {
+    "holdoutActors": [
+      "03"
+    ],
+    "matchedPairs": 60,
+    "normalRecordings": 60,
+    "strongExpressionRecordings": 60,
+    "trainActors": [
+      "01",
+      "02"
+    ],
+    "trainingClips": 80,
+    "validationClips": 40
+  },
+  "singerLicense": "CC-BY-NC-SA-4.0",
+  "skinCoordinateResults": {
+    "correctVsMismatchedMotionGain": 0.0001472,
+    "epoch": 1,
+    "faceSurfaceFrameCount": 2960,
+    "semanticReviewedFrameCount": 0,
+    "shiftedVocalSurfaceMAE": 0.0107262,
+    "staticRefSurfaceMAE": 0.0106362,
+    "trueVocalSurfaceMAE": 0.010579
+  },
+  "skinTrainingDiagnostics": [
+    "NO_WORD_TIMED_FACIAL_SEMANTIC_TRAINING_DATA"
+  ],
+  "sourceMediaOrOriginalWordListPublished": false,
+  "study": "SONG-v15-learned-word-affect-and-projected-facial-biomechanics",
+  "trainFaceFrames": 5920,
+  "trainedActualWordToFaceCorrespondence": false,
+  "wordAffectConstantBaselineMAE": 0.190078,
+  "wordFeelingsNotTheSingerActualEmotion": true,
+  "wordNormSha256": "3fbe1abbc44dba70f8ad8a0de4cf7af4b29e92ab7acc3134cac2b52c8753e587",
+  "wordTrainingFromExternalRealHumanRatings": true,
+  "wordsHeldout": 87
+}

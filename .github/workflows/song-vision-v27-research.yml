@@ -1,0 +1,60 @@
+name: SONG Vision v27 owner lip-jaw research
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/song-vision-v27-research.yml'
+      - 'song_vision/owner_v27_jaw_oral_rig.py'
+      - 'song_vision/owner_v27_phone_contract.py'
+      - 'song_vision/test_owner_v27_public.py'
+      - 'docs/song-vision-v27-jaw.html'
+      - 'docs/vision-owner/*V27*.mp4'
+      - 'docs/index.html'
+      - 'docs/song-vision-lab.html'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  owner_jaw_contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install public research dependencies (NO private face recordings)
+        run: python -m pip install 'numpy>=1.26,<3' 'scipy>=1.11,<2' 'opencv-python-headless>=4.10,<5'
+      - name: Verify jaw movement, upper-skull invariance, manual phone-label gate
+        run: python -m unittest discover -s song_vision -p 'test_owner_v27_public.py' -v
+      - name: Verify two exact video artifacts and required page links
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          videos=[
+             'SONG_V27_OWNER_REAL_MOUTH_PLUS_JAW_COMPARISON.mp4',
+             'AM630_V27_OWNER_JAW_COUPLED_LYRICS_UNALIGNED.mp4'
+          ]
+          home=Path('docs/index.html').read_text(encoding='utf-8')
+          lab=Path('docs/song-vision-lab.html').read_text(encoding='utf-8')
+          detail=Path('docs/song-vision-v27-jaw.html').read_text(encoding='utf-8')
+          for name in videos:
+              p=Path('docs/vision-owner')/name
+              assert p.exists() and p.stat().st_size>100_000,name
+              assert b'ftyp' in p.read_bytes()[:64],name
+              assert name in detail and name in lab,name
+          assert videos[0] in home
+          assert 'song-vision-v27-jaw.html' in home
+          assert '미검증' in detail
+          assert '턱뼈' in detail
+          print('v27: owner-only research media, routes and honest quality notices verified')
+          PY
+      - name: Compile public v27 research modules
+        run: |
+          python -m py_compile song_vision/owner_v27_jaw_oral_rig.py song_vision/train_owner_jaw_v27.py song_vision/owner_v27_phone_contract.py
+      - name: Disclose non-verified endpoints
+        run: |
+          echo 'JAW_BONE_3D_MEASURED=NO'
+          echo 'ORAL_MEDICAL_SEGMENTATION_VERIFIED=NO'
+          echo 'KOREAN_SINGING_PHONEME_TIMING_VERIFIED=NO'
+          echo 'OWNER_2D_CHIN_MOTION_HELDOUT=YES'

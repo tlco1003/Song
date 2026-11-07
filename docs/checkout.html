@@ -10,8 +10,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="checkout.css?v=20261106-promo-bottom-09">
-<script defer src="checkout.js?v=20261106-creator-price-07"></script>
+<link rel="stylesheet" href="checkout.css?v=20261107-emotional-value-10">
+<script defer src="checkout.js?v=20261107-emotional-value-10"></script>
 <script defer src="checkout-media.js?v=20261106-streamlined-02"></script>
 </head>
 <body>
@@ -77,24 +77,29 @@
    <div id="genre-plan-preview" class="genre-plan-preview" role="status" aria-live="polite">장르 선택을 불러오는 중이에요.</div>
    <label class="genre-blend-toggle third-verse-toggle" for="third-verse">
     <input type="checkbox" id="third-verse">
-    <span><strong>우리 이야기를 3절까지 확장 <em>+10,000원</em></strong>
-    <small>한 번 더 추억을 담아 1절·2절·3절로 완성해요. 2곡이어도 추가금은 주문당 한 번만 적용돼요.</small>
-    <small>음악 길이는 장르·편곡에 따라 달라지며 특정 분량을 보장하지 않아요.</small></span>
+    <span><strong>감정의 절정까지, 드라마틱한 3절 확장 <em>+10,000원</em></strong>
+    <small>1절에서 추억을 꺼내고, 2절에서 마음을 쌓고, 3절과 마지막 후렴에서는 감정이 크게 터져 나오는 듯한 클라이맥스를 만들어요.</small>
+    <small>악기와 보컬의 셈여림을 점점 키우되 장르·사연에 맞춰 조절해요. 감정 반응이나 재생 길이는 보장되지 않습니다.</small>
+    <small>2곡이어도 추가금은 주문당 한 번만 적용돼요.</small></span>
    </label>
    <label class="genre-blend-toggle dedication-toggle" for="dedication-outro">
     <input type="checkbox" id="dedication-outro">
-    <span><strong>마지막에 전하는 한마디 <em>+5,000원</em></strong>
-    <small>직접 적은 한마디를 노래 마지막의 별도 헌정 엔딩(2~4행)에 담아요.</small>
-    <small id="dedication-context">소중한 사람에게 기억될 한마디를 남겨 보세요.</small>
-    <small>2곡 상품도 추가금은 주문당 한 번만 적용돼요.</small></span>
+    <span><strong>노래 끝에 오래 남는 한마디 · 여운 엔딩 <em>+5,000원</em></strong>
+    <small>이미 전한 말을 다시 길게 반복하지 않아요. 감정의 절정 뒤에 음악이 잠시 잦아들고, 마지막 한마디가 또렷하게 남도록 마무리해요.</small>
+    <small id="dedication-context">그 사람만 알아들을 짧고 진심 어린 한마디를 남겨 보세요.</small>
+    <small>2곡이어도 추가금은 주문당 한 번만 적용돼요.</small></span>
    </label>
    <div id="dedication-text-wrap" class="dedication-text-wrap" hidden>
-    <label for="dedication-text">노래 마지막에 꼭 넣을 말 <span>(4~70자)</span></label>
-    <input id="dedication-text" maxlength="70" autocomplete="off" placeholder="예: 엄마, 내 모든 계절에 함께해 줘서 고마워요">
-    <p class="small-explain">이 문장을 가사에 그대로 반영합니다. 실제 보컬 발음과 길이는 생성 결과에 따라 달라질 수 있어요.</p>
+    <label for="dedication-text">노래 끝에 여운으로 남길 한마디 <span>(4~70자)</span></label>
+    <input id="dedication-text" maxlength="70" autocomplete="off" placeholder="예: 엄마, 나는 엄마 딸이라서 참 다행이야">
+    <p class="small-explain">선택한 한마디를 가사 마지막에 그대로 남기고, 절정과 대비되는 잔잔한 마무리를 설계해요. 실제 보컬·편곡은 달라질 수 있습니다.</p>
    </div>
    <div class="order-price-live" role="status" aria-live="polite"><span>선택한 구성 금액</span><strong id="selection-total">가격 확인 중</strong><small id="selection-addon">장르 혼합은 선택 사항이에요.</small></div>
    <p class="small-explain">음악 생성 과정에서 여러 후보가 나오더라도, 구매한 곡 수만큼 최종 완성곡을 선택해 전달해요.</p>
+   <div class="personal-gift-value" aria-label="개인화된 음악 선물의 제작 가치">
+    <strong>기성곡이 아닌, 우리만 아는 장면으로 만든 노래 선물</strong>
+    <p>고객의 실제 추억과 관계를 가사에 담고, 선택한 장르와 시대의 음악 감성을 반영해요. 제작자가 완성곡을 직접 검수하고, 받는 사람은 전용 링크에서 음악과 가사를 함께 감상할 수 있어요.</p>
+   </div>
   </div>
   <div class="inline-choice-section" id="video-inline-options" hidden>
    <section id="video-media-section" class="video-media-section" aria-labelledby="video-media-title">
@@ -168,8 +173,8 @@
     <div><dt>노래 분위기 · 시대</dt><dd id="order-mood-era"></dd></div>
     <div><dt>선택한 상품</dt><dd id="order-product"></dd></div>
     <div><dt>완성곡별 장르</dt><dd id="order-song-genres" class="order-song-genres"></dd></div>
-    <div><dt>가사 구성</dt><dd id="order-verse-selection"></dd></div>
-    <div><dt>마지막 헌정 한마디</dt><dd id="order-dedication"></dd></div>
+    <div><dt>감정 전개 구성</dt><dd id="order-verse-selection"></dd></div>
+    <div><dt>마지막 여운 한마디</dt><dd id="order-dedication"></dd></div>
    </dl>
    <p id="order-style" hidden></p>
    <div class="price-row"><span>결제 예정 금액</span><strong id="order-price">가격 확인 중</strong></div>

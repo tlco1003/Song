@@ -39,19 +39,19 @@
     },
     "thirdVerse": {
       "id": "third_verse",
-      "name": "가사 3절 확장",
+      "name": "감정 절정형 3절 확장",
       "amountKrw": 10000,
       "priceKind": "fixed",
       "chargeUnit": "per_order",
-      "description": "하나의 공통 사연을 1절·2절·3절로 완성. 2곡 상품에도 한 번만 부과."
+      "description": "실제 사연을 1절의 추억, 2절의 감정 축적, 3절의 깨달음과 마지막 후렴의 드라마틱한 절정으로 발전시킴. 장르에 맞게 악기와 보컬의 셈여림을 설계하며 2곡이어도 주문당 1회 부과. 곡 길이·감정 반응 보장 아님."
     },
     "dedicationOutro": {
       "id": "dedication_outro",
-      "name": "마지막 헌정 한마디",
+      "name": "마지막 여운 한마디 엔딩",
       "amountKrw": 5000,
       "priceKind": "fixed",
       "chargeUnit": "per_order",
-      "description": "고객이 직접 쓴 한마디를 마지막 헌정 엔딩 [Outro]에 원문 그대로 반영하는 가사 확장. 2곡에도 주문당 1회 부과."
+      "description": "앞선 감정의 절정과 대비되는 편곡의 여백 속에 고객이 직접 쓴 한마디가 남도록 설계하는 맞춤 [Outro] 엔딩. 원문을 그대로 보존하고 2곡에도 주문당 1회 부과."
     }
   },
   "promotion": {

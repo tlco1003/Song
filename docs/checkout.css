@@ -351,3 +351,9 @@
  .payment-entry .delivery-channel-choice>span{padding:10px 5px;min-height:70px}
  .payment-entry .delivery-channel-choice strong{font-size:11px}
 }
+
+/* Evidence-informed value cues: describe craft and delivery, not guaranteed emotion. */
+.checkout-flow .personal-gift-value{margin:17px 0 20px;padding:18px 19px;border:1px solid #e9d9e2;border-radius:13px;background:#fffafd}
+.checkout-flow .personal-gift-value strong{font-size:14px;color:#63435a;line-height:1.6}
+.checkout-flow .personal-gift-value p{font-size:12px;color:#80707d;line-height:1.85;margin:9px 0 0}
+.checkout-flow .third-verse-toggle small,.checkout-flow .dedication-toggle small{line-height:1.8}

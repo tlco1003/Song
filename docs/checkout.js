@@ -66,8 +66,8 @@ function showPrices(){
  $('selection-total').textContent=totalText();
  const extras=[];
  if(mixFee()===5000)extras.push('장르 믹스 +5,000원');
- if(thirdVerseFee()===10000)extras.push('3절 확장 +10,000원');
- if(dedicationFee()===5000)extras.push('헌정 엔딩 +5,000원');
+ if(thirdVerseFee()===10000)extras.push('감정 절정 3절 확장 +10,000원');
+ if(dedicationFee()===5000)extras.push('여운 엔딩 +5,000원');
  $('selection-addon').textContent=extras.length?extras.join(' · ')+' 포함':'필요할 때만 옵션을 추가할 수 있어요.';
  const discountMessages=[];
  for(const node of document.querySelectorAll('[data-promo-for]')){
@@ -203,9 +203,9 @@ function updateReview(){
  $('order-mood-era').textContent=summaryValue('mood',draft?.mood)+' · '+
   summaryValue('eraPreference',draft?.eraPreference);
  $('order-product').textContent=selectedPrice()?.name||'상품 선택';
- $('order-verse-selection').textContent=$('third-verse').checked?'3절까지 확장 (+10,000원)':'기본 가사 구성';
+ $('order-verse-selection').textContent=$('third-verse').checked?'3절에서 감정이 고조되고 마지막 후렴에 절정 (+10,000원)':'기본 가사 구성';
  $('order-dedication').textContent=$('dedication-outro').checked?
-  '헌정 엔딩 (+5,000원) · '+$('dedication-text').value.trim():'선택 안 함';
+  '여운 엔딩 (+5,000원) · '+$('dedication-text').value.trim():'선택 안 함';
  $('order-style').textContent='';
  try{$('order-song-genres').textContent=genreLabels(genreSelection()).join('\n');}
  catch(e){$('order-song-genres').textContent=e.message;}

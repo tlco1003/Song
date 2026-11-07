@@ -1,0 +1,101 @@
+{
+  "actualKoreanSingingTestPassed": false,
+  "audioCopiedUnchanged": true,
+  "canAcceptPaidJobs": false,
+  "commercialUseAllowed": false,
+  "encryptedFaceRendererCheckpoint": "song-v14-full-face-run-42335262425-a1.svault",
+  "encryptedMotionCheckpoint": "song-v14-base-motion-run-42335262425-a1.svault",
+  "encryptedMotionSha256": "69895b6bb6e56777cc89c686124471d6607a3d1a53b1d26ebff44c5de008e97a",
+  "encryptedRendererSha256": "ecbe6b75c70f38b925b481c056e3fb193db982e07dfd2d132531685ae4a7c97d",
+  "frameLandmarkCoverage": {
+    "train": {
+      "total": 6000,
+      "valid": 6000
+    },
+    "val": {
+      "total": 3000,
+      "valid": 3000
+    }
+  },
+  "fullFacePhotoRealismValidated": false,
+  "fullFaceRendererDiagnosticFlags": [
+    "RENDERED_FACE_WORSE_THAN_STATIC_COPY"
+  ],
+  "fullFaceRendererValidation": {
+    "cheekZygomaticRegionMAE": 0.074659,
+    "epoch": 2,
+    "eyeBrowRegionMAE": 0.0620716,
+    "fullFaceDynamicROI_MAE": 0.074321,
+    "fullFaceOutputAudioSensitivity": 0.016092,
+    "mouthRegionMAE": 0.0856163,
+    "sameAudioBetterThanShiftedGain": 0.0016184,
+    "shiftedWrongVocalDynamicROI_MAE": 0.0759394,
+    "staticReferenceDynamicROI_MAE": 0.0532552,
+    "trainDynamicFaceLoss": 0.0530238
+  },
+  "license": "CC-BY-NC-SA-4.0",
+  "modelBaseMotionValidation": {
+    "actedEmotionClassAccuracy": 0.26419,
+    "actedEmotionFrameCount": 2960,
+    "articulationMAE": 0.1069416,
+    "copyReferenceMAE": 0.0615056,
+    "emotionSurfaceMAE": 0.0776135,
+    "matchedVsShiftedAudioGain": 0.0390428,
+    "mouthMaskedMAE": 0.0782411,
+    "neutralArticulationMAE": 0.1267161,
+    "neutralEmotionSurfaceMAE": 0.0715196,
+    "overallMotionMAE": 0.0939314,
+    "projectedIrisFrameCount": 2960,
+    "projectedIrisMotionMAE": 0.0280449,
+    "reviewedConsonantAccuracy": null,
+    "reviewedConsonantFrameCount": 0,
+    "reviewedVowelAccuracy": null,
+    "reviewedVowelFrameCount": 0,
+    "temporalChangeMAE": 0.0375621,
+    "voiceMotionSensitivity": 0.0489348
+  },
+  "privatePreviewDiscardedAfterAudit": true,
+  "sameActualRecordedVocalAudit": {
+    "audioSamplesCopiedToVideo": 37888,
+    "commercialUseAllowed": false,
+    "losslessMuxedAudioIdenticalToOriginalPrefix": true,
+    "metrics": {
+      "actualAudioROIMAE": 0.0706836,
+      "cheeksMAE": 0.0775513,
+      "copyReferenceImprovement": -0.0201216,
+      "correctMinusWrongAlignmentGain": 0.0012882,
+      "eyesBrowMAE": 0.0522871,
+      "frameCount": 59,
+      "lipMAE": 0.081328,
+      "sameVocalVisualSensitivity": 0.0132358,
+      "shiftedAudioROIMAE": 0.0719718,
+      "staticReferenceROIMAE": 0.050562
+    },
+    "passedCorrectVsTimeShifted": true,
+    "passedVsStaticCopy": false,
+    "photorealisticVideoValidated": false,
+    "recordedAndGeneratedSameTimeSeconds": true,
+    "sourceAudioIdenticalByteForByteInSidecar": true,
+    "sourceDurationSeconds": 4.672,
+    "sourceMediaOrPreviewPublished": false,
+    "sourceVocalSha256": "91067c3c93ab18da6f32f87e3b99c9e1dd99ce5b1725c6bd9b50d057dc09995f",
+    "status": "actual_heldout_same_original_sound_vs_video_audit",
+    "videoComparedFrames": 60
+  },
+  "source": "https://zenodo.org/records/1188976",
+  "study": "song-v14-real-song-full-face-same-vocal-paired-comparison",
+  "trainHoldout": {
+    "holdoutActors": [
+      "03"
+    ],
+    "matchedPairs": 60,
+    "normalRecordings": 60,
+    "strongExpressionRecordings": 60,
+    "trainActors": [
+      "01",
+      "02"
+    ],
+    "trainingClips": 80,
+    "validationClips": 40
+  }
+}

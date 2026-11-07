@@ -32,8 +32,11 @@ jobs:
               path=Path('docs/vision-owner')/name
               assert path.is_file() and path.stat().st_size>100_000,name
               assert b'ftyp' in path.read_bytes()[:64],name
-              for doc in docs:
+              for doc in docs[1:]:
                   assert name in doc.read_text(encoding='utf-8'),(name,doc)
+          # The homepage embeds the visual comparison; the study page has both.
+          assert media[0] in docs[0].read_text(encoding='utf-8')
+          assert 'song-vision-v26-lips.html' in docs[0].read_text(encoding='utf-8')
           source=Path('song_vision/owner_mouth_library_v26.py').read_text(encoding='utf-8')
           assert 'segment_observed_outer_lip' in source
           assert 'phonemeAnnotationPresent' in source

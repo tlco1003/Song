@@ -1,0 +1,70 @@
+name: Publish v17 noncommercial video research previews to WITHU Pages
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/publish-song-v17-lab.yml'
+  workflow_dispatch:
+permissions:
+  actions: read
+  contents: write
+concurrency:
+  group: publish-v17-research-pages
+  cancel-in-progress: false
+jobs:
+  verify_and_publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Download exact completed NONCOMMERCIAL research artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/v17-src" docs/vision-research
+          gh run download 42350262499 --repo tlco1003/Song \
+            --name song-v17-real-singer-comparison-42350262499-a1 \
+            --dir "$RUNNER_TEMP/v17-src"
+          test -s "$RUNNER_TEMP/v17-src/NARA_v17_photo_pixel_memory_RESEARCH_ONLY.mp4"
+          test -s "$RUNNER_TEMP/v17-src/SONG_v17_same_audio_real_singer_comparison.mp4"
+          echo 'b071e1de1d3a135367504346a8beb8039353661c109a820129cad6728f465ee2  '"$RUNNER_TEMP/v17-src/NARA_v17_photo_pixel_memory_RESEARCH_ONLY.mp4" | sha256sum -c
+          echo '41a0e3aebd28a6970e0ebbb160667cb059c926dda819afc8aae714ffc9f64814  '"$RUNNER_TEMP/v17-src/SONG_v17_same_audio_real_singer_comparison.mp4" | sha256sum -c
+          python - "$RUNNER_TEMP/v17-src/v17_result.json" <<'PY'
+          import json,sys
+          data=json.load(open(sys.argv[1],encoding='utf-8'))
+          assert data['canAcceptPaidJobs'] is False
+          assert data['commerciallyValidated'] is False
+          assert data['license']=='CC-BY-NC-SA-4.0'
+          assert data['heldoutFaceMAE']['v17PhotoMemory'] > data['heldoutFaceMAE']['staticReference']
+          assert data['githubSongPreview']['accurateKoreanLipsyncValidated'] is False
+          print('V17_CONSENT_AND_QUALITY_GATES=RESEARCH_ONLY')
+          PY
+          cp "$RUNNER_TEMP/v17-src/NARA_v17_photo_pixel_memory_RESEARCH_ONLY.mp4" docs/vision-research/
+          cp "$RUNNER_TEMP/v17-src/SONG_v17_same_audio_real_singer_comparison.mp4" docs/vision-research/
+          cp "$RUNNER_TEMP/v17-src/SOURCE_AND_LIMITATIONS.txt" docs/vision-research/
+          cp "$RUNNER_TEMP/v17-src/v17_result.json" docs/vision-research/
+          ffprobe -v error -show_entries format=duration \
+            -of default=noprint_wrappers=1:nokey=1 docs/vision-research/NARA_v17_photo_pixel_memory_RESEARCH_ONLY.mp4
+          ffprobe -v error -show_entries format=duration \
+            -of default=noprint_wrappers=1:nokey=1 docs/vision-research/SONG_v17_same_audio_real_singer_comparison.mp4
+          test -s docs/song-vision-lab.html
+          grep -q 'vision-research/NARA_v17_photo_pixel_memory_RESEARCH_ONLY.mp4' docs/index.html
+      - name: Commit verified MP4s into GitHub Pages docs folder
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/vision-research/
+          if git diff --cached --quiet; then
+            echo 'Binary videos already committed; no changes needed'
+            exit 0
+          fi
+          git commit -m 'media(site): publish noncommercial v17 NARA and source-singer research MP4 previews'
+          git push origin HEAD:main
+          echo 'V17_SITE_RESEARCH_VIDEOS_PUBLISHED=YES'

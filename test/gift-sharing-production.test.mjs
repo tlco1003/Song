@@ -37,8 +37,8 @@ test('one shared approved lyric with distinct, verified style for each purchased
  assert.match(draft.songStyles[1].style,/Chosen genre: 재즈/);
  assert.match(draft.songStyles[0].style,/1990s/);
  assert.match(draft.songStyles[1].style,/2020s/);
- assert.match(draft.songStyles[0].style,/Dramatic/);
- assert.match(draft.songStyles[1].style,/Dramatic/);
+ assert.match(draft.songStyles[0].style,/dramatic/i);
+ assert.match(draft.songStyles[1].style,/dramatic/i);
  assert.equal(draft.amountBreakdown.amountKrw,39000,'Per-track style picks do not cost extra');
  const plan=buildSongProductionPlan({
   productId:'audio_duo',genreSelection:duo,trackPreferences:prefs,

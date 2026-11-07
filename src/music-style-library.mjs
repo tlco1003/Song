@@ -104,7 +104,7 @@ export function composeServerMusicStyle({
   opening:'Begin with a dramatic, emotionally engaging, clear Korean vocal opening. Original song only: never copy known melodies, voices or recordings.',
   genre:'Chosen genre: '+genre+'. '+genreText,
   blend:blendGenre?'Blend in '+blendGenre+' while retaining the primary identity: '+blendText:'',
-  era:eraText?'Era-inspired, not song-copied: '+eraText:'',
+  era:eraText?'Era '+era+' (inspired, not copied): '+eraText:'',
   mood:moodText,
   phrasing,arc:emotionalArc,
   preserve:'Preserve the selected genre and customer story over era assumptions.',

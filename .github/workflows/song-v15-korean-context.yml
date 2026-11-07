@@ -1,0 +1,91 @@
+name: SONG v15 self-trained Korean word and sentence semantic context
+on:
+  push:
+    branches:
+      - feature/song-vision-self-hosted-v1
+    paths:
+      - 'song_vision/korean_context_pretrain_v15.py'
+      - 'song_vision/korean_context_vault_v15.py'
+      - 'song_vision/external_context_v15.py'
+      - 'song_vision/test_korean_context_v15.py'
+      - '.github/workflows/song-v15-korean-context.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: song-v15-Korean-sentence-meaning-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  korean_semantic_sentence_research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      OMP_NUM_THREADS: '2'
+      MKL_NUM_THREADS: '2'
+      ARCHIVE: ${{ github.workspace }}/v15-word-sentence-meaning-encrypted
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install CPU-only PyTorch and cryptography for local NLP training
+        shell: bash
+        run: |
+          python -m pip install -q torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -q numpy cryptography
+      - name: Verify context gradients, genuine-polarity label route and word checkpoint preservation
+        run: |
+          python -m unittest song_vision.test_korean_context_v15 -v
+      - name: Learn on actual Korean emotion-word norms and independent sentence review labels
+        run: |
+          python -m song_vision.external_context_v15 \
+            --research-only-acknowledgement \
+            --owner-public-key song_vision/research_vault_public.pem \
+            --archive-dir "$ARCHIVE" \
+            --word-epochs 8 \
+            --context-epochs 3
+      - name: Keep both research models encrypted as 90-day backup
+        uses: actions/upload-artifact@v4
+        with:
+          name: song-v15-Korean-context-learning-encrypted-${{ github.run_id }}-a${{ github.run_attempt }}
+          path: ${{ env.ARCHIVE }}/*
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+      - name: Retain only ciphertext on owner historical research vault branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin refs/heads/research/song-vision-vault:refs/remotes/origin/research/song-vision-vault
+          git worktree add --detach "$RUNNER_TEMP/song-v15-context-vault" refs/remotes/origin/research/song-vision-vault
+          cd "$RUNNER_TEMP/song-v15-context-vault"
+          mkdir -p encrypted/korean-word-and-sentence-context-v15
+          cp "$ARCHIVE"/*.svault encrypted/korean-word-and-sentence-context-v15/
+          cp "$ARCHIVE"/*.manifest.json encrypted/korean-word-and-sentence-context-v15/
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add encrypted/korean-word-and-sentence-context-v15/
+          if git diff --cached --quiet; then
+            echo 'No new independent encrypted NLP model to preserve'
+            exit 1
+          fi
+          git commit -m "research-vault: preserve Korean word and reviewed sentence semantics $GITHUB_RUN_ID a$GITHUB_RUN_ATTEMPT"
+          for attempt in 1 2 3; do
+            if git push origin HEAD:refs/heads/research/song-vision-vault; then
+              exit 0
+            fi
+            sleep $((4 * attempt))
+            git fetch origin research/song-vision-vault
+            git rebase FETCH_HEAD
+          done
+          echo 'Owner's encrypted semantic model archival failed'
+          exit 1
+      - name: Model is NOT a singer's actual emotion or word-to-face mapping
+        run: |
+          echo 'Korean real review sentiment is POSITIVE/NEGATIVE only.'
+          echo 'Korean word norms describe average word valence/arousal.'
+          echo 'No real sung lyric/performer face emotional annotation trained here.'
+          echo 'Licensed data restrictions apply; paid SONG jobs remain closed.'

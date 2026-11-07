@@ -7,8 +7,8 @@
 <title>WITHU · 나의 노래함</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="song.css?v=20261106-my-music-03">
-<script src="cover-store.js" defer></script><script src="song.js?v=20261106-shareable-04" defer></script>
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="song.css?v=20261107-social-gift-01">
+<script src="cover-store.js" defer></script><script src="song.js?v=20261107-social-gift-01" defer></script>
 </head>
 <body class="song-detail-body my-music-body" data-withu-view="customer">
 <header class="site-header"><div class="frame header-inner">
@@ -29,7 +29,7 @@
       <h1 id="detail-title">노래를 불러오는 중</h1><p id="detail-genre" class="detail-genre">장르 정보 확인 중</p></div>
     <div class="detail-actions">
       <button id="cover-edit-button" type="button" class="detail-outline">✎ 커버 바꾸기</button>
-      <button id="share-button" type="button" class="detail-outline">공유</button>
+      <button id="share-button" type="button" class="detail-outline">무료 공유하기</button>
     </div>
   </div>
 
@@ -70,15 +70,41 @@
   <section id="commercial-upgrade-panel" class="commercial-upgrade-panel" aria-labelledby="commercial-title" hidden>
     <span class="small-caps">KEEP YOUR MUSIC</span>
     <h2 id="commercial-title">음원을 더 자유롭게 활용하고 싶다면</h2>
-    <p>기본 주문은 전용 링크에서 반복 감상할 수 있어요. 별도 이용권을 구매하면 권리 확인을 마친 완성곡의 상업적 이용 허락과 원본 음원 파일을 제공해요.</p>
+    <p>기본 주문은 링크로 누구에게나 무료 공유하고 반복 감상할 수 있어요. 별도 10,000원 이용권을 결제하면 권리 확인을 마친 완성곡의 원본 파일을 받을 수 있고, 유효한 주문 권한이 있는 동안 횟수 제한 없이 다시 다운로드할 수 있어요.</p>
     <div class="commercial-upgrade-price"><span>상업적 이용 허락 + 원본 음원</span><strong>추가 ₩10,000</strong></div>
     <button type="button" id="commercial-upgrade-buy" class="detail-main-button" disabled>상업적 이용 옵션 준비 중</button>
-    <a id="download-track" class="detail-main-button" download hidden>구매한 음원 파일 받기</a>
+    <a id="download-track" class="detail-main-button" download hidden>원본 음원 다운로드 · 다시 받기 가능</a>
     <p id="commercial-upgrade-status" role="status">실제 상업적 이용권 판매는 권리 확인 및 결제 연동 후 제공됩니다.</p>
   </section>
   <section class="detail-lyrics" aria-labelledby="detail-lyrics-title"><h2 id="detail-lyrics-title">노래에 담긴 이야기</h2>
     <div id="detail-lyrics-text" class="detail-lyrics-text">가사를 불러오는 중이에요.</div>
   </section>
+  <section class="gift-sharing-section" aria-labelledby="gift-sharing-title">
+    <span class="small-caps">SHARE THE MOMENT</span>
+    <h2 id="gift-sharing-title">이 노래를 소중한 사람과 함께 들어요.</h2>
+    <p>선물 링크 공유는 무료예요. 받은 사람도 같은 노래와 가사를 감상할 수 있어요. 공유는 원본 다운로드·상업적 이용 허락과 별개입니다.</p>
+    <div class="gift-sharing-actions">
+     <button id="gift-share-native" type="button" class="detail-outline">휴대폰 앱으로 공유</button>
+     <button id="gift-share-copy" type="button" class="detail-outline">선물 링크 복사</button>
+     <button id="gift-share-instagram" type="button" class="detail-outline">인스타그램에 공유 준비</button>
+     <button id="gift-share-tiktok" type="button" class="detail-outline">틱톡에 공유 준비</button>
+    </div>
+    <p class="sharing-caveat">인스타그램·틱톡은 기기 공유 메뉴에서 지원되는 경우 선택하거나 복사한 링크를 직접 붙여넣을 수 있어요. 게시물·릴스·틱톡 영상으로 음원 자체를 자동 업로드하는 기능은 해당 플랫폼의 승인·권리 확인 후 지원돼요.</p>
+   </section>
+   <section class="gift-comments-section" id="gift-comments-section" aria-labelledby="gift-comments-title">
+    <span class="small-caps">WORDS THAT STAY</span>
+    <h2 id="gift-comments-title">이 노래에 남기는 마음</h2>
+    <p>축하·감사·응원의 한마디를 남겨 주세요. 개인정보와 광고를 보호하기 위해 운영자 확인 후 댓글이 공개돼요.</p>
+    <div id="gift-comments-list" class="gift-comments-list" aria-live="polite"><p>댓글을 불러오는 중이에요.</p></div>
+    <form id="gift-comment-form" class="gift-comment-form" autocomplete="off">
+     <label for="gift-comment-nickname">작성자 이름 또는 별명</label>
+     <input id="gift-comment-nickname" type="text" maxlength="24" required placeholder="예: 사랑하는 친구">
+     <label for="gift-comment-text">전하고 싶은 말</label>
+     <textarea id="gift-comment-text" maxlength="300" minlength="2" required rows="3" placeholder="이 노래를 들으며 떠오른 마음을 남겨 주세요."></textarea>
+     <button id="gift-comment-submit" type="submit" class="detail-main-button">마음 남기기</button>
+    </form>
+    <p id="gift-comment-status" role="status" aria-live="polite">이 노래를 감상한 사람이라면 댓글을 남길 수 있어요.</p>
+   </section>
   <div class="detail-backlink"><a href="./">← WITHU 홈으로 돌아가기</a></div>
   </div>
 </main>

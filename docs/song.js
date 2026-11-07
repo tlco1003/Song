@@ -11,6 +11,7 @@ const stage=$('player-stage'),cover=$('detail-cover'),coverFallback=$('detail-co
 let track=null,player=audio,coverURL=null,candidateURL=null,candidateBlob=null,hideTimer=null,playing=false,mediaReady=false;
 let isPrivate=false,repeatOne=false;
 let privateDeliveryToken=null,privateTrackChoices=[],privateLicense=null;
+let privateShareUrl=null;
 const isCustomerLibrary=document.body?.dataset.withuView==='customer';
 function syncVideo(){
  if(player===video||video.hidden||!video.getAttribute('src'))return;
@@ -172,7 +173,7 @@ function configurePrivateLicense(response,item){
  buy.disabled=!eligible;
  buy.textContent=eligible?'상업적 이용 + 음원 파일 · 10,000원 결제':'상업적 이용 옵션 준비 중';
  $('commercial-upgrade-status').textContent=entitled?
-  '상업적 이용 옵션의 결제가 확인됐어요. 구매한 곡의 파일을 받을 수 있습니다.':
+  '원본 음원 이용권 결제가 확인됐어요. 감상 링크가 유효한 동안 여러 번 다운로드할 수 있어요.':
   eligible?'선택한 곡의 권리를 확인했어요. 결제 후 이용권과 원본 음원을 제공합니다.':
   '이 음원은 상업적 이용 권리와 결제 준비가 확인되면 옵션을 구매할 수 있어요.';
  const download=$('download-track');
@@ -184,7 +185,7 @@ function configurePrivateLicense(response,item){
   if(url.origin!==location.origin||!/^\/api\/delivery-downloads\/[A-Za-z0-9_-]{16,180}$/.test(url.pathname))
    return;
   download.href=url.href;
-  download.download='withu-commercial-'+String(item.index||1)+'.mp3';
+  download.download='withu-commercial-'+String(item.index||1)+'.'+(String(item.file||'').split('.').at(-1)||'mp3');
   download.hidden=false;
  }catch(_){}
 }
@@ -208,6 +209,8 @@ async function loadPrivate(token=null){
  // verified on this device can revisit /my-music.html with the HttpOnly session.
  // A link, query string or browser-side state is NEVER proof of payment.
  privateDeliveryToken=token;
+ privateShareUrl=/^[A-Za-z0-9_-]{43}$/.test(token||'')?
+  location.origin+'/gift.html#delivery='+token:null;
  $('commercial-upgrade-panel').hidden=true;
  $('private-track-list').hidden=true;
  const guest=$('my-music-guest'),customer=$('my-music-customer');
@@ -245,6 +248,21 @@ async function loadPrivate(token=null){
   loadTrack(t,false);
   if(!mediaReady)throw Error('not_ready');
   configurePrivateLicense(j,t);
+  if(!privateShareUrl){
+   try{
+    const shared=await fetch('/api/delivery/share-link',{
+     credentials:'same-origin',cache:'no-store'
+    });
+    if(shared.ok){
+     const result=await shared.json();
+     const link=new URL(result.shareUrl,location.href);
+     if(link.origin===location.origin&&link.pathname.endsWith('/gift.html')
+       &&/^[A-Za-z0-9_-]{43}$/.test(new URLSearchParams(link.hash.slice(1)).get('delivery')||''))
+      privateShareUrl=link.href;
+    }
+   }catch(_){/* Not critical to playback. */}
+  }
+  void loadGiftComments();
   if(j.testOnly===true){
    $('detail-private-note').textContent='[로컬 시연] 이 노래는 실제 결제 상품이 아닌 시험 주문의 음원입니다.';
    if(j.commercialUpgrade?.status==='active')
@@ -268,7 +286,7 @@ async function loadPrivate(token=null){
   audio.pause();video.pause();
   audio.removeAttribute('src');video.removeAttribute('src');
   track=null;mediaReady=false;isPrivate=false;
-  privateLicense=null;privateTrackChoices=[];
+  privateLicense=null;privateTrackChoices=[];privateShareUrl=null;
   $('download-track').hidden=true;
   $('download-track').removeAttribute('href');
   $('commercial-upgrade-panel').hidden=true;
@@ -379,18 +397,96 @@ $('detail-fullscreen').addEventListener('click',async()=>{
  }catch(_){notice('전체화면 전환이 제한됐어요.')}
  showControls();
 });
-$('share-button').addEventListener('click',async()=>{
- let link;
- if(isPrivate){
-  if(!privateDeliveryToken){notice('새 공유 링크는 메일에 담긴 개인 감상 링크를 복사해 공유해 주세요.');return;}
-  link=location.origin+location.pathname+'#delivery='+privateDeliveryToken;
- }else{
-  link=location.origin+location.pathname+'?demo='+encodeURIComponent(track?.id||'song-mother');
+function sharingLink(){
+ if(isPrivate)return privateShareUrl;
+ return location.origin+location.pathname+'?demo='+encodeURIComponent(track?.id||'song-mother');
+}
+async function shareSong({preferCopy=false,platform=''}={}){
+ const link=sharingLink();
+ if(!link){notice('공유 링크를 확인하는 중이에요. 다시 열어 주세요.');return;}
+ try{
+  if(preferCopy){
+   if(!navigator.clipboard?.writeText)throw Error('Clipboard unavailable');
+   await navigator.clipboard.writeText(link);
+  }else if(navigator.share){
+   await navigator.share({
+    title:(track?.title||'WITHU')+' · 음악 선물',
+    text:'소중한 이야기가 담긴 노래를 함께 들어주세요.',
+    url:link
+   });
+  }else if(navigator.clipboard?.writeText){
+   await navigator.clipboard.writeText(link);
+  }else throw Error('Share unavailable');
+  notice(platform?
+   platform+'에 게시물을 자동 올린 것은 아니에요. 앱에서 공유 대상을 선택하거나 복사한 링크를 붙여넣어 주세요.':
+   '이 노래의 무료 공유 링크를 준비했어요.');
+ }catch(error){
+  if(error?.name!=='AbortError')
+   notice('공유를 열 수 없어요. 브라우저의 주소 복사를 이용해 주세요.');
  }
- try{if(navigator.share)await navigator.share({title:track?.title||'WITHU',url:link});
- else await navigator.clipboard.writeText(link)}
- catch(_){notice('공유가 취소되었거나 사용할 수 없습니다.');return}
- notice(isPrivate?'고객 주문의 공유 감상 링크를 복사했어요.':'공개 감상 링크를 공유했어요.');
+}
+$('share-button').addEventListener('click',()=>{void shareSong()});
+for(const [id,action] of [
+ ['gift-share-native',{}],
+ ['gift-share-copy',{preferCopy:true}],
+ ['gift-share-instagram',{platform:'인스타그램'}],
+ ['gift-share-tiktok',{platform:'틱톡'}]
+]){
+ const button=$(id);
+ if(button)button.addEventListener('click',()=>{void shareSong(action)});
+}
+async function loadGiftComments(){
+ const pane=$('gift-comments-list');
+ if(!pane)return;
+ pane.replaceChildren();
+ try{
+  const response=await fetch('/api/gift/comments',{
+   credentials:'same-origin',cache:'no-store'
+  });
+  if(!response.ok)throw Error('not_live');
+  const result=await response.json();
+  const comments=Array.isArray(result.comments)?result.comments:[];
+  if(!comments.length){
+   const message=document.createElement('p');
+   message.textContent='아직 등록된 댓글이 없어요. 첫 마음을 남겨 보세요.';
+   pane.appendChild(message);return;
+  }
+  for(const item of comments){
+   const row=document.createElement('article');row.className='gift-comment';
+   const name=document.createElement('strong');
+   name.textContent=String(item.nickname||'익명').slice(0,24);
+   const content=document.createElement('p');
+   content.textContent=String(item.text||'').slice(0,300);
+   row.append(name,content);pane.appendChild(row);
+  }
+ }catch(_){
+  const fallback=document.createElement('p');
+  fallback.textContent='댓글을 불러올 수 없어요. 운영 서버 연결을 확인해 주세요.';
+  pane.appendChild(fallback);
+ }
+}
+const guestCommentForm=$('gift-comment-form');
+if(guestCommentForm)guestCommentForm.addEventListener('submit',async event=>{
+ event.preventDefault();
+ const button=$('gift-comment-submit');
+ const message=$('gift-comment-status');
+ if(button.disabled)return;
+ button.disabled=true;
+ try{
+  const nickname=$('gift-comment-nickname').value.trim();
+  const text=$('gift-comment-text').value.trim();
+  const response=await fetch('/api/gift/comments',{
+   method:'POST',credentials:'same-origin',cache:'no-store',
+   headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({nickname,text})
+  });
+  const result=await response.json().catch(()=>({}));
+  if(!response.ok)throw Error(result.error||'댓글을 등록하지 못했어요.');
+  message.textContent='댓글이 접수됐어요. 관리자 확인 후 이 노래에 표시됩니다.';
+  $('gift-comment-text').value='';
+  void loadGiftComments();
+ }catch(error){message.textContent=error.message;}
+ finally{button.disabled=false;}
 });
 function showDialog(){if(!track){notice('노래를 먼저 선택해 주세요.');return}
  $('cover-message').textContent='이미지를 선택하면 바로 미리 볼 수 있어요. 변경한 커버는 이 기기에만 저장됩니다.';

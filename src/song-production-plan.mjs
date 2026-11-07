@@ -65,7 +65,8 @@ export function buildSongProductionPlan(order){
   songs:Object.freeze(genres.map((genre,index)=>{
    const base=composeServerMusicStyle({
     genre,mood:order.mood||'따뜻한',eraPreference,recipientAgeGroup,
-    speechStyle,songIndex:index+1,mode:selected.mode,blendGenre
+    speechStyle,songIndex:index+1,mode:selected.mode,blendGenre,
+    thirdVerse:order.thirdVerse===true,dedicationOutro:order.dedicationOutro===true
    });
    // Customer notes are quoted DATA; they may refine approved choices but
    // may never replace internal instructions or read server secrets.

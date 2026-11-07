@@ -14,6 +14,8 @@ function musicPlan(order,lyrics){
   productId:order.productId,genreSelection:order.genreSelection,
   confirmedLyrics:lyrics,songTitle:draft.title,mood:draft.mood,
   eraPreference:draft.eraPreference,
+  thirdVerse:draft.thirdVerse===true,
+  dedicationOutro:draft.dedicationOutro===true,
   story:{...draft.story,
    recipientAgeGroup:draft.delivery?.recipientAgeGroup||'unknown',
    speechStyle:draft.delivery?.speechStyle||'auto',

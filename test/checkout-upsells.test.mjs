@@ -129,3 +129,37 @@ test('postpayment lyric worker rejects wrong phrase and requires the paid Outro'
   order,privateDraft,lyricProvider:async()=>lyrics.replace(phrase,'다른 말'),orders
  }),/verified ending/);
 });
+
+test('paid emotional-arc upgrades reach private lyric and genre-style plans without leaking prompts',()=>{
+ const base=prepareServerOrderDraft({
+  selectedProduct:'audio',genreSelection:single,story
+ });
+ const climactic=prepareServerOrderDraft({
+  selectedProduct:'audio',genreSelection:single,story,thirdVerse:true
+ });
+ const lingering=prepareServerOrderDraft({
+  selectedProduct:'audio',genreSelection:single,story,
+  dedicationOutro:true,dedicationText:phrase
+ });
+ const combined=prepareServerOrderDraft({
+  selectedProduct:'audio',genreSelection:single,story,
+  thirdVerse:true,dedicationOutro:true,dedicationText:phrase
+ });
+ assert.equal(base.amountBreakdown.amountKrw,29000);
+ assert.equal(climactic.amountBreakdown.amountKrw,39000);
+ assert.equal(lingering.amountBreakdown.amountKrw,34000);
+ assert.equal(combined.amountBreakdown.amountKrw,44000);
+ assert.match(climactic.lyricPrompt,/\[Verse 3\]/);
+ assert.match(climactic.lyricPrompt,/\[Final Chorus\]/);
+ assert.match(climactic.songStyles[0].style,/expressive Final Chorus peak/);
+ assert.match(lingering.lyricPrompt,/마지막 여운 엔딩/);
+ assert.match(lingering.songStyles[0].style,/quiet, spacious Outro/);
+ assert.match(combined.songStyles[0].style,/spacious Outro/);
+ assert.ok(combined.songStyles[0].style.length<=1000);
+ const html=read('docs/checkout.html');
+ assert.match(html,/드라마틱한 3절 확장/);
+ assert.match(html,/한마디 · 여운 엔딩/);
+ assert.match(html,/우리만 아는 장면/);
+ assert.doesNotMatch(html,/음악이 무조건 감동적|100% 감동/);
+ assert.ok(!html.includes('expressive Final Chorus peak'));
+});

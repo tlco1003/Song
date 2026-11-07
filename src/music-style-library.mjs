@@ -70,7 +70,8 @@ export function resolveEraChoice({eraPreference='auto',recipientAgeGroup='unknow
 }
 export function composeServerMusicStyle({
  genre,mood='따뜻한',eraPreference='auto',recipientAgeGroup='unknown',
- speechStyle='auto',songIndex=1,mode='single',blendGenre=null
+ speechStyle='auto',songIndex=1,mode='single',blendGenre=null,
+ thirdVerse=false,dedicationOutro=false
 }={}, {privateDirectory=process.env.WITHU_PRIVATE_STYLE_DIR||null}={}){
  if(!GENRE_KEYS.includes(genre)||!Object.hasOwn(MOODS,mood)
   ||(blendGenre!==null&&(!GENRE_KEYS.includes(blendGenre)||blendGenre===genre)))
@@ -88,6 +89,15 @@ export function composeServerMusicStyle({
   polite:'Respect polite Korean sentence endings.',
   mixed:'Respect the mixed speech style in the approved lyric.'
  })[speechStyle]||'Natural Korean syllable stress and spoken rhythm.';
+ if(typeof thirdVerse!=='boolean'||typeof dedicationOutro!=='boolean')
+  throw new AppError(400,'Invalid customer-selected emotional arc');
+ const emotionalArc=thirdVerse&&dedicationOutro?
+  'Arc: intimate Verse 1, rising Verse 2, pivotal Verse 3, expressive Final Chorus peak. Reduce the arrangement afterwards; leave a spacious Outro for the exact final phrase. Keep dynamics genre-true.':
+  thirdVerse?
+  'Arc: intimate Verse 1, rising Verse 2, pivotal Verse 3, emotional Final Chorus peak. Vary vocal intensity, instrument density and rests to suit the chosen genre, not loudness alone.':
+  dedicationOutro?
+  'After the main emotional peak, thin the instrumentation and leave a quiet, spacious Outro for the exact customer-supplied final phrase; allow the ending to breathe.':
+  'Use original, lyrics-led melodic contour, intentional pauses, and a coherent opening/build/climax/resolution.';
  const second=['same','blend'].includes(mode)&&songIndex===2?
   'Create an independently composed melody and arrangement for track two, never a duplicate of track one.':'';
  const stylePreset=[
@@ -96,7 +106,7 @@ export function composeServerMusicStyle({
   blendGenre?'Blend in '+blendGenre+' while retaining the primary identity: '+blendText:'',
   eraText?'Era-inspired, not song-copied: '+eraText:'',
   moodText,phrasing,
-  'Use original, lyrics-led melodic contour, intentional pauses, and a coherent opening/build/climax/resolution.',
+  emotionalArc,
   'Preserve the selected genre and customer story over era assumptions.',
   second
  ].filter(Boolean).join('\n');

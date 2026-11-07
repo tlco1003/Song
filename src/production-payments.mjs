@@ -137,7 +137,10 @@ export async function handleProductionPayments(req,res,{db,env,fetcher}){
   await db.collection('withuOrders').doc(id).create({
    id,createdAt:now(),productId:draft.productId,
    genreSelection:draft.genreSelection,
-   draft,contact,amountKrw:quote.amountKrw,currency:'KRW',
+   draft,contact,thirdVerse:draft.thirdVerse===true,
+   dedicationOutro:draft.dedicationOutro===true,
+   dedicationText:draft.dedicationText||'',
+   amountKrw:quote.amountKrw,currency:'KRW',
    state:'payment_pending',paymentStatus:'pending',
    confirmationKey:randomUUID(),
    paymentVerifiedAt:null,confirmLockUntil:0,

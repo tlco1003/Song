@@ -103,3 +103,12 @@ test('era choice reaches private lyric prompt validation, not public style strin
  assert.match(privatePrompt,/시대 선택: 1980s/);
  assert.throws(()=>validateLyricInput({...input,eraPreference:'wrong'}),/시대 선택/);
 });
+
+test('the server only varies musical arrangement for bought emotional-arc options',()=>{
+ const one=composeServerMusicStyle({genre:'발라드',mood:'감동적인',eraPreference:'1980s',thirdVerse:true});
+ const two=composeServerMusicStyle({genre:'재즈',mood:'따뜻한',eraPreference:'none',dedicationOutro:true});
+ assert.match(one,/pivotal Verse 3/);
+ assert.match(two,/quiet, spacious Outro/);
+ assert.ok(one.length<=1000&&two.length<=1000);
+ assert.throws(()=>composeServerMusicStyle({genre:'재즈',thirdVerse:'yes'}),/emotional arc/);
+});

@@ -8,7 +8,8 @@ import {LINK_TTL,SESSION_TTL,UPGRADE_PRICE,now,json,checkOrigin,
  stop,respond,paid,approvedTracks,currentSession,customerOrder,
  customerResponse,encodeSecret,decodeSecret,linkUrl}
  from './production-runtime.mjs';
-function library(o){return customerResponse(o);}
+import {hasDownloadGrant,redeemDownloadRecovery} from './production-download-grants.mjs';
+function library(o,downloadGranted=false){return customerResponse(o,{downloadGranted});}
 async function verifiedGiftToken(db,token){
  const hash=tokenHash(token);
  const link=await db.collection('withuLinks').doc(hash).get();
@@ -97,6 +98,12 @@ export async function handleProductionDelivery(req,res,{db,bucket,env,fetcher}){
    message:'이 주문의 노래를 무료로 공유할 수 있어요.'});
   return true;
  }
+ if(req.method==='POST'&&path==='/api/delivery/download-auth'){
+  checkOrigin(req,env);
+  const input=json(req,1024);
+  const order=await redeemDownloadRecovery({db,req,res,token:input.token});
+  respond(res,200,library(order,true));return true;
+ }
  if(req.method==='POST'&&path==='/api/delivery/resolve'){
   checkOrigin(req,env);
   const input=json(req,1024);
@@ -107,11 +114,11 @@ export async function handleProductionDelivery(req,res,{db,bucket,env,fetcher}){
   });
   res.setHeader('Set-Cookie','withu_session='+session+
    '; HttpOnly; Secure; SameSite=Lax; Path=/api; Max-Age='+Math.floor(SESSION_TTL/1000));
-  respond(res,200,library(order));return true;
+  respond(res,200,library(order,await hasDownloadGrant(req,db,order.id)));return true;
  }
  if(req.method==='GET'&&path==='/api/delivery/library'){
   const order=await customerOrder(req,db);
-  respond(res,200,library(order));return true;
+  respond(res,200,library(order,await hasDownloadGrant(req,db,order.id)));return true;
  }
  const media=/^\/api\/delivery-(assets|downloads)\/(withu_[a-f0-9]{32})_([12])$/.exec(path);
  if(media&&['GET','HEAD'].includes(req.method)){
@@ -120,8 +127,10 @@ export async function handleProductionDelivery(req,res,{db,bucket,env,fetcher}){
   const snap=await db.collection('withuOrders').doc(session.orderId).get();
   if(!snap.exists)stop(404,'음원 파일이 없습니다.');
   const order=snap.data();
+  const downloadGranted=type==='download'?
+   await hasDownloadGrant(req,db,order.id):false;
   try{authorizeOrderMedia({
-   sessionOrderId:session.orderId,assetOrderId:media[2],kind:type,order
+   sessionOrderId:session.orderId,assetOrderId:media[2],kind:type,order,downloadGranted
   });}catch(_){stop(403,'이 고객에게 허가되지 않은 음원입니다.');}
   const track=approvedTracks(order)[Number(media[3])-1];
   if(!track)stop(404,'음원 파일을 찾을 수 없습니다.');

@@ -33,6 +33,27 @@
 <nav aria-label="메뉴"><a href="index.html">홈</a><a href="index.html#vision-lab-preview">학습 결과</a></nav>
 </div></header>
 <main class="vision-lab"><div class="frame">
+<span class="vision-badge">LATEST · SONG-VISION v30 · VISIBLE LIP THICKNESS</span>
+<h1>윗입술과 아랫입술의 세로 높이까지<br>따로 비교해 볼 수 있어.</h1>
+<p class="vision-intro">네 스피킹 영상에서 실제 입술의 바깥·안쪽 경계 후보를 계산하고, 턱·볼·광대 피부 움직임과 별개로 윗입술·아랫입술 두께 조절을 추가했어. 원본 측면 회전 구간과 AM 6:30 원곡 시험 영상도 함께 확인할 수 있어. 모음별 정답 라벨은 아직 검증 전이야.</p>
+<div class="vision-grid">
+<section class="vision-card">
+<h2>NEW · v30 상하 입술 두께·윤곽 비교</h2>
+<video id="v30-lip-thickness" controls playsinline preload="metadata" aria-label="내 실제 입술을 이용한 윗입술과 아랫입술 겉보기 두께 비교 연구 영상"><source src="vision-owner/SONG_V30_VISIBLE_UPPER_LOWER_LIP_THICKNESS.mp4" type="video/mp4">MP4 미지원</video>
+<p>5.7초, 20fps. 2D 겉보기 입술 높이 조절값은 실험값이며 실제 의학적 조직두께 mm가 아니야.</p>
+<p><a href="song-vision-v30-lips.html">v30 모음별로 비교하기</a></p>
+<p id="v30-lip-thickness-status" class="vision-status" role="status"></p>
+</section>
+<section class="vision-card">
+<h2>NEW · AM 6:30 v30 원곡 적용</h2>
+<video id="v30-am630" controls playsinline preload="metadata" aria-label="AM 6:30 원곡으로 실제 입술 두께와 턱 볼 연동 연구 영상"><source src="vision-owner/AM630_V30_VISIBLE_LIP_THICKNESS_UNALIGNED.mp4" type="video/mp4">MP4 미지원</video>
+<p>6초, 실제 원곡 음성 포함. 한국어 음절 타이밍은 미검증 초안이야.</p>
+<p><a href="song-vision-v30-lips.html">얼굴 회전 원본과 입술 두께 함께 보기</a></p>
+<p id="v30-am630-status" class="vision-status" role="status"></p>
+</section>
+</div>
+<h2 style="font-size:22px;font-weight:400;margin:26px 0">이전 v27·v26·v23 연구 기록</h2>
+
 <span class="vision-badge">SONG-VISION v27 · OWNER REAL LIP/JAW MOTION</span>
 <h1>입술과 턱이 함께 움직이는지<br>v26과 v27을 비교해 확인해 줘.</h1>
 <p class="vision-intro">사용자 제공 스피킹 원본의 입 모양 픽셀과 아래턱 피부 이미지 움직임을 연결한 새 학습. 실제 뼈 각도·의료 구강 분할 및 한국어 모음별 발음 시간정답은 아직 미검증입니다.</p>
@@ -157,6 +178,8 @@
 <footer class="site-footer"><div class="frame footer-inner"><span class="footer-brand">WITHU</span><p>직접 제공한 자료로 학습한 SONG-Vision 연구 영상</p></div></footer>
 <script>
 for(const [vid,status] of [
+ ['v30-lip-thickness','v30-lip-thickness-status'],
+ ['v30-am630','v30-am630-status'],
  ['v27-real-jaw','v27-real-jaw-status'],
  ['v27-am630-jaw','v27-am630-jaw-status'],
  ['v26-real-mouth','v26-real-mouth-status'],

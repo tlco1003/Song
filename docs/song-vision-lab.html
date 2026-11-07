@@ -33,9 +33,29 @@
 <nav aria-label="메뉴"><a href="index.html">홈</a><a href="index.html#vision-lab-preview">학습 결과</a></nav>
 </div></header>
 <main class="vision-lab"><div class="frame">
-<span class="vision-badge">SONG-VISION V19 · OWNER SPEECH LEARNING</span>
-<h1>실제 네 스피킹 영상에서 학습한<br>입모양을 계속 비교할 수 있어요.</h1>
+<span class="vision-badge">SONG-VISION V20 · FULL-FACE SKIN MOTION · OWNER-ONLY</span>
+<h1>실제 얼굴 전체 움직임을<br>확대해서 비교할 수 있어요.</h1>
 <p class="vision-intro">여기에 표시된 세 영상은 모두 사용자가 제공한 실제 스피킹 자료나 사용자가 만든 AI 가수 이미지를 기준으로 생성했습니다. <strong>다른 사람의 RAVDESS 영상은 게시하지 않습니다.</strong> ▶를 누르면 원곡 음성과 영상이 함께 재생됩니다.</p>
+<div class="vision-grid">
+<section class="vision-card">
+<h2>최신 01 · v20 내 실제 스피킹에서 추출한 얼굴 전체 움직임</h2>
+<p>실제 스피킹 영상의 피부 픽셀 이동: 눈·눈썹·광대·양쪽 볼·코와 입 사이·입술·턱선·턱 끝 동시 비교 · 7.375초 · 24fps</p>
+<video id="v20-owner-speech" controls playsinline preload="metadata" aria-label="네 실제 스피킹 영상과 같은 얼굴의 눈가 볼 광대 턱 이동을 적용한 결과"><source src="vision-owner/OWNER_v20_REAL_SPEAKING_FULL_FACE_FLOW_COMPARISON.mp4" type="video/mp4">MP4 재생 미지원</video>
+<p class="meta">실제 네 영상의 연속 프레임에서 추출한 얼굴 전체 이동장을 다른 프레임에 옮긴 결과입니다. 화살표는 방향을 보기 쉽게 5배 표시했습니다. 원본 음향만으로 움직임을 예측한 것은 아닙니다.</p>
+<p><a href="vision-owner/OWNER_v20_REAL_SPEAKING_FULL_FACE_FLOW_COMPARISON.mp4" target="_blank" rel="noopener">v20 스피킹·얼굴 전체 움직임 크게 보기</a></p>
+<p id="v20-owner-speech-status" class="vision-status" role="status"></p>
+</section>
+<section class="vision-card">
+<h2>최신 02 · v20 AM 6:30 원곡으로 얼굴 전체 움직임 예측</h2>
+<p>사용자가 직접 제작한 여성 가수 사진 + AM 6:30 원곡 · 눈가·볼·광대·턱·입술 이동장 추론 · 8초 · 25fps</p>
+<video id="v20-am630-fullface" controls playsinline preload="metadata" aria-label="AM 6:30 음향에 의해 눈가 양쪽 볼 광대 입술 턱이 변형되는 v20 실험 영상"><source src="vision-owner/AM630_v20_FULL_FACE_EYES_CHEEKS_JAW_VISIBLE.mp4" type="video/mp4">MP4 재생 미지원</video>
+<p class="meta">음향→얼굴 이동장은 정적 기준보다 정확하지 않았습니다 (MAE 0.3655 vs 0.3583). 얼굴 위치와 변형은 움직이지만 한국어 발음 정확도를 입증하지 못합니다. 이동 방향 화살표만 5배 확대했습니다.</p>
+<p><a href="vision-owner/AM630_v20_FULL_FACE_EYES_CHEEKS_JAW_VISIBLE.mp4" target="_blank" rel="noopener">v20 AM 6:30 얼굴 전체 비교 크게 보기</a></p>
+<p id="v20-am630-status" class="vision-status" role="status"></p>
+</section>
+</div>
+<p class="vision-intro"><strong>검증 판정:</strong> 사용자 얼굴의 2D 피부 이동장은 측정·재생되지만, 뼈와 근육을 직접 측정한 모델은 아닙니다. 음원 예측 오차는 정적 기준보다 커서 실패입니다. 정확한 한국어 음소별 입모양과 감정에 따른 눈가 움직임은 별도 감독 학습이 필요합니다.</p>
+<h2 style="font-size:22px;font-weight:400;margin-top:30px">이전 버전의 입 주변 영상 및 실패 기록</h2>
 <div class="vision-grid">
 <section class="vision-card">
 <h2>01 · v19 실제 말하기 영상 vs 학습 AI (입술 확대)</h2>
@@ -79,6 +99,8 @@
 <footer class="site-footer"><div class="frame footer-inner"><span class="footer-brand">WITHU</span><p>직접 제공한 자료로 학습한 SONG-Vision 연구 영상</p></div></footer>
 <script>
 for(const [vid,status] of [
+ ['v20-owner-speech','v20-owner-speech-status'],
+ ['v20-am630-fullface','v20-am630-status'],
  ['v19-owner-speech','v19-owner-speech-status'],
  ['v19-am630-macro','v19-am630-macro-status'],
  ['v19-am630-scene','v19-am630-scene-status'],

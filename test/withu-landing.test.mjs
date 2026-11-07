@@ -193,6 +193,19 @@ test('homepage first song attempts autoplay with a one-tap fallback if browser b
  assert.ok(js.includes("audio.src=track.deviceURL||fileURL('media/',hasSeparateAudio?track.audioFile:track.file)"));
 });
 
+test('homepage film, clip caption, song details and preserved cover display in sequence',()=>{
+ const elements=['id="music-visual-stage"','class="music-visual-caption"','class="song-heading"','id="album-art"','class="album-eyebrow"','id="audio-zone"'];
+ const positions=elements.map(element=>html.indexOf(element));
+ assert.ok(positions.every(pos=>pos>=0),'expected player markup');
+ assert.ok(positions.every((pos,i)=>i===0||pos>positions[i-1]),'film, text and cover order');
+ assert.ok(js.includes("albumPanel.classList.add('has-visual')"));
+ assert.ok(js.includes("albumPanel.classList.remove('has-visual')"));
+ assert.ok(css.includes('.album-panel:not(.has-visual)>.album-art{order:-2}'));
+ assert.ok(css.includes('.album-panel:not(.has-visual)>.song-heading{order:-1}'));
+ assert.ok(js.includes("visualCaption.textContent='WITHU · '+track.title+' · VISUAL LOOP'"));
+ assert.ok(js.includes("albumArt.hidden=track.showCoverWithVisual!==true"));
+});
+
 test('playlist controls and private local upload controls are connected to new JS',()=>{
   for(const id of ['previous-track','next-track','music-audio','music-video','no-audio','track-list','local-song','local-lyrics','lyrics-scroll','local-review','review-gallery']){
     assert.ok(html.includes('id="'+id+'"'),id);

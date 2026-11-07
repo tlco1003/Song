@@ -5,7 +5,7 @@ import {filterLyricLines,parseLyricDocument,cueIndexAt,approximateLyricIndexAt,l
 const $=id=>document.getElementById(id);
 const audio=$('music-audio'),videoPlayer=$('music-video');
 const autoplayStart=$('autoplay-start');
-const musicVisual=$('music-visual'),musicVisualStage=$('music-visual-stage'),albumArt=$('album-art');
+const musicVisual=$('music-visual'),musicVisualStage=$('music-visual-stage'),albumArt=$('album-art'),albumPanel=document.querySelector('.album-panel');
 const visualExpand=$('music-visual-expand'),visualClose=$('music-visual-close');
 const visualFit=$('music-visual-fit'),visualControls=$('music-visual-fullscreen-controls');
 let tracks=[],current=0,requestId=0,rawLyrics='',visibleLyrics=[],activeLine=-1,lyricCueSeconds=null;
@@ -235,6 +235,7 @@ async function select(index,autoPlay=false,initialLoad=false){
  videoPlayer.pause();videoPlayer.removeAttribute('src');videoPlayer.load();
  musicVisual.pause();musicVisual.removeAttribute('src');musicVisual.load();
  musicVisualStage.hidden=true;albumArt.hidden=false;
+ albumPanel.classList.remove('has-visual');
  const cover=$('current-cover'),fallbackCover=$('cover-fallback'),coverPath=coverFor(track);
  cover.onload=()=>{cover.hidden=false;fallbackCover.hidden=true};
  cover.onerror=()=>{cover.hidden=true;fallbackCover.hidden=false};
@@ -269,6 +270,7 @@ async function select(index,autoPlay=false,initialLoad=false){
   musicVisual.src=fileURL('media/',track.visualFile);
   musicVisualStage.classList.toggle('is-landscape',track.visualAspect==='16:9');
   musicVisualStage.hidden=false;
+  albumPanel.classList.add('has-visual');
   albumArt.hidden=track.showCoverWithVisual!==true;
   void musicVisual.play().catch(()=>{/* Muted autoplay may require a later user gesture. */});
  }

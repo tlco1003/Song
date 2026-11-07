@@ -251,3 +251,17 @@ button:focus-visible,a:focus-visible,label:focus-visible,.lyrics-scroll:focus-vi
 .autoplay-start{align-self:center;min-width:142px;border:1px solid #e5c7d8;border-radius:24px;padding:11px 22px;background:#f0dce4;color:#352435;font:700 13px/1.4 "Gowun Batang",sans-serif;box-shadow:0 4px 16px #100b1455;cursor:pointer}
 .autoplay-start:hover,.autoplay-start:focus-visible{background:#fff5f8}
 .autoplay-start[hidden]{display:none!important}
+
+/* Clip-first order for visual songs: film, caption, song details, preserved cover. */
+.album-panel{display:flex;flex-direction:column}
+.album-panel:not(.has-visual)>.album-eyebrow{order:-3}
+.album-panel:not(.has-visual)>.album-art{order:-2}
+.album-panel:not(.has-visual)>.song-heading{order:-1}
+.album-panel.has-visual>.music-visual-stage{margin-top:0;margin-bottom:10px}
+.album-panel.has-visual>.song-heading{margin:0 auto 7px;width:100%}
+.album-panel.has-visual>.album-art{margin-top:12px;margin-bottom:14px}
+.album-panel.has-visual>.album-eyebrow{margin:0 0 10px}
+@media(max-width:690px){
+ .album-panel.has-visual>.music-visual-stage{margin-top:0;margin-bottom:7px}
+ .album-panel.has-visual>.album-art{margin-top:11px;margin-bottom:12px}
+}

@@ -33,9 +33,16 @@
 <nav aria-label="메뉴"><a href="index.html">홈</a><a href="index.html#vision-lab-preview">학습 결과</a></nav>
 </div></header>
 <main class="vision-lab"><div class="frame">
-<span class="vision-badge">SONG-VISION V21 · TEXT-FIRST 10 VOWELS · OWNER-ONLY</span>
+<span class="vision-badge">SONG-VISION V23 · AM630 TEXT-FIRST GUARDED FACE · OWNER-ONLY</span>
 <h1>실제 얼굴 전체 움직임을<br>확대해서 비교할 수 있어요.</h1>
 <p class="vision-intro">여기에 표시된 세 영상은 모두 사용자가 제공한 실제 스피킹 자료나 사용자가 만든 AI 가수 이미지를 기준으로 생성했습니다. <strong>다른 사람의 RAVDESS 영상은 게시하지 않습니다.</strong> ▶를 누르면 원곡 음성과 영상이 함께 재생됩니다.</p>
+<section class="vision-card" style="margin:18px 0 24px">
+<h2>최신 · v23 AM 6:30 가사 텍스트 → 입모양 → 얼굴 보호</h2>
+<p>본인이 업로드한 실제 스피킹 얼굴, AM 6:30 원곡과 정확한 가사 텍스트로 만든 14초 · 25fps 연구 영상이야. 가사 시작 시점은 미검증 초안이야.</p>
+<video id="v23-am630" controls playsinline preload="metadata" aria-label="v23 원곡 가사 기반 사용자 얼굴 동작과 원곡 음원"><source src="vision-owner/AM630_v23_TEXT_FIRST_CONSTRAINED_FACE_UNALIGNED.mp4" type="video/mp4">MP4 미지원</video>
+<p><a href="song-vision-v23-am630.html">v23 영상과 확대 영상을 같은 페이지에서 확인하기</a></p>
+<p id="v23-am630-status" class="vision-status" role="status"></p>
+</section>
 <section class="vision-card" style="margin:18px 0 24px">
 <h2>최신 · v21 텍스트 우선 한국어 10모음 / 얼굴 전체 동작 테스트</h2>
 <p>ㅏ ㅑ ㅓ ㅕ ㅗ ㅛ ㅜ ㅠ ㅡ ㅣ · 본인 스피킹 영상의 정면 얼굴 이미지 · 10초, 25fps, 무음 · 텍스트를 따라 피부가 2D로 연동됩니다.</p>
@@ -108,6 +115,7 @@
 <footer class="site-footer"><div class="frame footer-inner"><span class="footer-brand">WITHU</span><p>직접 제공한 자료로 학습한 SONG-Vision 연구 영상</p></div></footer>
 <script>
 for(const [vid,status] of [
+ ['v23-am630','v23-am630-status'],
  ['v21-ten-vowels','v21-ten-vowels-status'],
  ['v20-owner-speech','v20-owner-speech-status'],
  ['v20-am630-fullface','v20-am630-status'],

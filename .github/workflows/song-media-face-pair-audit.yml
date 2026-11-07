@@ -1,0 +1,37 @@
+name: SONG media original-audio and singer-video pairing audit
+on:
+  push:
+    branches:
+      - feature/song-vision-self-hosted-v1
+    paths:
+      - 'song_vision/song_media_source_audit.py'
+      - '.github/workflows/song-media-face-pair-audit.yml'
+      - 'docs/media/*.mp4'
+      - 'docs/media/*.mp3'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit_original_source_song_pairs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install local media analyzers
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg
+          python -m pip install -q "numpy>=1.26,<3" "opencv-python-headless>=4.8,<5"
+      - name: Check actual GitHub video and recorded sound evidence
+        run: |
+          python -m song_vision.song_media_source_audit
+      - name: Publish only diagnostic JSON, no raw customer faces or sounds
+        uses: actions/upload-artifact@v4
+        with:
+          name: song-media-original-pair-audit-${{ github.run_id }}
+          path: song-vision-source-audit-result.json
+          retention-days: 30
+          if-no-files-found: error

@@ -30,3 +30,9 @@ Google offline Face Landmarker: https://developers.google.com/edge/mediapipe/sol
 
 Never overwrite any v2-v12 archive. The v13 output uses a distinct run-numbered .svault file in research/song-vision-vault/encrypted/ravdess-four-stage-v13/. Source media and decryption PRIVATE key never enter GitHub.
 Treat face metrics worse than neutral, mouth metrics worse than copied-reference, unknown phone-label accuracy, unproven cross-language synchronization and missing realistic full-face renderer as failures/limitations. Customer video jobs remain disabled.
+
+## v13.1: Eye pupil/iris centre motion supervision (actual code)
+
+Added song_vision/projected_iris_v13.py. The offline MediaPipe 478-point teacher provides estimated two iris centres, projected relative to two corners for each eye. Four per-frame relative x/y displacement targets are normalized by each clip median; invalid teacher points are explicitly masked and **are not invented or interpolated**. The new emotion branch has trainable projected_iris_head with a small separate auxiliary loss; the final fusion stage includes the same measured iris target with lower weight. The report records projectedIrisFrameCount and projectedIrisMotionMAE. Extra synthetic tests check iris coordinate movement, masks, gradients and saved weights.
+
+These are 2D camera-projected iris-centre movements, **not actual eye orientation, target-directed gaze, pupil dilation, tear flow, eye muscle EMG or emotional intent**. Because eye movement is not determined by song loudness, it is an optional weakly weighted supervision target, never a deterministic frown/gaze rule. No full eye/cheek photoreal skin renderer is claimed.

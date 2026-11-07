@@ -19,7 +19,11 @@ class GivenTextTimingTests(unittest.TestCase):
         self.assertEqual(units.words,('엄마','사랑해'))
         self.assertEqual(set(units.word_indices),{0,1})
         self.assertIn('not_pronunciation_ground_truth',units.source)
-        with self.assertRaises(ValueError): units_from_given_text('love')
+        latin=units_from_given_text('Kids are singing')
+        self.assertIn('latin_not_phoneme_ground_truth',latin.source)
+        self.assertEqual(latin.words,('Kids','are','singing'))
+        self.assertEqual(len(latin.unit_ids),len('Kidsaresinging'))
+        with self.assertRaises(ValueError): units_from_given_text('1234')
 
     def test_long_vowel_and_repeated_units_follow_audio_not_equal_split(self):
         a=UNIT_TO_ID['ㅏ']; m=UNIT_TO_ID['ㅁ']

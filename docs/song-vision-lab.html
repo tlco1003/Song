@@ -33,6 +33,27 @@
 <nav aria-label="메뉴"><a href="index.html">홈</a><a href="index.html#vision-lab-preview">학습 결과</a></nav>
 </div></header>
 <main class="vision-lab"><div class="frame">
+<span class="vision-badge">LATEST V26 · REAL OWNER LIP OUTLINE AND TEETH</span>
+<h1>원형으로 오므리는 실제 입술,<br>입안과 치아가 보이는 실제 개방</h1>
+<p class="vision-intro">이번에는 단순 픽셀 음영 효과가 아니라 사용자 스피킹 영상에 실제 찍힌 입술·치아·입안 픽셀로 형태를 바꿔. 다만 사진만으로 3D 턱관절과 혀를 복원한 것은 아니고, 실제 모음별 정답을 학습한 모델도 아니야.</p>
+<div class="vision-grid">
+<section class="vision-card">
+<h2>v26 · 실제 입술 형태 ㅗ·ㅜ·ㅏ·ㅣ·ㅡ·ㅔ</h2>
+<video id="v26-real-mouth" controls playsinline preload="metadata" aria-label="내 실제 스피킹 영상의 입술과 입안 픽셀 기반 원형, 가로형, 크게 벌린 입 비교"><source src="vision-owner/SONG_V26_OWNER_REAL_LIP_CONTOUR_SHAPES.mp4" type="video/mp4">MP4 미지원</video>
+<p>7.78초 무음 / 18fps / 실제 관찰된 입술 형태로 영상 생성. 원본 스피킹 발음 라벨은 미검증.</p>
+<p><a href="song-vision-v26-lips.html">각 모음을 눌러 확인하기</a></p>
+<p id="v26-real-mouth-status" class="vision-status" role="status"></p>
+</section>
+<section class="vision-card">
+<h2>v26 · AM 6:30 원곡 6초 연구 영상</h2>
+<video id="v26-am630-mouth" controls playsinline preload="metadata" aria-label="본인 실제 입술 형태를 선택해 AM 6:30 원곡에 적용한 6초 실험 영상"><source src="vision-owner/AM630_V26_REAL_LIPS_TEXT_FIRST_UNALIGNED.mp4" type="video/mp4">MP4 미지원</video>
+<p>음원 포함 / 가사 타이밍은 미검증 편집 초안. 정확한 노래 립싱크 인증 아님.</p>
+<p><a href="song-vision-v26-lips.html">v26 연구 영상 페이지</a></p>
+<p id="v26-am630-status" class="vision-status" role="status"></p>
+</section>
+</div>
+<h2 style="font-size:21px;font-weight:400;margin-top:29px">이전 실험과 비교</h2>
+
 <span class="vision-badge">SONG-VISION V23 · AM630 TEXT-FIRST GUARDED FACE · OWNER-ONLY</span>
 <h1>실제 얼굴 전체 움직임을<br>확대해서 비교할 수 있어요.</h1>
 <p class="vision-intro">여기에 표시된 세 영상은 모두 사용자가 제공한 실제 스피킹 자료나 사용자가 만든 AI 가수 이미지를 기준으로 생성했습니다. <strong>다른 사람의 RAVDESS 영상은 게시하지 않습니다.</strong> ▶를 누르면 원곡 음성과 영상이 함께 재생됩니다.</p>
@@ -115,6 +136,8 @@
 <footer class="site-footer"><div class="frame footer-inner"><span class="footer-brand">WITHU</span><p>직접 제공한 자료로 학습한 SONG-Vision 연구 영상</p></div></footer>
 <script>
 for(const [vid,status] of [
+ ['v26-real-mouth','v26-real-mouth-status'],
+ ['v26-am630-mouth','v26-am630-status'],
  ['v23-am630','v23-am630-status'],
  ['v21-ten-vowels','v21-ten-vowels-status'],
  ['v20-owner-speech','v20-owner-speech-status'],

@@ -36,7 +36,7 @@ class PhotoPixelFrameMemory(nn.Module):
         )
         self.register_buffer("schema_version",torch.tensor([1],dtype=torch.long))
 
-    def forward(self,reference,raw_frames,motions):
+    def forward(self,reference,raw_frames,motions,*,state=None,return_state=False):
         if (reference.ndim!=4 or reference.shape[1:]!=(3,96,96)
                 or raw_frames.ndim!=5 or raw_frames.shape[0]!=reference.shape[0]
                 or raw_frames.shape[2:]!=(3,96,96)
@@ -51,8 +51,17 @@ class PhotoPixelFrameMemory(nn.Module):
         axis=torch.linspace(-1,1,96,device=reference.device,dtype=reference.dtype)
         yy,xx=torch.meshgrid(axis,axis,indexing="ij")
         coords=torch.stack((xx,yy),dim=-1)[None]
-        previous=reference
-        old_motion=motions[:,0]
+        if state is not None:
+            if (not isinstance(state,dict) or 'frame' not in state
+                    or 'motion' not in state
+                    or state['frame'].shape!=reference.shape
+                    or state['motion'].shape!=(b,38)):
+                raise ValueError("A carry state must match the same face and video")
+            previous=state['frame']
+            old_motion=state['motion']
+        else:
+            previous=reference
+            old_motion=motions[:,0]
         output=[]
         for frame in range(t):
             current=raw_frames[:,frame]
@@ -75,7 +84,10 @@ class PhotoPixelFrameMemory(nn.Module):
             output.append(result)
             previous=result
             old_motion=motions[:,frame]
-        return torch.stack(output,dim=1)
+        rendered=torch.stack(output,dim=1)
+        if return_state:
+            return rendered,dict(frame=previous.detach(),motion=old_motion.detach())
+        return rendered
 
 
 def supervised_pixel_memory_loss(predicted,raw,truth):

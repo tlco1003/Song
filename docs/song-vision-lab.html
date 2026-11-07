@@ -33,9 +33,18 @@
 <nav aria-label="메뉴"><a href="index.html">홈</a><a href="index.html#vision-lab-preview">학습 결과</a></nav>
 </div></header>
 <main class="vision-lab"><div class="frame">
-<span class="vision-badge">SONG-VISION V20 · FULL-FACE SKIN MOTION · OWNER-ONLY</span>
+<span class="vision-badge">SONG-VISION V21 · TEXT-FIRST 10 VOWELS · OWNER-ONLY</span>
 <h1>실제 얼굴 전체 움직임을<br>확대해서 비교할 수 있어요.</h1>
 <p class="vision-intro">여기에 표시된 세 영상은 모두 사용자가 제공한 실제 스피킹 자료나 사용자가 만든 AI 가수 이미지를 기준으로 생성했습니다. <strong>다른 사람의 RAVDESS 영상은 게시하지 않습니다.</strong> ▶를 누르면 원곡 음성과 영상이 함께 재생됩니다.</p>
+<section class="vision-card" style="margin:18px 0 24px">
+<h2>최신 · v21 텍스트 우선 한국어 10모음 / 얼굴 전체 동작 테스트</h2>
+<p>ㅏ ㅑ ㅓ ㅕ ㅗ ㅛ ㅜ ㅠ ㅡ ㅣ · 본인 스피킹 영상의 정면 얼굴 이미지 · 10초, 25fps, 무음 · 텍스트를 따라 피부가 2D로 연동됩니다.</p>
+<video id="v21-ten-vowels" controls playsinline preload="metadata" aria-label="사용자 제공 스피킹 얼굴로 한국어 10모음 전환을 보여주는 v21 텍스트 기반 연구 영상"><source src="vision-owner/SONG_v21_TEN_KOREAN_VOWELS_OWNER_FULL_FACE_TEST.mp4" type="video/mp4">MP4 미지원</video>
+<p class="meta">입·턱·양 볼·광대·아래 눈꺼풀 동작이 텍스트 목표에서 연결되는 초기 리그입니다. 개인별 근육 학습·실제 노래 음절 시간정렬·자연스러운 입안 합성은 미완성입니다.</p>
+<p><a href="song-vision-v21-vowels.html">10개 모음 하나씩 재생하고 가사 텍스트 분해 확인하기</a></p>
+<p id="v21-ten-vowels-status" class="vision-status" role="status"></p>
+</section>
+<h2 style="font-size:22px;font-weight:400;margin-top:28px">이전 v20·v19 동작 비교</h2>
 <div class="vision-grid">
 <section class="vision-card">
 <h2>최신 01 · v20 내 실제 스피킹에서 추출한 얼굴 전체 움직임</h2>
@@ -99,6 +108,7 @@
 <footer class="site-footer"><div class="frame footer-inner"><span class="footer-brand">WITHU</span><p>직접 제공한 자료로 학습한 SONG-Vision 연구 영상</p></div></footer>
 <script>
 for(const [vid,status] of [
+ ['v21-ten-vowels','v21-ten-vowels-status'],
  ['v20-owner-speech','v20-owner-speech-status'],
  ['v20-am630-fullface','v20-am630-status'],
  ['v19-owner-speech','v19-owner-speech-status'],

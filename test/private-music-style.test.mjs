@@ -112,3 +112,30 @@ test('the server only varies musical arrangement for bought emotional-arc option
  assert.ok(one.length<=1000&&two.length<=1000);
  assert.throws(()=>composeServerMusicStyle({genre:'재즈',thirdVerse:'yes'}),/emotional arc/);
 });
+
+test('all genre, era and mood combinations retain purchased emotional arcs within 1000 characters',()=>{
+ const moods=['따뜻한','감동적인','설레는','애절한','희망찬','신나는'];
+ for(const genre of GENRE_KEYS){
+  for(const eraPreference of ERA_KEYS){
+   for(const mood of moods){
+    for(const thirdVerse of [false,true]){
+     for(const dedicationOutro of [false,true]){
+      const base={genre,mood,eraPreference,thirdVerse,dedicationOutro};
+      const first=composeServerMusicStyle(base);
+      assert.ok(first.length<=1000,JSON.stringify(base));
+      assert.ok(!thirdVerse||first.includes('Verse 3'),JSON.stringify(base));
+      assert.ok(!dedicationOutro||first.includes('Outro'),JSON.stringify(base));
+      // The second track and cross-genre blend cost more prompt space.
+      const other=GENRE_KEYS[(GENRE_KEYS.indexOf(genre)+1)%GENRE_KEYS.length];
+      const blended=composeServerMusicStyle({
+       ...base,mode:'blend',blendGenre:other,songIndex:2
+      });
+      assert.ok(blended.length<=1000,JSON.stringify(base));
+      assert.ok(!thirdVerse||blended.includes('Verse 3'),JSON.stringify(base));
+      assert.ok(!dedicationOutro||blended.includes('Outro'),JSON.stringify(base));
+     }
+    }
+   }
+  }
+ }
+});

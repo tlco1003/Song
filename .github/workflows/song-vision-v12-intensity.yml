@@ -1,0 +1,104 @@
+name: SONG Vision v12 matched weak strong singing to face research
+on:
+  push:
+    branches:
+      - feature/song-vision-self-hosted-v1
+    paths:
+      - 'song_vision/external_ravdess_intensity_v12.py'
+      - 'song_vision/test_intensity_pairs_v12.py'
+      - '.github/workflows/song-vision-v12-intensity.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: song-vision-v12-expression-intensity-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  matched_intensity_vocal_to_face:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      OMP_NUM_THREADS: '2'
+      MKL_NUM_THREADS: '2'
+      RESEARCH_VAULT_FOLDER: ${{ github.workspace }}/v12-intensity-research-vault
+      FACE_TASK: ${{ github.workspace }}/face_landmarker.task
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install offline vision, CPU PyTorch, video decoder
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg libgles2 libegl1 libgl1 libglib2.0-0
+          python -m pip install -q torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -q -r song_vision/requirements-geometry.txt
+      - name: Validate strong and normal expression pairing, guard split and encrypted vault
+        run: |
+          python -m unittest song_vision.test_intensity_pairs_v12 song_vision.test_voice_to_face_v11 song_vision.test_research_checkpoint_vault -v
+      - name: Download sha256-pinned offline face tracker
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error --retry 4 --retry-delay 8 --max-time 240 \
+            'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task' \
+            --output "$FACE_TASK"
+          echo '64184e229b263107bc2b804c6625db1341ff2bb731874b0bcc2fe6544e0bc9ff  '"$FACE_TASK" | sha256sum --check
+          python - <<'PY'
+          from pathlib import Path
+          from song_vision.face_geometry import LocalFaceLandmarker
+          with LocalFaceLandmarker(Path("face_landmarker.task")) as tracker:
+              assert tracker.model is not None
+          print("SONG_V12_OFFLINE_FACE_MODEL_READY=true")
+          PY
+      - name: Train on actual same-text normal vs strong expression video, unseen singer eval
+        run: |
+          python -m song_vision.external_ravdess_intensity_v12 \
+            --acknowledge-noncommercial-research \
+            --landmarker-task "$FACE_TASK" \
+            --vault-public-key song_vision/research_vault_public.pem \
+            --vault-output-dir "$RESEARCH_VAULT_FOLDER" \
+            --epochs 6 --min-epochs 3 --patience 3
+      - name: Keep AES-GCM encrypted research checkpoint as a 90-day emergency artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: song-v12-matched-intensity-encrypted-${{ github.run_id }}-a${{ github.run_attempt }}
+          path: ${{ env.RESEARCH_VAULT_FOLDER }}/*
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+      - name: Store immutable ciphertext on user research vault Git branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin refs/heads/research/song-vision-vault:refs/remotes/origin/research/song-vision-vault
+          git worktree add --detach "$RUNNER_TEMP/song-v12-research-worktree" refs/remotes/origin/research/song-vision-vault
+          cd "$RUNNER_TEMP/song-v12-research-worktree"
+          mkdir -p encrypted/ravdess-v12-matched-intensity
+          cp "$RESEARCH_VAULT_FOLDER"/*.svault encrypted/ravdess-v12-matched-intensity/
+          cp "$RESEARCH_VAULT_FOLDER"/*.manifest.json encrypted/ravdess-v12-matched-intensity/
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add encrypted/ravdess-v12-matched-intensity
+          if git diff --cached --quiet; then
+            echo 'No unique encrypted checkpoint, refuse to claim a successful research backup.'
+            exit 1
+          fi
+          git commit -m "research-vault: protect normal/strong facial intensity training $GITHUB_RUN_ID a$GITHUB_RUN_ATTEMPT"
+          for attempt in 1 2 3; do
+            if git push origin HEAD:refs/heads/research/song-vision-vault; then
+              exit 0
+            fi
+            sleep $((4 * attempt))
+            git fetch origin research/song-vision-vault
+            git rebase FETCH_HEAD
+          done
+          echo 'Vault branch backup failed'
+          exit 1
+      - name: Assert no customer video access
+        run: |
+          echo 'No voice synthesizer, no user personal videos or plaintext singer model in repository.'
+          echo 'Research CC BY-NC-SA 4.0, canAcceptPaidJobs=false.'

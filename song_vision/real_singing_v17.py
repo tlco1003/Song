@@ -78,9 +78,10 @@ def region_metrics(model, loader, photo_memory=None):
     frames=0
     with torch.no_grad():
         for batch,timing in loader:
-            got=model(batch,timing)['frames']
+            predicted=model(batch,timing)
+            got=predicted['frames']
             old=forward_batch(model.base,batch)['frames']
-            memory_frames=(photo_memory(batch['reference'],got,model(batch,timing)['motion'])
+            memory_frames=(photo_memory(batch['reference'],got,predicted['motion'])
                            if photo_memory is not None else got)
             b,t=got.shape[:2]
             pred=got.reshape(-1,3,96,96)
@@ -117,10 +118,11 @@ def render_research_preview(model, timed, source_files, directory: Path, photo_m
         with torch.no_grad():
             for idx in ids_for_clip:
                 base,timing=collate_timed([timed[idx]])
-                v17=model(base,timing)['frames'][0]
+                predicted=model(base,timing)
+                v17=predicted['frames'][0]
                 v16=forward_batch(model.base,base)['frames'][0]
                 if photo_memory is not None:
-                    v17=photo_memory(base['reference'],v17[None],model(base,timing)['motion'])[0]
+                    v17=photo_memory(base['reference'],predicted['frames'],predicted['motion'])[0]
                 source=base['target'][0]
                 for recorded,old,new in zip(source,v16,v17):
                     panels=[]
@@ -227,6 +229,7 @@ def render_github_nara_photo_pixels(model, photo_memory, reference_data, output:
     reference=exemplar['reference'][0]
     model.eval();photo_memory.eval()
     last=None
+    memory_state=None
     changed=0;total_change=0.
     try:
         with torch.no_grad():
@@ -250,7 +253,9 @@ def render_github_nara_photo_pixels(model, photo_memory, reference_data, output:
                     prosody=torch.zeros(1,2,8),confidence=torch.zeros(1,2),
                     lyricsText=[text])
                 predicted=model(current,timing)
-                photo=photo_memory(current['reference'],predicted['frames'],predicted['motion'])
+                photo,memory_state=photo_memory(
+                    current['reference'],predicted['frames'],predicted['motion'],
+                    state=memory_state,return_state=True)
                 for j in range(2):
                     panel=[]
                     variants=((reference,'ORIGINAL PHOTO REFERENCE'),

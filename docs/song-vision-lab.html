@@ -33,6 +33,27 @@
 <nav aria-label="메뉴"><a href="index.html">홈</a><a href="index.html#vision-lab-preview">학습 결과</a></nav>
 </div></header>
 <main class="vision-lab"><div class="frame">
+<span class="vision-badge">SONG-VISION v27 · OWNER REAL LIP/JAW MOTION</span>
+<h1>입술과 턱이 함께 움직이는지<br>v26과 v27을 비교해 확인해 줘.</h1>
+<p class="vision-intro">사용자 제공 스피킹 원본의 입 모양 픽셀과 아래턱 피부 이미지 움직임을 연결한 새 학습. 실제 뼈 각도·의료 구강 분할 및 한국어 모음별 발음 시간정답은 아직 미검증입니다.</p>
+<div class="vision-grid">
+<section class="vision-card">
+<h2>NEW · v27 실제 사용자 입술·턱 영상 연동 비교</h2>
+<video id="v27-real-jaw" controls playsinline preload="metadata" aria-label="사용자 실제 스피킹 영상으로 학습한 v26 입술만 움직임과 v27 턱 피부도 함께 움직임 비교"><source src="vision-owner/SONG_V27_OWNER_REAL_MOUTH_PLUS_JAW_COMPARISON.mp4" type="video/mp4">MP4 미지원</video>
+<p>7.92초, 18fps. 턱 피부 이동량은 픽셀 단위 이미지 추정이며 턱뼈 실제 위치를 측정한 것은 아닙니다.</p>
+<p><a href="song-vision-v27-jaw.html">v27 별도 연구 페이지에서 확대 보기</a></p>
+<p id="v27-real-jaw-status" class="vision-status" role="status"></p>
+</section>
+<section class="vision-card">
+<h2>NEW · AM 6:30 v27 원곡 + 턱 연동</h2>
+<video id="v27-am630-jaw" controls playsinline preload="metadata" aria-label="AM 6:30 음원과 본인 실제 입술 및 하관 이미지 연동을 적용한 v27 연구 영상"><source src="vision-owner/AM630_V27_OWNER_JAW_COUPLED_LYRICS_UNALIGNED.mp4" type="video/mp4">MP4 미지원</video>
+<p>7초, 원곡 소리 포함. 한글 가사 음절의 실제 시작·끝 시각은 아직 미검증 초안입니다.</p>
+<p><a href="song-vision-v27-jaw.html">v27 연구 근거·검증 결과 확인하기</a></p>
+<p id="v27-am630-jaw-status" class="vision-status" role="status"></p>
+</section>
+</div>
+<h2 style="font-size:21px;font-weight:400;margin-top:30px">이전 v26·v23·v21 실험 기록</h2>
+
 <span class="vision-badge">LATEST V26 · REAL OWNER LIP OUTLINE AND TEETH</span>
 <h1>원형으로 오므리는 실제 입술,<br>입안과 치아가 보이는 실제 개방</h1>
 <p class="vision-intro">이번에는 단순 픽셀 음영 효과가 아니라 사용자 스피킹 영상에 실제 찍힌 입술·치아·입안 픽셀로 형태를 바꿔. 다만 사진만으로 3D 턱관절과 혀를 복원한 것은 아니고, 실제 모음별 정답을 학습한 모델도 아니야.</p>
@@ -136,6 +157,8 @@
 <footer class="site-footer"><div class="frame footer-inner"><span class="footer-brand">WITHU</span><p>직접 제공한 자료로 학습한 SONG-Vision 연구 영상</p></div></footer>
 <script>
 for(const [vid,status] of [
+ ['v27-real-jaw','v27-real-jaw-status'],
+ ['v27-am630-jaw','v27-am630-jaw-status'],
  ['v26-real-mouth','v26-real-mouth-status'],
  ['v26-am630-mouth','v26-am630-status'],
  ['v23-am630','v23-am630-status'],

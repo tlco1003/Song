@@ -44,3 +44,16 @@
 - 외부 공개 소스(개인 사진 없이) 4개 합성 계약 테스트: 통과.
 - 비공개 원본·측정 레코드·훈련 프로필은 비공개 저장소에만 저장. 공개 SONG에는 모델 **코드**와 사용자 승인된 **연구 영상**만 게시.
 - **최종 판정**: 2D 영상 관찰 기반 턱·입술 연동 연구 구현. 실제 턱뼈 3D 관절 애니메이션, 구강 임상 정답 분할, 발음별 정확한 시간 정렬, 자연스러운 실사 영상품질은 아직 미완성.
+
+## 내부 구강·치아 최신 주요 논문 (2025년까지 추가 조사)
+
+7. Weixi Zheng et al., **Teeth Reconstruction and Performance Capture Using a Phone Camera**, ICCV 2025. https://openaccess.thecvf.com/content/ICCV2025/papers/Zheng_Teeth_Reconstruction_and_Performance_Capture_Using_a_Phone_Camera_ICCV_2025_paper.pdf  
+   단일 휴대폰 촬영 영상에서 개인별 치아의 3D 형상을 재구성하고 턱·입술 사이의 가림 관계를 최적화하는 연구. Mesh+SDF의 이중 표현, 치아 분할 모델, 치아·입술의 관통 방지 제약을 이용한다. **본 v27에 해당 모델이나 치아 3D 복원이 설치·학습된 것은 아니다.**
+8. Zibo Su et al., **Outstanding Orthodontist: No More Artifactual Teeth in Talking Face**, IJCAI 2025. https://www.ijcai.org/proceedings/2025/0211.pdf  
+   치아를 구간별로 재생성하면 크기·형상이 프레임마다 변하는 문제를 다루며, 장단기 시각 기억을 결합하여 치아의 시간적 동일성을 개선한다. **v27은 치아의 실제 3D 일관성을 학습하지 않았다.**
+9. Y. Liu et al., **A New Dataset and Boundary-Attention Semantic Segmentation for Face Parsing**, AAAI 2020. DOI https://doi.org/10.1609/aaai.v34i07.6832  
+   22,000개 이상 얼굴 이미지, 11개 얼굴 픽셀 분류, 106개 랜드마크로 구성된 LaPa 데이터셋과 경계 주의 분할. 입술·입안 후보 학습의 출발점이지 개인의 치아/혀/하악골 **의학적 정답 분할 데이터가 아니다.**
+10. Medina et al., **Speech Driven Tongue Animation**, CVPR 2022, pp. 20406–20416. https://openaccess.thecvf.com/content/CVPR2022/html/Medina_Speech_Driven_Tongue_Animation_CVPR_2022_paper.html  
+   영상만으로는 부분적으로 가려진 구강 내부와 턱·혀의 실제 운동을 정밀하게 포착하기 어려워 전용 동작 캡처 데이터가 필요하다는 점을 다룬다.
+
+**다음 구현의 데이터 계약:** 실제 음절 구간 사람 정답 / 입안·치아 라벨 정확도 평가 / 개인 치아 고정 형상과 입술 가림 순서를 독립적으로 통과하기 전에는 `verified`를 절대 출력하지 않는다.

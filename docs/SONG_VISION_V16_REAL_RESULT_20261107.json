@@ -1,0 +1,277 @@
+{
+  "distinctTexts": 2,
+  "encryptedCheckpoint": {
+    "commercialUseAllowed": false,
+    "file": "song-v16-context-run-42342803065-a1.svault",
+    "provenance": {
+      "license": "RAVDESS-CC-BY-NC-SA-4.0-AND-WORD-NORM-NSMC-RIGHTS-UNVERIFIED",
+      "urls": [
+        "https://zenodo.org/records/1188976",
+        "https://huggingface.co/datasets/jonghwanhyeon/korean-emotion-lexicon",
+        "https://huggingface.co/datasets/e9t/nsmc"
+      ]
+    },
+    "sha256": "c6cc2571dac5e4d1f071be22d501ed9be0038346a143afbb7b34a8c086630a80",
+    "sourceDataset": "RAVDESS-AND-KOREAN-WORD-NORMS-CONTEXTUAL-V16"
+  },
+  "koreanSentenceTraining": {
+    "actualLyricsToFacialMotionPairsLearned": false,
+    "bestMovieReviewHoldout": {
+      "epoch": 3,
+      "heldoutMovieReviewPolarityAccuracy": 0.65875,
+      "originalWordNormHoldoutMAE": 0.176949,
+      "reviewPolarityMajorityBaseline": 0.5,
+      "trainedDistinctSentences": 5000,
+      "unseenDistinctSentences": 800
+    },
+    "canAcceptPaidJobs": false,
+    "commercialUseAllowed": false,
+    "history": [
+      {
+        "epoch": 1,
+        "heldoutMovieReviewPolarityAccuracy": 0.60625,
+        "originalWordNormHoldoutMAE": 0.181522,
+        "reviewPolarityMajorityBaseline": 0.5,
+        "trainedDistinctSentences": 5000,
+        "unseenDistinctSentences": 800
+      },
+      {
+        "epoch": 2,
+        "heldoutMovieReviewPolarityAccuracy": 0.635,
+        "originalWordNormHoldoutMAE": 0.17528,
+        "reviewPolarityMajorityBaseline": 0.5,
+        "trainedDistinctSentences": 5000,
+        "unseenDistinctSentences": 800
+      },
+      {
+        "epoch": 3,
+        "heldoutMovieReviewPolarityAccuracy": 0.65875,
+        "originalWordNormHoldoutMAE": 0.176949,
+        "reviewPolarityMajorityBaseline": 0.5,
+        "trainedDistinctSentences": 5000,
+        "unseenDistinctSentences": 800
+      }
+    ],
+    "modelVersion": "song-v15-korean-contextual-semantic-affect-v1",
+    "modelWeightsSha256": "78b2bfa41a9c3096be688caa9cc1f172175b265800725851b20933bec256d4cb",
+    "nsmcLicenseStatus": "HF-CARD-CC-BY-2.0-ORIGINAL-NAVER-SCRAPE-RIGHTS-UNVERIFIED",
+    "nsmcSource": "https://huggingface.co/datasets/e9t/nsmc",
+    "realMovieReviewLabelsNotSongEmotionLabels": true,
+    "realWordRatingsNotMuscleTargets": true,
+    "sourceDatasets": [
+      "Korean Emotion Lexicon re-digitization 434 human rated emotion words",
+      "Naver Sentiment Movie Corpus genuine 0/1 movie-review documents"
+    ],
+    "status": "research_only_not_lipsync_validated",
+    "wordNormSource": "https://huggingface.co/datasets/jonghwanhyeon/korean-emotion-lexicon",
+    "wordRatingMAEBeforeReviewContextTraining": 0.17647
+  },
+  "lexicalTraining": {
+    "actualSentenceEmotionOrVideoTrained": false,
+    "baselineMAE": 0.190078,
+    "bestEpoch": 8,
+    "bestValenceArousalMAE": 0.17647,
+    "canAcceptPaidJobs": false,
+    "checkpointSha256": "7814f3746192f142184dc8bd1fa83bfc139f26be153024fad58685261f2b52c9",
+    "datasetStats": {
+      "observedWordCount": 434,
+      "rawScoreMaxes": [
+        3.19,
+        3.4
+      ],
+      "rawScoreMins": [
+        0.66,
+        0.97
+      ]
+    },
+    "history": [
+      {
+        "constantMeanBaselineMAE": 0.190078,
+        "epoch": 1,
+        "independentHeldoutWords": 87,
+        "trainingWords": 347,
+        "validationNormMAE": 0.180729
+      },
+      {
+        "constantMeanBaselineMAE": 0.190078,
+        "epoch": 2,
+        "independentHeldoutWords": 87,
+        "trainingWords": 347,
+        "validationNormMAE": 0.179134
+      },
+      {
+        "constantMeanBaselineMAE": 0.190078,
+        "epoch": 3,
+        "independentHeldoutWords": 87,
+        "trainingWords": 347,
+        "validationNormMAE": 0.177345
+      },
+      {
+        "constantMeanBaselineMAE": 0.190078,
+        "epoch": 4,
+        "independentHeldoutWords": 87,
+        "trainingWords": 347,
+        "validationNormMAE": 0.178497
+      },
+      {
+        "constantMeanBaselineMAE": 0.190078,
+        "epoch": 5,
+        "independentHeldoutWords": 87,
+        "trainingWords": 347,
+        "validationNormMAE": 0.179226
+      },
+      {
+        "constantMeanBaselineMAE": 0.190078,
+        "epoch": 6,
+        "independentHeldoutWords": 87,
+        "trainingWords": 347,
+        "validationNormMAE": 0.181865
+      },
+      {
+        "constantMeanBaselineMAE": 0.190078,
+        "epoch": 7,
+        "independentHeldoutWords": 87,
+        "trainingWords": 347,
+        "validationNormMAE": 0.17984
+      },
+      {
+        "constantMeanBaselineMAE": 0.190078,
+        "epoch": 8,
+        "independentHeldoutWords": 87,
+        "trainingWords": 347,
+        "validationNormMAE": 0.17647
+      }
+    ],
+    "holdoutWords": 87,
+    "modelVersion": "song-v15-korean-contextual-semantic-affect-v1",
+    "primaryPaper": "https://www.kci.go.kr/kciportal/landing/article.kci?arti_id=ART000958746",
+    "rightsForCommercialDerivativeModelConfirmed": false,
+    "source": "https://huggingface.co/datasets/jonghwanhyeon/korean-emotion-lexicon/resolve/main/5-level.csv",
+    "sourceSha256": "3fbe1abbc44dba70f8ad8a0de4cf7af4b29e92ab7acc3134cac2b52c8753e587",
+    "status": "research_only_not_lipsync_validated",
+    "trainingWords": 347,
+    "wordNormsNotActualSingerEmotion": true
+  },
+  "license": "CC-BY-NC-SA-4.0",
+  "modelVersion": "song-vision-contextual-lyrics-singing-face-v16",
+  "pairedSameAudioAudit": {
+    "audioStartSample": 640,
+    "fps": 25,
+    "frames": 72,
+    "mediaPublished": false,
+    "modelStateResetsBetweenWindows": true,
+    "photorealismValidated": false,
+    "recordedFramesOnlyUsedAsTargets": true,
+    "semanticUnderstandingValidated": false,
+    "sequenceLength": 4,
+    "sourceSamplesCompared": 46080,
+    "sourceSamplesIdentical": true,
+    "sourceVocalSha256": "9a44d05e7854cd848c01a5b54899cc95b4cdb2da1bc82f7b8887c441ae92882c",
+    "startSeconds": 0.04,
+    "status": "heldout_paired_contextual_face_audit"
+  },
+  "privateMediaUploaded": false,
+  "semanticGeneralizationValidated": false,
+  "trainClips": 16,
+  "training": {
+    "audioSourceDisjoint": true,
+    "canAcceptPaidJobs": false,
+    "checkpointSha256": "0e8b08e0cd67d850b7e7ca3f0bf3b89c714a155049603827e21405b372676eb5",
+    "commerciallyValidated": false,
+    "diagnosticFlags": [
+      "SEMANTIC_GENERALIZATION_NOT_ESTABLISHED",
+      "ANATOMICAL_MUSCLES_NOT_VALIDATED",
+      "PHOTOREALISM_NOT_VALIDATED",
+      "TRAIN_VAL_LYRICS_OVERLAP",
+      "WORSE_THAN_STATIC_REFERENCE",
+      "AUDIO_ALIGNMENT_GAIN_NOT_SHOWN",
+      "CORRECT_LYRICS_ADVANTAGE_NOT_SHOWN",
+      "NO_REVIEWED_CONTEXT_MEANING_TARGETS",
+      "SINGING_PHONE_ACCURACY_NOT_VALIDATED"
+    ],
+    "finalValidation": {
+      "cheeksMAE": 0.0989546,
+      "copyReferenceMAE": 0.0659589,
+      "dynamicROIMAE": 0.0979977,
+      "evaluatedFrames": 576,
+      "eyesBrowMAE": 0.0795262,
+      "lyricOutputSensitivity": 0.011743,
+      "motionMAE": 0.0947042,
+      "mouthMAE": 0.1120759,
+      "reviewedContextAffectFrames": 0,
+      "reviewedContextAffectMAE": null,
+      "shiftedAudioMAE": 0.0978004,
+      "surfaceMAE": 0.0168021,
+      "temporalPixelDeltaMAE": 0.0243323,
+      "withoutLyricsMAE": 0.1034964,
+      "wrongLyricsFrames": 576,
+      "wrongLyricsGain": -0.0000035
+    },
+    "history": [
+      {
+        "cheeksMAE": 0.1026108,
+        "copyReferenceMAE": 0.0659589,
+        "dynamicROIMAE": 0.1039731,
+        "epoch": 1,
+        "evaluatedFrames": 576,
+        "eyesBrowMAE": 0.0887583,
+        "lyricOutputSensitivity": 0.013126,
+        "motionMAE": 0.0956716,
+        "mouthMAE": 0.1137805,
+        "reviewedContextAffectFrames": 0,
+        "reviewedContextAffectMAE": null,
+        "shiftedAudioMAE": 0.1041799,
+        "surfaceMAE": 0.0165222,
+        "temporalPixelDeltaMAE": 0.0241726,
+        "trainLoss": 0.1993177,
+        "withoutLyricsMAE": 0.1094182,
+        "wrongLyricsFrames": 576,
+        "wrongLyricsGain": -6e-7
+      },
+      {
+        "cheeksMAE": 0.0989546,
+        "copyReferenceMAE": 0.0659589,
+        "dynamicROIMAE": 0.0979977,
+        "epoch": 2,
+        "evaluatedFrames": 576,
+        "eyesBrowMAE": 0.0795262,
+        "lyricOutputSensitivity": 0.011743,
+        "motionMAE": 0.0947042,
+        "mouthMAE": 0.1120759,
+        "reviewedContextAffectFrames": 0,
+        "reviewedContextAffectMAE": null,
+        "shiftedAudioMAE": 0.0978004,
+        "surfaceMAE": 0.0168021,
+        "temporalPixelDeltaMAE": 0.0243323,
+        "trainLoss": 0.1349171,
+        "withoutLyricsMAE": 0.1034964,
+        "wrongLyricsFrames": 576,
+        "wrongLyricsGain": -0.0000035
+      }
+    ],
+    "implementationStatus": "implemented_and_trained_research_only",
+    "modelVersion": "song-vision-contextual-lyrics-singing-face-v16",
+    "overlappingContexts": 2,
+    "performerDisjoint": true,
+    "phoneLabeledFrames": {
+      "train": 0,
+      "val": 0
+    },
+    "photorealismValidated": false,
+    "physicalMuscleForceInferred": false,
+    "semanticGeneralizationValidated": false,
+    "sequenceLength": 4,
+    "status": "research_only_not_lipsync_validated",
+    "trainDistinctContexts": 2,
+    "trainSequences": 288,
+    "valDistinctContexts": 2,
+    "valSequences": 144,
+    "warmStartSha256": {
+      "motion": "a7560e8a8c0d24d35a8928a511acf8ccc3ae1eb40d6a24fd644a562325f58776",
+      "wordFeeling": "78b2bfa41a9c3096be688caa9cc1f172175b265800725851b20933bec256d4cb"
+    },
+    "wordTimingAvailable": false
+  },
+  "transcriptSource": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0196391",
+  "valClips": 8
+}

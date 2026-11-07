@@ -163,3 +163,61 @@ The integrated temporal/pixel extension is versioned v16 to distinguish it.
 
 NSMC positive/negative movie-review accuracy is not lyric-emotion or face-expression accuracy.
 The original source rights are marked unverified for commercial reuse in the combined archive.
+
+## Verified execution record
+
+Implementation commit: `322f2f35b96c0af3ae17e2228f37fe077dcb4cc2`.
+
+- Local complete Python suite: **102 tests passed** after incorporating the branch's existing Korean-context fixture correction.
+- Local Node suite: **159 tests passed**; `npm run check` passed.
+- GitHub Python CI: https://github.com/tlco1003/Song/actions/runs/42342803034 — success.
+- GitHub Node CI: https://github.com/tlco1003/Song/actions/runs/42342803037 — success.
+- Additional synthetic integration probe: 24 heldout comparison frames with genuinely different lyrics; combined-source checkpoint encryption passed.
+- Generated-pixel gradients reached the existing v15 word GRU as well as the v16 contextual encoder, surface rig and image renderer. This proves the modules are computationally connected, not that their expression predictions are accurate.
+- Same-source audio audit test passed with a nonzero 640-sample source offset; exact corresponding PCM samples, not merely a matching filename, were checked.
+
+The existing separate Korean-context experiment finished successfully:
+https://github.com/tlco1003/Song/actions/runs/42342733947 . It trained on
+5,000 genuine sentences and evaluated 800 distinct official-split holdout
+sentences. Best movie-review polarity accuracy was **0.6625**, against a
+balanced-class baseline of **0.5**. Word-only pretraining used 347 rated training
+words; its heldout normalized valence/arousal MAE was **0.178696**, against the
+constant-mean baseline **0.190078**. These are results of that separate v15 run,
+not results of the integrated v16 face experiment, and not song-emotion accuracy.
+
+Integrated v16 actual-source experiment completed **successfully as an execution**:
+https://github.com/tlco1003/Song/actions/runs/42342803065 . The encrypted
+checkpoint and aggregate manifest were confirmed present on the owner vault
+branch. See `docs/SONG_VISION_V16_REAL_RESULT_20261107.json` for the exact
+aggregate results. The source media and private comparison video were not published.
+
+### Completed integrated v16 experiment: quality verdict
+
+| Evaluation | Actual result | Interpretation |
+|---|---:|---|
+| Korean review polarity, 5,000 train / 800 holdout | 0.65875 vs 0.5 baseline | Some learned review-context signal; not song-emotion accuracy |
+| Korean word ratings, 347 train / 87 holdout | MAE 0.176470 vs mean baseline 0.190078 | Modest improvement on normative word ratings |
+| Heldout face dynamic-ROI MAE, 576 frames | 0.0979977 vs static-copy 0.0659589 | FAIL: generated pixels worse than static reference |
+| Without lyrics, same heldout faces | MAE 0.1034964 | Lyrics-present path performs better than removing text |
+| Wrong distinct lyrics advantage test | gain -0.0000035 | FAIL: correct text is not better than different text |
+| Source audio shifted 320ms | MAE 0.0978004 | FAIL: correct timing is not better than shifted audio |
+| Eyes/brows / cheeks / mouth ROI MAE | 0.0795262 / 0.0989546 / 0.1120759 | Raw region errors; no naturalness claim |
+| Private paired same-audio video | 72 frames, 46,080 PCM samples identical | PASS: time-aligned original sound preserved; not lip-sync quality proof |
+| Model preservation | encrypted file SHA256 c6cc2571dac5e4d1f071be22d501ed9be0038346a143afbb7b34a8c086630a80 | PASS: archived independently of older models |
+
+**Implementation, training, audiovisual audit and archival completed. Face quality,
+correct lyric-meaning-to-expression correspondence and lip-sync accuracy did not
+pass.** A no-text ablation gain cannot establish correct semantic interpretation:
+the wrong-text control does not improve in the correct direction. Two English
+source statements overlap between train and validation, and reviewed contextual
+meaning targets and Korean singing phone targets are absent. There are zero
+human-reviewed contextual-affect frames in this real face study. The classifier's
+Korean review accuracy must not be presented as facial-expression accuracy.
+
+The model remains a 96px research renderer with four-frame state windows, a
+projected jaw/surface prior rather than measured anatomy, and no commercial or
+photorealistic quality approval. The next scientifically meaningful improvement
+requires diverse synchronized Korean sung lyrics, reviewed word timing and
+contextual performance labels; merely increasing epochs on these two statements
+would not establish meaning generalization. The pipeline already accepts those
+annotations without replacing missing labels with invented ones.

@@ -9,6 +9,7 @@ on:
       - 'song_vision/test_owner_v21_site_assets.py'
       - 'song_vision/owner_v21_audio_loudness.py'
       - 'song_vision/test_owner_v21_audio_loudness.py'
+      - 'song_vision/test_owner_v21_am630_lyrics.py'
       - 'docs/song-vision-v21-vowels.html'
       - 'docs/vision-owner/SONG_v21_TEN_KOREAN_VOWELS_OWNER_FULL_FACE_TEST.mp4'
   workflow_dispatch:

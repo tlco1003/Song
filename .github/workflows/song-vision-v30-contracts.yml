@@ -1,0 +1,62 @@
+name: SONG Vision v30 owner lip thickness research
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/song-vision-v30-contracts.yml'
+      - 'song_vision/owner_v30_pose_lip_thickness.py'
+      - 'song_vision/test_v30_public.py'
+      - 'song_vision/README_V30.md'
+      - 'docs/song-vision-v30-lips.html'
+      - 'docs/vision-owner/*V30*.mp4'
+      - 'docs/index.html'
+      - 'docs/song-vision-lab.html'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  lip_thickness_contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install synthetic-only geometry test dependencies
+        run: python -m pip install 'numpy>=1.26,<3' 'scipy>=1.11,<2' 'opencv-python-headless>=4.10,<5'
+      - name: Verify visible upper/lower lip geometry and face guard
+        run: python -m unittest discover -s song_vision -p 'test_v30_public.py' -v
+      - name: Verify owner video artifacts and all three page paths
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          vids=[
+           'SONG_V30_VISIBLE_UPPER_LOWER_LIP_THICKNESS.mp4',
+           'SONG_V30_OWNER_SPEAKING_TURNED_POSE_OBSERVATION.mp4',
+           'AM630_V30_VISIBLE_LIP_THICKNESS_UNALIGNED.mp4',
+          ]
+          page=Path('docs/song-vision-v30-lips.html').read_text(encoding='utf-8')
+          home=Path('docs/index.html').read_text(encoding='utf-8')
+          lab=Path('docs/song-vision-lab.html').read_text(encoding='utf-8')
+          for name in vids:
+           file=Path('docs/vision-owner')/name
+           assert file.exists() and file.stat().st_size>50000,name
+           assert b'ftyp' in file.read_bytes()[:64],name
+           assert name in page,name
+          assert vids[0] in home and vids[0] in lab
+          assert 'song-vision-v30-lips.html' in home
+          assert '미검증' in page and '3D' in page
+          print('v30 pages, media, user provenance/quality disclosures verified')
+          PY
+      - name: Compile source modules
+        run: |
+          python -m py_compile song_vision/owner_v29_microexpression_skin_rig.py song_vision/owner_v30_pose_lip_thickness.py song_vision/render_v30_owner.py song_vision/render_v30_am630.py
+      - name: Publish verification boundaries
+        run: |
+          echo 'VISIBLE_LIP_BAND_2D=IMPLEMENTED'
+          echo 'UPPER_LOWER_INDEPENDENT_REMAP=IMPLEMENTED'
+          echo 'PERSON_VERIFIED_VOWEL_LABELS=NOT_AVAILABLE'
+          echo '3D_LIP_DEPTH_MM=NOT_MEASURED'
+          echo 'POSE_YAW_ANGLE_DEGREES=NOT_MEASURED'
+          echo 'SINGING_LYRICS_TIMING=NOT_VERIFIED'

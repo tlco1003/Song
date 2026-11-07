@@ -84,18 +84,22 @@ test('shareable gift access is order-scoped and repeat licensed downloads never 
   }],
   upgrade:{paymentStatus:'paid',rightsVerified:true}
  };
- const media=customerResponse(order);
+ const guest=customerResponse(order);
+ assert.equal(guest.track.commercialUpgrade.status,'available');
+ assert.equal(guest.track.privateDownloadUrl,undefined,
+  'Free gift-sharing does not grant another buyer a paid file download');
+ const media=customerResponse(order,{downloadGranted:true});
  assert.equal(media.track.commercialUpgrade.status,'active');
  assert.match(media.track.privateDownloadUrl,/^\/api\/delivery-downloads\//);
  assert.equal(authorizeOrderMedia({
-  sessionOrderId:orderId,assetOrderId:orderId,order,kind:'download'
+  sessionOrderId:orderId,assetOrderId:orderId,order,kind:'download',downloadGranted:true
  }),true);
  assert.equal(authorizeOrderMedia({
-  sessionOrderId:orderId,assetOrderId:orderId,order,kind:'download'
+  sessionOrderId:orderId,assetOrderId:orderId,order,kind:'download',downloadGranted:true
  }),true,'Repeated download does not use up a purchased entitlement');
  const otherId='withu_'+'b'.repeat(32);
  assert.throws(()=>authorizeOrderMedia({
-  sessionOrderId:otherId,assetOrderId:orderId,order,kind:'download'
+  sessionOrderId:otherId,assetOrderId:orderId,order,kind:'download',downloadGranted:true
  }));
 });
 test('guest comments are plain text, length-bounded and not automatically public',()=>{

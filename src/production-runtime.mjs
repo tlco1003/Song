@@ -70,8 +70,8 @@ export function approvedTracks(o){
   stop(409,'구매곡의 최종 음원·가사·검수가 완료되지 않았습니다.');
  return o.tracks;
 }
-export function visibleTracks(o){
- const upgraded=o.upgrade?.paymentStatus==='paid'&&o.upgrade?.rightsVerified===true;
+export function visibleTracks(o,{downloadGranted=false}={}){
+ const upgraded=downloadGranted===true&&o.upgrade?.paymentStatus==='paid'&&o.upgrade?.rightsVerified===true;
  return approvedTracks(o).map((t,i)=>({
   index:i+1,title:t.title,genre:t.genre,
   file:'withu_song_'+(i+1)+'.'+(t.ext||'mp3'),
@@ -86,8 +86,8 @@ export function visibleTracks(o){
   ...(upgraded?{privateDownloadUrl:'/api/delivery-downloads/'+o.id+'_'+(i+1)}:{})
  }));
 }
-export function customerResponse(o){
- const tracks=visibleTracks(o);
+export function customerResponse(o,{downloadGranted=false}={}){
+ const tracks=visibleTracks(o,{downloadGranted});
  return {status:'delivered',tracks,track:tracks[0],
   commercialUpgrade:tracks[0].commercialUpgrade};
 }

@@ -70,13 +70,14 @@ export function assertValidPreparedOrder(draft){
   throw new Error('Server-owned price did not match prepared draft');
  return quote.amountKrw;
 }
-export function authorizeOrderMedia({sessionOrderId,assetOrderId,kind,order}={}){
+export function authorizeOrderMedia({sessionOrderId,assetOrderId,kind,order,downloadGranted=false}={}){
  requireProductionId(sessionOrderId);
  requireProductionId(assetOrderId);
  if(sessionOrderId!==assetOrderId)throw new Error('Other customer song not authorized');
  if(!order||order.paymentStatus!=='paid'||order.delivery?.status!=='sent')
   throw new Error('Unpaid or undelivered song not authorized');
- if(kind==='download'&&!(order.upgrade?.paymentStatus==='paid'
+ if(kind==='download'&&!(downloadGranted===true
+    &&order.upgrade?.paymentStatus==='paid'
     &&order.upgrade?.rightsVerified===true))
   throw new Error('Download rights and separate payment required');
  if(!['playback','download'].includes(kind))throw new Error('Invalid media access kind');

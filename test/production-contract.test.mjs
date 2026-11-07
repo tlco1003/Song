@@ -51,6 +51,7 @@ test('shared music links may only access songs belonging to their own order',()=
  }));
  assert.equal(authorizeOrderMedia({
   sessionOrderId:orderId,assetOrderId:orderId,kind:'download',
-  order:{...paid,upgrade:{paymentStatus:'paid',rightsVerified:true}}
+  order:{...paid,upgrade:{paymentStatus:'paid',rightsVerified:true}},
+  downloadGranted:true
  }),true);
 });

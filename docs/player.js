@@ -4,6 +4,7 @@ import {filterLyricLines,parseLyricDocument,cueIndexAt,approximateLyricIndexAt,l
 'use strict';
 const $=id=>document.getElementById(id);
 const audio=$('music-audio'),videoPlayer=$('music-video');
+const autoplayStart=$('autoplay-start');
 const musicVisual=$('music-visual'),musicVisualStage=$('music-visual-stage'),albumArt=$('album-art');
 const visualExpand=$('music-visual-expand'),visualClose=$('music-visual-close');
 const visualFit=$('music-visual-fit'),visualControls=$('music-visual-fullscreen-controls');
@@ -47,6 +48,26 @@ async function available(url){
  return 'unchecked';
 }
 function status(text){$('playback-message').textContent=text}
+// Attempt audible music on page entry. Mobile Safari may require a user gesture.
+async function tryStartSelectedMusic(initialLoad=false){
+ const target=playbackPlayer,token=requestId;
+ try{
+  await target.play();
+  if(token===requestId&&target===playbackPlayer)autoplayStart.hidden=true;
+ }catch(error){
+  if(token!==requestId||target!==playbackPlayer||error?.name==='AbortError')return;
+  if(error?.name==='NotAllowedError'){
+   autoplayStart.hidden=false;
+   status(initialLoad
+    ?'브라우저가 소리 자동 재생을 제한하고 있어요. 아래 ‘음악 시작’을 누르면 노래가 시작돼요.'
+    :'소리 재생이 제한됐어요. ‘음악 시작’을 눌러 노래를 들어 주세요.');
+  }else{
+   autoplayStart.hidden=true;
+   status('노래 재생을 시작할 수 없어요. 음원 파일과 브라우저 지원 여부를 확인해 주세요.');
+  }
+ }
+}
+autoplayStart.addEventListener('click',()=>{void tryStartSelectedMusic(false)});
 function syncSilentVideo(visual,sound){
  if(visual.hidden||!visual.getAttribute('src'))return;
  if(document.visibilityState==='hidden'||sound.paused||sound.ended){
@@ -203,10 +224,11 @@ function showPlayer(kind,hasSeparateAudio=false){
  videoPlayer.hidden=kind!=='video';
  $('no-audio').hidden=kind!=='none';
 }
-async function select(index,autoPlay=false){
+async function select(index,autoPlay=false,initialLoad=false){
  if(!tracks.length)return;
  current=(index+tracks.length)%tracks.length;
  const track=tracks[current],token=++requestId;
+ autoplayStart.hidden=true;
  closeVisual();
  featuredAudio.pause();
  audio.pause();audio.removeAttribute('src');audio.load();
@@ -272,7 +294,7 @@ async function select(index,autoPlay=false){
   updateRepeat();
   setMediaSession(track,playbackPlayer);
   status(isVideo?(hasSeparateAudio?'영상은 무음으로 표시되고 노래는 오디오 플레이어로 재생돼요.':'현재는 MP4 영상의 재생 버튼으로 소리와 영상을 함께 감상할 수 있어요. 별도 음원이 연결되면 화면 잠금 재생을 지원해요.'):track.visualMode==='silent-loop'?'영상은 무음으로 반복되고, 아래 재생 버튼으로 원곡을 들을 수 있어요.':'노래를 재생하면 가사가 자동으로 따라가요.');
-  if(autoPlay)void playbackPlayer.play().catch(()=>status('재생 버튼을 눌러 노래를 감상해 주세요.'));
+  if(autoPlay)void tryStartSelectedMusic(initialLoad);
  }else{
   showPlayer('none');
   status('이 곡은 아직 MP3가 업로드되지 않았어요. 노래 파일을 등록하면 직접 재생할 수 있어요.');
@@ -322,13 +344,14 @@ async function start(){
  }));
  // Keep approved manifest entries visible; show unavailable audio as "준비 중".
  // Otherwise a temporary HEAD failure can silently remove a song and its lyrics.
- showTracks();await select(0);
+ showTracks();await select(0,true,true);
  if(usingFallback)status('최신 곡 목록을 불러오지 못해 임시 목록을 표시하고 있어요. 인터넷 연결을 확인하고 새로고침해 주세요.');
 }
 $('previous-track').addEventListener('click',()=>select(current-1,true));
 $('next-track').addEventListener('click',()=>select(current+1,true));
 // Audio is the sole audible master for lyric timing, video and lock-screen controls.
 audio.addEventListener('play',()=>{
+ autoplayStart.hidden=true;
  featuredAudio.pause();
  setMediaSession(tracks[current],audio);
  if(!musicVisualStage.hidden)void musicVisual.play().catch(()=>{});
@@ -339,6 +362,7 @@ audio.addEventListener('seeking',()=>{if(playbackPlayer===audio)syncSilentVideo(
 videoPlayer.addEventListener('loadedmetadata',()=>{if(playbackPlayer===audio)syncSilentVideo(videoPlayer,audio)});
 videoPlayer.addEventListener('play',()=>{
  if(playbackPlayer!==videoPlayer)return;
+ autoplayStart.hidden=true;
  featuredAudio.pause();
  setMediaSession(tracks[current],videoPlayer);
 });

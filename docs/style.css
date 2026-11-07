@@ -246,3 +246,8 @@ button:focus-visible,a:focus-visible,label:focus-visible,.lyrics-scroll:focus-vi
  .music-visual-fullscreen-controls{gap:6px}
  .music-visual-fullscreen-controls .visual-overlay-button{padding:10px 11px}
 }
+
+/* Shown only if unmuted autoplay is blocked by the browser. */
+.autoplay-start{align-self:center;min-width:142px;border:1px solid #e5c7d8;border-radius:24px;padding:11px 22px;background:#f0dce4;color:#352435;font:700 13px/1.4 "Gowun Batang",sans-serif;box-shadow:0 4px 16px #100b1455;cursor:pointer}
+.autoplay-start:hover,.autoplay-start:focus-visible{background:#fff5f8}
+.autoplay-start[hidden]{display:none!important}

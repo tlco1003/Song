@@ -12,8 +12,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20261107-responsive-video-01">
-  <script type="module" src="player.js?v=20261107-responsive-video-01"></script>
+  <link rel="stylesheet" href="style.css?v=20261107-auto-mp3-01">
+  <script type="module" src="player.js?v=20261107-auto-mp3-01"></script>
   <style>
     .v17-research-section{background:#29212e;color:#f6edf2;padding:55px 0 64px}
     .v17-research-head{text-align:center;max-width:740px;margin:0 auto 25px}
@@ -80,6 +80,7 @@
           <div id="audio-zone" class="audio-zone">
             <video id="music-video" muted playsinline preload="metadata" hidden aria-label="선택한 노래의 무음 영상"></video>
             <audio id="music-audio" controls preload="metadata" playsinline hidden aria-label="선택한 노래의 오디오 재생"></audio>
+            <button id="autoplay-start" class="autoplay-start" type="button" hidden aria-label="음악 시작">▶ 음악 시작</button>
             
             <p id="no-audio" hidden>음악 파일을 준비하고 있어요. 내 음악 불러오기로 기기에 저장된 곡을 들어볼 수 있어요.</p>
           </div>

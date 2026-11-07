@@ -182,6 +182,17 @@ test('mother cinematic preview keeps her face cover, 16:9 loop and MP3 playback'
  assert.ok(js.includes('video.muted=true;video.defaultMuted=true'));
 });
 
+test('homepage first song attempts autoplay with a one-tap fallback if browser blocks sound',()=>{
+ assert.ok(html.includes('id="autoplay-start"'));
+ assert.ok(css.includes('.autoplay-start[hidden]'));
+ assert.ok(js.includes('showTracks();await select(0,true,true)'));
+ assert.ok(js.includes('async function tryStartSelectedMusic(initialLoad=false)'));
+ assert.ok(js.includes("error?.name==='NotAllowedError'"));
+ assert.ok(js.includes("autoplayStart.addEventListener('click'"));
+ assert.ok(js.includes("target.play()"));
+ assert.ok(js.includes("audio.src=track.deviceURL||fileURL('media/',hasSeparateAudio?track.audioFile:track.file)"));
+});
+
 test('playlist controls and private local upload controls are connected to new JS',()=>{
   for(const id of ['previous-track','next-track','music-audio','music-video','no-audio','track-list','local-song','local-lyrics','lyrics-scroll','local-review','review-gallery']){
     assert.ok(html.includes('id="'+id+'"'),id);

@@ -144,30 +144,28 @@
   <section class="v17-research-section" id="vision-lab-preview" aria-labelledby="vision-lab-heading">
     <div class="frame">
       <div class="v17-research-head">
-        <span class="small-caps">WITHU SONG-VISION · OWNER TRAINING · V18</span>
-        <h2 id="vision-lab-heading">내가 만든 얼굴 AI, 실제 학습 결과 보기</h2>
-        <p>다른 사람의 얼굴 영상이 아닙니다. 사용자가 직접 제공한 사진, 스피킹 영상과 제작한 AI 가수 이미지로 구성한 연구 결과입니다. 아래 재생 버튼을 누르면 원곡과 함께 확인할 수 있어요.</p>
+        <span class="small-caps">SONG-VISION · USER-OWNED TRAINING DATA · V19</span>
+        <h2 id="vision-lab-heading">네 영상으로 직접 배우는 AI 입모양</h2>
+        <p>이전 v18은 입모양 움직임이 거의 없는 실패 결과였습니다. 새 v19에서는 직접 제공한 스피킹 영상 2개에서 측정한 입 주변 변화와 원본 음성을 학습했습니다. 실제 촬영 영상과 생성 결과, 입술 확대 화면을 함께 확인하세요.</p>
       </div>
       <div class="v17-research-grid">
         <article class="v17-research-card">
-          <h3>01 · AM 6:30 — SONG-Vision v18</h3>
-          <p>사용자가 직접 제작해 올린 AI 가수 이미지 · AM 6:30 실제 음원 · 8초 · 25fps</p>
-          <video controls playsinline preload="metadata" poster="vision-owner/am630_v18_poster.jpg" aria-label="사용자가 제작한 가수 이미지와 AM 6:30 음원으로 생성한 v18 AI 입모양 테스트 영상"><source src="vision-owner/AM630_v18_AI_photo_audio_driven_UNVALIDATED.mp4" type="video/mp4">이 브라우저는 MP4를 지원하지 않습니다.</video>
-          <p>※ 사용자 제작 AI 캐릭터 이미지에 음원 기반 얼굴 픽셀 변화를 적용한 결과입니다. 자연스러운 한국어 립싱크 정확도는 아직 미달입니다.</p>
-          <a href="vision-owner/AM630_v18_AI_photo_audio_driven_UNVALIDATED.mp4" target="_blank" rel="noopener" style="text-decoration:underline;color:#f8dce7;font-size:12px">영상 새 창에서 재생</a>
+          <h3>01 · 네 실제 스피킹 영상 vs v19 AI</h3>
+          <p>왼쪽: 실제 네가 올린 스피킹 영상 · 오른쪽: 원본 음성→학습된 입 움직임 · 아래: 입술 확대 · 8초 · 25fps</p>
+          <video controls playsinline preload="metadata" poster="vision-owner/owner_speaking_poster.jpg" aria-label="사용자 원본 스피킹 얼굴과 v19 개인 학습모델 입술 움직임 확대 비교"><source src="vision-owner/OWNER_speaking_v19_MOUTH_MACRO_LEARNED.mp4" type="video/mp4">이 브라우저는 MP4를 지원하지 않습니다.</video>
+          <p>검증 프레임 132장. 정적 평균 입모양 지표 오차 0.262 → 학습 모델 0.217. 실제 발음과 일치하지 않는 구간이 있어 연구용으로만 표시합니다.</p>
+          <a href="vision-owner/OWNER_speaking_v19_MOUTH_MACRO_LEARNED.mp4" target="_blank" rel="noopener" style="text-decoration:underline;color:#f8dce7;font-size:12px">스피킹 비교 영상 크게 보기</a>
         </article>
         <article class="v17-research-card">
-          <h3>02 · 내가 올린 스피킹 영상 vs 개인 AI</h3>
-          <p>사용자 실제 촬영 얼굴 / 사용자 기준 사진 / 실제 사용자 자료로 학습한 AI · 6.4초</p>
-          <video controls playsinline preload="metadata" poster="vision-owner/owner_speaking_poster.jpg" aria-label="사용자 원본 스피킹 영상과 사용자의 사진으로 학습한 AI 결과 비교"><source src="vision-owner/owner_speaking_preview_v1.mp4" type="video/mp4">이 브라우저는 MP4를 지원하지 않습니다.</video>
-          <p>※ 비교의 첫 화면은 실제 업로드한 스피킹 영상, 나머지는 개인 기준 사진과 훈련 결과입니다. 정확한 모음별 발음 일치는 아직 검증되지 않았습니다.</p>
-          <a href="vision-owner/owner_speaking_preview_v1.mp4" target="_blank" rel="noopener" style="text-decoration:underline;color:#f8dce7;font-size:12px">영상 새 창에서 재생</a>
+          <h3>02 · AM 6:30 — v19 AI 가수 입모양</h3>
+          <p>사용자가 직접 만든 AI 가수 사진 + 실제 AM 6:30 원곡 음원 · 사진과 AI의 입술 확대 비교 · 10초 · 25fps</p>
+          <video controls playsinline preload="metadata" poster="vision-owner/am630_v18_poster.jpg" aria-label="사용자 생성 가수 얼굴의 실제 AM 6:30 음원 기반 입술 움직임 확대"><source src="vision-owner/AM630_v19_OWNER_MOUTH_MACRO_LEARNED.mp4" type="video/mp4">이 브라우저는 MP4를 지원하지 않습니다.</video>
+          <p>입술 변형은 모델의 음향 예측을 시각적으로 증폭한 실험입니다. 원곡은 반주가 섞인 음원이며 한국어 립싱크 정확도는 미검증입니다.</p>
+          <a href="vision-owner/AM630_v19_OWNER_singer_mouth_scene.mp4" target="_blank" rel="noopener" style="text-decoration:underline;color:#f8dce7;font-size:12px">AM 6:30 전체 장면 영상 보기</a>
         </article>
       </div>
-      <p class="v17-research-note">추가 비교: <a href="vision-owner/owner_audio_only_photo_v1.mp4" target="_blank" rel="noopener" style="text-decoration:underline;color:#f8dce7">초기 개인 얼굴 AI v1 영상 보기</a><br>
-        <span>v18 평가: 입 영역 MAE 0.03036 · 정지 사진 복사 기준 0.03000 (작을수록 좋음) · 현재 립싱크 품질 미달</span>
-      </p>
-      <div class="v17-research-note"><a class="v17-research-link" href="song-vision-lab.html">영상 크게 보기 · 버전별 연구 결과 ↗</a></div>
+      <p class="v17-research-note">사진·원본 스피킹 영상은 사용자가 직접 제공한 자료이고, AI 가수 이미지는 사용자가 제작한 이미지입니다. 이 두 영상 모두 완성된 립싱크가 아닌 실험 기록입니다.<br>
+      <a href="song-vision-lab.html" class="v17-research-link">v19 영상 3종과 v18 실패 결과 비교 보기 ↗</a></p>
     </div>
   </section>
 

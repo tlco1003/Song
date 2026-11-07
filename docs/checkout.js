@@ -111,7 +111,7 @@ function initTrackPreferences(){
    const option=document.createElement('option');option.value=value;
    option.textContent=choiceLabels.eraPreference[value]||value;era.appendChild(option);
   }
-  const saved=draft?.trackPreferences?.[i-1];
+  const saved=draft?.duoTrackPreferences?.[i-1]||draft?.trackPreferences?.[i-1];
   mood.value=perTrackMoods.includes(saved?.mood)?saved.mood:
    perTrackMoods.includes(draft?.mood)?draft.mood:'따뜻한';
   era.value=perTrackEras.includes(saved?.eraPreference)?saved.eraPreference:
@@ -160,6 +160,11 @@ function saveChoices(){
  const next={...draft,selectedProduct:chosenProduct(),genreSelection:selected,
    sharedStyleNotes:'',
    trackPreferences:trackPreferences(),
+   // Preserve both song presets while switching between 1 and 2 song products.
+   duoTrackPreferences:[1,2].map(i=>({
+    mood:$('song-mood-'+i).value,
+    eraPreference:$('song-era-'+i).value
+   })),
    singleGenreBlend:$('single-genre-blend').checked,
    thirdVerse:$('third-verse').checked,
    dedicationOutro:$('dedication-outro').checked,

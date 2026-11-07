@@ -33,50 +33,59 @@
 <nav aria-label="메뉴"><a href="index.html">홈</a><a href="index.html#vision-lab-preview">학습 결과</a></nav>
 </div></header>
 <main class="vision-lab"><div class="frame">
-<span class="vision-badge">SONG-VISION V18 · OWNER MATERIAL ONLY</span>
-<h1>내 사진·내 스피킹 영상으로<br>학습한 AI 얼굴을 직접 비교해요.</h1>
+<span class="vision-badge">SONG-VISION V19 · OWNER SPEECH LEARNING</span>
+<h1>실제 네 스피킹 영상에서 학습한<br>입모양을 계속 비교할 수 있어요.</h1>
 <p class="vision-intro">여기에 표시된 세 영상은 모두 사용자가 제공한 실제 스피킹 자료나 사용자가 만든 AI 가수 이미지를 기준으로 생성했습니다. <strong>다른 사람의 RAVDESS 영상은 게시하지 않습니다.</strong> ▶를 누르면 원곡 음성과 영상이 함께 재생됩니다.</p>
 <div class="vision-grid">
 <section class="vision-card">
-<h2>01. AM 6:30 · SONG-Vision v18 최신 실험</h2>
-<p>사용자가 만든 AI 가수 이미지 + 실제 AM 6:30 음원만으로 얼굴 움직임 생성 / 8초 · 25fps · 음성 포함</p>
-<video id="v18-am630-video" controls playsinline preload="metadata" poster="vision-owner/am630_v18_poster.jpg" aria-label="내가 만든 AI 가수 이미지에 AM 6:30 음원을 적용한 v18 입모양 영상">
-<source src="vision-owner/AM630_v18_AI_photo_audio_driven_UNVALIDATED.mp4" type="video/mp4">MP4를 지원하지 않는 브라우저입니다.</video>
-<p class="meta">정답 얼굴 동영상을 생성 입력으로 사용하지 않은 음원·사진 기반 결과. 한국어 모음별 정확한 발음 동기화는 아직 미검증입니다.</p>
-<p><a href="vision-owner/AM630_v18_AI_photo_audio_driven_UNVALIDATED.mp4" target="_blank" rel="noopener">영상 새 창으로 보기</a></p>
+<h2>01 · v19 실제 말하기 영상 vs 학습 AI (입술 확대)</h2>
+<p>원본 실제 사용자의 스피킹 영상과 같은 시간대 음성을 입력받아 학습 모델이 예측한 입 주변 움직임을 비교 · 8초 · 25fps</p>
+<video id="v19-owner-speech" controls playsinline preload="metadata" poster="vision-owner/owner_speaking_poster.jpg" aria-label="사용자의 실제 말하기와 AI 입 모양 v19 비교"><source src="vision-owner/OWNER_speaking_v19_MOUTH_MACRO_LEARNED.mp4" type="video/mp4">MP4 미지원</video>
+<p class="meta">왼쪽은 실제 촬영본, 오른쪽은 처음 기준 사진에서 음향 모델로 움직인 얼굴, 맨 아래는 입술 확대입니다. 한국어 음절마다 정답인지는 검증되지 않았습니다.</p>
+<p><a href="vision-owner/OWNER_speaking_v19_MOUTH_MACRO_LEARNED.mp4" target="_blank" rel="noopener">실제 스피킹 비교 크게 보기</a></p>
+<p id="v19-owner-speech-status" class="vision-status" role="status"></p>
+</section>
+<section class="vision-card">
+<h2>02 · v19 AM 6:30 음악·AI 캐릭터 (입술 확대)</h2>
+<p>사용자가 직접 만든 AI 여성 가수 이미지 · 원곡 AM 6:30 · 입술 부분 확대 비교 · 10초 · 25fps</p>
+<video id="v19-am630-macro" controls playsinline preload="metadata" poster="vision-owner/am630_v18_poster.jpg" aria-label="AM 6:30 AI 가수 이미지와 입 움직임 v19 확대"><source src="vision-owner/AM630_v19_OWNER_MOUTH_MACRO_LEARNED.mp4" type="video/mp4">MP4 미지원</video>
+<p class="meta">네가 만든 AI 가수 사진은 다른 사용자의 실사 영상이 아닙니다. 음향 기반 움직임은 보기 쉽게 증폭했으며 립싱크로 검증된 결과는 아닙니다.</p>
+<p><a href="vision-owner/AM630_v19_OWNER_MOUTH_MACRO_LEARNED.mp4" target="_blank" rel="noopener">AM 6:30 입술 확대 크게 보기</a></p>
+<p id="v19-am630-macro-status" class="vision-status" role="status"></p>
+</section>
+<section class="vision-card">
+<h2>03 · v19 AM 6:30 원본 웨딩 이미지 전체 화면</h2>
+<p>원래 사진의 구도와 바다·오케스트라·드레스를 유지한 음향 기반 얼굴 변형 · 10초 · 25fps</p>
+<video id="v19-am630-scene" controls playsinline preload="metadata" poster="vision-owner/am630_v18_poster.jpg" aria-label="AM 6:30 전체 웨딩 배경 AI 가수 입모양 v19"><source src="vision-owner/AM630_v19_OWNER_singer_mouth_scene.mp4" type="video/mp4">MP4 미지원</video>
+<p class="meta">배경은 움직이지 않습니다. 실제 노래 가사·발음 시점과 일치하는지도 아직 검증되지 않았습니다. 입모양 검사는 두 번째 확대 영상을 이용하세요.</p>
+<p><a href="vision-owner/AM630_v19_OWNER_singer_mouth_scene.mp4" target="_blank" rel="noopener">전체 장면 크게 보기</a></p>
+<p id="v19-am630-scene-status" class="vision-status" role="status"></p>
+</section>
+<section class="vision-card">
+<h2>04 · 이전 v18 실패 영상 (변화 비교)</h2>
+<p>이전 8초 모델은 실제로 입이 거의 움직이지 않았습니다. 학습 성공으로 표시하지 않습니다.</p>
+<video id="v18-am630-video" controls playsinline preload="metadata" poster="vision-owner/am630_v18_poster.jpg" aria-label="거의 정지한 이전 v18 실패 영상"><source src="vision-owner/AM630_v18_AI_photo_audio_driven_UNVALIDATED.mp4" type="video/mp4">MP4 미지원</video>
+<p class="meta">v18은 평균 프레임간 전체 픽셀 차이 0.000007로 정지 수준입니다. v19도 실제 가창 입술 동기화는 아직 미달입니다.</p>
+<p><a href="vision-owner/AM630_v18_AI_photo_audio_driven_UNVALIDATED.mp4" target="_blank" rel="noopener">실패 기준 영상 크게 보기</a></p>
 <p id="v18-am630-status" class="vision-status" role="status"></p>
 </section>
-<section class="vision-card">
-<h2>02. 내 실제 말하기 얼굴과 AI 학습 결과 비교</h2>
-<p>사용자가 촬영한 스피킹 영상 / 사용자 정면 사진 / 개인 음향 얼굴 모델 · 6.4초 · 원본 음성 포함</p>
-<video id="v18-owner-compare" controls playsinline preload="metadata" poster="vision-owner/owner_speaking_poster.jpg" aria-label="내 스피킹 영상과 AI 입모양 학습 결과 비교">
-<source src="vision-owner/owner_speaking_preview_v1.mp4" type="video/mp4">MP4를 지원하지 않는 브라우저입니다.</video>
-<p class="meta">원본 스피킹 영상이 화면 왼쪽, 기준 사진과 학습 모델 비교가 나머지 두 화면입니다. 개인 데이터만 사용한 모델입니다.</p>
-<p><a href="vision-owner/owner_speaking_preview_v1.mp4" target="_blank" rel="noopener">비교 영상 새 창으로 보기</a></p>
-<p id="v18-owner-status" class="vision-status" role="status"></p>
-</section>
-<section class="vision-card">
-<h2>03. 개인 얼굴 AI v1 · 이전 버전</h2>
-<p>초기 개인 모델 · 사진+음성만으로 생성한 8초 영상 · 25fps</p>
-<video id="v18-owner-v1" controls playsinline preload="metadata" poster="vision-owner/owner_speaking_poster.jpg" aria-label="첫 번째 개인 얼굴 음성 모델 영상">
-<source src="vision-owner/owner_audio_only_photo_v1.mp4" type="video/mp4">MP4를 지원하지 않는 브라우저입니다.</video>
-<p class="meta">이전 버전과 최신 결과를 비교하기 위한 기록입니다. 미세한 움직임만 있는 실험 단계입니다.</p>
-<p><a href="vision-owner/owner_audio_only_photo_v1.mp4" target="_blank" rel="noopener">영상 새 창으로 보기</a></p>
-<p id="v18-owner-v1-status" class="vision-status" role="status"></p>
-</section>
 </div>
-<div class="vision-note"><strong>학습 근거 및 품질 구분</strong>
-<p>v18은 사용자가 업로드한 말하기 음성·실제 얼굴 프레임과 별도 AI 가수 이미지를 활용한 모델입니다. 사진은 외형 복원에만, 실제 말하기 영상은 음향-입 주변 변화 학습에 사용했습니다. AI 제작 이미지에는 실제 발음 정답을 임의로 붙이지 않았습니다.</p>
-<p>v18 실제 검증: 입 주변 MAE 0.03036, 정지 사진 복사 0.03000. 작을수록 좋은 값이므로 아직 정지 얼굴 기준을 넘지 못했고, 아·이·우·에·오의 실제 음절별 타이밍 정답도 없습니다. **립싱크 품질 미달**이며 영상이 존재한다는 사실만으로 학습 성공이라고 판정하지 않습니다.</p>
-<p>영상은 사용자가 공개 확인을 요청한 결과물입니다. 원본 전체 길이 학습 영상과 개인 모델 가중치는 공개하지 않았습니다. 앞으로 새 학습 결과가 만들어지면 이곳에 버전별 비교 영상을 추가할 수 있습니다.</p>
+<div class="vision-note"><strong>검증·데이터 출처</strong>
+<p>v19은 오직 사용자가 제공한 실제 스피킹 영상 2개에서 측정한 입 주변 명암·형태의 통계적 지표를 학습했습니다. 422프레임 학습, 서로 떨어진 시점의 132프레임 검증에서 입 벌어짐 지표 MAE가 고정 평균 0.2620에서 모델 0.2167로 낮아졌습니다. 음향 특징을 뒤섞으면 0.2318로 나빠졌습니다.</p>
+<p>이 측정 지표는 실제 3D 입술 랜드마크가 아니라 영상의 명암을 이용한 대용 지표입니다. 개별 한국어 자음·모음의 정확한 정답과 가사 시점은 확보하지 못했습니다. AM 6:30은 반주가 섞인 음원이므로 학습 때와 다른 음향 분포를 맞춘 뒤 움직임을 시각화한 것이며 **실제 노래에 정확히 립싱크했다는 뜻이 아닙니다.**</p>
+<p>위 영상은 본인이 공개해도 좋다고 한 사용자 제공 자료 기반 결과물입니다. 녹화한 전체 원본과 개인 학습 모델 가중치는 비공개 저장소에 유지합니다. 대외 제품 품질 기준은 미달입니다.</p>
 </div><a class="vision-back" href="index.html">← WITHU 홈으로 돌아가기</a>
 </div></main>
 <footer class="site-footer"><div class="frame footer-inner"><span class="footer-brand">WITHU</span><p>직접 제공한 자료로 학습한 SONG-Vision 연구 영상</p></div></footer>
 <script>
-for(const [vid,status] of [['v18-am630-video','v18-am630-status'],['v18-owner-compare','v18-owner-status'],['v18-owner-v1','v18-owner-v1-status']]){
- const v=document.getElementById(vid),s=document.getElementById(status);
- v.addEventListener('loadedmetadata',()=>{s.textContent='영상 준비 완료. ▶를 누르면 소리와 함께 재생됩니다.'});
- v.addEventListener('error',()=>{s.textContent='영상 파일을 확인하지 못했습니다. 아래 새 창 링크를 눌러보세요.'},true);
+for(const [vid,status] of [
+ ['v19-owner-speech','v19-owner-speech-status'],
+ ['v19-am630-macro','v19-am630-macro-status'],
+ ['v19-am630-scene','v19-am630-scene-status'],
+ ['v18-am630-video','v18-am630-status']]){
+ const v=document.getElementById(vid),t=document.getElementById(status);
+ v.addEventListener('loadedmetadata',()=>{t.textContent='영상 준비 완료 · 재생 버튼으로 확인할 수 있습니다.'});
+ v.addEventListener('error',()=>{t.textContent='영상 로딩 오류 · 아래 새 창 링크를 확인하세요.'},true);
 }
 </script>
 </body></html>

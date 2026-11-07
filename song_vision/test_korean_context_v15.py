@@ -33,7 +33,7 @@ class KoreanSentenceLearningTests(unittest.TestCase):
             rows.append(
                 f"{word},False,2.50,2.00,{1.+((i*17)%300)/100.:.2f},"
                 f"{1.+((i*29)%320)/100.:.2f}")
-        return ("\\n".join(rows)+"\\n").encode("utf-8")
+        return ("\n".join(rows)+"\n").encode("utf-8")
 
     @staticmethod
     def fake_reviews(suffix,n=45):

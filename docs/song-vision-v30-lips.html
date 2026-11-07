@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#231c27">
+<meta name="description" content="WITHU SONG-Vision v30 사용자 실제 스피킹 영상 기반 윗입술·아랫입술 겉보기 두께 측정, 얼굴 회전, AM 6:30 연구 비교">
+<title>WITHU | SONG-Vision v30 입술 두께·측면·미세표정</title>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:#211a28;color:#f5eef2;font-family:"Gowun Batang",serif}
+header{display:flex;justify-content:space-between;align-items:center;padding:18px max(18px,calc((100vw - 1070px)/2));border-bottom:1px solid #ffffff28}
+.brand{font:28px "Cormorant Garamond",serif;letter-spacing:.20em}
+header a{color:#f4dce8;text-decoration:none}
+main{max-width:1070px;margin:0 auto;padding:30px 17px 80px}
+.tag{display:inline-block;border:1px solid #b993b3;border-radius:22px;padding:7px 13px;font:12px sans-serif;color:#f3d6e4;letter-spacing:.06em}
+h1{font-weight:400;font-size:clamp(27px,4vw,43px);line-height:1.45;margin:17px 0}
+h2{font-size:21px;font-weight:400;margin:0 0 11px}
+p{line-height:1.85;color:#e4d0dd;word-break:keep-all}
+a{color:#f5cddb;text-underline-offset:5px}
+.panel{background:#ffffff0b;border:1px solid #ffffff22;border-radius:14px;padding:16px;margin:23px 0}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+video{width:100%;background:#100e15;border-radius:10px;display:block;max-height:75vh}
+.note{font:13px/1.8 sans-serif;color:#dfcad5}
+.vowels{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px;margin:16px 0}
+.vowels button{font:22px "Gowun Batang",serif;border:1px solid #c0a4b0;color:#f5edf2;background:#ffffff12;border-radius:9px;cursor:pointer;padding:11px 3px}
+.vowels button[aria-pressed=true]{background:#966d85}
+.status{font:13px/1.6 sans-serif;color:#eec0d0;min-height:20px}
+table{border-collapse:collapse;width:100%;font:13px/1.8 sans-serif}
+td,th{border-bottom:1px solid #ffffff26;padding:9px;text-align:left}
+th{color:#ead2de}
+.small{font-size:12px}
+@media(max-width:720px){.cols{grid-template-columns:1fr}.panel{padding:10px}.vowels button{padding:9px 2px;font-size:21px}}
+</style>
+</head>
+<body>
+<header><a class="brand" href="index.html">WITHU</a><a href="song-vision-lab.html">← 연구 영상 전체</a></header>
+<main>
+<span class="tag">SONG-VISION V30 · VISIBLE LIP THICKNESS · OWNER VIDEO</span>
+<h1>윗입술과 아랫입술의<br>얇아짐을 따로 계산했어.</h1>
+<p>실제 스피킹 영상의 입술 윤곽을 추출하고, <strong>윗입술·아랫입술·입안 개방·입 너비</strong>를 분리했어. v29의 독립적인 아래턱·볼·광대 피부 움직임을 유지하면서 입술의 겉보기 두께를 따로 변형할 수 있게 했어.</p>
+<section class="panel">
+<h2>01 · v29 vs v30, 입술 두께 비교</h2>
+<p class="note">원본 얼굴에서 추출한 입술 픽셀을 사용한 연구 영상. 왼쪽 기존 v29, 오른쪽 v30. <strong>모음별 두께 조절값은 검증 전 설계 초안이며, 그 발음의 실측 정답이 아니야.</strong></p>
+<video id="vowels-video" controls playsinline preload="metadata" aria-label="v29와 v30 사용자 실제 입술 영상의 윗입술 아랫입술 독립 변형 비교"><source src="vision-owner/SONG_V30_VISIBLE_UPPER_LOWER_LIP_THICKNESS.mp4" type="video/mp4">MP4 미지원</video>
+<div class="vowels" id="vowel-buttons" aria-label="모음 별 비교 구간"></div>
+<p class="status" id="vowels-status" role="status">ㅣ·ㅔ·ㅗ·ㅜ·ㅏ·ㅡ 순서로 비교해 볼 수 있어.</p>
+<p class="small"><a href="vision-owner/SONG_V30_VISIBLE_UPPER_LOWER_LIP_THICKNESS.mp4" target="_blank" rel="noopener">입술 비교 영상 크게 보기</a></p>
+</section>
+<div class="cols">
+<section class="panel">
+<h2>02 · 실제 Speaking의 측면 회전</h2>
+<p class="note">IMG_0853.mp4의 8–14초 구간. 실제 얼굴이 옆으로 돌아가는 영상 그대로이며, 3D 턱 회전각을 측정한 영상으로 표시하지 않아.</p>
+<video controls playsinline preload="metadata" aria-label="사용자 실제 스피킹 정면에서 측면으로 돌아가는 녹화 영상"><source src="vision-owner/SONG_V30_OWNER_SPEAKING_TURNED_POSE_OBSERVATION.mp4" type="video/mp4">MP4 미지원</video>
+<p><a href="vision-owner/SONG_V30_OWNER_SPEAKING_TURNED_POSE_OBSERVATION.mp4" target="_blank" rel="noopener">측면 원본 비교 크게 보기</a></p>
+</section>
+<section class="panel">
+<h2>03 · AM 6:30 원곡 가사 시연</h2>
+<p class="note">6초 · 20fps · 실제 원곡 음성. 가사로 모음을 정하고 음량으로 움직임 강도만 조절해. 음절별 타이밍은 아직 정답이 아닌 임시 배정이야.</p>
+<video controls playsinline preload="metadata" aria-label="AM 6:30 원곡과 연구용 윗입술 아랫입술 두께 모음 변형 영상"><source src="vision-owner/AM630_V30_VISIBLE_LIP_THICKNESS_UNALIGNED.mp4" type="video/mp4">MP4 미지원</video>
+<p><a href="vision-owner/AM630_V30_VISIBLE_LIP_THICKNESS_UNALIGNED.mp4" target="_blank" rel="noopener">원곡 시험 영상 크게 보기</a></p>
+</section>
+</div>
+<section class="panel">
+<h2>어떤 두께를 측정했을까?</h2>
+<p><strong>실제 3D 입술 조직의 두께가 아니라</strong> 정규화한 320×320 얼굴 이미지에서 겉으로 보이는 붉은 입술의 세로 높이와 입안의 검은 영역 후보를 측정했어. 입술이 닫혔거나 경계가 불확실하면 두께를 확정하지 않도록 했어.</p>
+<table><thead><tr><th>영상에서 관찰한 형태</th><th>윗입술 높이 후보</th><th>아랫입술 높이 후보</th><th>검증</th></tr></thead>
+<tbody>
+<tr><td>크게 열린 원본 (IMG_0853 · 1.0초)</td><td>9px</td><td>28px</td><td>자동 추정 · 사람 경계검수 전</td></tr>
+<tr><td>오므린 형태 (IMG_0853 · 5.0초)</td><td>5px</td><td>15px</td><td>자동 추정 · 사람 경계검수 전</td></tr>
+<tr><td>둥글게 열린 형태 (IMG_0854 · 26.2초)</td><td>8px</td><td>23px</td><td>자동 추정 · 사람 경계검수 전</td></tr>
+<tr><td>입술 닫힘 (IMG_0853 · 7.6초)</td><td>측정 보류</td><td>측정 보류</td><td>입안 경계 미확인</td></tr>
+</tbody></table>
+<p class="note">관찰된 형태와 실제 발음이 일치한다는 음소 정답 라벨은 없어. 이 숫자는 의료 영상으로 검증된 해부학적 두께가 아니며, 학습용 입술 경계 후보야.</p>
+</section>
+<section class="panel">
+<h2>실제 논문과 미완료 조건</h2>
+<p>3D 입술 랜드마크 연구(Nasir 외, 2020), 한국 여성의 3D 안면 계측, 입둘레근의 강성·입술 원형화 연구(Nazari 외, 2011)를 기준으로 **입술 두께·가로 너비·입안 개방을 독립 변수**로 설계했어. 단, 논문의 수치를 이 사람의 발음별 개인 데이터로 전용하지 않았어.</p>
+<p class="note">남은 연구: ① 프레임별 실제 입술 안팎 경계 사람검수 ② 정면·좌·우 측면별 3D 얼굴 포즈 보정 ③ 실제 가창 음소 시간 검증 ④ 치아·혀·구강 내부 가림/노출 ⑤ 실제 턱관절 회전각 측정. v30은 이 모든 것을 완료한 실사 AI라는 뜻이 아니야.</p>
+<p class="small">근거: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7267716/" target="_blank" rel="noopener">Nasir 외 2020</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7875215/" target="_blank" rel="noopener">한국 여성 3D 안면 계측</a> · <a href="https://pubmed.ncbi.nlm.nih.gov/21339518/" target="_blank" rel="noopener">Nazari 외 2011</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC13105802/" target="_blank" rel="noopener">Garg 외 2026</a> · <a href="https://github.com/tlco1003/Song/blob/main/song_vision/README_V30.md" target="_blank" rel="noopener">연구 근거·재현 방법</a></p>
+</section>
+</main>
+<script>
+(()=>{
+const v=document.getElementById('vowels-video'),root=document.getElementById('vowel-buttons'),status=document.getElementById('vowels-status');
+const names=['ㅣ','ㅔ','ㅗ','ㅜ','ㅏ','ㅡ'];let stop=-1;
+names.forEach((name,i)=>{let b=document.createElement('button');b.type='button';b.textContent=name;b.setAttribute('aria-pressed','false');
+b.onclick=()=>{stop=(i+1)*.95-.025;v.currentTime=i*.95+.035;
+document.querySelectorAll('#vowel-buttons button').forEach((x,j)=>x.setAttribute('aria-pressed',String(i===j)));
+status.textContent=name+' 입술의 윗부분·아랫부분 변형 시연 중. 음소 정답은 검증 전.';
+const play=v.play();if(play?.catch)play.catch(()=>status.textContent='재생이 막혔어. 영상의 재생 버튼을 눌러줘.');
+};root.appendChild(b);});
+v.addEventListener('timeupdate',()=>{if(stop>=0&&v.currentTime>=stop){v.pause();stop=-1}});
+})();
+</script>
+</body>
+</html>

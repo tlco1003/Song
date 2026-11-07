@@ -1,0 +1,105 @@
+name: SONG Vision v17 real singing research and inspectable video
+on:
+  push:
+    branches:
+      - feature/song-vision-self-hosted-v1
+    paths:
+      - 'song_vision/*v17.py'
+      - '.github/workflows/song-vision-v17-real-singing.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: song-v17-real-singing-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  real_paired_singing_v17:
+    runs-on: ubuntu-latest
+    timeout-minutes: 105
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      OMP_NUM_THREADS: '2'
+      MKL_NUM_THREADS: '2'
+      FACE_TASK: ${{ github.workspace }}/face_landmarker.task
+      V17_VAULT: ${{ github.workspace }}/v17-new-encrypted-vault
+      V17_PREVIEW: ${{ github.workspace }}/v17-owner-video-preview
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install offline PyTorch and multimedia dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg libgles2 libegl1 libgl1 libglib2.0-0
+          python -m pip install -q torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -q -r song_vision/requirements-geometry.txt
+      - name: Validate Korean plus licensed English transcription timing contracts
+        run: |
+          python -m unittest song_vision.test_text_audio_v17 -v
+          python -m compileall -q song_vision/real_singing_v17.py
+      - name: Install verified local face landmark teacher
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error --retry 4 --retry-delay 8 --max-time 240 \
+            'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task' \
+            --output "$FACE_TASK"
+          echo '64184e229b263107bc2b804c6625db1341ff2bb731874b0bcc2fe6544e0bc9ff  '"$FACE_TASK" | sha256sum --check
+      - name: Train actually paired face and source vocal models; compare same audio
+        run: |
+          python -m song_vision.real_singing_v17 \
+            --landmarker-task "$FACE_TASK" \
+            --vault-public-key song_vision/research_vault_public.pem \
+            --vault-output-dir "$V17_VAULT" \
+            --preview-output-dir "$V17_PREVIEW" \
+            --epochs 2 \
+            --acknowledge-noncommercial-research
+      - name: Upload noncommercial, attributed holdout singer comparison video
+        uses: actions/upload-artifact@v4
+        with:
+          name: song-v17-real-singer-comparison-${{ github.run_id }}-a${{ github.run_attempt }}
+          path: ${{ env.V17_PREVIEW }}/*
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload encrypted model and research metrics (never plain weights)
+        uses: actions/upload-artifact@v4
+        with:
+          name: song-v17-encrypted-model-${{ github.run_id }}-a${{ github.run_attempt }}
+          path: ${{ env.V17_VAULT }}/*
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+      - name: Preserve fresh encrypted v17 checkpoint without overwriting v16
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin refs/heads/research/song-vision-vault:refs/remotes/origin/research/song-vision-vault
+          git worktree add --detach "$RUNNER_TEMP/v17-archive" refs/remotes/origin/research/song-vision-vault
+          cd "$RUNNER_TEMP/v17-archive"
+          mkdir -p encrypted/ravdess-v17-real-singing
+          cp "$V17_VAULT"/*.svault "$V17_VAULT"/*.manifest.json encrypted/ravdess-v17-real-singing/
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add encrypted/ravdess-v17-real-singing
+          if git diff --cached --quiet; then
+            echo 'Refusing to claim a newly persisted model when no ciphertext changed'
+            exit 1
+          fi
+          git commit -m "research-vault: preserve actual v17 singer training $GITHUB_RUN_ID a$GITHUB_RUN_ATTEMPT"
+          for attempt in 1 2 3; do
+            if git push origin HEAD:refs/heads/research/song-vision-vault; then
+              exit 0
+            fi
+            sleep $((4 * attempt))
+            git fetch origin research/song-vision-vault
+            git rebase FETCH_HEAD
+          done
+          echo 'Encrypted v17 archive failed'
+          exit 1
+      - name: Explicit commercial quality gate
+        run: |
+          echo 'Research video uses RAVDESS CC BY-NC-SA 4.0 and cannot be a paid SONG product.'
+          echo 'English source graphemes are NOT verified Korean phoneme or lyric timing.'

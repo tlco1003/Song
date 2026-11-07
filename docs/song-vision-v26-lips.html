@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#221d27">
+<meta name="description" content="SONG-Vision v26 실제 사용자 스피킹 영상의 입술 윤곽·입안·치아 픽셀을 학습한 비교 영상">
+<title>WITHU | SONG-Vision v26 실제 입술·구강 형태 연구</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}html{color-scheme:dark}body{background:#221d27;color:#f6ecf0;margin:0;font-family:"Gowun Batang",serif}
+header{padding:16px max(18px,calc((100% - 1080px)/2));display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ffffff26}
+.brand{font-family:"Cormorant Garamond",serif;font-size:29px;letter-spacing:.16em}
+a{color:#f3d0dc;text-underline-offset:4px}header a{text-decoration:none}
+main{max-width:1080px;margin:auto;padding:34px 17px 80px}
+.tag{border:1px solid #dfbfc683;padding:8px 13px;border-radius:30px;color:#f3d3dc;display:inline-block;font:12px sans-serif}
+h1{font-weight:400;font-size:clamp(28px,4.5vw,44px);line-height:1.48;margin:17px 0}
+h2{font-weight:400;font-size:23px}p{line-height:1.85;color:#dfcfda;word-break:keep-all}
+.panel{background:#ffffff0b;border:1px solid #ffffff22;border-radius:15px;padding:18px;margin:18px 0}
+video{display:block;width:100%;max-height:76vh;object-fit:contain;background:#141119;border-radius:10px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.vowels{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+.vowels button{font:20px "Gowun Batang",serif;color:#fff;background:#ffffff12;border:1px solid #ffffff4d;padding:14px 7px;border-radius:9px;cursor:pointer}
+.vowels button[aria-pressed="true"]{background:#885e73;border-color:#ecc7d6}
+.label{font:12px/1.65 sans-serif;color:#e7cdd5}
+.detail{font-size:13px}
+.status{color:#ecb7bf;font-size:13px;min-height:20px}
+.small-link{display:inline-block;margin:8px 0;font-size:13px}
+@media(max-width:760px){.cols{grid-template-columns:1fr}.panel{padding:12px}.vowels{grid-template-columns:repeat(5,minmax(0,1fr))}h2{font-size:20px}.vowels button{padding:10px 3px}}
+</style></head>
+<body>
+<header><a class="brand" href="index.html">WITHU</a><a href="song-vision-lab.html">연구 영상 전체</a></header>
+<main>
+<span class="tag">SONG-VISION V26 · REAL OWNER LIP PIXELS · RESEARCH ONLY</span>
+<h1>입술 자체가 원형으로 모이고,<br>실제로 벌어지는 모습을 비교해.</h1>
+<p>이번 v26은 이전의 검은 타원·가짜 치아 효과 대신, 사용자가 직접 올린 스피킹 영상에서 입술·입안·실제 치아 픽셀을 가져와 서로 다른 형태로 연결한 시연이야. <strong>모음명은 텍스트 기반 형태 선택값이며, 실제 촬영 시 그 모음을 발음했다는 정답 라벨은 없어.</strong></p>
+<section class="panel">
+<h2>01. 실제 입술 형태 10개 구간 비교</h2>
+<p>왼쪽은 고정된 기준 얼굴, 가운데는 실제 입술 픽셀이 다른 형태로 바뀐 얼굴, 오른쪽은 확대 입술이야. 아래 모음을 누르면 해당 구간을 재생할 수 있어.</p>
+<video id="shape-video" controls playsinline preload="metadata" aria-label="내 실제 스피킹 영상에서 추출한 오므린 입술, 벌린 입술, 치아와 구강 내부가 보이는 다양한 모양 7.78초 연구 영상">
+<source src="vision-owner/SONG_V26_OWNER_REAL_LIP_CONTOUR_SHAPES.mp4" type="video/mp4">이 브라우저에서는 MP4를 재생할 수 없어.</video>
+<div class="vowels" id="vowel-controls" aria-label="모음별 얼굴 확인"></div>
+<p class="label" id="shape-status" role="status">각 버튼은 무음 시연의 해당 모양 구간으로 이동해.</p>
+<a class="small-link" href="vision-owner/SONG_V26_OWNER_REAL_LIP_CONTOUR_SHAPES.mp4" target="_blank" rel="noopener">영상 새 창에서 크게 보기</a>
+</section>
+<section class="panel">
+<h2>02. AM 6:30 원곡에 적용</h2>
+<p>같은 실제 입술 모양 자료를 가사 텍스트로 선택해서 원곡과 함께 재생해. **가사 음절 시작 시점은 검증되지 않은 초안**이므로 정확한 노래 립싱크로 판정하지 않아.</p>
+<video id="music-video" controls playsinline preload="metadata" aria-label="실제 원본 입술과 입안을 적용한 AM 6:30 음원 6초 미검증 립싱크 연구 영상">
+<source src="vision-owner/AM630_V26_REAL_LIPS_TEXT_FIRST_UNALIGNED.mp4" type="video/mp4">이 브라우저에서는 MP4를 재생할 수 없어.</video>
+<p class="label" id="music-status" role="status"></p>
+<a class="small-link" href="vision-owner/AM630_V26_REAL_LIPS_TEXT_FIRST_UNALIGNED.mp4" target="_blank" rel="noopener">AM 6:30 시험 영상 새 창에서 보기</a>
+</section>
+<div class="cols">
+<section class="panel">
+<h2>이번에 실제로 학습한 부분</h2>
+<p>두 개의 사용자 스피킹 영상에서 93개 유효 프레임의 입술 외곽 특징을 추출했어. 앞부분 63개로 5개 형태 군집을 학습하고, 별도의 마지막 19개 프레임으로 평가했어.</p>
+<p>원형 입술·가로 확장 입술·큰 개방형 입술의 실제 영상 픽셀을 보존하고, 눈·코·배경은 고정했어.</p>
+</section>
+<section class="panel">
+<h2>아직 학습하지 못한 부분</h2>
+<p>혀 뒤쪽·구개·치열의 보이지 않는 면과 아래턱뼈의 진짜 3D 움직임은 이 영상만으로 알 수 없어. 전면 입술 윤곽은 이미지에서 추출했지만 안쪽 구강 경계의 의학적 분할 정확도도 확인되지 않았어.</p>
+<p>실제 한국어 모음의 정답 시간 라벨, 발음별 독립 검증, 자연스러운 연속 치아 가림·노출도 아직 완성되지 않았어.</p>
+</section>
+</div>
+<p class="detail">구현 코드: <a href="https://github.com/tlco1003/Song/blob/main/song_vision/owner_mouth_library_v26.py" target="_blank" rel="noopener">입술 픽셀·외곽선 전이 엔진</a> · <a href="song-vision-v23-am630.html">이전 v23 결과</a></p>
+</main>
+<script>
+(()=>{
+const video=document.getElementById('shape-video'),root=document.getElementById('vowel-controls');
+const status=document.getElementById('shape-status');
+const shapes=['ㅡ','ㅗ','ㅜ','ㅏ','ㅣ','ㅔ','ㅗ','ㅜ','ㅏ','ㅡ'];const duration=0.78;let stop=-1;
+shapes.forEach((v,i)=>{
+const b=document.createElement('button');b.type='button';b.textContent=v+(i===0?' (시작)':'');b.setAttribute('aria-pressed','false');
+b.onclick=()=>{
+ document.querySelectorAll('#vowel-controls button').forEach((k,j)=>k.setAttribute('aria-pressed',String(j===i)));
+ stop=(i+1)*duration-.025;video.currentTime=i*duration+.04;
+ status.textContent=v+' 형태 · 실제 사용자 영상 픽셀 기반 · 모음 정답 라벨 미검증';
+ const p=video.play();if(p&&typeof p.catch==='function')p.catch(()=>{status.textContent='자동 재생이 차단됐어. 영상에서 재생 버튼을 눌러줘.'});
+};root.appendChild(b);
+});
+video.addEventListener('timeupdate',()=>{
+if(stop>=0&&video.currentTime>=stop){video.pause();stop=-1;}
+});
+for(const [id,target] of [['shape-video','shape-status'],['music-video','music-status']]){
+const v=document.getElementById(id),t=document.getElementById(target);
+v.addEventListener('error',()=>{t.textContent='영상 로딩 실패. 새 창에서 보기 링크를 눌러줘.'},true);
+}
+})();
+</script>
+</body></html>

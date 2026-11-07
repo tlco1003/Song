@@ -3,8 +3,8 @@
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>WITHU · 운영자 제작 관리실</title>
-<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="admin.css?v=production-01">
-<script type="module" src="admin.js?v=production-01"></script>
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="admin.css?v=production-02">
+<script type="module" src="admin.js?v=production-02"></script>
 </head>
 <body class="admin-body">
 <header class="site-header"><div class="frame header-inner">
@@ -46,6 +46,11 @@
 <div><h3>제작 요청 · 내부 지시</h3><pre id="admin-style" class="admin-story"></pre></div>
 </div></div>
 <div id="admin-song-editor" class="admin-song-editor"></div>
+<section class="admin-comments-panel" aria-labelledby="admin-comments-title">
+ <h3 id="admin-comments-title">이 주문에 남겨진 댓글 · 공개 승인</h3>
+ <p>스팸·개인정보 노출을 막기 위해 새 댓글은 기본 비공개예요. 내용을 확인한 뒤 승인하거나 숨길 수 있어요.</p>
+ <div id="admin-comments-list" role="region" aria-live="polite" aria-label="고객 주문 댓글"></div>
+</section>
 <div class="admin-toolbar">
 <button type="button" class="admin-primary" id="admin-finalize">검수 완료된 고객 음원 전송</button>
 <button type="button" class="admin-secondary" id="admin-retry-ai">AI 작사 다시 실행</button>

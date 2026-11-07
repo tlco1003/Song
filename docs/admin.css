@@ -38,3 +38,12 @@ body.admin-body{background:#fcf8fb;color:#493949}
 .admin-order.active{border:2px solid #986b88;background:#fff8fc}
 .admin-status{font-size:12px;color:#936578}
 .admin-song-card textarea{min-height:240px}
+
+.admin-comments-panel{border-top:1px solid #e5d7df;margin:22px 0;padding-top:20px}
+.admin-comments-panel h3{font-size:18px;color:#684b60}
+.admin-comments-panel p{font-size:12px;line-height:1.8;color:#876e80}
+#admin-comments-list{display:grid;gap:12px}
+.admin-comment{padding:14px 16px;border:1px solid #eadde5;border-radius:12px;background:#fffafd}
+.admin-comment strong{display:block;font-size:13px;color:#644558}
+.admin-comment p{white-space:pre-wrap;overflow-wrap:anywhere;color:#574456}
+.admin-comment button{margin:5px 7px 0 0}

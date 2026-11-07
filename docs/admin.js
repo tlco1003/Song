@@ -194,6 +194,43 @@ function select(o){
   area.appendChild(card);
  }
  renderOrders();
+ void loadAdminComments(o.id);
+}
+async function loadAdminComments(orderId){
+ const pane=$('admin-comments-list');pane.replaceChildren();
+ try{
+  const result=await api('/api/admin/orders/'+orderId+'/comments');
+  if(selected?.id!==orderId)return;
+  const comments=Array.isArray(result.comments)?result.comments:[];
+  if(!comments.length){
+   pane.appendChild(txt('p','아직 이 고객 노래에 등록된 댓글이 없어요.'));return;
+  }
+  for(const item of comments){
+   const row=document.createElement('article');row.className='admin-comment';
+   const header=txt('strong',(item.nickname||'익명')+' · '+(
+    item.status==='published'?'공개 중':item.status==='hidden'?'숨김':'승인 대기'));
+   const message=txt('p',item.text||'');
+   row.append(header,message);
+   for(const [action,label] of [['publish','공개 승인'],['hide','숨기기']]){
+    const b=document.createElement('button');
+    b.type='button';b.className='admin-secondary';b.textContent=label;
+    b.disabled=(action==='publish'&&item.status==='published')||
+     (action==='hide'&&item.status==='hidden');
+    b.addEventListener('click',run(async()=>{
+     b.disabled=true;
+     await api('/api/admin/orders/'+orderId+'/comments/'+item.id+'/moderate',{
+      method:'POST',data:{action}
+     });
+     workStatus('댓글 상태를 변경했어요. 승인한 댓글만 고객 노래함에 표시됩니다.');
+     if(selected?.id===orderId)await loadAdminComments(orderId);
+    },workStatus));
+    row.appendChild(b);
+   }
+   pane.appendChild(row);
+  }
+ }catch(error){
+  pane.appendChild(txt('p',error?.message||'댓글을 불러오지 못했습니다.'));
+ }
 }
 async function send(){
  if(!selected)throw Error('주문을 선택하세요.');

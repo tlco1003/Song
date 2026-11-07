@@ -1,0 +1,46 @@
+{
+  "actualKoreanSungWordToFaceLearned": false,
+  "canAcceptPaidJobs": false,
+  "commercialUseAllowed": false,
+  "contextAccuracyIsNotSongEmotionAccuracy": true,
+  "humanWordMeanBaseline": 0.190078,
+  "independentContextResearchArchive": {
+    "commercialUseAllowed": false,
+    "file": "song-v15-word-and-context-42342733947-a1.svault",
+    "provenance": {
+      "commercialRightsForDerivativeWeightsConfirmed": false,
+      "license": "WORD_REPUBLISH_CC0_NSMC_REPUBLISH_CC_BY_2_ORIGINAL_RIGHTS_UNVERIFIED",
+      "otherSource": "https://huggingface.co/datasets/jonghwanhyeon/korean-emotion-lexicon",
+      "url": "https://huggingface.co/datasets/e9t/nsmc"
+    },
+    "sha256": "f30e5b8d971e082c4bb3f0c8847a80444557b9ee72b0ade6d0af9c924fc2c040",
+    "sourceDataset": "KOREAN-WORD-NORM-AND-NSMC-REVIEW-CONTEXT"
+  },
+  "lexicalSourceHash": "3fbe1abbc44dba70f8ad8a0de4cf7af4b29e92ab7acc3134cac2b52c8753e587",
+  "originalNSMCHeldoutHash": "8ac9f64052f11dbf6ae0acb5e038f03d90a76f0eda7820cfb3a92d02edfcebda",
+  "originalNSMCTrainHash": "e03b7d14e9e41be8d464a28057cd25d7396c53e67aa7fd5f7e552c59b0ee2940",
+  "realContextMetrics": {
+    "epoch": 3,
+    "heldoutMovieReviewPolarityAccuracy": 0.6625,
+    "originalWordNormHoldoutMAE": 0.183476,
+    "reviewPolarityMajorityBaseline": 0.5,
+    "trainedDistinctSentences": 5000,
+    "unseenDistinctSentences": 800
+  },
+  "realMuscleForceMeasured": false,
+  "realTrainingWords": 347,
+  "realWordValidation": 0.178696,
+  "sourceCard": "https://huggingface.co/datasets/e9t/nsmc",
+  "sourceLicenseStatus": "HF-CARD-CC-BY-2.0-ORIGINAL-NAVER-SCRAPE-RIGHTS-UNVERIFIED",
+  "study": "song-v15-real-Korean-word-norms-and-sentence-context-pretraining",
+  "wordNormResearchArchive": {
+    "commercialUseAllowed": false,
+    "file": "song-v15-human-word-affect-42342733947-a1.svault",
+    "provenance": {
+      "license": "COMMUNITY-CC0-ORIGINAL-PAPER-RIGHTS-UNVERIFIED",
+      "url": "https://huggingface.co/datasets/jonghwanhyeon/korean-emotion-lexicon"
+    },
+    "sha256": "6ce55b98d8446444eb405db8a8d60047266d1e4fc00894da36a2ff34c708489b",
+    "sourceDataset": "KOREAN-EMOTION-WORD-RATINGS"
+  }
+}

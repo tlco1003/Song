@@ -31,6 +31,7 @@ from .text_timed_face_v17 import (TextTimedSingingFaceNet, MODEL_VERSION,
 from .full_face_renderer_v14 import dynamic_region_masks, region_mae
 from .research_vault_v15 import seal_study_model
 from .core import decode_audio
+from .photo_pixel_memory_v17 import PhotoPixelFrameMemory, supervised_pixel_memory_loss, MODEL_VERSION as PHOTO_VERSION
 
 
 class TimedRealSequences(Dataset):
@@ -70,21 +71,24 @@ def collate_timed(samples):
     return base,timing
 
 
-def region_metrics(model, loader):
+def region_metrics(model, loader, photo_memory=None):
     model.eval()
     mask,_=dynamic_region_masks()
-    totals=dict(v16=0.,v17=0.,staticReference=0.)
+    totals=dict(v16=0.,v17=0.,staticReference=0.,v17PhotoMemory=0.)
     frames=0
     with torch.no_grad():
         for batch,timing in loader:
             got=model(batch,timing)['frames']
             old=forward_batch(model.base,batch)['frames']
+            memory_frames=(photo_memory(batch['reference'],got,model(batch,timing)['motion'])
+                           if photo_memory is not None else got)
             b,t=got.shape[:2]
             pred=got.reshape(-1,3,96,96)
             baseline=old.reshape(-1,3,96,96)
             truth=batch['target'].reshape(-1,3,96,96)
             static=batch['reference'][:,None].expand(-1,t,-1,-1,-1).reshape(-1,3,96,96)
             for name,values in (('v17',pred),('v16',baseline),
+                                ('v17PhotoMemory',memory_frames.reshape(-1,3,96,96)),
                                 ('staticReference',static)):
                 totals[name]+=float(region_mae(values,truth,mask))*b*t
             frames+=b*t
@@ -92,10 +96,12 @@ def region_metrics(model, loader):
     return {**{key:round(val/frames,7) for key,val in totals.items()},
             'frames':frames,
             'beatsV16':totals['v17']<totals['v16'],
-            'beatsStaticCopy':totals['v17']<totals['staticReference']}
+            'beatsStaticCopy':totals['v17']<totals['staticReference'],
+            'photoMemoryBeatsStaticCopy':totals['v17PhotoMemory']<totals['staticReference'],
+            'photoMemoryBeatsV17':totals['v17PhotoMemory']<totals['v17']}
 
 
-def render_research_preview(model, timed, source_files, directory: Path):
+def render_research_preview(model, timed, source_files, directory: Path, photo_memory=None):
     """Three-panel *real* holdout preview with the ORIGINAL matching source song."""
     directory.mkdir(parents=True,exist_ok=False)
     ci=0
@@ -113,10 +119,13 @@ def render_research_preview(model, timed, source_files, directory: Path):
                 base,timing=collate_timed([timed[idx]])
                 v17=model(base,timing)['frames'][0]
                 v16=forward_batch(model.base,base)['frames'][0]
+                if photo_memory is not None:
+                    v17=photo_memory(base['reference'],v17[None],model(base,timing)['motion'])[0]
                 source=base['target'][0]
                 for recorded,old,new in zip(source,v16,v17):
                     panels=[]
-                    for frame,label in ((recorded,'RECORDED'),(old,'V16 BASE'),(new,'V17 TRAINED')):
+                    for frame,label in ((recorded,'RECORDED'),(old,'V16 BASE'),
+                                        (new,'V17 PHOTO MEMORY' if photo_memory is not None else 'V17 TRAINED')):
                         pixels=(frame.permute(1,2,0).clamp(0,1).numpy()*255).astype(np.uint8)
                         pixels=cv2.resize(pixels,(192,192),interpolation=cv2.INTER_CUBIC)
                         cv2.putText(pixels,label,(4,16),cv2.FONT_HERSHEY_SIMPLEX,.43,
@@ -177,12 +186,12 @@ def render_research_preview(model, timed, source_files, directory: Path):
 
 
 
-def render_github_nara_motion_schematic(model, reference_data, output: Path):
-    """Viewable ORIGINAL GitHub song with the trained acoustic motion pathway.
+def render_github_nara_photo_pixels(model, photo_memory, reference_data, output: Path):
+    """Original GitHub MP3 drives REAL PHOTO PIXELS using a licensed reference.
 
-    NOT a person's likeness or a Korean phoneme-aligned lip-sync. v17 text
-    confidence is intentionally zero because its real supervised aligner
-    was trained on English RAVDESS only. No fictional syllable timing.
+    Reference is a heldout RAVDESS research actor, NOT the Korean recording
+    performer. Pixel motion is learned from separate real singing videos.
+    English CTC never supplies invented Korean phoneme timing.
     """
     from .core import audio_features, mel_window
     from .vocal_acoustics import analyze_vocal_cues, cue_window
@@ -192,96 +201,100 @@ def render_github_nara_motion_schematic(model, reference_data, output: Path):
     source=Path('docs/media/nara.mp3')
     lyrics_file=Path('docs/media/lyrics-nara.txt')
     if not source.is_file() or not lyrics_file.is_file():
-        raise FileNotFoundError('Exact repository song and supplied lyrics required')
+        raise FileNotFoundError('GitHub source song and supplied lyrics required')
     source_hash=hashlib.sha256(source.read_bytes()).hexdigest()
     wave=decode_audio(source)
     melodic=audio_features(wave)
     cues=analyze_vocal_cues(wave)
     if melodic.shape[1]!=cues.shape[1]:
-        raise ValueError('Song acoustic feature timestamp mismatch')
+        raise ValueError('Source song melodic features and sound cues disagree')
     lines=[x.strip() for x in lyrics_file.read_text(encoding='utf-8').splitlines()
            if x.strip() and not x.strip().startswith('[')]
     text=' '.join(lines[:2])
-    if not text:raise ValueError('User-supplied lyric text required')
+    if not text:raise ValueError('Given original lyrics required')
     tokens=encode_text(text)
     lexical,lexical_mask=lexical_chunks(text)
-    frames=300
+    frames=250
     start_second=25.
     duration=len(wave)/16000.
     if start_second+frames/25+1>duration:
-        raise ValueError('Insufficient source song for preview')
-    saved=output/'NARA_acoustic_motion_schematic_NOT_LIPSYNC.mp4'
-    silent=output/'NARA_schematic_temporary_silent.mp4'
-    writer=cv2.VideoWriter(str(silent),cv2.VideoWriter_fourcc(*'mp4v'),25,(512,512))
-    if not writer.isOpened():raise OSError('Cannot produce original song motion preview')
+        raise ValueError('Original song too short for source-time preview')
+    result_file=output/'NARA_v17_photo_pixel_memory_RESEARCH_ONLY.mp4'
+    silent=output/'NARA_photo_frame_temporary_silent.mp4'
+    writer=cv2.VideoWriter(str(silent),cv2.VideoWriter_fourcc(*'mp4v'),25,(960,368))
+    if not writer.isOpened():raise OSError('Could not encode image-based face frames')
     exemplar=collate_sequences([reference_data.base[0]])
-    model.eval()
-    count=0
+    reference=exemplar['reference'][0]
+    model.eval();photo_memory.eval()
+    last=None
+    changed=0;total_change=0.
     try:
         with torch.no_grad():
-            for start in range(0,frames,4):
-                seconds=[start_second+(start+j)/25 for j in range(4)]
-                input_batch=dict(exemplar)
-                input_batch['mel']=torch.from_numpy(np.stack(
+            for start in range(0,frames,2):
+                seconds=[start_second+(start+j)/25 for j in range(2)]
+                current=dict(exemplar)
+                current['mel']=torch.from_numpy(np.stack(
                     [mel_window(melodic,t) for t in seconds],axis=0))[None]
-                input_batch['cues']=torch.from_numpy(np.stack(
+                current['cues']=torch.from_numpy(np.stack(
                     [cue_window(cues,t) for t in seconds],axis=0))[None]
-                input_batch['tokens']=tokens[None]
-                input_batch['active']=torch.zeros(1,4,len(tokens),dtype=torch.bool)
-                input_batch['lexical_codes']=lexical[None]
-                input_batch['lexical_mask']=lexical_mask[None]
-                input_batch['song_context']=F.adaptive_avg_pool1d(
+                current['tokens']=tokens[None]
+                current['active']=torch.zeros(1,2,len(tokens),dtype=torch.bool)
+                current['lexical_codes']=lexical[None]
+                current['lexical_mask']=lexical_mask[None]
+                current['song_context']=F.adaptive_avg_pool1d(
                     torch.from_numpy(np.concatenate((melodic,cues),axis=0))[None],16)
-                input_batch['progress']=torch.tensor(seconds).reshape(1,4)/duration
-                # All timing confidence is zero: no fake Korean aligned labels.
-                # The trained base is nevertheless conditioned on the real
-                # user's track acoustic features at the exact frame seconds.
-                timing=dict(unitIds=torch.zeros(1,4,dtype=torch.long),
-                    wordIndices=torch.full((1,4),-1,dtype=torch.long),
-                    prosody=torch.zeros(1,4,8),
-                    confidence=torch.zeros(1,4),
+                current['progress']=torch.tensor(seconds,dtype=torch.float32).reshape(1,2)/duration
+                # No fabricated Korean phones or aligned word intervals.
+                timing=dict(unitIds=torch.zeros(1,2,dtype=torch.long),
+                    wordIndices=torch.full((1,2),-1,dtype=torch.long),
+                    prosody=torch.zeros(1,2,8),confidence=torch.zeros(1,2),
                     lyricsText=[text])
-                result=model(input_batch,timing)
-                for j,motion in enumerate(result['motion'][0]):
-                    # These are display coordinates, not anatomical millimeters.
-                    opening=float(np.clip(.5+.35*float(motion[0]),0.,1.))
-                    width=float(np.clip(.5+.25*float(motion[1]),0.,1.))
-                    brow=float(np.clip(.5+.25*float(motion[12]),0.,1.))
-                    image=np.zeros((512,512,3),np.uint8)
-                    image[:]=(29,30,38)
-                    cv2.ellipse(image,(256,260),(132,166),0,0,360,
-                                (175,204,228),-1,cv2.LINE_AA)
-                    cv2.ellipse(image,(211,229),(12,8),0,0,360,(31,38,54),-1,cv2.LINE_AA)
-                    cv2.ellipse(image,(300,229),(12,8),0,0,360,(31,38,54),-1,cv2.LINE_AA)
-                    by=int(196-13*brow)
-                    cv2.line(image,(187,by),(233,by-3),(42,53,72),6,cv2.LINE_AA)
-                    cv2.line(image,(278,by-3),(324,by),(42,53,72),6,cv2.LINE_AA)
-                    cv2.ellipse(image,(256,271),(12,21),0,10,170,(122,154,192),3,cv2.LINE_AA)
-                    cv2.ellipse(image,(256,327),(int(32+20*width),int(6+29*opening)),
-                                0,0,360,(37,62,113),-1,cv2.LINE_AA)
-                    cv2.ellipse(image,(256,327),(int(32+20*width),int(6+29*opening)),
-                                0,0,360,(63,89,152),3,cv2.LINE_AA)
-                    cv2.putText(image,'NARA: SOURCE SONG FROM GITHUB',(35,48),
-                                cv2.FONT_HERSHEY_SIMPLEX,.57,(235,235,235),1,cv2.LINE_AA)
-                    cv2.putText(image,'AUDIO-DRIVEN MOTION / SCHEMATIC',(37,466),
-                                cv2.FONT_HERSHEY_SIMPLEX,.48,(237,237,237),1,cv2.LINE_AA)
-                    cv2.putText(image,'NOT VERIFIED KOREAN LIP-SYNC',(37,489),
-                                cv2.FONT_HERSHEY_SIMPLEX,.48,(237,237,237),1,cv2.LINE_AA)
-                    writer.write(image);count+=1
-    finally:writer.release()
-    if count!=frames:raise ValueError('Incomplete audio-driven render')
+                predicted=model(current,timing)
+                photo=photo_memory(current['reference'],predicted['frames'],predicted['motion'])
+                for j in range(2):
+                    panel=[]
+                    variants=((reference,'ORIGINAL PHOTO REFERENCE'),
+                              (predicted['frames'][0,j],'TRAINED AUDIO FACE'),
+                              (photo[0,j],'LEARNED FRAME MEMORY'))
+                    for frame,label in variants:
+                        pixels=(frame.permute(1,2,0).clamp(0,1).numpy()*255).astype(np.uint8)
+                        pixels=cv2.resize(pixels,(320,320),interpolation=cv2.INTER_CUBIC)
+                        canvas=np.full((368,320,3),32,np.uint8)
+                        canvas[:320]=pixels
+                        cv2.putText(canvas,label,(8,339),cv2.FONT_HERSHEY_SIMPLEX,.38,
+                                    (240,240,240),1,cv2.LINE_AA)
+                        cv2.putText(canvas,'RAVDESS AVATAR; NOT ORIGINAL SINGER',
+                                    (8,354),cv2.FONT_HERSHEY_SIMPLEX,.26,
+                                    (240,240,240),1,cv2.LINE_AA)
+                        panel.append(canvas)
+                    image=np.concatenate(panel,axis=1)
+                    if last is not None:
+                        delta=float((photo[0,j]-last).abs().mean())
+                        total_change+=delta
+                        if delta>0.00001:changed+=1
+                    last=photo[0,j]
+                    writer.write(image)
+    finally:
+        writer.release()
     subprocess.run(['ffmpeg','-nostdin','-hide_banner','-loglevel','error','-y',
         '-i',str(silent),'-ss',str(start_second),'-i',str(source),
-        '-map','0:v:0','-map','1:a:0','-c:v','libx264','-crf','21',
+        '-map','0:v:0','-map','1:a:0','-c:v','libx264','-crf','20',
         '-preset','veryfast','-pix_fmt','yuv420p','-c:a','aac','-b:a','160k',
-        '-t',str(frames/25),'-movflags','+faststart',str(saved)],check=True)
+        '-t',str(frames/25),'-movflags','+faststart',str(result_file)],check=True)
     silent.unlink()
-    return dict(videoName=saved.name,source='docs/media/nara.mp3',
+    return dict(videoName=result_file.name,source='docs/media/nara.mp3',
         sourceAudioSha256=source_hash,sourceStartSeconds=start_second,
-        seconds=frames/25,renderMode='schematic_from_trained_v16_audio_motion',
-        v17KoreanAlignmentUsed=False,sourceIsFullMixNotIsolatedVocal=True,
-        originalSameSongSingingFaceVideoAvailable=False,
-        demonstratedAccuracy=False,phonemeLipsyncAccuracyValidated=False)
+        durationSeconds=frames/25,fps=25,totalGeneratedFrames=frames,
+        changingConsecutiveFrames=changed,
+        meanFramePixelDelta=round(total_change/max(1,frames-1),8),
+        rendering='photo-based trained acoustic face plus recurrent learned frame-memory',
+        referenceFace='RAVDESS-Actor-03-noncommercial-research',
+        noReferenceVideoFromOriginalKoreanSong=True,
+        originalSongIsFullMixNotIsolatedVocal=True,
+        humanReviewedKoreanPhones=False,
+        accurateKoreanLipsyncValidated=False,
+        license='CC-BY-NC-SA-4.0-RESEARCH-ONLY')
+
 
 def run(landmarker: Path,public_key: Path,vault: Path,preview: Path,epochs=2):
     if preview.exists() or (vault.exists() and any(vault.iterdir())):
@@ -341,9 +354,43 @@ def run(landmarker: Path,public_key: Path,vault: Path,preview: Path,epochs=2):
             metrics=region_metrics(model,val_loader)
             history.append(dict(epoch=epoch+1,trainLoss=loss_sum/seen,**metrics))
             print('SONG_V17_REAL_EPOCH='+json.dumps(history[-1],sort_keys=True),flush=True)
-        metrics=region_metrics(model,val_loader)
-        preview_report=render_research_preview(model,val_data,paths,preview)
-        nara_report=render_github_nara_motion_schematic(model,val_data,preview)
+        raw_metrics=region_metrics(model,val_loader)
+        # The trained acoustic-to-face model remains frozen for a separate
+        # reference-photo + previous-frame pixel-memory learning stage.
+        # Each sequence uses ACTUAL paired face targets, not generated targets.
+        pixel_memory=PhotoPixelFrameMemory()
+        optimizer_pixels=torch.optim.AdamW(pixel_memory.parameters(),lr=.0006)
+        memory_history=[]
+        for pixel_epoch in range(3):
+            pixel_memory.train()
+            seen=0;total=0.
+            for batch,timing in train_loader:
+                with torch.no_grad():
+                    source_prediction=model(batch,timing)
+                adjusted=pixel_memory(batch['reference'],
+                    source_prediction['frames'].detach(),
+                    source_prediction['motion'].detach())
+                loss=supervised_pixel_memory_loss(
+                    adjusted,source_prediction['frames'].detach(),batch['target'])
+                if not torch.isfinite(loss):
+                    raise ValueError('Nonfinite photo pixel memory training')
+                optimizer_pixels.zero_grad(set_to_none=True)
+                loss.backward()
+                torch.nn.utils.clip_grad_norm_(pixel_memory.parameters(),1.)
+                optimizer_pixels.step()
+                seen+=len(batch['reference'])
+                total+=float(loss.detach())*len(batch['reference'])
+            pixel_memory.eval()
+            evaluation=region_metrics(model,val_loader,pixel_memory)
+            memory_history.append(dict(epoch=pixel_epoch+1,
+                trainingLoss=round(total/seen,7),heldout=evaluation))
+            print('SONG_V17_PHOTO_MEMORY_EPOCH='+json.dumps(memory_history[-1],
+                  sort_keys=True),flush=True)
+        metrics=region_metrics(model,val_loader,pixel_memory)
+        preview_report=render_research_preview(
+            model,val_data,paths,preview,pixel_memory)
+        nara_report=render_github_nara_photo_pixels(
+            model,pixel_memory,val_data,preview)
         # Never claim accurate phoneme/timing, meaningful expression or
         # quality pass solely from pixel MAE reductions.
         report=dict(modelVersion=MODEL_VERSION,license='CC-BY-NC-SA-4.0',
@@ -351,14 +398,22 @@ def run(landmarker: Path,public_key: Path,vault: Path,preview: Path,epochs=2):
             trainedOn='real_official_English_singing_video_audio_pairs',
             koreanSingingLearned=False,actualSingerVideoUsed=True,
             ctcTraining=align_report,baseV16=base_report['finalValidation'],
-            history=history,heldoutFaceMAE=metrics,sourcePreview=preview_report,githubSongPreview=nara_report,
+            history=history,originalV17Holdout=raw_metrics,
+            photoPixelMemoryVersion=PHOTO_VERSION,
+            photoPixelMemoryTraining=memory_history,
+            heldoutFaceMAE=metrics,sourcePreview=preview_report,
+            githubSongPreview=nara_report,
             actualSongFacePairForGithubNara=False,
             alignedPhonesReviewed=False,wordTimingAccuracyValidated=False,
             customerFacing=False,commerciallyValidated=False,canAcceptPaidJobs=False,
-            qualityStatus='RESEARCH_ONLY_NOT_KOREAN_LIPSYNC_VALIDATED')
+            qualityStatus='RESEARCH_ONLY_NOT_KOREAN_LIPSYNC_VALIDATED',
+            status='research_only_not_lipsync_validated')
         checkpoint=root/'v17-timed-face-real.pt'
         torch.save(dict(modelVersion=MODEL_VERSION,
             stateDict={k:v.detach().cpu() for k,v in model.state_dict().items()},
+            photoPixelMemoryStateDict={k:v.detach().cpu()
+                                       for k,v in pixel_memory.state_dict().items()},
+            photoPixelMemoryVersion=PHOTO_VERSION,
             commerciallyValidated=False,sourceDataset='RAVDESS-research-only',
             alignerVocab='english-orthographic-not-phone-labels'),checkpoint)
         checkpoint.with_suffix('.report.json').write_text(

@@ -1,0 +1,33 @@
+name: SONG-Vision v21 text-first vowel contracts
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/song-vision-v21-text-tests.yml'
+      - 'song_vision/owner_v21_text_viseme.py'
+      - 'song_vision/test_owner_v21_text_viseme.py'
+      - 'song_vision/test_owner_v21_site_assets.py'
+      - 'docs/song-vision-v21-vowels.html'
+      - 'docs/vision-owner/SONG_v21_TEN_KOREAN_VOWELS_OWNER_FULL_FACE_TEST.mp4'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ten_korean_vowels:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install only public 2D prototype test dependencies
+        run: python -m pip install 'numpy>=1.26,<3' 'opencv-python-headless>=4.10,<5'
+      - name: Verify ten text-driven vowels, full-face region coupling and fail-closed sync
+        run: python -m unittest discover -s song_vision -p 'test_owner_v21_text_viseme.py' -v
+      - name: Verify demo video path and published text interface
+        run: python -m unittest discover -s song_vision -p 'test_owner_v21_site_assets.py' -v
+      - name: Mark experimental nature and no private source-video use
+        run: |
+          echo 'TEXT_FIRST_VOWELS_10=CODE_AND_DEMO_ONLY'
+          echo 'KOREAN_SONG_LIP_SYNC_VERIFIED=NO'

@@ -211,7 +211,7 @@ test('Resend email adapter uses server key, verified origin and idempotency',asy
  assert.deepEqual(body.to,['buyer@example.test']);
  assert.ok(body.text.includes(invite.deliveryUrl));
  assert.ok(body.html.includes(invite.deliveryUrl));
- assert.match(body.html,/나의 노래함 열기/);
+ assert.match(body.html,/받은 음악 선물 열어보기/);
  assert.match(body.html,/원본 음원과 상업적 이용/);
  assert.ok(!body.text.includes('RESEND_API_KEY'));
  assert.ok(!body.html.includes('RESEND_API_KEY'));

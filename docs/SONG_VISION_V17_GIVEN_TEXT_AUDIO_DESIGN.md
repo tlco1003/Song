@@ -209,3 +209,33 @@ Data source: Livingstone & Russo (2018), RAVDESS,
 https://zenodo.org/records/1188976 ;
 research only, CC BY-NC-SA 4.0. The orthographic CTC method here
 does not reproduce or inherit accuracy claims from Ayllón et al. (2019).
+
+## Clarification: an MP3 does NOT contain a face, and it does NOT need to
+
+The original SONG `docs/media/nara.mp3` is an audio input only. Inference
+must not require a matching singer-face video of that particular song.
+
+There are **two independent tasks**:
+
+1. **Supervised training and heldout accuracy audit:** independent,
+   legitimately usable recordings containing synchronized *singing voice
+   and genuine singer-face video*, e.g. RAVDESS noncommercial research.
+   These recordings are the ground truth for measuring predicted face
+   quality and alignment on genuinely withheld performers.
+2. **Original-song video synthesis:** accept only the audio, user-provided
+   lyrics and an avatar specification. The avatar can be a newly created
+   fictional face, an authorized still-photo reference or a controlled
+   3D avatar rig; it must not be presented as an identified real singer.
+   Render dynamic movement from the measured source song features and
+   learned model. No matching real-world singer video is required.
+   Consequently *there is no ground-truth face-MAE for nara.mp3 itself*.
+
+The currently executable NARA sample is a **schematic fictional face**,
+not a photorealistic learned original-identity generator, and its Korean
+phoneme timing remains unverified. The trainable v17 face decoder
+currently consumes a reference image and face geometry; a production
+quality synthetic-identity face generator is a distinct missing part.
+Claims of commercial quality or Korean lyric lip-sync are blocked.
+
+This distinction prevents taking the video's absence as an input fault
+or treating unrelated music videos as accurate lip-sync ground truth.

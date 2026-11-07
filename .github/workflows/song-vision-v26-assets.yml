@@ -1,0 +1,45 @@
+name: SONG Vision v26 owner mouth preview
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/song-vision-v26-assets.yml'
+      - 'docs/song-vision-v26-lips.html'
+      - 'docs/index.html'
+      - 'docs/song-vision-lab.html'
+      - 'docs/vision-owner/*V26*.mp4'
+      - 'song_vision/owner_mouth_library_v26.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  publish_contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate v26 actual owner-sourced mouth study media and entrypoints
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re,sys
+          media=[
+              'SONG_V26_OWNER_REAL_LIP_CONTOUR_SHAPES.mp4',
+              'AM630_V26_REAL_LIPS_TEXT_FIRST_UNALIGNED.mp4',
+          ]
+          docs=[Path('docs/index.html'),Path('docs/song-vision-lab.html'),Path('docs/song-vision-v26-lips.html')]
+          for name in media:
+              path=Path('docs/vision-owner')/name
+              assert path.is_file() and path.stat().st_size>100_000,name
+              assert b'ftyp' in path.read_bytes()[:64],name
+              for doc in docs:
+                  assert name in doc.read_text(encoding='utf-8'),(name,doc)
+          source=Path('song_vision/owner_mouth_library_v26.py').read_text(encoding='utf-8')
+          assert 'segment_observed_outer_lip' in source
+          assert 'phonemeAnnotationPresent' in source
+          page=docs[-1].read_text(encoding='utf-8')
+          assert '미검증' in page and '3D' in page
+          print('SONG v26: both owner-generated MP4s are present, linked, H264 containers, and disclaimers intact')
+          PY
+      - name: Compile public owner-lip research implementation without private source media
+        run: python3 -m py_compile song_vision/owner_mouth_library_v26.py

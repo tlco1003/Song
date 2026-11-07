@@ -5,6 +5,8 @@ import {validateCheckoutDeliveryContact} from './customer-notification-contact.m
 import {makeTossPaymentAdapter} from './toss-payment-adapter.mjs';
 import {commercialMode,makeProductionId,requireProductionId,
  assertExactTossPayment} from './production-contract.mjs';
+import {ensurePaidDownloadGrant,sendRecoveryEmail,hasDownloadGrant}
+ from './production-download-grants.mjs';
 import {UPGRADE_PRICE,now,json,checkOrigin,stop,respond,customerOrder,
  currentSession,hash} from './production-runtime.mjs';
 
@@ -37,6 +39,11 @@ async function confirmPayment(req,db,env,fetcher,upgrade=false){
   tx.update(doc,{confirmLockUntil:now()+120000});
   original=current;
  });
+ if(upgrade){
+  const session=await currentSession(req,db);
+  if(session.orderId!==original.originalOrderId)
+   stop(403,'해당 노래의 추가 결제만 승인할 수 있습니다.');
+ }
  if(original.paymentStatus==='paid')
   return {status:'paid_verified',orderId:id,upgrade,already:true};
  if(upgrade){
@@ -160,18 +167,30 @@ export async function handleProductionPayments(req,res,{db,env,fetcher}){
  }
  if(req.method==='POST'&&path==='/api/upgrades/confirm'){
   checkOrigin(req,env);ready(env);
-  respond(res,200,await confirmPayment(req,db,env,fetcher,true));return true;
+  const result=await confirmPayment(req,db,env,fetcher,true);
+  const grant=await ensurePaidDownloadGrant({
+   db,env,res,intentId:result.orderId
+  });
+  const delivery=await sendRecoveryEmail({
+   db,env,fetcher,intentId:result.orderId,grant
+  });
+  respond(res,200,{...result,downloadGrant:'owner_only',
+   downloadRecoveryEmailStatus:delivery.status});return true;
  }
  if(req.method==='POST'&&path==='/api/commerce/commercial-upgrade/checkout'){
-  checkOrigin(req,env);ready(env);json(req,1024);
+  checkOrigin(req,env);ready(env);
+  const input=json(req,1024);
+  const email=typeof input.customerEmail==='string'?input.customerEmail.trim():'';
+  if(email.length>254||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+   stop(400,'원본 음원 복구 링크를 받을 이메일을 입력해 주세요.');
   const order=await customerOrder(req,db);
   if(order.upgrade?.rightsVerified!==true)
    stop(403,'원본 음원 상업적 이용권 제공이 승인되지 않았습니다.');
-  if(order.upgrade?.paymentStatus==='paid')
-   stop(409,'이미 원본 음원 이용권을 구매했습니다.');
+  if(await hasDownloadGrant(req,db,order.id))
+   stop(409,'이미 이 기기에 원본 음원 이용권이 있습니다.');
   const id=makeProductionId('upg');
   await db.collection('withuUpgradeIntents').doc(id).create({
-   id,originalOrderId:order.id,amountKrw:UPGRADE_PRICE,
+   id,originalOrderId:order.id,customerEmail:email,amountKrw:UPGRADE_PRICE,
    currency:'KRW',paymentStatus:'pending',createdAt:now(),confirmLockUntil:0,
    confirmationKey:randomUUID()
   });
@@ -189,6 +208,7 @@ export async function handleProductionPayments(req,res,{db,env,fetcher}){
    stop(403,'이 추가 결제에 접근할 수 없습니다.');
   respond(res,200,{orderId:intent[1],amountKrw:UPGRADE_PRICE,
    orderName:'WITHU 원본 음원 및 상업적 이용',
+   customerEmail:snap.data().customerEmail,
    clientKey:commercialMode(env).clientKey});
   return true;
  }

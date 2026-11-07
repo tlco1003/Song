@@ -176,6 +176,113 @@ def render_research_preview(model, timed, source_files, directory: Path):
                 audioInMP4Lossy=True)
 
 
+
+def render_github_nara_motion_schematic(model, reference_data, output: Path):
+    """Viewable ORIGINAL GitHub song with the trained acoustic motion pathway.
+
+    NOT a person's likeness or a Korean phoneme-aligned lip-sync. v17 text
+    confidence is intentionally zero because its real supervised aligner
+    was trained on English RAVDESS only. No fictional syllable timing.
+    """
+    from .core import audio_features, mel_window
+    from .vocal_acoustics import analyze_vocal_cues, cue_window
+    from .lyric_context_v16 import encode_text, lexical_chunks
+    from torch.nn import functional as F
+
+    source=Path('docs/media/nara.mp3')
+    lyrics_file=Path('docs/media/lyrics-nara.txt')
+    if not source.is_file() or not lyrics_file.is_file():
+        raise FileNotFoundError('Exact repository song and supplied lyrics required')
+    source_hash=hashlib.sha256(source.read_bytes()).hexdigest()
+    wave=decode_audio(source)
+    melodic=audio_features(wave)
+    cues=analyze_vocal_cues(wave)
+    if melodic.shape[1]!=cues.shape[1]:
+        raise ValueError('Song acoustic feature timestamp mismatch')
+    lines=[x.strip() for x in lyrics_file.read_text(encoding='utf-8').splitlines()
+           if x.strip() and not x.strip().startswith('[')]
+    text=' '.join(lines[:2])
+    if not text:raise ValueError('User-supplied lyric text required')
+    tokens=encode_text(text)
+    lexical,lexical_mask=lexical_chunks(text)
+    frames=300
+    start_second=25.
+    duration=len(wave)/16000.
+    if start_second+frames/25+1>duration:
+        raise ValueError('Insufficient source song for preview')
+    saved=output/'NARA_acoustic_motion_schematic_NOT_LIPSYNC.mp4'
+    silent=output/'NARA_schematic_temporary_silent.mp4'
+    writer=cv2.VideoWriter(str(silent),cv2.VideoWriter_fourcc(*'mp4v'),25,(512,512))
+    if not writer.isOpened():raise OSError('Cannot produce original song motion preview')
+    exemplar=collate_sequences([reference_data.base[0]])
+    model.eval()
+    count=0
+    try:
+        with torch.no_grad():
+            for start in range(0,frames,4):
+                seconds=[start_second+(start+j)/25 for j in range(4)]
+                input_batch=dict(exemplar)
+                input_batch['mel']=torch.from_numpy(np.stack(
+                    [mel_window(melodic,t) for t in seconds],axis=0))[None]
+                input_batch['cues']=torch.from_numpy(np.stack(
+                    [cue_window(cues,t) for t in seconds],axis=0))[None]
+                input_batch['tokens']=tokens[None]
+                input_batch['active']=torch.zeros(1,4,len(tokens),dtype=torch.bool)
+                input_batch['lexical_codes']=lexical[None]
+                input_batch['lexical_mask']=lexical_mask[None]
+                input_batch['song_context']=F.adaptive_avg_pool1d(
+                    torch.from_numpy(np.concatenate((melodic,cues),axis=0))[None],16)
+                input_batch['progress']=torch.tensor(seconds).reshape(1,4)/duration
+                # All timing confidence is zero: no fake Korean aligned labels.
+                # The trained base is nevertheless conditioned on the real
+                # user's track acoustic features at the exact frame seconds.
+                timing=dict(unitIds=torch.zeros(1,4,dtype=torch.long),
+                    wordIndices=torch.full((1,4),-1,dtype=torch.long),
+                    prosody=torch.zeros(1,4,8),
+                    confidence=torch.zeros(1,4),
+                    lyricsText=[text])
+                result=model(input_batch,timing)
+                for j,motion in enumerate(result['motion'][0]):
+                    # These are display coordinates, not anatomical millimeters.
+                    opening=float(np.clip(.5+.35*float(motion[0]),0.,1.))
+                    width=float(np.clip(.5+.25*float(motion[1]),0.,1.))
+                    brow=float(np.clip(.5+.25*float(motion[12]),0.,1.))
+                    image=np.zeros((512,512,3),np.uint8)
+                    image[:]=(29,30,38)
+                    cv2.ellipse(image,(256,260),(132,166),0,0,360,
+                                (175,204,228),-1,cv2.LINE_AA)
+                    cv2.ellipse(image,(211,229),(12,8),0,0,360,(31,38,54),-1,cv2.LINE_AA)
+                    cv2.ellipse(image,(300,229),(12,8),0,0,360,(31,38,54),-1,cv2.LINE_AA)
+                    by=int(196-13*brow)
+                    cv2.line(image,(187,by),(233,by-3),(42,53,72),6,cv2.LINE_AA)
+                    cv2.line(image,(278,by-3),(324,by),(42,53,72),6,cv2.LINE_AA)
+                    cv2.ellipse(image,(256,271),(12,21),0,10,170,(122,154,192),3,cv2.LINE_AA)
+                    cv2.ellipse(image,(256,327),(int(32+20*width),int(6+29*opening)),
+                                0,0,360,(37,62,113),-1,cv2.LINE_AA)
+                    cv2.ellipse(image,(256,327),(int(32+20*width),int(6+29*opening)),
+                                0,0,360,(63,89,152),3,cv2.LINE_AA)
+                    cv2.putText(image,'NARA: SOURCE SONG FROM GITHUB',(35,48),
+                                cv2.FONT_HERSHEY_SIMPLEX,.57,(235,235,235),1,cv2.LINE_AA)
+                    cv2.putText(image,'AUDIO-DRIVEN MOTION / SCHEMATIC',(37,466),
+                                cv2.FONT_HERSHEY_SIMPLEX,.48,(237,237,237),1,cv2.LINE_AA)
+                    cv2.putText(image,'NOT VERIFIED KOREAN LIP-SYNC',(37,489),
+                                cv2.FONT_HERSHEY_SIMPLEX,.48,(237,237,237),1,cv2.LINE_AA)
+                    writer.write(image);count+=1
+    finally:writer.release()
+    if count!=frames:raise ValueError('Incomplete audio-driven render')
+    subprocess.run(['ffmpeg','-nostdin','-hide_banner','-loglevel','error','-y',
+        '-i',str(silent),'-ss',str(start_second),'-i',str(source),
+        '-map','0:v:0','-map','1:a:0','-c:v','libx264','-crf','21',
+        '-preset','veryfast','-pix_fmt','yuv420p','-c:a','aac','-b:a','160k',
+        '-t',str(frames/25),'-movflags','+faststart',str(saved)],check=True)
+    silent.unlink()
+    return dict(videoName=saved.name,source='docs/media/nara.mp3',
+        sourceAudioSha256=source_hash,sourceStartSeconds=start_second,
+        seconds=frames/25,renderMode='schematic_from_trained_v16_audio_motion',
+        v17KoreanAlignmentUsed=False,sourceIsFullMixNotIsolatedVocal=True,
+        originalSameSongSingingFaceVideoAvailable=False,
+        demonstratedAccuracy=False,phonemeLipsyncAccuracyValidated=False)
+
 def run(landmarker: Path,public_key: Path,vault: Path,preview: Path,epochs=2):
     if preview.exists() or (vault.exists() and any(vault.iterdir())):
         raise FileExistsError('Never overwrite research outputs')
@@ -236,6 +343,7 @@ def run(landmarker: Path,public_key: Path,vault: Path,preview: Path,epochs=2):
             print('SONG_V17_REAL_EPOCH='+json.dumps(history[-1],sort_keys=True),flush=True)
         metrics=region_metrics(model,val_loader)
         preview_report=render_research_preview(model,val_data,paths,preview)
+        nara_report=render_github_nara_motion_schematic(model,val_data,preview)
         # Never claim accurate phoneme/timing, meaningful expression or
         # quality pass solely from pixel MAE reductions.
         report=dict(modelVersion=MODEL_VERSION,license='CC-BY-NC-SA-4.0',
@@ -243,7 +351,7 @@ def run(landmarker: Path,public_key: Path,vault: Path,preview: Path,epochs=2):
             trainedOn='real_official_English_singing_video_audio_pairs',
             koreanSingingLearned=False,actualSingerVideoUsed=True,
             ctcTraining=align_report,baseV16=base_report['finalValidation'],
-            history=history,heldoutFaceMAE=metrics,sourcePreview=preview_report,
+            history=history,heldoutFaceMAE=metrics,sourcePreview=preview_report,githubSongPreview=nara_report,
             actualSongFacePairForGithubNara=False,
             alignedPhonesReviewed=False,wordTimingAccuracyValidated=False,
             customerFacing=False,commerciallyValidated=False,canAcceptPaidJobs=False,

@@ -100,16 +100,46 @@ export function composeServerMusicStyle({
   'Use original, lyrics-led melodic contour, intentional pauses, and a coherent opening/build/climax/resolution.';
  const second=['same','blend'].includes(mode)&&songIndex===2?
   'Create an independently composed melody and arrangement for track two, never a duplicate of track one.':'';
- const stylePreset=[
-  'Compose an original Korean song, not a cover. Never reproduce a known melody, lyric, vocal identity or signature recording.',
-  'Chosen genre: '+genre+'. '+genreText,
-  blendGenre?'Blend in '+blendGenre+' while retaining the primary identity: '+blendText:'',
-  eraText?'Era-inspired, not song-copied: '+eraText:'',
-  moodText,phrasing,
-  emotionalArc,
-  'Preserve the selected genre and customer story over era assumptions.',
+ const parts={
+  opening:'Compose an original Korean song, not a cover. Never reproduce a known melody, lyric, vocal identity or signature recording.',
+  genre:'Chosen genre: '+genre+'. '+genreText,
+  blend:blendGenre?'Blend in '+blendGenre+' while retaining the primary identity: '+blendText:'',
+  era:eraText?'Era-inspired, not song-copied: '+eraText:'',
+  mood:moodText,
+  phrasing,arc:emotionalArc,
+  preserve:'Preserve the selected genre and customer story over era assumptions.',
   second
+ };
+ // Keep all genre/era/mood materials, including any private recipes. If paid
+ // arc options make the full scaffold exceed Suno's 1000-char Style limit,
+ // compact ONLY generic scaffolding. Never silently drop a purchased arc.
+ const assemble=p=>[
+  p.opening,p.genre,p.blend,p.era,p.mood,p.phrasing,
+  p.arc,p.preserve,p.second
  ].filter(Boolean).join('\n');
- if(stylePreset.length>1000)throw new AppError(503,'Music style preset must be within 1000 characters');
+ let stylePreset=assemble(parts);
+ if(stylePreset.length>1000){
+  const compactArc=thirdVerse&&dedicationOutro?
+   'Verse 1 intimate; Verse 2 rising; Verse 3 pivotal; Final Chorus peak. Finish with a quiet, spacious Outro for the exact last phrase.':
+   thirdVerse?
+   'Verse 1 intimate; Verse 2 rising; Verse 3 pivotal; Final Chorus peak with genre-true dynamics.':
+   dedicationOutro?
+   'After climax, leave a quiet, spacious Outro for the exact customer final phrase.':
+   'Original melody; lyric-led build, contrast, rests and resolution.';
+  stylePreset=assemble({
+   ...parts,
+   opening:'Original Korean song; no copied melody, lyric, vocal identity or recording.',
+   phrasing:'Use the approved Korean speech style.',
+   arc:compactArc,
+   preserve:'Keep selected genre and real customer story.',
+   second:second?'Track 2: distinct melody and arrangement.':''
+  });
+ }
+ if(stylePreset.length>1000){
+  // Even the compact generic scaffold may not fit an excessively long
+  // operator-supplied private MD preset. Fail closed rather than truncating
+  // genre identity, the user's selected emotional arc, or rights instructions.
+  throw new AppError(503,'Music style preset must be within 1000 characters');
+ }
  return stylePreset;
 }

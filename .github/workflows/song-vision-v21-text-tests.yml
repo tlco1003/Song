@@ -7,6 +7,8 @@ on:
       - 'song_vision/owner_v21_text_viseme.py'
       - 'song_vision/test_owner_v21_text_viseme.py'
       - 'song_vision/test_owner_v21_site_assets.py'
+      - 'song_vision/owner_v21_audio_loudness.py'
+      - 'song_vision/test_owner_v21_audio_loudness.py'
       - 'docs/song-vision-v21-vowels.html'
       - 'docs/vision-owner/SONG_v21_TEN_KOREAN_VOWELS_OWNER_FULL_FACE_TEST.mp4'
   workflow_dispatch:
@@ -24,7 +26,7 @@ jobs:
       - name: Install only public 2D prototype test dependencies
         run: python -m pip install 'numpy>=1.26,<3' 'opencv-python-headless>=4.10,<5'
       - name: Verify ten text-driven vowels, full-face region coupling and fail-closed sync
-        run: python -m unittest discover -s song_vision -p 'test_owner_v21_text_viseme.py' -v
+        run: python -m unittest discover -s song_vision -p 'test_owner_v21_*.py' -v
       - name: Verify demo video path and published text interface
         run: python -m unittest discover -s song_vision -p 'test_owner_v21_site_assets.py' -v
       - name: Mark experimental nature and no private source-video use

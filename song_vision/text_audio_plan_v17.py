@@ -17,7 +17,8 @@ from .vocal_acoustics import CUE_COUNT, CUE_NAMES
 ONSETS=tuple('ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ')
 VOWELS=tuple('ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ')
 CODAS=('',*tuple('ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ'))
-UNITS=('<blank>',*dict.fromkeys((*ONSETS,*VOWELS,*CODAS[1:])))
+LATIN=tuple('abcdefghijklmnopqrstuvwxyz')
+UNITS=('<blank>',*dict.fromkeys((*ONSETS,*VOWELS,*CODAS[1:],*LATIN)))
 UNIT_TO_ID={s:i for i,s in enumerate(UNITS)}
 PROSODY_NAMES=('relativeLevel','attackSlope','releaseSlope','spectralOnset',
                'brightness','flatness','unitProgress','unitDurationSeconds')
@@ -37,6 +38,7 @@ def units_from_given_text(text: str) -> LyricUnits:
     if not isinstance(text,str) or not text.strip(): raise ValueError('Given lyrics required')
     text=unicodedata.normalize('NFC',text)
     ids=[]; word_ids=[]; words=text.split()
+    has_latin=any('a'<=c.lower()<='z' for c in text)
     if len(text)>8000: raise ValueError('Lyrics too long')
     for wi,word in enumerate(words):
         for char in word:
@@ -46,6 +48,8 @@ def units_from_given_text(text: str) -> LyricUnits:
                 symbols=(ONSETS[onset],VOWELS[vowel],CODAS[coda])
             elif char in UNIT_TO_ID:
                 symbols=(char,)
+            elif 'a' <= char.lower() <= 'z':
+                symbols=(char.lower(),)
             elif unicodedata.category(char).startswith(('P','S')):
                 continue
             else:
@@ -54,7 +58,9 @@ def units_from_given_text(text: str) -> LyricUnits:
                 if symbol:
                     ids.append(UNIT_TO_ID[symbol]); word_ids.append(wi)
     if not ids: raise ValueError('Lyrics contain no supported units')
-    return LyricUnits(text,tuple(ids),tuple(word_ids),tuple(words))
+    provenance=('orthographic_latin_not_phoneme_ground_truth' if has_latin
+                else 'orthographic_hangul_not_pronunciation_ground_truth')
+    return LyricUnits(text,tuple(ids),tuple(word_ids),tuple(words),provenance)
 
 
 class LyricsAcousticAligner(nn.Module):

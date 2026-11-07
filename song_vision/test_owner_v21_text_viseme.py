@@ -48,6 +48,15 @@ class TextFirstVowels(unittest.TestCase):
         self.assertGreater(u.protrusion,o.protrusion)
         self.assertGreater(i.spreading,eu.spreading)
 
+    def test_segment_boundaries_are_continuous_instead_of_snapping(self):
+        timed=preview_intervals('아 오 야 우',each_seconds=.8)
+        for end in (.8,1.6,2.4):
+            before,_=pose_at(timed,end-0.00001)
+            after,_=pose_at(timed,end)
+            self.assertLess(max(abs(a-b) for a,b in zip(before.values(),after.values())),.02)
+        first,_=pose_at(timed,0.)
+        self.assertEqual(first.values(),REST.values())
+
     def test_no_invented_alignment_or_text_override_by_energy(self):
         x=preview_intervals('아 야 어 여 오 요 우 유 으 이',.75)
         p,d=pose_at(x,2.1,energy=.2)

@@ -5,6 +5,8 @@ import {filterLyricLines,parseLyricDocument,cueIndexAt,approximateLyricIndexAt,l
 const $=id=>document.getElementById(id);
 const audio=$('music-audio'),videoPlayer=$('music-video');
 const musicVisual=$('music-visual'),musicVisualStage=$('music-visual-stage'),albumArt=$('album-art');
+const visualExpand=$('music-visual-expand'),visualClose=$('music-visual-close');
+const visualFit=$('music-visual-fit'),visualControls=$('music-visual-fullscreen-controls');
 let tracks=[],current=0,requestId=0,rawLyrics='',visibleLyrics=[],activeLine=-1,lyricCueSeconds=null;
 let repeatMode='off';
 const featuredAudio=$('mother-featured-audio'),featuredVideo=$('mother-featured-video');
@@ -151,6 +153,51 @@ function advanceLyrics(){
  if(estimated>=0)setActiveLine(estimated);
  else setActiveLine(-1);
 }
+// In-page enlargement keeps iOS native fullscreen from interrupting the song MP3.
+function closeVisual(returnFocus=false){
+ const wasExpanded=musicVisualStage.classList.contains('is-expanded');
+ musicVisualStage.classList.remove('is-expanded','is-contain');
+ document.body.classList.remove('music-visual-open');
+ musicVisualStage.removeAttribute('role');musicVisualStage.removeAttribute('aria-modal');
+ visualControls.hidden=true;visualExpand.hidden=false;
+ visualFit.textContent='전체 장면 보기';visualFit.setAttribute('aria-pressed','false');
+ if(returnFocus&&wasExpanded&&!musicVisualStage.hidden)visualExpand.focus();
+}
+function expandVisual(){
+ if(musicVisualStage.hidden)return;
+ musicVisualStage.classList.add('is-expanded');musicVisualStage.classList.remove('is-contain');
+ document.body.classList.add('music-visual-open');
+ musicVisualStage.setAttribute('role','dialog');musicVisualStage.setAttribute('aria-modal','true');
+ visualExpand.hidden=true;visualControls.hidden=false;
+ visualFit.textContent='전체 장면 보기';visualFit.setAttribute('aria-pressed','false');
+ visualClose.focus();
+}
+visualExpand.addEventListener('click',expandVisual);
+musicVisual.addEventListener('click',()=>{
+ if(!musicVisualStage.classList.contains('is-expanded'))expandVisual();
+});
+musicVisual.addEventListener('keydown',event=>{
+ if((event.key==='Enter'||event.key===' ')&&!musicVisualStage.classList.contains('is-expanded')){
+  event.preventDefault();expandVisual();
+ }
+});
+visualClose.addEventListener('click',()=>closeVisual(true));
+visualFit.addEventListener('click',()=>{
+ const contain=musicVisualStage.classList.toggle('is-contain');
+ visualFit.textContent=contain?'화면 가득 채우기':'전체 장면 보기';
+ visualFit.setAttribute('aria-pressed',String(contain));
+});
+document.addEventListener('keydown',event=>{
+ if(event.key==='Escape'&&musicVisualStage.classList.contains('is-expanded')){
+  event.preventDefault();closeVisual(true);
+ }
+ if(event.key==='Tab'&&musicVisualStage.classList.contains('is-expanded')){
+  const buttons=[visualFit,visualClose];
+  const position=buttons.indexOf(document.activeElement);
+  if(event.shiftKey&&position===0){event.preventDefault();visualClose.focus()}
+  else if(!event.shiftKey&&position===1){event.preventDefault();visualFit.focus()}
+ }
+});
 function showPlayer(kind,hasSeparateAudio=false){
  audio.hidden=kind==='none'||(kind==='video'&&!hasSeparateAudio);
  videoPlayer.hidden=kind!=='video';
@@ -160,6 +207,7 @@ async function select(index,autoPlay=false){
  if(!tracks.length)return;
  current=(index+tracks.length)%tracks.length;
  const track=tracks[current],token=++requestId;
+ closeVisual();
  featuredAudio.pause();
  audio.pause();audio.removeAttribute('src');audio.load();
  videoPlayer.pause();videoPlayer.removeAttribute('src');videoPlayer.load();
@@ -197,7 +245,9 @@ async function select(index,autoPlay=false){
   musicVisual.muted=true;musicVisual.defaultMuted=true;musicVisual.volume=0;
   musicVisual.controls=false;musicVisual.loop=true;
   musicVisual.src=fileURL('media/',track.visualFile);
-  musicVisualStage.hidden=false;albumArt.hidden=true;
+  musicVisualStage.classList.toggle('is-landscape',track.visualAspect==='16:9');
+  musicVisualStage.hidden=false;
+  albumArt.hidden=track.showCoverWithVisual!==true;
   void musicVisual.play().catch(()=>{/* Muted autoplay may require a later user gesture. */});
  }
  if(track.deviceURL||track.availability!=='missing'){
@@ -391,32 +441,25 @@ $('local-review').addEventListener('change',event=>{
 });
 function featured(){
  const video=featuredVideo,sound=featuredAudio,placeholder=$('mother-video-pending');
- video.src='media/mother-song.mp4';
- video.muted=false;video.defaultMuted=false;video.controls=true;video.loop=repeatMode!=='off';
- video.hidden=false;sound.hidden=true;placeholder.hidden=true;
- // An MP4-only public sample must remain audible, even if audio extraction
- // has not completed yet. Upgrade to separate M4A only after confirmed HEAD.
- void available('media/mother-song.m4a').then(state=>{
-  if(state!=='ready')return;
-  sound.src='media/mother-song.m4a';sound.hidden=false;
-  video.pause();video.muted=true;video.defaultMuted=true;video.controls=false;video.loop=true;
-  sound.loop=repeatMode!=='off';
- });
- video.addEventListener('play',()=>{
-  if(!sound.hidden)return;
-  audio.pause();setMediaSession(fallback[0],video);
- });
+ // Published MP3 remains the only audible sound; MP4 is a silent visual follower.
+ video.src='media/mother-song.mp4';video.muted=true;video.defaultMuted=true;
+ video.controls=false;video.loop=true;video.playsInline=true;
+ sound.src='media/mother-song.mp3';sound.controls=true;sound.loop=repeatMode!=='off';
+ video.hidden=false;sound.hidden=false;placeholder.hidden=true;
  sound.addEventListener('play',()=>{
-  audio.pause();setMediaSession(fallback[0],sound);syncSilentVideo(video,sound);
+  audio.pause();
+  if(playbackPlayer===videoPlayer)videoPlayer.pause();
+  setMediaSession(fallback[0],sound);
+  syncSilentVideo(video,sound);
  });
  sound.addEventListener('pause',()=>syncSilentVideo(video,sound));
  sound.addEventListener('timeupdate',()=>syncSilentVideo(video,sound));
  sound.addEventListener('seeking',()=>syncSilentVideo(video,sound));
- video.addEventListener('loadedmetadata',()=>{if(!sound.hidden)syncSilentVideo(video,sound)});
+ video.addEventListener('loadedmetadata',()=>syncSilentVideo(video,sound));
  video.addEventListener('error',()=>{
   video.hidden=true;placeholder.hidden=false;
   const explanation=placeholder.querySelector('p');
-  if(explanation)explanation.textContent='영상 화면을 준비하고 있어요. 오디오는 아래에서 들어 주세요.';
+  if(explanation)explanation.textContent='영상을 불러오지 못했어요. MP3로 노래를 계속 들을 수 있어요.';
  },{once:true});
 }
 window.addEventListener('pagehide',()=>[...deviceAudio,...deviceVideo].forEach(URL.revokeObjectURL));

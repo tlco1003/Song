@@ -12,8 +12,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20261106-my-music-nav-03">
-  <script type="module" src="player.js?v=20261107-mother-intro-loop-01"></script>
+  <link rel="stylesheet" href="style.css?v=20261107-responsive-video-01">
+  <script type="module" src="player.js?v=20261107-responsive-video-01"></script>
   <style>
     .v17-research-section{background:#29212e;color:#f6edf2;padding:55px 0 64px}
     .v17-research-head{text-align:center;max-width:740px;margin:0 auto 25px}
@@ -61,8 +61,15 @@
             <a class="cover-view-link" id="cover-detail-link" href="song.html?demo=song-mother" aria-label="이 노래 상세 페이지 열기">곡 감상하기 ↗</a>
           </div>
           <div class="music-visual-stage" id="music-visual-stage" hidden>
-            <video id="music-visual" autoplay muted loop playsinline preload="metadata" aria-label="세탁소의 신데렐라 뮤직비디오 무음 반복 재생"></video>
-            <span class="music-visual-caption" aria-hidden="true">WITHU · CINDERELLA · VISUAL LOOP</span>
+            <div class="music-visual-frame">
+              <video id="music-visual" autoplay muted loop playsinline preload="metadata" tabindex="0" aria-label="선택한 노래의 무음 영상, 눌러서 크게 보기"></video>
+              <button id="music-visual-expand" class="visual-overlay-button visual-expand" type="button" aria-label="영상 크게 보기">⛶ 크게 보기</button>
+            </div>
+            <span class="music-visual-caption" aria-hidden="true">WITHU · MUSIC LETTER · VISUAL LOOP</span>
+            <div class="music-visual-fullscreen-controls" id="music-visual-fullscreen-controls" hidden>
+              <button id="music-visual-fit" class="visual-overlay-button" type="button" aria-pressed="false">전체 장면 보기</button>
+              <button id="music-visual-close" class="visual-overlay-button" type="button">✕ 닫기</button>
+            </div>
           </div>
           <div class="song-heading">
             <p class="song-number">THE MUSIC LETTER</p>

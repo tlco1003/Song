@@ -156,9 +156,30 @@ test('Cinderella short loops silently while its full MP3 drives playback and lyr
   assert.match(js,/musicVisual\.loop=true/);
   assert.match(js,/musicVisual\.controls=false/);
   assert.match(js,/track\.visualMode==='silent-loop'/);
-  assert.match(js,/musicVisualStage\.hidden=false;albumArt\.hidden=true/);
+  assert.ok(js.includes("albumArt.hidden=track.showCoverWithVisual!==true"));
   assert.match(js,/void musicVisual\.play\(\)/);
   assert.match(css,/#music-visual\{/);
+});
+
+test('mother cinematic preview keeps her face cover, 16:9 loop and MP3 playback',()=>{
+ const mother=tracks.tracks.find(t=>t.id==='song-mother');
+ assert.equal(mother.coverImage,'covers/mother-thanks.webp');
+ assert.equal(mother.visualFile,'mother-intro-loop.mp4');
+ assert.equal(mother.visualAspect,'16:9');
+ assert.equal(mother.showCoverWithVisual,true);
+ assert.equal(mother.audioFile,'mother-song.mp3');
+ assert.ok(statSync(new URL('../docs/covers/mother-thanks.webp',import.meta.url)).size>1024);
+ assert.ok(statSync(new URL('../docs/media/mother-intro-loop.mp4',import.meta.url)).size>1024);
+ for(const id of ['music-visual-expand','music-visual-close','music-visual-fit','music-visual-fullscreen-controls']){
+  assert.ok(html.includes('id="'+id+'"'),id);
+ }
+ assert.ok(css.includes('aspect-ratio:16/9'));
+ assert.ok(css.includes('.music-visual-stage.is-landscape'));
+ assert.ok(js.includes("musicVisualStage.classList.toggle('is-landscape'"));
+ assert.ok(js.includes('function expandVisual()'));
+ assert.ok(js.includes('function closeVisual('));
+ assert.ok(js.includes("sound.src='media/mother-song.mp3'"));
+ assert.ok(js.includes('video.muted=true;video.defaultMuted=true'));
 });
 
 test('playlist controls and private local upload controls are connected to new JS',()=>{

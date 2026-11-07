@@ -16,7 +16,10 @@
       "audioFile": "mother-song.mp3",
       "productType": "audio_video",
       "lyricsOffsetSeconds": 1,
-      "lyricsOffsetAnchors": []
+      "lyricsOffsetAnchors": [],
+      "coverImage": "covers/mother-thanks.webp",
+      "visualAspect": "16:9",
+      "showCoverWithVisual": true
     },
     {
       "id": "song-papa",
@@ -44,7 +47,9 @@
       "coverImage": "covers/cinderella-laundry.webp",
       "productType": "audio_with_cover",
       "lyricsOffsetSeconds": 1,
-            "lyricsOffsetAnchors": [-1],
+      "lyricsOffsetAnchors": [
+        -1
+      ],
       "coverTheme": "장난스럽고 낭만적인 동전 세탁소의 신데렐라"
     },
     {

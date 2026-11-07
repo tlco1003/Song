@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#251d2a">
+<meta name="description" content="WITHU SONG-Vision v23 AM 6:30 한국어 가사 텍스트와 사용자 얼굴 피부 보호 연구 영상">
+<title>WITHU | SONG-Vision v23 · AM 6:30 연구 영상</title>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}html{color-scheme:dark}body{font-family:"Gowun Batang",serif;background:#211b29;color:#f6edf3;margin:0}
+header{border-bottom:1px solid #ffffff30;padding:19px max(20px,calc((100% - 1080px)/2));display:flex;justify-content:space-between;align-items:center}
+header a{color:#efd7e5;text-decoration:none}header .brand{font-size:24px;letter-spacing:.17em}
+main{width:min(1080px,calc(100% - 32px));margin:0 auto;padding:32px 0 64px}
+.tag{display:inline-block;border:1px solid #eac0d072;color:#f1d6df;border-radius:40px;padding:8px 13px;font:12px sans-serif;letter-spacing:.08em}
+h1{font-size:clamp(29px,4vw,45px);font-weight:400;line-height:1.45;margin:17px 0}h2{font-size:21px;font-weight:400;line-height:1.5;margin:7px 0}
+p{line-height:1.9;color:#e1d1dc;word-break:keep-all}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:17px;margin:22px 0}
+.card{background:#ffffff0b;border:1px solid #ffffff25;border-radius:14px;padding:15px;min-width:0}
+video{display:block;max-height:480px;background:#0e0b14;border-radius:9px;width:100%;object-fit:contain}
+.sub{font-size:13px}.quiet{color:#d7becb;font-size:12px}
+a{color:#f3cbdc;text-underline-offset:4px}
+.lyrics{font-size:22px;line-height:2;color:#f5eced;margin:16px 0}
+.notice{margin-top:25px;border-top:1px solid #ffffff29;padding-top:19px}
+@media(max-width:720px){.grid{grid-template-columns:1fr}main{padding:24px 0 45px}.card{padding:11px}}
+</style>
+</head>
+<body>
+<header><a class="brand" href="index.html">WITHU</a><a href="song-vision-lab.html">← 전체 연구 영상</a></header>
+<main>
+<span class="tag">SONG-VISION V23 · OWNER FACE · AM 6:30</span>
+<h1>실제 가사로 움직이는 얼굴,<br>경계는 지키면서</h1>
+<p>사용자가 제공한 실제 스피킹 얼굴을 기준으로, 가사가 결정한 모음과 원곡 음량을 분리해 처리한 연구 영상이야. 입술·턱·양 볼은 약하게 연동하지만, 얼굴 바깥·고정 영역은 잠금 처리했어.</p>
+<div class="grid">
+<section class="card">
+<h2>01. AM 6:30 · 가사 기반 v23</h2>
+<p class="sub">14초 · 25fps · 원곡 음원 포함 · 정면 얼굴 비교</p>
+<video controls playsinline preload="metadata" id="v23-main" aria-label="본인 스피킹 얼굴을 기준으로 AM 6:30 가사를 사용해 만든 14초 SONG-Vision v23 연구 영상"><source src="vision-owner/AM630_v23_TEXT_FIRST_CONSTRAINED_FACE_UNALIGNED.mp4" type="video/mp4">MP4를 지원하지 않습니다.</video>
+<p class="quiet">한국어 음절의 정확한 시작 시간은 확인 전 초안이야. 원본 스피킹 영상의 움직임 자체를 복사한 영상은 아니야.</p>
+<a href="vision-owner/AM630_v23_TEXT_FIRST_CONSTRAINED_FACE_UNALIGNED.mp4" target="_blank" rel="noopener">영상 새 창에서 보기</a>
+</section>
+<section class="card">
+<h2>02. 입술 확대 · 원본과 생성 결과</h2>
+<p class="sub">실제 입·턱 영역을 확대하고 차이를 시각화한 검사 영상</p>
+<video controls playsinline preload="metadata" id="v23-closeup" aria-label="사용자 원본 얼굴과 v23 생성 영상의 입술 부분 및 차이 시각화"><source src="vision-owner/AM630_v23_MOUTH_CLOSEUP_SITE.mp4" type="video/mp4">MP4를 지원하지 않습니다.</video>
+<p class="quiet">마지막 차이맵은 변화량을 28배로 강조해 보여주는 검사 도구야. 자연스럽게 보이는 입술 생성과 별개야.</p>
+<a href="vision-owner/AM630_v23_MOUTH_CLOSEUP_SITE.mp4" target="_blank" rel="noopener">확대 영상 새 창에서 보기</a>
+</section>
+</div>
+<section class="card">
+<h2>가사 텍스트 (실제 저장소 음원/가사 기준)</h2>
+<div class="lyrics">어두운 밤이 지나면<br>아침은 다시 찾아오겠지</div>
+<p>모음 선택은 가사 텍스트가 결정해. 음악 소리로 단어를 추정하거나 발음을 바꾸지 않아. 각 음절의 시작·끝 시각은 아직 검수되지 않은 초안이므로 노래와 정확히 일치하지 않을 수 있어.</p>
+<p class="quiet">텍스트 소스: <code>docs/media/lyrics-am630.txt</code> · 음원 소스: <code>docs/media/am630.mp3</code></p>
+</section>
+<section class="notice">
+<h2>정확한 성공·실패 판정</h2>
+<p>v23은 얼굴 외부, 경계 보호 띠, 단단하게 고정한 영역의 2D 픽셀 변화를 0으로 검사해. 하지만 얼굴 마스크는 실제 개인의 해부학적 경계선을 분할한 것이 아니라 얼굴 안쪽의 보수적인 타원형 모델이고, 턱관절 역시 완전한 3D 근육·뼈 모델이 아니야.</p>
+<p><strong>상태: 실제 음원·가사 연결 완료 / 경계 보호 검사 통과 / 정확한 한국어 가창 립싱크·인체 근육 학습 미완료.</strong></p>
+<p><a href="song-vision-v21-vowels.html">10개 모음별 시연</a> · <a href="song-vision-lab.html">이전 v22·v21 비교 영상</a></p>
+</section>
+</main>
+<script>
+for(const id of ['v23-main','v23-closeup']){
+ const player=document.getElementById(id);
+ player.addEventListener('error',()=>console.warn('SONG-Vision video unavailable: '+id),true);
+}
+</script>
+</body></html>

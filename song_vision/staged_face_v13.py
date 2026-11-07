@@ -414,7 +414,8 @@ def train_staged(dataset: Path, checkpoint: Path, *,
                  epochs_per_stage: tuple[int, int, int, int] = (2, 2, 2, 2),
                  batch_size: int = 12, lr: float = .0003,
                  device: str = "cpu", seed: int = 42,
-                 init_v11_checkpoint: Path | None = None) -> dict:
+                 init_v11_checkpoint: Path | None = None,
+                 init_seoul_phone_checkpoint: Path | None = None) -> dict:
     if (len(epochs_per_stage) != 4 or any(
             type(n) is not int or not 1 <= n <= 30 for n in epochs_per_stage)
             or not 2 <= batch_size <= 64 or not 1e-7 <= lr <= .01):
@@ -423,6 +424,10 @@ def train_staged(dataset: Path, checkpoint: Path, *,
         raise FileExistsError("Existing research model cannot be overwritten")
     if init_v11_checkpoint is not None and not init_v11_checkpoint.is_file():
         raise FileNotFoundError("Owner-restored prior v11 research checkpoint not found")
+    if init_seoul_phone_checkpoint is not None and not init_seoul_phone_checkpoint.is_file():
+        raise FileNotFoundError("Owner-restored Seoul Korean phone checkpoint absent")
+    if init_seoul_phone_checkpoint is not None and checkpoint.resolve()==init_seoul_phone_checkpoint.resolve():
+        raise ValueError("Research Korean speech pretrained weights must never be overwritten")
     if init_v11_checkpoint is not None and checkpoint.resolve() == init_v11_checkpoint.resolve():
         raise ValueError("Warm-start must never overwrite original research model")
     if torch.device(device).type == "cuda" and not torch.cuda.is_available():
@@ -445,6 +450,22 @@ def train_staged(dataset: Path, checkpoint: Path, *,
             raise ValueError("Only trusted, operator-restored v11 research model supported")
         net.backbone.load_state_dict(data["stateDict"], strict=True)
         prior_sha = hashlib.sha256(init_v11_checkpoint.read_bytes()).hexdigest()
+    seoul_sha = None
+    if init_seoul_phone_checkpoint is not None:
+        seoul = torch.load(init_seoul_phone_checkpoint, map_location="cpu", weights_only=True)
+        if (seoul.get("modelVersion") != "song-vision-seoul-hand-corrected-phones-v1"
+                or seoul.get("sourceLicense") != "CC-BY-NC-2.0"
+                or seoul.get("commerciallyValidated") is not False
+                or tuple(seoul.get("consonants", ())) != CONSONANTS
+                or tuple(seoul.get("vowels", ())) != VOWELS):
+            raise ValueError("Only source-attributed Korean hand-corrected speech phoneme weights accepted")
+        source_weights = seoul["stateDict"]
+        for module_name in ("articulation_encoder", "consonant_head", "vowel_head"):
+            prefix = module_name + "."
+            relevant = {key[len(prefix):]:value
+                        for key,value in source_weights.items() if key.startswith(prefix)}
+            getattr(net,module_name).load_state_dict(relevant,strict=True)
+        seoul_sha = hashlib.sha256(init_seoul_phone_checkpoint.read_bytes()).hexdigest()
     hist, stage_bests = [], {}
     for stage, stage_epochs in zip(STAGES, epochs_per_stage):
         configure_stage(net, stage)
@@ -497,7 +518,11 @@ def train_staged(dataset: Path, checkpoint: Path, *,
     if result["projectedIrisFrameCount"] == 0:
         failures.append("PROJECTED_IRIS_MOVEMENT_NOT_EVALUATED")
     if result["reviewedConsonantFrameCount"] == 0 or result["reviewedVowelFrameCount"] == 0:
-        failures.append("EXACT_PHONEME_CLASSIFICATION_NOT_TRAINED_OR_VALIDATED")
+        failures.append("EXACT_SINGING_PHONEME_CLASSIFICATION_NOT_VALIDATED")
+        if seoul_sha is None:
+            failures.append("EXACT_PHONEME_CLASSIFICATION_NOT_TRAINED_OR_VALIDATED")
+        else:
+            failures.append("KOREAN_SPEECH_PHONE_PRETRAINING_NOT_SINGING_VALIDATION")
     checkpoint.parent.mkdir(parents=True, exist_ok=True)
     torch.save({
         "modelVersion": MODEL_VERSION,
@@ -509,6 +534,7 @@ def train_staged(dataset: Path, checkpoint: Path, *,
         "status": "research_only_unvalidated_checkpoint",
         "commerciallyValidated": False,
         "warmStartV11Sha256": prior_sha,
+        "pretrainedKoreanSpeechPhoneCheckpointSha256": seoul_sha,
         "optimizerStateRestored": False,
     }, checkpoint)
     report = {
@@ -535,6 +561,8 @@ def train_staged(dataset: Path, checkpoint: Path, *,
         "trainFrames": len(train_data), "valFrames": len(val_data),
         "trainClips": splits["train"], "valClips": splits["val"],
         "warmStartV11Sha256": prior_sha,
+        "pretrainedKoreanSpeechPhoneCheckpointSha256": seoul_sha,
+        "KoreanSpeechNotEquivalentToSinging": True,
         "optimizerStateRestored": False,
         "canAcceptPaidJobs": False,
         "commercialUseAllowed": False,
@@ -564,6 +592,7 @@ def main():
     parser.add_argument("--fusion-epochs", type=int, default=2)
     parser.add_argument("--batch-size", type=int, default=12)
     parser.add_argument("--init-v11-checkpoint", type=Path)
+    parser.add_argument("--init-seoul-phone-checkpoint", type=Path)
     args = parser.parse_args()
     result = train_staged(
         args.dataset, args.checkpoint,
@@ -571,6 +600,7 @@ def main():
                           args.emotion_epochs, args.fusion_epochs),
         batch_size=args.batch_size,
         init_v11_checkpoint=args.init_v11_checkpoint,
+        init_seoul_phone_checkpoint=args.init_seoul_phone_checkpoint,
     )
     print("SONG_V13_RESULT=" + json.dumps({
         "modelVersion": result["modelVersion"],

@@ -1,0 +1,88 @@
+name: SONG v14 Korean speech phonemes hand-corrected Seoul Corpus study
+on:
+  push:
+    branches:
+      - feature/song-vision-self-hosted-v1
+    paths:
+      - 'song_vision/korean_seoul_phones_v14.py'
+      - 'song_vision/seoul_research_vault_v14.py'
+      - 'song_vision/test_korean_seoul_v14.py'
+      - '.github/workflows/song-vision-v14-seoul.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: song-seoul-phone-v14-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  academic_seoul_corpus_real_phone_audio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      OMP_NUM_THREADS: '2'
+      MKL_NUM_THREADS: '2'
+      VAULT_TARGET: ${{ github.workspace }}/v14-seoul-phone-encrypted-private
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install CPU-only PyTorch, signal/video decoder, cryptography
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg libgles2 libegl1 libgl1 libglib2.0-0
+          python -m pip install -q torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -q -r song_vision/requirements-geometry.txt
+      - name: Verify Korean published phoneme mapping and noncommercial vault contract
+        run: |
+          python -m unittest song_vision.test_korean_seoul_v14 -v
+      - name: Academic research from hand-corrected phone TextGrids plus actual speech audio
+        run: |
+          python -m song_vision.korean_seoul_phones_v14 \
+            --research-acknowledge-noncommercial \
+            --vault-public-key song_vision/research_vault_public.pem \
+            --vault-output-dir "$VAULT_TARGET" \
+            --epochs 6
+      - name: Preserve only encrypted Seoul speech phoneme weights and metrics
+        uses: actions/upload-artifact@v4
+        with:
+          name: song-seoul-hand-corrected-phones-${{ github.run_id }}-a${{ github.run_attempt }}
+          path: ${{ env.VAULT_TARGET }}/*
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+      - name: Store Korean phoneme weights separately in owner encrypted study branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin refs/heads/research/song-vision-vault:refs/remotes/origin/research/song-vision-vault
+          git worktree add --detach "$RUNNER_TEMP/seoul-v14-private-study" refs/remotes/origin/research/song-vision-vault
+          cd "$RUNNER_TEMP/seoul-v14-private-study"
+          mkdir -p encrypted/seoul-corpus-v14-korean-speech-phones
+          cp "$VAULT_TARGET"/*.svault encrypted/seoul-corpus-v14-korean-speech-phones/
+          cp "$VAULT_TARGET"/*.manifest.json encrypted/seoul-corpus-v14-korean-speech-phones/
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add encrypted/seoul-corpus-v14-korean-speech-phones
+          if git diff --cached --quiet; then
+            echo 'No valid new Korean phoneme checkpoint generated'
+            exit 1
+          fi
+          git commit -m "research-vault: Seoul Corpus phones CC BY-NC 2.0 $GITHUB_RUN_ID a$GITHUB_RUN_ATTEMPT"
+          for attempt in 1 2 3; do
+            if git push origin HEAD:refs/heads/research/song-vision-vault; then
+              exit 0
+            fi
+            sleep $((4 * attempt))
+            git fetch origin research/song-vision-vault
+            git rebase FETCH_HEAD
+          done
+          echo 'Academic Korean model archival failed'
+          exit 1
+      - name: Enforce dataset separation
+        run: |
+          echo 'Seoul Corpus CC BY-NC 2.0, not RAVDESS. Real Korean speech-only phonemes.'
+          echo 'No Korean singing motion, lipsync or commercial use is claimed.'

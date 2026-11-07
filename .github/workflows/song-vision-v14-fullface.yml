@@ -1,0 +1,108 @@
+name: SONG Vision v14 real full face same original vocal audit
+on:
+  push:
+    branches:
+      - feature/song-vision-self-hosted-v1
+    paths:
+      - 'song_vision/full_face_renderer_v14.py'
+      - 'song_vision/paired_face_audit_v14.py'
+      - 'song_vision/external_ravdess_full_face_v14.py'
+      - 'song_vision/test_full_face_v14.py'
+      - '.github/workflows/song-vision-v14-fullface.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: song-v14-fullface-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  singer_face_real_same_audio_comparison:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      OMP_NUM_THREADS: '2'
+      MKL_NUM_THREADS: '2'
+      FACE_TASK: ${{ github.workspace }}/face_landmarker.task
+      NEW_ENCRYPTED_VAULT: ${{ github.workspace }}/v14-fullface-private-research-archive
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install local PyTorch, MediaPipe, video codecs and encryption
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg libgles2 libegl1 libgl1 libglib2.0-0
+          python -m pip install -q torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -q -r song_vision/requirements-geometry.txt
+      - name: Verify artificial full face training, acoustic PCM unchanged, Korean phoneme guards
+        run: |
+          python -m unittest song_vision.test_full_face_v14 \
+            song_vision.test_staged_face_v13 \
+            song_vision.test_research_checkpoint_vault -v
+      - name: Download and validate offline face teacher task
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error --retry 4 --retry-delay 8 --max-time 240 \
+            'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task' \
+            --output "$FACE_TASK"
+          echo '64184e229b263107bc2b804c6625db1341ff2bb731874b0bcc2fe6544e0bc9ff  '"$FACE_TASK" | sha256sum --check
+          python - <<'PY'
+          from pathlib import Path
+          from song_vision.face_geometry import LocalFaceLandmarker
+          with LocalFaceLandmarker(Path("face_landmarker.task")) as x:
+              assert x.model is not None
+          print("SONG_V14_LOCAL_FACE_TEACHER=PASS")
+          PY
+      - name: Real singer same-audio full face reconstruction and side by side audit
+        run: |
+          python -m song_vision.external_ravdess_full_face_v14 \
+            --acknowledge-noncommercial-research \
+            --landmarker-task "$FACE_TASK" \
+            --vault-public-key song_vision/research_vault_public.pem \
+            --vault-output-dir "$NEW_ENCRYPTED_VAULT" \
+            --render-epochs 2 --audit-frames 60
+      - name: Upload only encrypted model files and metrics (NO REAL FACES)
+        uses: actions/upload-artifact@v4
+        with:
+          name: song-v14-fullface-research-only-encrypted-${{ github.run_id }}-a${{ github.run_attempt }}
+          path: ${{ env.NEW_ENCRYPTED_VAULT }}/*
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+      - name: Store new AES-GCM ciphertext in durable owner research branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin refs/heads/research/song-vision-vault:refs/remotes/origin/research/song-vision-vault
+          git worktree add --detach "$RUNNER_TEMP/v14-archival" refs/remotes/origin/research/song-vision-vault
+          cd "$RUNNER_TEMP/v14-archival"
+          mkdir -p encrypted/ravdess-v14-fullface-original-sound
+          cp "$NEW_ENCRYPTED_VAULT"/*.svault encrypted/ravdess-v14-fullface-original-sound/
+          cp "$NEW_ENCRYPTED_VAULT"/*.manifest.json encrypted/ravdess-v14-fullface-original-sound/
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add encrypted/ravdess-v14-fullface-original-sound
+          if git diff --cached --quiet; then
+            echo 'No real new encrypted weights; refuse to claim preservation'
+            exit 1
+          fi
+          git commit -m "research-vault: preserve v14 face pixels and same-vocal audit $GITHUB_RUN_ID a$GITHUB_RUN_ATTEMPT"
+          for attempt in 1 2 3; do
+            if git push origin HEAD:refs/heads/research/song-vision-vault; then
+              exit 0
+            fi
+            sleep $((4 * attempt))
+            git fetch origin research/song-vision-vault
+            git rebase FETCH_HEAD
+          done
+          echo 'Encrypted model preservation failed'
+          exit 1
+      - name: Production remains closed
+        run: |
+          echo 'Real recorded audio is unchanged. No identity video, vocals or private decryption key uploaded.'
+          echo 'Only 96px full facial-region renderer, not a photoreal production model.'

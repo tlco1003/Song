@@ -1,0 +1,91 @@
+{
+  "bestEpoch": 2,
+  "bestMetrics": {
+    "articulatoryFaceMAE": 0.1095084,
+    "copiedReferenceMouthMAE": 0.0615056,
+    "epoch": 2,
+    "facialMotionMAE": 0.0937888,
+    "matchedVsShiftedVoiceGain": 0.0373277,
+    "mouthMAE": 0.0810097,
+    "soundControlsSensitivity": 0.0162261,
+    "staticFaceMotionMAE": 0.1022303,
+    "temporalFaceChangeMAE": 0.0371311,
+    "trainJointLoss": 0.0931189,
+    "visualResponseToVoice": 0.0475266
+  },
+  "canAcceptPaidJobs": false,
+  "commercialUseAllowed": false,
+  "dataCounts": {
+    "holdoutActors": [
+      "03"
+    ],
+    "matchedPairs": 60,
+    "normalRecordings": 60,
+    "strongExpressionRecordings": 60,
+    "trainActors": [
+      "01",
+      "02"
+    ],
+    "trainingClips": 80,
+    "validationClips": 40
+  },
+  "diagnosticFlags": [
+    "LIP_RECONSTRUCTION_WORSE_THAN_COPY"
+  ],
+  "encryptedCheckpoint": "song-v12-intensity-pairs-run-42317907195-a1.svault",
+  "encryptedFileSha256": "b324d7daa4e0ac340b508d111b6e6edd66745b1786d1529c354db36920c60698",
+  "epochsCompleted": 5,
+  "faceLabelCoverage": {
+    "train": {
+      "total": 6000,
+      "valid": 6000
+    },
+    "val": {
+      "total": 3000,
+      "valid": 3000
+    }
+  },
+  "modelVersion": "song-vision-pronunciation-prosody-face-v11",
+  "officialMd5Verified": {
+    "01": "0f7ba20f3a7278d5a662a7e30f44c942",
+    "02": "8e426ef4134abe1dff4d2a8262abe8a9",
+    "03": "2d686591f8760f8041d2dc75e8234828"
+  },
+  "researchModelPreservedEncrypted": true,
+  "singerRawMediaPreserved": false,
+  "source": "https://zenodo.org/records/1188976",
+  "study": "song-vision-normal-vs-strong-phonetic-prosody-face-v12",
+  "unseenSingerNormalVsStrong": {
+    "normal": {
+      "articulatoryFaceMAE": 0.0934851,
+      "copiedReferenceMouthMAE": 0.0553422,
+      "facialMotionMAE": 0.079829,
+      "frames": 1480,
+      "matchedVsShiftedVoiceGain": 0.0339713,
+      "mouthMAE": 0.0800525,
+      "soundControlsSensitivity": 0.0165573,
+      "staticFaceMotionMAE": 0.0855572,
+      "temporalFaceChangeMAE": 0.030913,
+      "visualResponseToVoice": 0.0413006
+    },
+    "strongExpression": {
+      "articulatoryFaceMAE": 0.1255317,
+      "copiedReferenceMouthMAE": 0.0676689,
+      "facialMotionMAE": 0.1077486,
+      "frames": 1480,
+      "matchedVsShiftedVoiceGain": 0.0406842,
+      "mouthMAE": 0.0819668,
+      "soundControlsSensitivity": 0.0158949,
+      "staticFaceMotionMAE": 0.1189035,
+      "temporalFaceChangeMAE": 0.0433492,
+      "visualResponseToVoice": 0.0537526
+    }
+  },
+  "weaknesses": [
+    "RAVDESS intensity is acted emotional intensity, NOT directly measured muscle effort",
+    "Different takes of the same lyric are not frame-level phoneme aligned",
+    "No accurate phoneme labeling across languages",
+    "Audio normalization, microphone gain and singing technique can confound loudness",
+    "No production validated full face skin renderer"
+  ]
+}

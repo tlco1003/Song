@@ -14,6 +14,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=20261106-my-music-nav-03">
   <script type="module" src="player.js?v=20261106-papa-fresh-lyrics-01"></script>
+  <style>
+    .v17-research-section{background:#29212e;color:#f6edf2;padding:55px 0 64px}
+    .v17-research-head{text-align:center;max-width:740px;margin:0 auto 25px}
+    .v17-research-head h2{font:400 clamp(28px,3.8vw,46px)/1.4 "Gowun Batang",serif;margin:10px 0}
+    .v17-research-head p{font-size:13px;line-height:1.9;color:#ded0dc;word-break:keep-all}
+    .v17-research-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+    .v17-research-card{min-width:0;border:1px solid #ffffff3c;border-radius:13px;background:#ffffff0a;padding:16px}
+    .v17-research-card h3{font:400 17px/1.7 "Gowun Batang",serif;margin:0 0 6px}
+    .v17-research-card p{font-size:12px;line-height:1.8;color:#d5c3d3}
+    .v17-research-card video{display:block;width:100%;height:auto;max-height:380px;object-fit:contain;background:#151119;border-radius:9px}
+    .v17-research-note{margin-top:18px;text-align:center;font-size:12px;color:#d0bcca;line-height:1.9}
+    .v17-research-link{display:inline-flex;align-items:center;justify-content:center;border:1px solid #d8bfce;border-radius:8px;padding:11px 17px;margin-top:17px;font-size:13px;color:#f5dde9}
+    .v17-research-link:hover{background:#ffffff18}
+    @media(max-width:700px){.v17-research-grid{grid-template-columns:1fr}.v17-research-section{padding:34px 0 42px}.v17-research-card{padding:12px}}
+  </style>
 </head>
 <body>
 <header class="site-header">
@@ -109,6 +124,33 @@
           <strong>엄마에게 전하는 노래</strong>
           <p>영상 공개를 준비하고 있어요.</p>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="v17-research-section" id="vision-lab-preview" aria-labelledby="vision-lab-heading">
+    <div class="frame">
+      <div class="v17-research-head">
+        <span class="small-caps">SONG-VISION V17 · NONCOMMERCIAL RESEARCH</span>
+        <h2 id="vision-lab-heading">사진 한 장이 노래하는 얼굴이 되기까지</h2>
+        <p>출시 전 연구 영상입니다. 원본 음원에서 분석한 움직임과 기준 얼굴 사진의 픽셀을 이용해 만든 실험 결과를 재생 버튼으로 확인할 수 있습니다. 상업용 제품 시연이나 립싱크 완성 인증은 아닙니다.</p>
+      </div>
+      <div class="v17-research-grid">
+        <article class="v17-research-card">
+          <h3>01 · 〈나라는 사람〉 사진 픽셀 AI 영상</h3>
+          <p>실제 GitHub MP3 · 10초 · 기준 사진 / 음향 기반 얼굴 / 이전 프레임 기억</p>
+          <video controls playsinline preload="metadata" aria-label="나라는 사람 노래를 이용한 비상업 사진 픽셀 AI 영상"><source src="vision-research/NARA_v17_photo_pixel_memory_RESEARCH_ONLY.mp4" type="video/mp4">MP4 재생을 지원하지 않습니다.</video>
+          <p>※ 등장 얼굴은 원곡 가수가 아닌 연구용 얼굴이며 한국어 입모양의 정확도는 미검증입니다.</p>
+        </article>
+        <article class="v17-research-card">
+          <h3>02 · 실제 가창 영상과 v17 AI 비교</h3>
+          <p>실제 가창 영상 / 기존 v16 / 새 픽셀 메모리 모델 · 2.88초</p>
+          <video controls playsinline preload="metadata" aria-label="실제 가창 영상과 두 모델의 얼굴 복원 결과 비교"><source src="vision-research/SONG_v17_same_audio_real_singer_comparison.mp4" type="video/mp4">MP4 재생을 지원하지 않습니다.</video>
+          <p>※ 정지 사진 복사 오차 0.0659589보다 새 모델 오차 0.0744623이 높아 품질 미달입니다.</p>
+        </article>
+      </div>
+      <div class="v17-research-note">RAVDESS (Livingstone &amp; Russo, 2018), CC BY-NC-SA 4.0 · 비상업 연구 전용 · 유료 상품과 분리
+        <div><a class="v17-research-link" href="song-vision-lab.html">영상 크게 보기 · 연구 상세 정보 ↗</a></div>
       </div>
     </div>
   </section>

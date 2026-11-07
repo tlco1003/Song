@@ -151,7 +151,7 @@ test('paid emotional-arc upgrades reach private lyric and genre-style plans with
  assert.equal(combined.amountBreakdown.amountKrw,44000);
  assert.match(climactic.lyricPrompt,/\[Verse 3\]/);
  assert.match(climactic.lyricPrompt,/\[Final Chorus\]/);
- assert.match(climactic.songStyles[0].style,/expressive Final Chorus peak/);
+ assert.match(climactic.songStyles[0].style,/emotional Final Chorus peak/);
  assert.match(lingering.lyricPrompt,/마지막 여운 엔딩/);
  assert.match(lingering.songStyles[0].style,/quiet, spacious Outro/);
  assert.match(combined.songStyles[0].style,/spacious Outro/);

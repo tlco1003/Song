@@ -144,32 +144,32 @@
   <section class="v17-research-section" id="vision-lab-preview" aria-labelledby="vision-lab-heading">
     <div class="frame">
       <div class="v17-research-head">
-        <span class="small-caps">SONG-VISION · USER-OWNED TRAINING DATA · V19</span>
-        <h2 id="vision-lab-heading">네 영상으로 직접 배우는 AI 입모양</h2>
-        <p>이전 v18은 입모양 움직임이 거의 없는 실패 결과였습니다. 새 v19에서는 직접 제공한 스피킹 영상 2개에서 측정한 입 주변 변화와 원본 음성을 학습했습니다. 실제 촬영 영상과 생성 결과, 입술 확대 화면을 함께 확인하세요.</p>
+        <span class="small-caps">SONG-VISION v20 · OWNER RECORDED FULL FACE</span>
+        <h2 id="vision-lab-heading">입술뿐 아니라 볼·광대·눈가·턱까지</h2>
+        <p>네가 직접 올린 스피킹 영상의 연속 프레임에서 얼굴 전체 피부 이동을 측정했습니다. 왼쪽은 실제 관찰된 연동 움직임, 오른쪽은 AM 6:30 음향으로 그 움직임을 예측한 결과입니다. 두 영상의 성능을 구분해서 확인해 주세요.</p>
       </div>
       <div class="v17-research-grid">
         <article class="v17-research-card">
-          <h3>01 · 네 실제 스피킹 영상 vs v19 AI</h3>
-          <p>왼쪽: 실제 네가 올린 스피킹 영상 · 오른쪽: 원본 음성→학습된 입 움직임 · 아래: 입술 확대 · 8초 · 25fps</p>
-          <video controls playsinline preload="metadata" poster="vision-owner/owner_speaking_poster.jpg" aria-label="사용자 원본 스피킹 얼굴과 v19 개인 학습모델 입술 움직임 확대 비교"><source src="vision-owner/OWNER_speaking_v19_MOUTH_MACRO_LEARNED.mp4" type="video/mp4">이 브라우저는 MP4를 지원하지 않습니다.</video>
-          <p>검증 프레임 132장. 정적 평균 입모양 지표 오차 0.262 → 학습 모델 0.217. 실제 발음과 일치하지 않는 구간이 있어 연구용으로만 표시합니다.</p>
-          <a href="vision-owner/OWNER_speaking_v19_MOUTH_MACRO_LEARNED.mp4" target="_blank" rel="noopener" style="text-decoration:underline;color:#f8dce7;font-size:12px">스피킹 비교 영상 크게 보기</a>
+          <h3>01 · 내 실제 스피킹 영상의 얼굴 전체 움직임</h3>
+          <p>원본 얼굴 프레임 / 실제 관찰된 피부 이동장을 적용한 얼굴 · 눈가, 양쪽 볼, 광대, 턱선, 입술 동시 비교 · 7.375초</p>
+          <video controls playsinline preload="metadata" aria-label="내 스피킹 얼굴 실제 프레임과 눈가 볼 광대 턱 등 전체 얼굴 이동장 비교"><source src="vision-owner/OWNER_v20_REAL_SPEAKING_FULL_FACE_FLOW_COMPARISON.mp4" type="video/mp4">MP4 재생을 지원하지 않습니다.</video>
+          <p>실제 녹화된 얼굴 움직임에서 이동장을 추출해 다른 프레임에 적용한 결과입니다. 음원만으로 정확히 예측한 결과는 아닙니다. 이동 방향 화살표는 보기 쉽게 5배 확대했습니다.</p>
+          <a href="vision-owner/OWNER_v20_REAL_SPEAKING_FULL_FACE_FLOW_COMPARISON.mp4" target="_blank" rel="noopener" style="text-decoration:underline;color:#f8dce7;font-size:12px">실제 얼굴 전체 움직임 영상 열기</a>
         </article>
         <article class="v17-research-card">
-          <h3>02 · AM 6:30 — v19 AI 가수 입모양</h3>
-          <p>사용자가 직접 만든 AI 가수 사진 + 실제 AM 6:30 원곡 음원 · 사진과 AI의 입술 확대 비교 · 10초 · 25fps</p>
-          <video controls playsinline preload="metadata" poster="vision-owner/am630_v18_poster.jpg" aria-label="사용자 생성 가수 얼굴의 실제 AM 6:30 음원 기반 입술 움직임 확대"><source src="vision-owner/AM630_v19_OWNER_MOUTH_MACRO_LEARNED.mp4" type="video/mp4">이 브라우저는 MP4를 지원하지 않습니다.</video>
-          <p>입술 변형은 모델의 음향 예측을 시각적으로 증폭한 실험입니다. 원곡은 반주가 섞인 음원이며 한국어 립싱크 정확도는 미검증입니다.</p>
-          <a href="vision-owner/AM630_v19_OWNER_singer_mouth_scene.mp4" target="_blank" rel="noopener" style="text-decoration:underline;color:#f8dce7;font-size:12px">AM 6:30 전체 장면 영상 보기</a>
+          <h3>02 · AM 6:30 — v20 얼굴 전체 음향 예측</h3>
+          <p>네가 만든 여성 가수 이미지 + AM 6:30 원곡 · 눈가·볼·광대·입술·턱 표면 변형을 한 화면에서 확인 · 8초 · 25fps</p>
+          <video controls playsinline preload="metadata" aria-label="AM 6:30 원곡과 직접 만든 AI 가수 사진을 이용한 눈가 광대 볼 턱 전체 표면 변화 실험"><source src="vision-owner/AM630_v20_FULL_FACE_EYES_CHEEKS_JAW_VISIBLE.mp4" type="video/mp4">MP4 재생을 지원하지 않습니다.</video>
+          <p>이동은 실제 스피킹 영상에서 학습한 표면 이동장을 음향에 연결한 실험입니다. 검증 오차 0.3655는 정적인 기준 0.3583보다 높아 정확한 가창 표정·립싱크 품질은 미달입니다. 화살표만 5배 확대 표시했습니다.</p>
+          <a href="vision-owner/AM630_v20_FULL_FACE_EYES_CHEEKS_JAW_VISIBLE.mp4" target="_blank" rel="noopener" style="text-decoration:underline;color:#f8dce7;font-size:12px">AM 6:30 얼굴 전체 비교 영상 열기</a>
         </article>
       </div>
-      <p class="v17-research-note">사진·원본 스피킹 영상은 사용자가 직접 제공한 자료이고, AI 가수 이미지는 사용자가 제작한 이미지입니다. 이 두 영상 모두 완성된 립싱크가 아닌 실험 기록입니다.<br>
-      <a href="song-vision-lab.html" class="v17-research-link">v19 영상 3종과 v18 실패 결과 비교 보기 ↗</a></p>
+      <p class="v17-research-note">연구 자료는 사용자가 직접 촬영하거나 만든 이미지입니다. 근육·뼈를 직접 측정한 모델은 아니며 한국어 음소 타이밍의 정확도는 아직 검증되지 않았습니다.<br>
+      <a href="song-vision-lab.html" class="v17-research-link">v20 결과와 이전 v19·v18 실패 영상 비교 보기 ↗</a></p>
     </div>
   </section>
 
-  <section class="gift-section" id="gifts" aria-labelledby="gift-title">
+    <section class="gift-section" id="gifts" aria-labelledby="gift-title">
     <div class="frame gift-grid">
       <div class="gift-intro">
         <span class="small-caps">FOR SOMEONE YOU LOVE</span>

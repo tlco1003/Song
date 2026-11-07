@@ -183,15 +183,28 @@ def pose_at(intervals:Sequence[Interval], seconds:float,
     if row.syllable.coda in BILABIAL_CODA and f>.82:
         end=smooth((f-.82)/.18)
         pose=pose.blend(Pose(.025,pose.rounding,.18,pose.protrusion,.03),end)
-    # Blend adjacent syllable anticipatory posture in the last ~12%; no
-    # phoneme-time assertion. Must never invert ㅛ/ㅗ etc.
+    # Continuous coarticulation across segment boundaries. A *symmetric*
+    # 10%-per-side transition meets at 50/50 on both sides of the clock
+    # boundary; this avoids abrupt photo jumps at each text syllable.
     idx=intervals.index(row)
-    if idx+1<len(intervals) and f>.88 and intervals[idx+1].start-row.end<.03:
-        following=intervals[idx+1]
-        nxt=vowel_pose(following.syllable.vowel,0.)
-        if following.syllable.onset in BILABIAL_ONSET:
-            nxt=Pose(.02,nxt.rounding,nxt.spreading,nxt.protrusion,.02)
-        pose=pose.blend(nxt,smooth((f-.88)/.12)*.20)
+    if f<.10:
+        if idx>0 and abs(intervals[idx-1].end-row.start)<.03:
+            previous=intervals[idx-1]
+            prev=vowel_pose(previous.syllable.vowel,1.)
+            if previous.syllable.coda in BILABIAL_CODA:
+                prev=Pose(.025,prev.rounding,.18,prev.protrusion,.03)
+            pose=prev.blend(pose,.5+.5*smooth(f/.10))
+        else:
+            pose=REST.blend(pose,smooth(f/.10))
+    if f>.90:
+        if idx+1<len(intervals) and abs(intervals[idx+1].start-row.end)<.03:
+            following=intervals[idx+1]
+            nxt=vowel_pose(following.syllable.vowel,0.)
+            if following.syllable.onset in BILABIAL_ONSET:
+                nxt=Pose(.02,nxt.rounding,nxt.spreading,nxt.protrusion,.02)
+            pose=pose.blend(nxt,.5*smooth((f-.90)/.10))
+        else:
+            pose=pose.blend(REST,smooth((f-.90)/.10))
     # Loudness affects movement magnitude, not vowel choice / linguistic token.
     if energy is not None:
         scale=.86+.28*energy  # max 14% articulation range vs nominal

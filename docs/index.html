@@ -131,27 +131,30 @@
   <section class="v17-research-section" id="vision-lab-preview" aria-labelledby="vision-lab-heading">
     <div class="frame">
       <div class="v17-research-head">
-        <span class="small-caps">SONG-VISION V17 · NONCOMMERCIAL RESEARCH</span>
-        <h2 id="vision-lab-heading">사진 한 장이 노래하는 얼굴이 되기까지</h2>
-        <p>출시 전 연구 영상입니다. 원본 음원에서 분석한 움직임과 기준 얼굴 사진의 픽셀을 이용해 만든 실험 결과를 재생 버튼으로 확인할 수 있습니다. 상업용 제품 시연이나 립싱크 완성 인증은 아닙니다.</p>
+        <span class="small-caps">WITHU SONG-VISION · OWNER TRAINING · V18</span>
+        <h2 id="vision-lab-heading">내가 만든 얼굴 AI, 실제 학습 결과 보기</h2>
+        <p>다른 사람의 얼굴 영상이 아닙니다. 사용자가 직접 제공한 사진, 스피킹 영상과 제작한 AI 가수 이미지로 구성한 연구 결과입니다. 아래 재생 버튼을 누르면 원곡과 함께 확인할 수 있어요.</p>
       </div>
       <div class="v17-research-grid">
         <article class="v17-research-card">
-          <h3>01 · 〈나라는 사람〉 사진 픽셀 AI 영상</h3>
-          <p>실제 GitHub MP3 · 10초 · 기준 사진 / 음향 기반 얼굴 / 이전 프레임 기억</p>
-          <video controls playsinline preload="metadata" aria-label="나라는 사람 노래를 이용한 비상업 사진 픽셀 AI 영상"><source src="vision-research/NARA_v17_photo_pixel_memory_RESEARCH_ONLY.mp4" type="video/mp4">MP4 재생을 지원하지 않습니다.</video>
-          <p>※ 등장 얼굴은 원곡 가수가 아닌 연구용 얼굴이며 한국어 입모양의 정확도는 미검증입니다.</p>
+          <h3>01 · AM 6:30 — SONG-Vision v18</h3>
+          <p>사용자가 직접 제작해 올린 AI 가수 이미지 · AM 6:30 실제 음원 · 8초 · 25fps</p>
+          <video controls playsinline preload="metadata" aria-label="사용자가 제작한 가수 이미지와 AM 6:30 음원으로 생성한 v18 AI 입모양 테스트 영상"><source src="vision-owner/AM630_v18_AI_photo_audio_driven_UNVALIDATED.mp4" type="video/mp4">이 브라우저는 MP4를 지원하지 않습니다.</video>
+          <p>※ 사용자 제작 AI 캐릭터 이미지에 음원 기반 얼굴 픽셀 변화를 적용한 결과입니다. 자연스러운 한국어 립싱크 정확도는 아직 미달입니다.</p>
+          <a href="vision-owner/AM630_v18_AI_photo_audio_driven_UNVALIDATED.mp4" target="_blank" rel="noopener" style="text-decoration:underline;color:#f8dce7;font-size:12px">영상 새 창에서 재생</a>
         </article>
         <article class="v17-research-card">
-          <h3>02 · 실제 가창 영상과 v17 AI 비교</h3>
-          <p>실제 가창 영상 / 기존 v16 / 새 픽셀 메모리 모델 · 2.88초</p>
-          <video controls playsinline preload="metadata" aria-label="실제 가창 영상과 두 모델의 얼굴 복원 결과 비교"><source src="vision-research/SONG_v17_same_audio_real_singer_comparison.mp4" type="video/mp4">MP4 재생을 지원하지 않습니다.</video>
-          <p>※ 정지 사진 복사 오차 0.0659589보다 새 모델 오차 0.0744623이 높아 품질 미달입니다.</p>
+          <h3>02 · 내가 올린 스피킹 영상 vs 개인 AI</h3>
+          <p>사용자 실제 촬영 얼굴 / 사용자 기준 사진 / 실제 사용자 자료로 학습한 AI · 6.4초</p>
+          <video controls playsinline preload="metadata" aria-label="사용자 원본 스피킹 영상과 사용자의 사진으로 학습한 AI 결과 비교"><source src="vision-owner/owner_speaking_preview_v1.mp4" type="video/mp4">이 브라우저는 MP4를 지원하지 않습니다.</video>
+          <p>※ 비교의 첫 화면은 실제 업로드한 스피킹 영상, 나머지는 개인 기준 사진과 훈련 결과입니다. 정확한 모음별 발음 일치는 아직 검증되지 않았습니다.</p>
+          <a href="vision-owner/owner_speaking_preview_v1.mp4" target="_blank" rel="noopener" style="text-decoration:underline;color:#f8dce7;font-size:12px">영상 새 창에서 재생</a>
         </article>
       </div>
-      <div class="v17-research-note">RAVDESS (Livingstone &amp; Russo, 2018), CC BY-NC-SA 4.0 · 비상업 연구 전용 · 유료 상품과 분리
-        <div><a class="v17-research-link" href="song-vision-lab.html">영상 크게 보기 · 연구 상세 정보 ↗</a></div>
-      </div>
+      <p class="v17-research-note">추가 비교: <a href="vision-owner/owner_audio_only_photo_v1.mp4" target="_blank" rel="noopener" style="text-decoration:underline;color:#f8dce7">초기 개인 얼굴 AI v1 영상 보기</a><br>
+        <span>v18 평가: 입 영역 MAE 0.03036 · 정지 사진 복사 기준 0.03000 (작을수록 좋음) · 현재 립싱크 품질 미달</span>
+      </p>
+      <div class="v17-research-note"><a class="v17-research-link" href="song-vision-lab.html">영상 크게 보기 · 버전별 연구 결과 ↗</a></div>
     </div>
   </section>
 

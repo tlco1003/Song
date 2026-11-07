@@ -26,6 +26,11 @@ SOURCES={
         "urls":["https://zenodo.org/records/1188976",
                 "https://huggingface.co/datasets/jonghwanhyeon/korean-emotion-lexicon",
                 "https://huggingface.co/datasets/e9t/nsmc"]},
+    "RAVDESS-REAL-SINGING-V17-ENGLISH-CTC":{
+        "license":"CC-BY-NC-SA-4.0",
+        "url":"https://zenodo.org/records/1188976",
+        "trainingScope":"English orthographic grapheme timing and actual audiovisual performances; no Korean phoneme truth"
+    },
     "RAVDESS-FACE-120":{
         "license":"CC-BY-NC-SA-4.0",
         "url":"https://zenodo.org/records/1188976"},

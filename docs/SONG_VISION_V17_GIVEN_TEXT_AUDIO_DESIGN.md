@@ -49,9 +49,10 @@ Hangul decomposition is **orthographic**, not an exact pronunciation model.
 Assimilation, liaison, unreleased final consonants, silent onset ㅇ and singing
 pronunciation variants cannot be claimed correct merely by decomposing spelling.
 The sequence type retains its provenance. A reviewed pronunciation or a validated
-G2P mapping can supply a `LyricUnits` sequence instead. The acoustic head's current
-vocabulary covers the declared Hangul units; unsupported non-Hangul text fails
-explicitly rather than silently disappearing.
+G2P mapping can supply a `LyricUnits` sequence instead. The acoustic head's vocabulary covers declared Hangul orthographic units and,
+for separate licensed RAVDESS research, Latin-letter graphemes. Latin spellings
+are **not English phoneme labels**. Unsupported numerals or other text fail explicitly
+rather than silently disappearing.
 
 A CTC blank means no emitted textual unit at that acoustic frame. It is not
 proof of silence or a command to freeze the face. The existing audio/context
@@ -162,3 +163,49 @@ CTC and sustained-duration timing, nonzero source-time offsets, confidence and
 text-mismatch rejection, alignment training/save/reload, and gradients from timed
 unit/dynamics inputs to generated pixels. These tests establish the implemented
 contract and computational learning paths, not real singing accuracy.
+
+
+## v17 actual singer study and inspectable research videos (2026-11-07)
+
+The training/preview runner is executable Python, not merely a proposed
+workflow:
+
+- `song_vision/real_singing_v17.py`: obtains verified official RAVDESS
+  audiovisual singing takes, trains an original English-grapheme CTC head
+  on 16 real voice/transcript pairs, independently evaluates on eight clips
+  from an unseen Actor 03, trains the v16 reference and v17 timed-motion
+  branch against actual image targets, and calculates heldout dynamic-ROI MAE.
+- `.github/workflows/song-vision-v17-real-singing.yml`: runs the complete
+  experiment, preserves a separate encrypted research checkpoint (existing
+  older encrypted weights untouched), and uploads an inspectable comparison
+  `SONG_v17_same_audio_real_singer_comparison.mp4`. Source performer images
+  are never used as inference target inputs. The same original WAV source
+  is used for all three video columns and a temporary PCM integrity check
+  rejects different source audio. Research video is licensed **CC BY-NC-SA
+  4.0** and cannot be deployed or sold commercially.
+- A separate **GitHub SONG sound** preview
+  `NARA_acoustic_motion_schematic_NOT_LIPSYNC.mp4` uses the recorded
+  `docs/media/nara.mp3` (25–37 seconds, full musical mix, AAC transcode)
+  to show **a schematic, non-identifying animated face** driven by the
+  acoustic motion network. It is **not a Korean phoneme-level video**.
+  Because there is no confirmed same-song face-performance recording or
+  independently trained Korean singing aligner, the v17 Korean timing
+  confidence is set to zero rather than fabricating times. V16's actually
+  learned audio-motion path drives the schematic and cannot be counted as
+  v17 Korean singing precision.
+- Public repository comparisons may contain research-only RAVDESS material;
+  the original dataset's Zenodo attribution/license accompanies the
+  generated artifact. No paid-customer access, singer identity replication
+  guarantee, natural 3D anatomy, or emotion-understanding success is implied.
+
+**Results are pending until the specific real workflow run finishes.**
+A successful CI checkout or synthetic unit test is not a measured outcome of
+the real experiment. Video files are uploaded as Actions artifacts only
+after research training and source-audio integrity checks succeed. If quality
+remains worse than the static-copy baseline, the result is FAIL irrespective
+of video creation.
+
+Data source: Livingstone & Russo (2018), RAVDESS,
+https://zenodo.org/records/1188976 ;
+research only, CC BY-NC-SA 4.0. The orthographic CTC method here
+does not reproduce or inherit accuracy claims from Ayllón et al. (2019).

@@ -1,0 +1,26 @@
+name: SONG Vision AM630 audio for locally verified experimental inference
+on:
+  push:
+    branches: [feature/song-vision-self-hosted-v1]
+    paths: ['.github/workflows/song-am630-audio-research-export.yml']
+permissions:
+  contents: read
+jobs:
+  export_owner_public_audio:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify existing original music MP3
+        run: |
+          set -euo pipefail
+          test -s docs/media/am630.mp3
+          file docs/media/am630.mp3
+          sha256sum docs/media/am630.mp3
+          mkdir song-am630-source
+          cp docs/media/am630.mp3 song-am630-source/am630.mp3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: song-am630-existing-public-track-${{ github.run_id }}
+          path: song-am630-source/am630.mp3
+          retention-days: 1
+          if-no-files-found: error

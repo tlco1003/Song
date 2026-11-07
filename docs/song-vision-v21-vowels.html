@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#251e2a">
+<meta name="description" content="WITHU SONG-Vision v21 한국어 10모음 텍스트 우선 입모양·얼굴 전체 피부 연동 연구 테스트">
+<title>WITHU | SONG-Vision v21 모음 10개 얼굴 움직임 실험</title>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:#211a27;color:#f5edf1;font-family:'Gowun Batang',serif}
+main{width:min(1040px,calc(100% - 32px));margin:0 auto;padding:32px 0 75px}
+header{border-bottom:1px solid #ffffff2e;padding:17px max(20px,calc((100% - 1040px)/2));display:flex;justify-content:space-between;align-items:center}
+header a{color:#f1dde7;text-decoration:none;font-size:14px}
+.brand{font-size:24px;letter-spacing:.19em}
+.tag{display:inline-block;border:1px solid #c9a4ac89;padding:8px 12px;border-radius:40px;color:#eac2cf;font:12px sans-serif;letter-spacing:.08em}
+h1{font-size:clamp(29px,5vw,48px);font-weight:400;line-height:1.45;margin:14px 0}
+h2{font-size:22px;font-weight:400;margin:10px 0}
+p{line-height:1.85;color:#dacbd7;word-break:keep-all}
+.intro{max-width:900px}
+figure{padding:15px;background:#ffffff09;border:1px solid #ffffff25;border-radius:16px;margin:25px 0 15px}
+video{display:block;background:#15121a;width:100%;border-radius:10px;max-height:70vh;object-fit:contain}
+figcaption{font-size:12px;color:#d3c1cd;margin-top:12px;line-height:1.85}
+a{color:#f5cbd9;text-underline-offset:5px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.panel{background:#ffffff0a;border:1px solid #ffffff21;border-radius:14px;padding:19px}
+.vowel-buttons{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:13px 0}
+.vowel-buttons button{border:1px solid #cbb6c877;border-radius:9px;background:#ffffff0a;color:#fff;font-size:23px;padding:13px 4px;cursor:pointer;font-family:inherit}
+.vowel-buttons button[aria-pressed=true]{background:#9f7185;color:white;border-color:#f4c8d8}
+input,textarea{display:block;width:100%;background:#1d1622;border:1px solid #dac0d15e;border-radius:9px;padding:12px;color:#f5ebf1;font:16px/1.6 inherit;min-height:82px;resize:vertical}
+.action{background:#8e6b80;border:0;border-radius:8px;color:#fff;padding:12px 18px;margin:10px 0;cursor:pointer;font:15px inherit}
+.output{min-height:55px;padding:12px;background:#18131d;border-radius:9px;line-height:2;word-break:break-all;font-size:14px}
+.output span{display:inline-block;margin:3px;padding:4px 7px;border-radius:6px;background:#ffffff14}
+.notice{font:12px/1.85 sans-serif;color:#ddc2ca}
+small{display:block;line-height:1.8;color:#cfb9c6}
+@media(max-width:720px){.grid{grid-template-columns:1fr}.vowel-buttons{grid-template-columns:repeat(5,1fr)}.panel{padding:13px}figure{padding:9px}header{padding:13px 18px}}
+</style>
+</head>
+<body>
+<header><a class="brand" href="index.html">WITHU</a><a href="song-vision-lab.html">← 이전 버전 비교</a></header>
+<main>
+<span class="tag">SONG-VISION v21 · TEXT-FIRST · RESEARCH TEST</span>
+<h1>ㅏ ㅑ ㅓ ㅕ ㅗ<br>ㅛ ㅜ ㅠ ㅡ ㅣ</h1>
+<p class="intro">직접 입력된 한국어 가사가 입모양의 종류를 결정하고, 턱·양 볼·광대·눈 아래 피부가 하나의 2D 표면으로 연동하도록 구현한 연구 결과야. 아래 영상의 원본 얼굴은 사용자가 직접 올린 스피킹 영상에서 가져왔어. <strong>실제 발음 시각·개인별 근육 움직임의 정답으로 학습된 상태는 아니야.</strong></p>
+<figure>
+<video id="v21video" controls playsinline preload="metadata" aria-label="ㅏ ㅑ ㅓ ㅕ ㅗ ㅛ ㅜ ㅠ ㅡ ㅣ 텍스트 우선 얼굴 피부 연동 10초 비교 영상">
+<source src="vision-owner/SONG_v21_TEN_KOREAN_VOWELS_OWNER_FULL_FACE_TEST.mp4" type="video/mp4">
+MP4가 지원되지 않는 브라우저야.</video>
+<figcaption>왼쪽: 원본 스피킹 얼굴 사진 · 오른쪽: 텍스트로 선택한 입모양과 연동된 얼굴 표면 변형. <strong>무음 10초 / 25fps / 원곡과 시간 정렬되지 않은 실험.</strong>
+<a href="vision-owner/SONG_v21_TEN_KOREAN_VOWELS_OWNER_FULL_FACE_TEST.mp4" target="_blank" rel="noopener">새 창에서 영상 크게 열기</a></figcaption>
+</figure>
+<div class="grid">
+<section class="panel">
+<h2>모음 한 개씩 검사</h2>
+<p>누르면 해당 모음의 실제 생성 프레임 구간으로 이동해서 재생해. ㅑ·ㅕ·ㅛ·ㅠ는 ㅣ 계열의 시작 동작에서 다음 모음으로 이동하는 모습을 확인해.</p>
+<div class="vowel-buttons" id="vowels" aria-label="10개 모음 별 연구 영상 구간 재생"></div>
+<p class="notice" id="clipnotice" role="status">위의 모음 버튼을 누르면 해당 0.95초 영상 구간을 재생해.</p>
+</section>
+<section class="panel">
+<h2>정확한 가사 텍스트 분해</h2>
+<p>받은 한글 가사를 글자별 초성·모음·종성으로 분해해. 이 기능은 오디오로 가사를 추정하지 않아.</p>
+<label for="lyrics">테스트용 한국어 가사</label>
+<textarea id="lyrics">엄마, 난 가끔 그런 생각을 해</textarea>
+<button class="action" id="decompose">입력한 가사 분해하기</button>
+<div class="output" id="output" aria-live="polite"></div>
+<small>가사를 분해했다고 실제 노래의 각 음절 시작 시간이 확보되는 것은 아니야. 정밀 동기화에는 음원과 일치하는 가사별 검증 타임스탬프가 필요해.</small>
+</section>
+</div>
+<section class="panel" style="margin-top:21px">
+<h2>구현 범위와 실패 기준</h2>
+<p>ㅏ·ㅓ·ㅗ·ㅜ·ㅡ·ㅣ는 서로 다른 입의 개방·퍼짐·둥글림을 갖고, ㅑ·ㅕ·ㅛ·ㅠ는 /j/ 시작에서 핵모음으로 전이해. 입술의 닫힘이 필요한 ㅁ·ㅂ·ㅍ 초성도 기본 처리했어. 음량 입력은 같은 글자의 턱 벌어짐을 조절할 수 있지만 <strong>글자 자체를 바꾸지 못해.</strong></p>
+<p class="notice">코드는 테스트 6/6을 통과했지만 이 영상은 가사-음원 강제정렬, 실제 인체 근육 시뮬레이션, 치아·혀 합성, 개인별 모음 정답 학습을 완료했다는 증거가 아니야. 움직임 수치는 개인의 근육 힘을 실측한 값이 아니라 검증 전 2D 애니메이션 초기값이야.</p>
+<p class="notice">연구: <a href="https://www.kci.go.kr/kciportal/landing/article.kci?arti_id=ART003147504" target="_blank" rel="noopener">한국어 이중모음의 조음 양상과 특성(2024)</a> · <a href="https://www.eksss.org/archive/view_article?pid=pss-18-1-45" target="_blank" rel="noopener">발화 속도에 따른 한국어 이중모음(2026)</a> · <a href="https://www.isca-archive.org/interspeech_2025/kim25r_interspeech.html" target="_blank" rel="noopener">문맥 의존적 시각 음소(2025)</a></p>
+</section>
+</main>
+<script>
+(()=>{
+ const video=document.getElementById('v21video');
+ const vowels=['ㅏ','ㅑ','ㅓ','ㅕ','ㅗ','ㅛ','ㅜ','ㅠ','ㅡ','ㅣ'];
+ const names=['아','야','어','여','오','요','우','유','으','이'];
+ const root=document.getElementById('vowels');
+ const notice=document.getElementById('clipnotice');
+ let active=-1;
+ vowels.forEach((v,i)=>{
+  const b=document.createElement('button');b.type='button';b.textContent=v+' '+names[i];b.setAttribute('aria-pressed','false');
+  b.addEventListener('click',()=>{
+   active=i;document.querySelectorAll('#vowels button').forEach((el,k)=>el.setAttribute('aria-pressed',String(i===k)));
+   video.currentTime=i*.95+.03;
+   const result=video.play();
+   if(result?.catch)result.catch(()=>{notice.textContent='자동 재생이 차단됐어. 영상의 ▶ 버튼을 눌러줘.'});
+   notice.textContent=v+' ('+names[i]+') 동작 시연 구간';
+  });root.appendChild(b);
+ });
+ video.addEventListener('timeupdate',()=>{
+   if(active>=0 && video.currentTime>=(active+1)*.95-.04){
+      video.pause();active=-1;
+      document.querySelectorAll('#vowels button').forEach(el=>el.setAttribute('aria-pressed','false'));
+   }
+ });
+ const ON=[...'ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ'];
+ const VO=[...'ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ'];
+ const CO=['',...'ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ'];
+ document.getElementById('decompose').addEventListener('click',()=>{
+  const output=document.getElementById('output');output.textContent='';
+  try {
+   let count=0;
+   for(const ch of document.getElementById('lyrics').value.normalize('NFC')){
+      let o='',v='',c='';
+      if(VO.includes(ch)){o='ㅇ';v=ch}
+      else{
+        const n=ch.codePointAt(0)-0xAC00;
+        if(n>=0&&n<11172){const i=Math.floor(n/(21*28)),rem=n%(21*28);o=ON[i];v=VO[Math.floor(rem/28)];c=CO[rem%28];}
+        else if(/[\s,.!?;:'"()\[\]·—-]/u.test(ch))continue;
+        else throw new Error('지원되지 않는 문자: '+ch);
+      }
+      const item=document.createElement('span');
+      item.textContent=ch+' → '+(o==='ㅇ'?'(무성 초성)':o)+' / '+v+(c?' / '+c:'');
+      output.appendChild(item);count++;
+   }
+   if(!count)output.textContent='한글 모음 또는 가사를 입력해줘.';
+  } catch(e){output.textContent=e.message}
+ });
+ document.getElementById('decompose').click();
+})();
+</script>
+</body>
+</html>

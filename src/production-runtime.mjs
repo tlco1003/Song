@@ -111,6 +111,10 @@ export function adminSummary(o){
    rightsVerified:o.upgrade?.rightsVerified===true},
   tracks:o.tracks||[],story:o.draft?.story||null,
   songStyles:o.draft?.songStyles||null,
+  trackPreferences:o.draft?.trackPreferences||null,
+  privateProductionPlan:o.privateProductionPlan?.songs?.map(s=>({index:s.index,
+   genre:s.genre,mood:s.mood,eraPreference:s.eraPreference,
+   stylePrompt:s.stylePrompt}))||null,
   confirmedLyrics:o.confirmedLyrics||null,songTitle:o.draft?.title||null
  };
 }

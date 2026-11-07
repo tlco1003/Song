@@ -97,11 +97,18 @@ export async function handleProductionAdmin(req,res,{db,bucket,auth,env,fetcher}
    if(!tracks[index-1]?.storagePath)stop(409,'비공개 음원을 먼저 올려주세요.');
    if(input.genre!==o.draft.songStyles[index-1].genre)
     stop(409,'결제 시 선택된 장르와 다릅니다.');
+   // The duo is two musical settings of ONE shared final lyric.
+   // Updating words in either editor applies to every already-reviewed track.
+   const commonLyrics=input.lyrics.trim();
    tracks[index-1]={...tracks[index-1],index,
     title:input.title.trim(),genre:input.genre,
-    lyrics:input.lyrics.trim(),rightsVerified:true,reviewed:true,
+    lyrics:commonLyrics,rightsVerified:true,reviewed:true,
     reviewedAt:now()};
-   tx.update(ref,{tracks});
+   for(let k=0;k<tracks.length;k++){
+    if(k!==index-1&&tracks[k]?.reviewed===true)
+     tracks[k]={...tracks[k],lyrics:commonLyrics};
+   }
+   tx.update(ref,{tracks,confirmedLyrics:commonLyrics});
   });
   respond(res,200,{status:'approved',index});return true;
  }

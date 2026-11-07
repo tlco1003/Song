@@ -357,3 +357,13 @@
 .checkout-flow .personal-gift-value strong{font-size:14px;color:#63435a;line-height:1.6}
 .checkout-flow .personal-gift-value p{font-size:12px;color:#80707d;line-height:1.85;margin:9px 0 0}
 .checkout-flow .third-verse-toggle small,.checkout-flow .dedication-toggle small{line-height:1.8}
+
+.per-track-style{padding:16px 18px;border:1px solid #e7d4df;border-radius:12px;background:#fffbfd;margin-top:18px}
+.per-track-style[hidden]{display:none!important}
+.per-track-style h3{font-size:19px;color:#64465a;margin:9px 0}
+.per-track-style-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.track-style-card{display:grid;gap:8px;border:1px solid #e4d7df;border-radius:10px;background:white;padding:13px}
+.track-style-card strong{font-size:14px;color:#594056}
+.track-style-card label{font-size:12px;color:#765d6e}
+.track-style-card select{box-sizing:border-box;min-width:0;width:100%;font-size:13px;padding:10px;border-radius:8px;border:1px solid #d9c9d4;background:white;color:#4d3b49}
+@media(max-width:520px){.per-track-style-grid{grid-template-columns:1fr}}

@@ -122,7 +122,8 @@ function select(o){
   '원 · '+o.paymentStatus+' · 고객 발송: '+(o.delivery?.status||'대기');
  $('admin-story').textContent=JSON.stringify(o.story||{},null,2);
  $('admin-style').textContent=JSON.stringify({
-  production:o.production,genres:o.genreSelection,songStyles:o.songStyles
+  production:o.production,genres:o.genreSelection,
+  songStyles:o.songStyles,trackPreferences:o.trackPreferences
  },null,2);
  $('admin-finalize').disabled=o.paymentStatus!=='paid'||o.delivery?.status==='sent';
  $('admin-retry-ai').disabled=o.paymentStatus!=='paid'||o.delivery?.status==='sent';
@@ -135,8 +136,19 @@ function select(o){
   card.className='admin-song-card';
   card.appendChild(txt('h3','곡 '+(i+1)+' · '+(o.songStyles?.[i]?.genre||'장르 확인 중')));
   const title=inputField('완성곡 제목',old?.title||o.songTitle||'');
+  const style=o.privateProductionPlan?.[i]?.stylePrompt||o.songStyles?.[i]?.style||'작사·스타일 준비 중';
+  const promptBox=inputField('곡 '+(i+1)+' · 비공개 음악 스타일 프롬프트',style,'textarea');
+  promptBox.el.readOnly=true;
+  promptBox.el.setAttribute('aria-label','제작 관리자 전용 비공개 스타일 프롬프트');
+  const copyStyle=document.createElement('button');
+  copyStyle.type='button';copyStyle.className='admin-secondary';
+  copyStyle.textContent='곡 '+(i+1)+' 스타일 복사';
+  copyStyle.addEventListener('click',run(async()=>{
+   await navigator.clipboard.writeText(promptBox.el.value);
+   workStatus('곡 '+(i+1)+'의 제작 스타일을 복사했어요.');
+  },workStatus));
   const lyrics=inputField('고객에게 전달할 확정 가사',
-   old?.lyrics||o.confirmedLyrics||'', 'textarea');
+   o.confirmedLyrics||old?.lyrics||'', 'textarea');
   const fileLabel=txt('label','최종 MP3/M4A/WAV 업로드 (25MB 이하)');
   const file=document.createElement('input');
   file.type='file';file.accept='.mp3,.m4a,.wav,audio/*';
@@ -178,7 +190,7 @@ function select(o){
     await refresh();
    }finally{save.disabled=false;}
   },workStatus));
-  card.append(title.wrap,uploadWrap,lyrics.wrap,check,save);
+  card.append(title.wrap,promptBox.wrap,copyStyle,uploadWrap,lyrics.wrap,check,save);
   area.appendChild(card);
  }
  renderOrders();

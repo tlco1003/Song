@@ -137,6 +137,7 @@ export async function handleProductionPayments(req,res,{db,env,fetcher}){
   await db.collection('withuOrders').doc(id).create({
    id,createdAt:now(),productId:draft.productId,
    genreSelection:draft.genreSelection,
+   trackPreferences:draft.trackPreferences,
    draft,contact,thirdVerse:draft.thirdVerse===true,
    dedicationOutro:draft.dedicationOutro===true,
    dedicationText:draft.dedicationText||'',

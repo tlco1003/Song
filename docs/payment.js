@@ -116,6 +116,7 @@ async function placeOrder(){
      dedicationOutro:prepared.data.dedicationOutro===true,
      dedicationText:prepared.data.dedicationOutro===true?
       prepared.data.dedicationText||'':'',
+     trackPreferences:prepared.data.trackPreferences,
      story:prepared.data.story
     },
     contact,clientAmount:prepared.localPrice,

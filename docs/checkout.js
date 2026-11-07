@@ -88,6 +88,38 @@ function error(message){
  $('checkout-message').hidden=!message;
 }
 function validGenre(g){return !!genres?.genres.some(x=>x.id===g);}
+const perTrackMoods=["따뜻한","감동적인","설레는","애절한","희망찬","신나는"];
+const perTrackEras=["auto","none","1960s","1970s","1980s","1990s","2000s","2010s","2020s"];
+function trackPreferences(){
+ const duo=chosenProduct()==='audio_duo';
+ const count=duo?2:1;
+ return Array.from({length:count},(_,i)=>{
+  const mood=$('song-mood-'+(i+1)).value,eraPreference=$('song-era-'+(i+1)).value;
+  if(!perTrackMoods.includes(mood)||!perTrackEras.includes(eraPreference))
+   throw Error('곡마다 분위기와 시대를 정확하게 골라 주세요.');
+  return {mood,eraPreference};
+ });
+}
+function initTrackPreferences(){
+ for(let i=1;i<=2;i++){
+  const mood=$('song-mood-'+i),era=$('song-era-'+i);
+  for(const value of perTrackMoods){
+   const option=document.createElement('option');option.value=value;option.textContent=value;
+   mood.appendChild(option);
+  }
+  for(const value of perTrackEras){
+   const option=document.createElement('option');option.value=value;
+   option.textContent=choiceLabels.eraPreference[value]||value;era.appendChild(option);
+  }
+  const saved=draft?.trackPreferences?.[i-1];
+  mood.value=perTrackMoods.includes(saved?.mood)?saved.mood:
+   perTrackMoods.includes(draft?.mood)?draft.mood:'따뜻한';
+  era.value=perTrackEras.includes(saved?.eraPreference)?saved.eraPreference:
+   perTrackEras.includes(draft?.eraPreference)?draft.eraPreference:'auto';
+  mood.addEventListener('change',()=>{saveChoices();renderGenres();});
+  era.addEventListener('change',()=>{saveChoices();renderGenres();});
+ }
+}
 function genreSelection(){
  if(!genres)throw Error('음악 장르를 아직 불러오지 못했어요.');
  const first=$('song-genre-first').value;
@@ -127,6 +159,7 @@ function saveChoices(){
  catch(_){/* Invalid selection is not persisted as a valid production request. */}
  const next={...draft,selectedProduct:chosenProduct(),genreSelection:selected,
    sharedStyleNotes:'',
+   trackPreferences:trackPreferences(),
    singleGenreBlend:$('single-genre-blend').checked,
    thirdVerse:$('third-verse').checked,
    dedicationOutro:$('dedication-outro').checked,
@@ -158,6 +191,7 @@ function renderGenres(){
  const mode=document.querySelector('input[name="duoGenreMode"]:checked')?.value;
  const secondary=duo?['different','blend'].includes(mode):$('single-genre-blend').checked;
  $('duo-genre-modes').hidden=!duo;
+ $('per-track-style').hidden=!duo;
  $('single-genre-blend-wrap').hidden=duo;
  $('song-genre-second-wrap').hidden=!secondary;
  $('song-genre-second').disabled=!secondary||!genres;
@@ -170,7 +204,10 @@ function renderGenres(){
  try{
   const selection=genreSelection();
   $('genre-plan-preview').classList.remove('invalid');
-  $('genre-plan-preview').textContent=genreLabels(selection).join('\n')+
+  $('genre-plan-preview').textContent=genreLabels(selection).map((label,i)=>{
+   const choice=trackPreferences()[i];
+   return label+' · '+choice.mood+' · '+(choiceLabels.eraPreference[choice.eraPreference]||choice.eraPreference);
+  }).join('\n')+
    (selection.mode==='blend'?'\n두 장르를 한 곡 안에 섞어요. 추가금은 주문당 5,000원':'\n각 완성곡마다 별도로 제작됩니다.');
  }catch(e){
   $('genre-plan-preview').classList.add('invalid');
@@ -256,6 +293,7 @@ function canAdvance(){
    return false;
   }
  }
+ try{trackPreferences();}catch(e){error(e.message);return false;}
  if(!saveChoices())return false;
  return true;
 }
@@ -280,7 +318,8 @@ $('go-payment').addEventListener('click',async event=>{
  }
  const payload={selectedProduct:chosenProduct(),genreSelection:genreSelection(),thirdVerse:$('third-verse').checked,
   dedicationOutro:$('dedication-outro').checked,
-  dedicationText:$('dedication-outro').checked?$('dedication-text').value.trim():'',story:draft.story};
+  dedicationText:$('dedication-outro').checked?$('dedication-text').value.trim():'',
+  trackPreferences:trackPreferences(),story:draft.story};
  $('go-payment').setAttribute('aria-busy','true');
  try{
   // A properly deployed private server prepares encrypted instructions.
@@ -401,6 +440,7 @@ async function init(){
  for(const label of document.querySelectorAll('.gift-choice')){
   label.classList.toggle('active',label.querySelector('input')?.checked===true);
  }
+ initTrackPreferences();
  await Promise.all([loadPrices(),loadGenres()]);
  // The old draft must not be silently promoted into a paid order.
  show(new URLSearchParams(location.search).get('stage')||'product');

@@ -10,8 +10,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="checkout.css?v=20261107-emotional-value-10">
-<script defer src="checkout.js?v=20261107-emotional-value-10"></script>
+<link rel="stylesheet" href="checkout.css?v=20261107-track-preferences-11">
+<script defer src="checkout.js?v=20261107-track-preferences-11"></script>
 <script defer src="checkout-media.js?v=20261106-streamlined-02"></script>
 </head>
 <body>
@@ -74,6 +74,28 @@
     </fieldset>
    </div>
    <input id="song-shared-notes" type="hidden" value="">
+   <section id="per-track-style" class="per-track-style" aria-labelledby="per-track-style-title" hidden>
+    <span class="small-caps">TWO DISTINCT SONG STYLES</span>
+    <h3 id="per-track-style-title">같은 가사, 서로 다른 음악의 느낌</h3>
+    <p class="small-explain">두 곡은 동일한 이야기를 노래하지만 각 곡의 장르·분위기·시대를 따로 선택해요. 선택값마다 제작용 스타일 프롬프트도 곡별로 따로 준비됩니다.</p>
+    <div class="per-track-style-grid">
+     <div class="track-style-card" data-track="0">
+      <strong>첫 번째 노래</strong>
+      <label for="song-mood-1">감정과 분위기</label>
+      <select id="song-mood-1" class="track-mood"></select>
+      <label for="song-era-1">음악 시대 감성</label>
+      <select id="song-era-1" class="track-era"></select>
+     </div>
+     <div class="track-style-card" data-track="1">
+      <strong>두 번째 노래</strong>
+      <label for="song-mood-2">감정과 분위기</label>
+      <select id="song-mood-2" class="track-mood"></select>
+      <label for="song-era-2">음악 시대 감성</label>
+      <select id="song-era-2" class="track-era"></select>
+     </div>
+    </div>
+    <p class="small-explain">두 곡 모두 전달력 있는 드라마틱한 도입과 고유 멜로디·편곡을 지향하며, 기존 3절·여운 엔딩 선택은 두 곡에 함께 적용돼요.</p>
+   </section>
    <div id="genre-plan-preview" class="genre-plan-preview" role="status" aria-live="polite">장르 선택을 불러오는 중이에요.</div>
    <label class="genre-blend-toggle third-verse-toggle" for="third-verse">
     <input type="checkbox" id="third-verse">

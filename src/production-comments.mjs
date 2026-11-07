@@ -39,6 +39,8 @@ export async function handleProductionComments(req,res,{db,auth,env}){
   if(req.method==='POST'){
    checkOrigin(req,env);
    const values=json(req,1400);
+   if(values.publicConsent!==true)
+    stop(400,'댓글의 공개 범위를 확인하고 동의해 주세요.');
    let clean;
    try{clean=validateGiftComment(values);}
    catch(error){stop(400,error.message);}

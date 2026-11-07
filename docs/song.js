@@ -478,12 +478,13 @@ if(guestCommentForm)guestCommentForm.addEventListener('submit',async event=>{
   const response=await fetch('/api/gift/comments',{
    method:'POST',credentials:'same-origin',cache:'no-store',
    headers:{'Content-Type':'application/json'},
-   body:JSON.stringify({nickname,text})
+   body:JSON.stringify({nickname,text,publicConsent:$('gift-comment-consent').checked})
   });
   const result=await response.json().catch(()=>({}));
   if(!response.ok)throw Error(result.error||'댓글을 등록하지 못했어요.');
   message.textContent='댓글이 접수됐어요. 관리자 확인 후 이 노래에 표시됩니다.';
   $('gift-comment-text').value='';
+  $('gift-comment-consent').checked=false;
   void loadGiftComments();
  }catch(error){message.textContent=error.message;}
  finally{button.disabled=false;}

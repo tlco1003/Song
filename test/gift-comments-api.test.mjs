@@ -80,7 +80,7 @@ test('real comment API holds new replies pending until the verified owner approv
  const ctx={db,auth,env};
  const post=response();
  await handleProductionComments(request({
-  method:'POST',cookie,data:{nickname:'엄마 친구',text:'너무 아름다운 노래네요!'}
+  method:'POST',cookie,data:{nickname:'엄마 친구',text:'너무 아름다운 노래네요!',publicConsent:true}
  }),post,ctx);
  assert.equal(post.statusCode,201);
  assert.equal(post.result.status,'pending');
@@ -130,11 +130,11 @@ test('comment rate limiting rejects fourth post in the same authenticated gift s
  for(let i=0;i<3;i++){
   const res=response();
   await handleProductionComments(request({
-   method:'POST',cookie,data:{nickname:'친구',text:'정말 잘 들었습니다 '+i}
+   method:'POST',cookie,data:{nickname:'친구',text:'정말 잘 들었습니다 '+i,publicConsent:true}
   }),res,ctx);
   assert.equal(res.statusCode,201);
  }
  await assert.rejects(()=>handleProductionComments(request({
-  method:'POST',cookie,data:{nickname:'친구',text:'또 남깁니다'}
+  method:'POST',cookie,data:{nickname:'친구',text:'또 남깁니다',publicConsent:true}
  }),response(),ctx),/댓글 작성 횟수 제한/);
 });

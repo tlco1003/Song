@@ -12,6 +12,7 @@ import {onDocumentUpdated} from 'firebase-functions/v2/firestore';
 import {handleProductionPayments} from './production-payments.mjs';
 import {handleProductionDelivery} from './production-delivery.mjs';
 import {handleProductionAdmin} from './production-admin.mjs';
+import {handleProductionComments} from './production-comments.mjs';
 import {handleProductionWebhooks} from './production-webhooks.mjs';
 import {processVerifiedPaidWork} from './production-worker.mjs';
 import {respond,stop} from './production-runtime.mjs';
@@ -34,7 +35,7 @@ export const api=onRequest({
   res.setHeader('Referrer-Policy','no-referrer');
   res.setHeader('Cache-Control','private, no-store');
   for(const handle of [handleProductionWebhooks,handleProductionPayments,
-    handleProductionDelivery,handleProductionAdmin]){
+    handleProductionDelivery,handleProductionComments,handleProductionAdmin]){
    if(await handle(req,res,context))return;
   }
   stop(404,'해당 API 경로가 없습니다.');

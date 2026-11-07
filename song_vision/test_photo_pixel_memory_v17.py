@@ -40,6 +40,25 @@ class PhotoMemoryTests(unittest.TestCase):
         self.assertTrue(torch.equal(a,b))
         self.assertGreater(float((a-different).abs().sum()),.001)
 
+    def test_streaming_chunks_preserve_full_sequence_pixels(self):
+        model=PhotoPixelFrameMemory().eval()
+        reference=torch.rand(1,3,96,96)
+        frames=torch.rand(1,6,3,96,96)
+        motions=torch.randn(1,6,38)
+        with torch.no_grad():
+            complete=model(reference,frames,motions)
+            first,state=model(reference,frames[:,:3],motions[:,:3],
+                              return_state=True)
+            second,state=model(reference,frames[:,3:],motions[:,3:],
+                               state=state,return_state=True)
+        self.assertTrue(torch.allclose(
+            torch.cat((first,second),dim=1),complete,atol=1e-6))
+        self.assertEqual(state['frame'].shape,reference.shape)
+        with self.assertRaises(ValueError):
+            model(reference,frames,motions,
+                  state={'frame':torch.zeros(2,3,96,96),
+                         'motion':torch.zeros(1,38)})
+
     def test_invalid_mismatched_frame_targets_fail_closed(self):
         model=PhotoPixelFrameMemory()
         reference=torch.zeros(1,3,96,96)

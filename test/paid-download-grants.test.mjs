@@ -14,7 +14,8 @@ function fixture(){
  const doc=path=>({
   path,
   async get(){return {exists:store.has(path),data:()=>store.get(path)}},
-  async update(patch){store.set(path,{...store.get(path),...patch})}
+  async update(patch){store.set(path,{...store.get(path),...patch})},
+  async create(value){if(store.has(path))throw Error('duplicate');store.set(path,value)}
  });
  const db={
   collection:collection=>({doc:id=>doc(collection+'/'+id)}),

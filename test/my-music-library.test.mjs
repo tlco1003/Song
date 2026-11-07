@@ -123,7 +123,9 @@ test('customer library requires a valid session, verified paid orders and per-so
 });
 test('upgrade purchase is tied to the selected verified order, not a global profile toggle',()=>{
  assert.match(script,/item\?\.commercialUpgrade\|\|response\?\.commercialUpgrade/);
- assert.match(script,/orderRef:track\?\.orderRef/);
+ assert.match(script,/customerEmail:email/);
+ assert.match(read('src/production-download-grants.mjs'),/withu_download/);
+ assert.match(read('src/production-delivery.mjs'),/downloadGranted/);
  assert.match(server,/everyPurchasedTrackAuthorized!==true/);
  assert.match(server,/!tokenHash&&!orderRef/);
  assert.match(server,/sanitizeCustomerCommercialStatus/);

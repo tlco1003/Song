@@ -1,0 +1,7 @@
+SOURCE: Livingstone & Russo (2018), RAVDESS, Zenodo 1188976.
+LICENSE: CC BY-NC-SA 4.0. Noncommercial research viewing only.
+Three columns are recorded heldout singer / v16 / actually trained v17.
+Identical source recording and source timestamps for all columns.
+Video preview transcodes audio to AAC, while a transient PCM audit verified all 46080 compared original audio samples.
+English performed phrases; NO verified Korean song phoneme alignment.
+This footage and learned weights may NOT be used for paid SONG jobs.

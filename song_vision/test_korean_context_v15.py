@@ -12,7 +12,6 @@ from pathlib import Path
 
 import torch
 
-from song_vision.test_semantic_body_v15 import WordEmotionFaceBodyUnitTests
 from song_vision.word_feelings_v15 import train_word_meanings,LearnedWordFeeling
 from song_vision.korean_context_pretrain_v15 import (
     select_balanced_review_contexts,train_contextual_korean,VERSION,
@@ -25,6 +24,16 @@ from song_vision.research_vault_v15 import SOURCES
 class KoreanSentenceLearningTests(unittest.TestCase):
     def setUp(self):
         torch.set_num_threads(2)
+
+    @staticmethod
+    def fake_word_norms(count=360):
+        rows=["lexicon,representative,prototypicality,familiarity,valence,arousal"]
+        for i in range(count):
+            word="감정"+chr(0xAC00+i)
+            rows.append(
+                f"{word},False,2.50,2.00,{1.+((i*17)%300)/100.:.2f},"
+                f"{1.+((i*29)%320)/100.:.2f}")
+        return ("\\n".join(rows)+"\\n").encode("utf-8")
 
     @staticmethod
     def fake_reviews(suffix,n=45):
@@ -46,7 +55,7 @@ class KoreanSentenceLearningTests(unittest.TestCase):
             select_balanced_review_contexts(train,100)
 
     def test_finetune_actual_word_encoder_with_contextual_sentence_loss(self):
-        raw=WordEmotionFaceBodyUnitTests.synthetic_word_csv()
+        raw=self.fake_word_norms()
         with tempfile.TemporaryDirectory() as temp:
             root=Path(temp)
             word=root/"known-real-shape-word.pt"

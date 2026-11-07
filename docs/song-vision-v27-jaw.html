@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#221d27">
+<meta name="description" content="WITHU SONG-Vision v27 사용자 스피킹 영상 기반 턱·입술 동시 조음 연구 비교">
+<title>WITHU | SONG-Vision v27 턱·입술 연동 학습</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*:before,*:after{box-sizing:border-box}html{color-scheme:dark}body{margin:0;color:#f8edf3;background:#211a27;font-family:"Gowun Batang",serif}
+header{padding:18px max(18px,calc((100% - 1080px)/2));display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff30}
+a{color:#f6cfdd;text-underline-offset:4px}header a{text-decoration:none}.brand{font:29px "Cormorant Garamond",serif;letter-spacing:.18em}
+main{max-width:1080px;margin:auto;padding:34px 18px 80px}
+.tag{display:inline-block;border:1px solid #eed1db66;border-radius:50px;padding:8px 14px;font:12px sans-serif;letter-spacing:.06em}
+h1{font-weight:400;font-size:clamp(28px,4.7vw,43px);line-height:1.4;margin:17px 0}
+h2{font-size:22px;font-weight:400;margin:3px 0 10px}
+p{line-height:1.9;word-break:keep-all;color:#e3d0dc}
+.panel{border:1px solid #ffffff28;background:#ffffff0a;border-radius:14px;padding:16px;margin:22px 0}
+video{width:100%;max-height:75vh;display:block;background:#131019;border-radius:9px;object-fit:contain}
+.small{font-size:13px;color:#ddc3ce}.study{display:grid;grid-template-columns:1fr 1fr;gap:16px}.metric{font:26px "Cormorant Garamond",serif;color:#f6dee4}
+hr{border:0;border-top:1px solid #ffffff28;margin:24px 0}
+button{font:14px "Gowun Batang",serif;background:#806578;border:0;color:white;padding:12px 17px;border-radius:8px;cursor:pointer}
+.status{min-height:20px;color:#e9b5c5;font-size:13px}
+@media(max-width:720px){main{padding:26px 15px 60px}.study{grid-template-columns:1fr}.panel{padding:11px}.metric{font-size:24px}}
+</style>
+</head>
+<body>
+<header><a class="brand" href="index.html">WITHU</a><a href="song-vision-lab.html">← 이전 연구 비교</a></header>
+<main>
+<span class="tag">SONG-VISION V27 · OWNER SPEECH · LIP + JAW</span>
+<h1>입술을 열면, 아래턱 피부도<br>실제로 함께 내려가야 해.</h1>
+<p>사용자가 직접 촬영한 두 스피킹 영상에서 입안이 열리는 정도와 턱 아래쪽 영상 패치의 수직 이동량을 대응시켜 학습했어. 이전 v26은 실제 입술 픽셀을 바꾸었지만 하관이 거의 고정돼 있었고, v27에서는 <strong>입술 개방과 함께 하관 영상 영역을 이동</strong>하도록 했어.</p>
+<section class="panel">
+<h2>01. v26 입술만 변경 vs v27 입술+하관</h2>
+<p class="small">7.92초 · 18fps · 본인 실제 얼굴만 사용 · 무음. 아래턱 수치는 320×320 이미지의 추정 피부 이동량이며 턱뼈 실제 mm/각도가 아님.</p>
+<video id="jaw-comparison" controls playsinline preload="metadata" aria-label="v26 입술만 움직이는 얼굴과 v27 실제 관찰 턱 피부 이동으로 연동한 얼굴 비교"><source src="vision-owner/SONG_V27_OWNER_REAL_MOUTH_PLUS_JAW_COMPARISON.mp4" type="video/mp4">MP4를 지원하지 않는 브라우저야.</video>
+<p><a href="vision-owner/SONG_V27_OWNER_REAL_MOUTH_PLUS_JAW_COMPARISON.mp4" target="_blank" rel="noopener">비교 영상 새 창에서 재생</a></p>
+<p class="status" id="jaw-status" role="status"></p>
+</section>
+<section class="panel">
+<h2>02. AM 6:30 원곡에 하관 연동</h2>
+<p class="small">7초 · 18fps · 실제 원곡 소리 포함. 한국어 가사는 직접 전달된 텍스트로 제어하지만 음절 시작·끝 시각은 미검증 편집 초안이야.</p>
+<video id="jaw-song" controls playsinline preload="metadata" aria-label="AM 6:30 실제 음원과 v27 입술·턱 연동을 비교하는 사용자 전용 연구 영상"><source src="vision-owner/AM630_V27_OWNER_JAW_COUPLED_LYRICS_UNALIGNED.mp4" type="video/mp4">MP4를 지원하지 않는 브라우저야.</video>
+<p><a href="vision-owner/AM630_V27_OWNER_JAW_COUPLED_LYRICS_UNALIGNED.mp4" target="_blank" rel="noopener">AM 6:30 영상 새 창에서 재생</a></p>
+<p class="status" id="song-status" role="status"></p>
+</section>
+<div class="study">
+<section class="panel">
+<h2>실제 사용자 영상 학습 검증</h2>
+<p><span class="metric">54</span> 학습 프레임 · <span class="metric">15</span> 독립 시간 구간 검증 프레임</p>
+<p>아랫턱 피부의 이미지 이동량 MAE <strong>3.6934px</strong> · 정적인 기준 <strong>5.7827px</strong> (낮을수록 좋음). 이 데이터만의 예측 프록시 검사 결과야.</p>
+<p>실제 턱관절·하악골 회전각을 영상으로 측정했다고 주장하지 않아.</p>
+</section>
+<section class="panel">
+<h2>치아·입안은 아직 의료 분할이 아냐</h2>
+<p>구강 내부의 어두운 부분과 치아처럼 보이는 밝은 픽셀을 분리하는 실험을 했지만, 치열·혀의 정답 마스크가 없어 임상적 분할 정확도는 계산할 수 없어. 오므린 입술을 치아로 잘못 인식한 사례는 후보 검출에서 억제했어.</p>
+<p><strong>새로운 치아를 합성하거나, 실제 뼈가 움직이는 영상이라고 표시하지 않아.</strong></p>
+</section>
+</div>
+<section class="panel">
+<h2>한국어 발음 정답·가창 타임코드는 별도 검증 대상</h2>
+<p>정확한 모음별 음소 시간 라벨이 없는 영상을 정답으로 만들어 학습시키지 않았어. v27의 새 학습은 <strong>입 개방과 턱 영상 움직임</strong>에 한정되고, 한국어 발음·가사 시간 정렬은 독립적인 사람 검수 데이터를 요구해.</p>
+<p class="small">연구 근거: <a href="https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE00605411" target="_blank" rel="noopener">1987 한국어 모음 턱·입술 X선 조음 관찰</a> · <a href="https://pubs.asha.org/doi/10.1044/2025_JSLHR-24-00535" target="_blank" rel="noopener">2025 턱·입술 동시 조음 타이밍 연구</a> · <a href="https://www.kci.go.kr/kciportal/landing/article.kci?arti_id=ART002606277" target="_blank" rel="noopener">2020 한국어 동시조음 애니메이션</a> · <a href="https://jcaa.caa-aca.ca/index.php/jcaa/article/view/3350" target="_blank" rel="noopener">2019 가창 음소 강제정렬 연구</a></p>
+<p><a href="song-vision-v26-lips.html">이전 v26 실제 입술 형태 연구</a></p>
+</section>
+</main>
+<script>
+for(const [vid,id] of [['jaw-comparison','jaw-status'],['jaw-song','song-status']]){
+ const v=document.getElementById(vid),t=document.getElementById(id);
+ v.addEventListener('loadedmetadata',()=>{t.textContent='영상 준비 완료 · 화면의 ▶를 눌러 확인해 주세요.';});
+ v.addEventListener('error',()=>{t.textContent='동영상 로드 실패. 새 창 링크를 열어 주세요.';},true);
+}
+</script>
+</body>
+</html>

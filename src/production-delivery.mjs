@@ -9,6 +9,21 @@ import {LINK_TTL,SESSION_TTL,UPGRADE_PRICE,now,json,checkOrigin,
  customerResponse,encodeSecret,decodeSecret,linkUrl}
  from './production-runtime.mjs';
 function library(o){return customerResponse(o);}
+async function verifiedGiftToken(db,token){
+ const hash=tokenHash(token);
+ const link=await db.collection('withuLinks').doc(hash).get();
+ if(!link.exists||link.data()?.revoked||link.data()?.expiresAt<=now())
+  stop(403,'유효하지 않거나 만료된 음악 선물 링크입니다.');
+ const snap=await db.collection('withuOrders').doc(link.data().orderId).get();
+ if(!snap.exists)stop(404,'노래 선물을 찾을 수 없습니다.');
+ const order=snap.data();
+ paid(order);
+ if(order.delivery?.status!=='sent'||order.delivery?.tokenHash!==hash)
+  stop(403,'이 주문에 연결된 감상 링크가 아닙니다.');
+ approvedTracks(order);
+ return {order,hash};
+}
+
 async function sendCompletedEmail({db,env,fetcher,id}){
  const ref=db.collection('withuOrders').doc(id);
  let details;
@@ -60,19 +75,32 @@ async function sendCompletedEmail({db,env,fetcher,id}){
 }
 export async function handleProductionDelivery(req,res,{db,bucket,env,fetcher}){
  const path=new URL(req.originalUrl||req.url,'https://placeholder.invalid').pathname;
+ if(req.method==='POST'&&path==='/api/delivery/gift-preview'){
+  checkOrigin(req,env);
+  const token=json(req,1024).token;
+  const {order}=await verifiedGiftToken(db,token);
+  // A holder of the existing order-scoped token may see only the
+  // recipient nickname, not the story, customer email, or private music files.
+  const recipient=String(order.draft?.story?.recipient||'').trim().slice(0,55);
+  respond(res,200,{status:'ready',recipient});
+  return true;
+ }
+ if(req.method==='GET'&&path==='/api/delivery/share-link'){
+  const order=await customerOrder(req,db);
+  if(!order.delivery?.encryptedToken)
+   stop(404,'공유 링크가 준비되지 않았습니다.');
+  const token=decodeSecret(order.delivery.encryptedToken,
+   env.WITHU_LINK_ENCRYPTION_KEY);
+  const {order:verified}=await verifiedGiftToken(db,token);
+  if(verified.id!==order.id)stop(403,'다른 주문의 공유 링크입니다.');
+  respond(res,200,{status:'ready',shareUrl:linkUrl(env,token),
+   message:'이 주문의 노래를 무료로 공유할 수 있어요.'});
+  return true;
+ }
  if(req.method==='POST'&&path==='/api/delivery/resolve'){
   checkOrigin(req,env);
   const input=json(req,1024);
-  const hash=tokenHash(input.token);
-  const link=await db.collection('withuLinks').doc(hash).get();
-  if(!link.exists||link.data().revoked||link.data().expiresAt<=now())
-   stop(403,'링크가 만료되었거나 취소됐습니다.');
-  const ref=db.collection('withuOrders').doc(link.data().orderId);
-  const snap=await ref.get();
-  if(!snap.exists)stop(404,'주문을 찾지 못했습니다.');
-  const order=snap.data();paid(order);
-  if(order.delivery?.status!=='sent'||order.delivery?.tokenHash!==hash)
-   stop(403,'현재 주문에 유효한 공유 링크가 아닙니다.');
+  const {order}=await verifiedGiftToken(db,input.token);
   const session=makeOpaqueToken();
   await db.collection('withuSessions').doc(tokenHash(session)).create({
    orderId:order.id,createdAt:now(),expiresAt:now()+SESSION_TTL

@@ -119,6 +119,6 @@ export function adminSummary(o){
  };
 }
 export function linkUrl(env,token){
- return new URL('my-music.html#delivery='+token,env.WITHU_PUBLIC_BASE_URL).href;
+ return new URL('gift.html#delivery='+token,env.WITHU_PUBLIC_BASE_URL).href;
 }
 export function requireOrderPath(id){return requireProductionId(id);}

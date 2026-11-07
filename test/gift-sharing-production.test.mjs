@@ -129,7 +129,7 @@ test('gift opening page requires existing order-scoped link and preserves no pub
  assert.match(read('src/production-delivery.mjs'),/\/api\/delivery\/share-link/);
  assert.match(read('src/production-delivery.mjs'),/\/api\/delivery\/gift-preview/);
  for(const id of ['gift-share-native','gift-share-copy','gift-share-instagram',
-  'gift-share-tiktok','gift-comments-section','gift-comment-form']){
+  'gift-share-tiktok','gift-share-card','gift-comments-section','gift-comment-form']){
   assert.ok(read('docs/my-music.html').includes('id="'+id+'"'),id);
  }
  assert.match(read('docs/song.js'),/privateShareUrl/);
@@ -186,4 +186,12 @@ test('gift preview rejects unrelated leaked tokens and reveals only recipient ni
  await assert.rejects(()=>handleProductionDelivery(request(makeOpaqueToken()),response(),{
   db:database,env:{WITHU_PUBLIC_BASE_URL:'https://music.example'}
  }),/유효하지 않거나/);
+});
+
+test('vertical social gift card is generated locally without exporting private audio',()=>{
+ const code=read('docs/song.js');
+ assert.match(code,/canvas\.width=1080;canvas\.height=1920/);
+ assert.match(code,/WITHU-gift-story\.png/);
+ assert.doesNotMatch(code,/canvas\.captureStream|MediaRecorder/);
+ assert.match(code,/인스타그램·틱톡의 링크 스티커/);
 });

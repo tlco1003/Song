@@ -425,6 +425,49 @@ async function shareSong({preferCopy=false,platform=''}={}){
    notice('공유를 열 수 없어요. 브라우저의 주소 복사를 이용해 주세요.');
  }
 }
+function saveVerticalGiftCard(){
+ const link=sharingLink();
+ if(!link){notice('먼저 노래 감상 링크를 확인해 주세요.');return;}
+ const canvas=document.createElement('canvas');
+ canvas.width=1080;canvas.height=1920;
+ const ctx=canvas.getContext('2d');
+ if(!ctx){notice('이 기기에서 이미지를 만들 수 없어요.');return;}
+ const gradient=ctx.createLinearGradient(0,0,1080,1920);
+ gradient.addColorStop(0,'#382c42');
+ gradient.addColorStop(.55,'#70475e');
+ gradient.addColorStop(1,'#c08caa');
+ ctx.fillStyle=gradient;ctx.fillRect(0,0,1080,1920);
+ ctx.strokeStyle='#eac8dd';ctx.lineWidth=3;
+ ctx.strokeRect(60,70,960,1780);
+ ctx.strokeRect(84,94,912,1732);
+ ctx.textAlign='center';ctx.fillStyle='#fff8f8';
+ ctx.font='44px Georgia, serif';
+ ctx.fillText('WITHU MUSIC LETTER',540,345,940);
+ ctx.font='160px Georgia, serif';ctx.fillText('♪',540,660);
+ ctx.font='68px "Gowun Batang", serif';
+ ctx.fillText('당신에게 온',540,910,950);
+ ctx.fillText('세상에 단 하나의 노래',540,1015,980);
+ ctx.strokeStyle='#e7b7cf';ctx.lineWidth=2;
+ ctx.beginPath();ctx.moveTo(300,1110);ctx.lineTo(780,1110);ctx.stroke();
+ const title=String(track?.title||'소중한 음악 선물');
+ ctx.font='52px "Gowun Batang", serif';
+ const chars=Array.from(title);
+ const rows=[];
+ for(let i=0;i<chars.length&&rows.length<3;i+=13)rows.push(chars.slice(i,i+13).join(''));
+ rows.forEach((line,i)=>ctx.fillText(line,540,1280+i*75,920));
+ ctx.font='36px sans-serif';
+ ctx.fillText('무료 감상 링크를 함께 전해 주세요',540,1575,980);
+ ctx.font='30px sans-serif';
+ ctx.fillText('인스타그램·틱톡의 링크 스티커/프로필에 추가',540,1640,970);
+ ctx.font='38px Georgia, serif';ctx.fillText('WITHU · MADE FOR SOMEONE SPECIAL',540,1780,950);
+ const a=document.createElement('a');
+ a.href=canvas.toDataURL('image/png');
+ a.download='WITHU-gift-story.png';
+ document.body.appendChild(a);a.click();a.remove();
+ notice('9:16 세로형 선물 카드를 저장했어요. SNS에 올린 뒤 무료 노래 링크를 함께 붙여 주세요.');
+}
+const cardButton=$('gift-share-card');
+if(cardButton)cardButton.addEventListener('click',saveVerticalGiftCard);
 $('share-button').addEventListener('click',()=>{void shareSong()});
 for(const [id,action] of [
  ['gift-share-native',{}],

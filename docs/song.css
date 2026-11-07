@@ -123,3 +123,4 @@
 .gift-comment-form button{margin-top:7px}
 #gift-comment-status{font-size:12px;color:#907a89}
 @media(max-width:600px){.gift-sharing-section,.gift-comments-section{padding:20px 16px}}
+.gift-sharing-actions #gift-share-card{border-color:#bc90ab;background:#f8eef5;color:#6c4461;font-weight:700}

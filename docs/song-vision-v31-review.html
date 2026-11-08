@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>WITHU | SONG-Vision v31 · 실험 영상 검증</title>
+<meta name="theme-color" content="#231e29"/>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}
+body{background:#231e29;color:#f5eaf1;font-family:"Gowun Batang",serif;margin:0}
+header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ffffff2c;padding:18px max(18px,calc((100vw - 1080px)/2))}
+header a{text-decoration:none;color:#f4dae5}.brand{font:30px "Cormorant Garamond",serif;letter-spacing:.16em}
+main{max-width:1080px;padding:35px 18px 70px;margin:auto}
+h1{font-weight:400;font-size:clamp(26px,4vw,42px);line-height:1.5;margin:16px 0}
+h2{font-size:22px;font-weight:400;margin:5px 0 12px}
+p{line-height:1.85;color:#e6d3df;word-break:keep-all}
+.tag{display:inline-block;border-radius:28px;border:1px solid #d6b8c5;padding:7px 13px;font:12px sans-serif;color:#f5d8e3}
+.error{color:#f4b9b4;font-weight:bold}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+.card{padding:17px;border-radius:14px;background:#ffffff0b;border:1px solid #ffffff30}
+video{display:block;width:100%;max-height:68vh;object-fit:contain;border-radius:9px;background:#110f15}
+a{color:#f1c5d8;text-underline-offset:5px}
+.note{font-size:13px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.card{padding:11px}}
+</style>
+</head>
+<body>
+<header><a href="index.html" class="brand">WITHU</a><a href="song-vision-lab.html">← 연구 영상 목록</a></header>
+<main>
+<span class="tag">SONG-VISION v31 · 2D RESEARCH DIAGNOSTIC</span>
+<h1>입술 경계와 하관 이동을<br/>수정한 시험 결과</h1>
+<p class="error">판정: 코드 수정 및 MP4 생성 완료 · 실제 립싱크·시각 품질 검증 미통과</p>
+<p>본인이 올린 Speaking 영상의 닫힌 입술 명암선을 기준으로 경계를 잡고, 코–윗입술 구간을 고정하며 아래턱 쪽만 움직이도록 제약을 추가한 실험본이야. 다만 실제 결과에서 입안이 부자연스러운 검은 타원으로 보이고, ㅗ·ㅜ의 실제 입술 윤곽이 제대로 오므려지지 않았어. <strong>학습 완료 영상이 아니며 수동 파라미터 시험이야.</strong></p>
+<div class="grid">
+<section class="card">
+<h2>01 · 전체 얼굴·턱 비교</h2>
+<p class="note">6초 / 20fps / 실제 본인 사진과 변형 얼굴의 차이 확인</p>
+<video controls playsinline preload="metadata" aria-label="SONG v31 전체 얼굴과 턱의 실험 결과. 품질 검증 실패"><source src="vision-owner/SONG_V31_SEAM_AND_JAW_FIX_DIAGNOSTIC.mp4" type="video/mp4"/>MP4를 지원하지 않아.</video>
+<p><a href="vision-owner/SONG_V31_SEAM_AND_JAW_FIX_DIAGNOSTIC.mp4" target="_blank" rel="noopener">전체 영상 새 창에서 보기</a></p>
+</section>
+<section class="card">
+<h2>02 · 입술 확대</h2>
+<p class="note">6초 / 20fps / ㅡ·ㅗ·ㅜ·ㅏ·ㅔ 확대 비교</p>
+<video controls playsinline preload="metadata" aria-label="SONG v31 입술 확대 비교 영상. 잘못된 검은 입안 렌더링 확인"><source src="vision-owner/SONG_V31_MOUTH_CLOSEUP_DIAGNOSTIC.mp4" type="video/mp4"/>MP4를 지원하지 않아.</video>
+<p><a href="vision-owner/SONG_V31_MOUTH_CLOSEUP_DIAGNOSTIC.mp4" target="_blank" rel="noopener">입술 확대 영상 새 창에서 보기</a></p>
+</section>
+</div>
+<section class="card">
+<h2>03 · AM 6:30 음원 시험본</h2>
+<p class="note">6초 / 20fps / 음원 포함 / 음절 타임코드 미검증</p>
+<video controls playsinline preload="metadata" aria-label="AM 6:30 원곡을 동기화 정확도 검증 없이 적용한 v31 연구 영상"><source src="vision-owner/AM630_V31_CONSTRAINED_FACE_UNALIGNED.mp4" type="video/mp4"/>MP4를 지원하지 않아.</video>
+<p><a href="vision-owner/AM630_V31_CONSTRAINED_FACE_UNALIGNED.mp4" target="_blank" rel="noopener">AM 6:30 영상 새 창에서 보기</a></p>
+</section>
+<section class="card">
+<h2>무엇이 바뀌었고, 무엇이 실패했을까?</h2>
+<p>닫힌 입술 경계 추정, 코–윗입술 상부 잠금, ㅗ보다 ㅜ를 더 오므리게 하는 목표값, ㅏ의 별도 턱 하강값을 코드에 추가했어. 그러나 실제 입술 바깥 윤곽과 안쪽 경계가 연속 변형되는 실사 모델은 여전히 부족해.</p>
+<p>특히 현재 입안은 검은 타원을 덧씌우는 방식이 남아 있고, 실제 치아·혀의 자연스러운 가림과 피부 조직의 정밀 추적은 구현되지 않았어. 이 문제를 고치기 전에는 성공으로 판정하지 않아.</p>
+<p><a href="song-vision-v30-lips.html">이전 v30 비교</a></p>
+</section>
+</main>
+</body>
+</html>

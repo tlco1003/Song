@@ -52,18 +52,28 @@ function promotionFor(productId){
  return {regular:comparison,discountRate:Math.round((1-current/comparison)*1000)/10};
 }
 function showPrices(){
- // Show the creator's publicly declared standard production list price,
- // explicitly distinguished in adjacent copy from a historical selling price.
+ // Only show independently evidenced comparison prices.
+ // Proposed internal pricing is NOT a customer-facing original price.
  for(const node of document.querySelectorAll('[data-reference-for]')){
-  const amount=prices?.promotion?.plannedRegularPricesKrw?.[node.dataset.referenceFor];
-  node.textContent=Number.isSafeInteger(amount)&&amount>0?
-   '정상가 '+won.format(amount):'정상가 확인 중';
+  const verified=promotionFor(node.dataset.referenceFor);
+  node.hidden=!verified;
+  node.textContent=verified?'검증된 비교가격 '+won.format(verified.regular):'';
  }
  for(const node of document.querySelectorAll('[data-price-for]')){
   node.textContent=priceText(prices?.products.find(p=>p.id===node.dataset.priceFor));
  }
  for(const node of document.querySelectorAll('[data-compare-price]')){
   node.textContent=priceText(prices?.products.find(p=>p.id===node.dataset.comparePrice));
+ }
+ const singlePrice=prices?.products.find(p=>p.id==='audio')?.amountKrw;
+ const duoPrice=prices?.products.find(p=>p.id==='audio_duo')?.amountKrw;
+ const duoCompare=$('duo-price-explanation');
+ if(duoCompare){
+  duoCompare.textContent=Number.isSafeInteger(singlePrice)&&Number.isSafeInteger(duoPrice)&&singlePrice>0&&duoPrice>0
+   ?'1곡 상품 2건을 각각 구매하면 '+won.format(singlePrice*2)+
+    ' · 2곡 상품은 '+won.format(duoPrice)+
+    (duoPrice<singlePrice*2?' · 구성 차액 '+won.format(singlePrice*2-duoPrice):'')
+   :'2곡 상품의 실제 가격은 상품 선택 후 확인할 수 있어요.';
  }
  $('order-price').textContent=totalText();
  $('selection-total').textContent=totalText();

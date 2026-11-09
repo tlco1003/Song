@@ -33,7 +33,9 @@ export async function sendPaidOrderReceipt({db,orderId,env=process.env,fetcher=f
   const snap=await tx.get(ref);
   if(!snap.exists)stop(404,'주문 없음');
   const o=snap.data();paid(o);
-  if(o.statusReceipt?.status==='sent'){job={skip:true};return;}
+  if(o.statusReceipt?.status==='sent'&&o.statusReceipt.expiresAt>now()){
+   job={skip:true};return;
+  }
   if(o.statusReceipt?.status==='sending'&&o.statusReceipt.lockUntil>now()){job={busy:true};return;}
   const old=o.statusReceipt||{},reuse=old.encryptedToken&&old.expiresAt>now();
   const token=reuse?decodeSecret(old.encryptedToken,env.WITHU_LINK_ENCRYPTION_KEY):makeOpaqueToken();
@@ -48,7 +50,7 @@ export async function sendPaidOrderReceipt({db,orderId,env=process.env,fetcher=f
  if(job.busy)return {status:'already_sending'};
  try{
   const receipt=await createResendTransactionalMailer({config:env,fetcher}).sendOrderStatusLink({
-   to:job.email,orderStatusUrl:statusUrl(env,job.token),idempotencyKey:'receipt-'+orderId
+   to:job.email,orderStatusUrl:statusUrl(env,job.token),idempotencyKey:'receipt-'+orderId+'-'+tokenHash(job.token).slice(0,12)
   });
   await ref.update({'statusReceipt.status':'sent','statusReceipt.lockUntil':0,
    'statusReceipt.messageId':receipt.messageId,'statusReceipt.sentAt':now()});

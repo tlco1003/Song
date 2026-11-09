@@ -33,11 +33,16 @@ test('seller proposed regular prices remain gated behind independently documente
  assert.match(html,/data-reference-for="audio_duo"/);
  assert.match(html,/종전거래가격을 의미하지 않습니다/);
  assert.match(html,/제작자가 고객의 사연과 가사/);
- assert.match(js,/plannedRegularPricesKrw\?\.\[node\.dataset\.referenceFor\]/);
- assert.match(js,/'정상가 '\+won\.format\(amount\)/);
+ assert.match(js,/const verified=promotionFor\(node\.dataset\.referenceFor\)/);
+ assert.match(js,/node\.hidden=!verified/);
+ assert.doesNotMatch(js,/'정상가 '\+won\.format\(amount\)/);
  assert.doesNotMatch(html,/(?:71|80\.5)%\s*할인/u);
  assert.match(js,/comparisonPriceVerified!==true/);
  assert.match(js,/comparisonEvidenceByProduct/);
+ assert.match(html,/data-reference-for="audio" hidden/);
+ assert.match(html,/id="duo-price-explanation"/);
+ assert.doesNotMatch(html,/<s>개별 구매 58,000원<\/s>/);
+ assert.match(js,/singlePrice\*2-duoPrice/);
 });
 test('all upgrades are optional with a clear final-price calculation and no payment bypass',()=>{
  const html=read('docs/checkout.html'),js=read('docs/checkout.js');

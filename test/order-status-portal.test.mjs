@@ -106,25 +106,35 @@ test('verified payment produces one protected status email and a private pending
  const retry=await sendPaidOrderReceipt({db,orderId:id,env:emailEnv,fetcher});
  assert.equal(retry.status,'already_sent');
  assert.equal(sent,1);
+ // A delivered/accepted receipt must be reissued after its 90-day status token expires.
+ const stale=rows.get('withuOrders/'+id);
+ stale.statusReceipt.expiresAt=Date.now()-1000;
+ rows.set('withuOrders/'+id,stale);
+ const renewed=await sendPaidOrderReceipt({db,orderId:id,env:emailEnv,fetcher});
+ assert.equal(renewed.status,'provider_accepted_not_inbox_verified');
+ assert.equal(sent,2);
+ const renewedToken=emailBody.text.match(/#status=([A-Za-z0-9_-]{43})/)[1];
+ assert.notEqual(renewedToken,token);
+ assert.equal(rows.get('withuOrders/'+id).statusReceipt.tokenHash,tokenHash(renewedToken));
  const finalToken=makeOpaqueToken();
  doc.delivery={status:'sent',tokenHash:tokenHash(finalToken),
   encryptedToken:encodeSecret(finalToken,emailEnv.WITHU_LINK_ENCRYPTION_KEY),
   expiresAt:Date.now()+60000};
  rows.set('withuOrders/'+id,doc);
  const completed=statusResponse();
- await handleOrderStatus(statusRequest(token),completed,{db,env:emailEnv});
+ await handleOrderStatus(statusRequest(renewedToken),completed,{db,env:emailEnv});
  assert.equal(completed.result.status,'delivered');
  assert.equal(completed.result.listeningUrl,
   'https://withu.example/my-music.html#delivery='+finalToken);
- const expired=rows.get('withuStatusLinks/'+tokenHash(token));
+ const expired=rows.get('withuStatusLinks/'+tokenHash(renewedToken));
  expired.expiresAt=Date.now()-1;
- rows.set('withuStatusLinks/'+tokenHash(token),expired);
+ rows.set('withuStatusLinks/'+tokenHash(renewedToken),expired);
  await assert.rejects(
-  handleOrderStatus(statusRequest(token),statusResponse(),{db,env:emailEnv}),
+  handleOrderStatus(statusRequest(renewedToken),statusResponse(),{db,env:emailEnv}),
   {status:403}
  );
  await assert.rejects(
-  handleOrderStatus(statusRequest(token,{origin:'https://attacker.example'}),statusResponse(),{db,env:emailEnv}),
+  handleOrderStatus(statusRequest(renewedToken,{origin:'https://attacker.example'}),statusResponse(),{db,env:emailEnv}),
   {status:403}
  );
 });

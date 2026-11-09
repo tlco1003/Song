@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#231e29"/><meta name="description" content="SONG AI 연구: 한국어 자음·모음별 가려진 혀와 구강, 연구개, 턱, 치아, 입술의 3D 조음 메쉬와 검사 영상"/>
+<title>WITHU | SONG AI v35 · 3D 혀·구강 조음 연구</title>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{background:#211b29;color:#f5e9f0;font-family:"Gowun Batang",serif;margin:0}
+header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff2b;padding:17px max(17px,calc((100% - 1100px)/2))}
+header a{color:#f8d6e5;text-decoration:none}.brand{font:30px "Cormorant Garamond",serif;letter-spacing:.18em}
+main{max-width:1100px;padding:31px 16px 74px;margin:0 auto}
+.eyebrow{font:12px/1.5 sans-serif;border:1px solid #c6a5b8;display:inline-block;border-radius:35px;padding:7px 13px;color:#ffdae8;letter-spacing:.07em}
+h1{font-size:clamp(26px,4vw,42px);line-height:1.45;font-weight:400;margin:16px 0}h2{font-size:23px;font-weight:400;margin:6px 0 13px}
+p{line-height:1.86;color:#e1ced9;word-break:keep-all}
+.card{border:1px solid #ffffff28;background:#ffffff0c;border-radius:15px;padding:17px;margin:20px 0}
+video{width:100%;max-height:71vh;border-radius:10px;display:block;background:#111017;object-fit:contain}
+a{color:#f4ccdc;text-underline-offset:5px}
+.warning{border-left:3px solid #dca99c;padding-left:15px}
+.small{font:13px/1.8 sans-serif;color:#d4c4d0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.pills{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px;margin-top:14px}
+.pills button{font:20px "Gowun Batang",serif;padding:9px 1px;background:#ffffff14;color:#f5e5ec;border:1px solid #b18e9e;border-radius:9px;cursor:pointer}
+.pills button[aria-pressed=true]{background:#855772}
+@media(max-width:800px){.grid{grid-template-columns:1fr}.card{padding:11px}.pills button{font-size:17px}}
+</style></head>
+<body><header><a class="brand" href="index.html">WITHU</a><a href="song-vision-lab.html">← SONG Vision 연구</a></header>
+<main>
+<span class="eyebrow">SONG-VISION v35 · ARTICULATORY 3D RESEARCH</span>
+<h1>입술에 가려진 혀도<br/>3D 구조로 함께 움직이게 만들었어.</h1>
+<p>이번 영상은 혀끝·혀앞부분·혀몸통·혀뒤쪽·혀뿌리, 경구개·연구개, 위아래 치아, 독립적인 아래턱 회전과 입술 돌출을 계산한 <strong>실행형 3D 조음 시뮬레이션</strong>이야. 왼쪽은 3D 메쉬를 잘라 내부가 보이도록 투영한 화면, 오른쪽은 입술 개방을 이해하기 위한 정면 도식이야.</p>
+<section class="card"><h2>01 · 한국어 기본 모음 10개</h2>
+<p class="small">ㅏ·ㅑ·ㅓ·ㅕ·ㅗ·ㅛ·ㅜ·ㅠ·ㅡ·ㅣ / 7.14초 / 14fps / 무음</p>
+<video id="vowels" controls playsinline preload="metadata" aria-label="한국어 모음 10개에 따라 3D 혀와 입술이 움직이는 연구용 단면 영상"><source src="vision-owner/SONG_V35_TONGUE_3D_TEN_VOWELS.mp4" type="video/mp4">MP4 미지원</video>
+<div class="pills" id="vowel-pills"></div>
+<p class="small" id="vowel-note" role="status">발음별 목표 자세의 차이를 볼 수 있어. 개인 실측치가 아닌 연구용 설정이야.</p>
+<p><a target="_blank" rel="noopener" href="vision-owner/SONG_V35_TONGUE_3D_TEN_VOWELS.mp4">모음 영상 새 창에서 보기</a></p>
+</section>
+<section class="card"><h2>02 · 자음 19개와 이어지는 '아'</h2>
+<p class="small">ㄱ·ㄲ·ㄴ·ㄷ·ㄸ·ㄹ·ㅁ·ㅂ·ㅃ·ㅅ·ㅆ·ㅇ·ㅈ·ㅉ·ㅊ·ㅋ·ㅌ·ㅍ·ㅎ / 12.21초 / 14fps / 무음</p>
+<video controls playsinline preload="metadata" aria-label="자음 19개와 아 모음으로 이어지는 3D 혀·턱·치아 접촉 연구 영상"><source src="vision-owner/SONG_V35_TONGUE_3D_NINETEEN_CONSONANTS.mp4" type="video/mp4">MP4 미지원</video>
+<p class="small">ㄱ·ㅋ는 혀 뒤쪽과 연구개, ㄴ·ㄷ·ㅌ은 혀끝과 잇몸, ㅁ·ㅂ·ㅍ은 양입술 폐쇄, ㅅ은 마찰 협착, ㅎ은 후두 관련 설정을 사용해. 성문 긴장도·기식은 영상에 보이는 입모양과 별도 값으로 관리해.</p>
+<p><a target="_blank" rel="noopener" href="vision-owner/SONG_V35_TONGUE_3D_NINETEEN_CONSONANTS.mp4">자음 영상 새 창에서 보기</a></p>
+</section>
+<div class="grid">
+<section class="card">
+<h2>3D 엔진에 연결한 요소</h2>
+<p>혀끝, 혀날, 혀몸통, 혀뒤, 혀뿌리의 3D 메쉬 · 경구개 접촉 충돌 제한 · 연구개 하강 · 윗턱 고정 · 아래턱 회전 · 윗니/아랫니 분리 · 입술 폭·개방·전방 돌출 · 성문 긴장 및 기식 제어</p>
+<p class="small">초성 19개 × 중성 21개 = 399개 조합에 대해 생성 경로가 있고, 종성은 단순 기본 일곱 종류를 우선 지원해. 문맥에 따른 복잡한 받침 소리변화는 미검증 상태면 입력을 거부해.</p>
+</section>
+<section class="card">
+<h2>현재 연구 결과</h2>
+<p>개별 구강 부품을 생성하고 자연스럽게 관통하지 않도록 제한하는 등 <strong>14개 로컬 자동검사 통과</strong>. '엄마 난 가끔...' 같은 글자를 자음 폐쇄→모음 전환→종성의 조음 키프레임으로 바꾸는 코드도 작성했어.</p>
+<p class="small">개인 실제 혀 위치, 근육활성도, 3D 얼굴 메쉬, 성대의 음향합성, 정확한 한국어 음소 시간 정렬은 아직 학습·검증되지 않았어.</p>
+</section>
+</div>
+<section class="card"><h2>연구 정확도의 경계</h2>
+<p class="warning"><strong>이 영상은 3D 일반 조음 모형의 움직임을 보여줘. 사용자 개인의 숨겨진 혀 위치를 관찰하거나, 실제 근육의 힘을 측정한 결과가 아니야.</strong> 수치들은 정규화된 3D 설계값이며 한국어 발음·교합의 의료적 기준값이 아니야. 소리는 생성하지 않아.</p>
+<p>실제 조음 연구에는 3D MRI·초음파·턱의 동작 측정과 성문 제어가 필요할 수 있어. 참고 연구: Stavness 외 2011 (턱·혀·설골 접촉), Anderson 외 2015 (3D 발성기관), Kim 외 2012 (한국어 구개음화 MRI), 황영·하영우 2026 (한국어 모음 3D 초음파).</p>
+<p><a href="https://github.com/tlco1003/Song/blob/main/song_vision/README_V35.md" rel="noopener" target="_blank">논문·테스트·코드 재현 방법 보기</a> · <a href="song-vision-v32-oral.html">이전 v32 실제 원본 입안 픽셀 분석</a></p>
+</section>
+</main>
+<script>
+(()=>{
+const vowelOrder=['ㅏ','ㅑ','ㅓ','ㅕ','ㅗ','ㅛ','ㅜ','ㅠ','ㅡ','ㅣ'];
+const player=document.getElementById('vowels'),root=document.getElementById('vowel-pills'),status=document.getElementById('vowel-note');
+let stop=-1;
+vowelOrder.forEach((v,i)=>{const b=document.createElement('button');b.type='button';b.textContent=v;b.setAttribute('aria-pressed','false');
+b.onclick=()=>{root.querySelectorAll('button').forEach((q,j)=>q.setAttribute('aria-pressed',String(i===j)));
+player.currentTime=(i*10+1)/14;stop=(i+1)*10/14-.03;
+status.textContent=v+'의 혀·입술·턱 동작을 검토 중. 연구용 기본 자세이며 개인 실측은 아님.';
+const p=player.play();if(p&&p.catch)p.catch(()=>{status.textContent='영상의 재생 버튼을 눌러줘.'});};root.appendChild(b);});
+player.addEventListener('timeupdate',()=>{if(stop>=0&&player.currentTime>=stop){stop=-1;player.pause()}});
+})();
+</script>
+</body></html>

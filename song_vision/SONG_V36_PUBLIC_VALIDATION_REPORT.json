@@ -1,0 +1,84 @@
+{
+  "version": "SONG_V36_ACOUSTICALLY_CONSTRAINED_ARTICULATION",
+  "ownerVowelsWeaklySequenceLabeled": 10,
+  "realOwnerSpokenAudioUsedForLPCComparison": true,
+  "realOwnerTongue3DObserved": false,
+  "privateOwnerAudioNotCommittedToPublicRepo": true,
+  "3DVisibleTongueJawPalateLipsSource": "stylized v35 general 3D model",
+  "acousticsAdded": "loss-regularized 1D tube transfer-matrix resonance from synthetic 3D tongue/palate/lips/jaw",
+  "syntheticTraining": {
+    "version": "v36_forward_synthetic_articulatory_acoustic_regression",
+    "supervision": "synthetic_1d_tube_simulator_only",
+    "features": [
+      "jaw_rad",
+      "tip_z",
+      "blade_z",
+      "body_z",
+      "dorsum_z",
+      "root_z",
+      "lip_width",
+      "lip_open",
+      "lip_protrusion"
+    ],
+    "inputDimension": 9,
+    "syntheticSamples": 517,
+    "trainCount": 413,
+    "testCount": 104,
+    "randomPerVowelHoldout": true,
+    "metrics": {
+      "F1": {
+        "heldoutMAE_Hz": 7.73,
+        "staticMeanBaselineMAE_Hz": 31.48
+      },
+      "F2": {
+        "heldoutMAE_Hz": 17.67,
+        "staticMeanBaselineMAE_Hz": 109.7
+      }
+    },
+    "actualKoreanSpeechSoundTrained": false,
+    "actualOwnerTonguePositionsLearned": false,
+    "simulatorPhysicalAccuracyClinicallyVerified": false,
+    "note": "Surrogate learns predicted resonance changes for tongue/lips/jaw poses; cannot recover unique tongue pose from audio"
+  },
+  "ownerAudioReference": {
+    "sourceOriginalFilename": "Pronunciation .mp4",
+    "VADInitialSequenceWeaklyAligned": [
+      "아",
+      "야",
+      "어",
+      "여",
+      "오",
+      "요",
+      "우",
+      "유",
+      "으",
+      "이"
+    ],
+    "confirmedSoundRecognitionLabels": 0,
+    "uVowelF2CandidateUnavailable": true,
+    "iObservedF2CandidateHz": 2733,
+    "iSimulatedF2CandidateHz": 1560,
+    "inverseVowelCrosscheckWeakSequenceAgreement": 2,
+    "inverseVowelCrosscheckEligibleSegments": 9,
+    "agreementIsNotRecognitionAccuracy": true
+  },
+  "supportedGraphemeShapes": {
+    "onsets": 19,
+    "vowels": 21,
+    "onsetMedialPairs": 399
+  },
+  "media": [
+    "SONG_V36_3D_TONGUE_VS_REAL_VOICE.mp4",
+    "SONG_V36_19_CONSONANT_CONTACT_AND_AIRWAY.mp4",
+    "SONG_V36_ARTICULATORY_FORMANT_PROBES_NOT_KOREAN_TTS.wav"
+  ],
+  "whatIsNotImplemented": [
+    "owner calibrated 3D bone and tongue MRI/ultrasound",
+    "actual muscle force field FEM and jaw torque",
+    "nasal side branch acoustics and consonant airflow turbulence",
+    "3D acoustic synthesis of real Korean consonants and tones",
+    "validated Korean phoneme alignment and voice-to-mouth lip sync",
+    "unique inverse mapping from acoustic formants to hidden tongue shape"
+  ],
+  "truthPolicy": "v36 forward learner is supervised by synthetic 1D tube resonances only; real owner speech is a mismatch test"
+}

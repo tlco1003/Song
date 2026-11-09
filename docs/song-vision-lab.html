@@ -33,6 +33,20 @@
 <nav aria-label="메뉴"><a href="index.html">홈</a><a href="index.html#vision-lab-preview">학습 결과</a></nav>
 </div></header>
 <main class="vision-lab"><div class="frame">
+<span class="vision-badge">LATEST · SONG-VISION v37 · REAL USER AV TRAINING</span>
+<h1>네 실제 발음에서 학습한 2D 입·턱 움직임을 3D 턱·혀 리그에 연결했어.</h1>
+<p class="vision-intro">실제 발음 영상 169개 음성 구간 중 128개로 학습하고 41개를 별도 검사했어. 원본 음성과 얼굴을 그대로 재생하면서 학습된 턱·입술 제어값을 3D 조음 리그에 연결한 진단 영상이야. 다만 개인 숨겨진 혀와 실제 턱관절 각도는 아직 미측정이야.</p>
+<div class="vision-grid">
+<section class="vision-card">
+<h2>NEW · v37 실제 발음 학습 검토</h2>
+<video id="v37-review" controls playsinline preload="metadata" aria-label="실제 사용자 목소리와 영상의 2D 음향 학습 결과와 3D 턱/혀 모형을 함께 보여주는 연구 영상"><source src="vision-owner/SONG_V37_REAL_OWNER_TRAINED_JAW_AND_3D_TONGUE_REVIEW.mp4" type="video/mp4">MP4 미지원</video>
+<p>6.4초 · 사용자 실제 음성 포함 · 원본 얼굴 변형 없음 · 3D 혀 사전값은 연구용 추정. 실제 음소 정답 라벨 검증 전.</p>
+<p><a href="song-vision-v37-trained-owner.html">실제 학습 결과·검증 점수·미완료 항목 보기</a></p>
+<p id="v37-review-status" class="vision-status" role="status"></p>
+</section>
+</div>
+<h2 style="font-size:21px;font-weight:400;margin-top:29px">이전 v35 3D 조음 연구 및 기타 실험</h2>
+
 <span class="vision-badge">LATEST · SONG-VISION v35 · 3D TONGUE & ORAL ARTICULATION</span>
 <h1>혀끝부터 혀뿌리, 구개·치아·아래턱까지 3D로 움직여.</h1>
 <p class="vision-intro">실제 사용자의 숨겨진 혀를 측정한 영상이 아니라, 연구용 정규화 3D 구강 메쉬와 조음 제어 코드를 실행한 영상이야. 개인 3D 골격 학습·소리 합성·음소 정답 정렬은 미완료.</p>
@@ -212,6 +226,7 @@
 <footer class="site-footer"><div class="frame footer-inner"><span class="footer-brand">WITHU</span><p>직접 제공한 자료로 학습한 SONG-Vision 연구 영상</p></div></footer>
 <script>
 for(const [vid,status] of [
+ ['v37-review','v37-review-status'],
  ['v35-vowels','v35-vowels-status'],
  ['v35-consonants','v35-consonants-status'],
  ['v32-oral','v32-oral-status'],

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>WITHU | SONG AI v37 · 실제 발음 영상 학습</title>
+<meta name="theme-color" content="#231d29"><meta name="description" content="사용자가 실제로 녹화한 발음 영상의 음성·입술·턱 관찰값으로 학습한 SONG AI v37 실험 결과와 3D 혀 리그 연결 검사">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#231d29;color:#f6eaf2;font-family:"Gowun Batang",serif}
+header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ffffff26;padding:16px max(17px,calc((100% - 1040px)/2))}
+header a{color:#f4cfdf;text-decoration:none}.brand{font:29px "Cormorant Garamond",serif;letter-spacing:.17em}
+main{max-width:1040px;margin:0 auto;padding:30px 17px 80px}
+.kicker{display:inline-block;padding:7px 12px;border-radius:27px;border:1px solid #d2aebf;color:#f7d5e6;font:12px sans-serif}
+h1{font-weight:400;font-size:clamp(28px,4.4vw,43px);line-height:1.5;margin:17px 0}
+h2{font-size:23px;font-weight:400;margin:7px 0 12px}
+p{line-height:1.85;color:#e0d0df;word-break:keep-all}
+.box{background:#ffffff0b;border:1px solid #ffffff2b;border-radius:14px;padding:17px;margin:20px 0}
+video{display:block;width:100%;max-height:74vh;background:#0f0d13;border-radius:10px}
+a{color:#eec1d4;text-underline-offset:5px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.stat{font:30px "Cormorant Garamond",serif;color:#f2d0e0}
+.small{font:13px/1.8 sans-serif;color:#d2c1d0}
+table{border-collapse:collapse;width:100%;font:14px/1.7 sans-serif}
+th,td{border-bottom:1px solid #ffffff25;padding:10px 8px;text-align:left}
+th{color:#f5d9e5;font-weight:500}
+.pills{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin:14px 0}
+.pills button{border:1px solid #ae8f9f;border-radius:8px;color:#f7e7ef;background:#ffffff13;padding:9px 1px;font:18px "Gowun Batang",serif;cursor:pointer}
+.pills button[aria-pressed=true]{background:#81566d}
+.warn{border-left:3px solid #e8ad9a;padding-left:13px}
+@media(max-width:650px){.box{padding:11px}.grid{gap:5px}.stat{font-size:25px}.pills button{font-size:15px}}
+</style></head><body>
+<header><a href="index.html" class="brand">WITHU</a><a href="song-vision-lab.html">← 연구 영상 목록</a></header>
+<main>
+<span class="kicker">SONG-VISION v37 · ACTUAL OWNER AUDIO + VISIBLE FACE LEARNING</span>
+<h1>이제 네 실제 목소리로<br>입술·턱 움직임을 학습한 결과야.</h1>
+<p>이번에는 가상 조음 자세만 학습한 것이 아니야. 네가 녹화한 3분 15초짜리 실제 발음 영상에서 음성 구간을 찾고, 같은 시점의 입술·입안·턱끝 명암선 후보를 측정했어. 실제 사용자 데이터로 학습한 모델의 입·턱 제어값을 기존 3D 턱과 혀 연구 모형에 연결했어.</p>
+<div class="grid">
+<div class="box"><div class="stat">169</div><p class="small">음성 발화 후보 구간</p></div>
+<div class="box"><div class="stat">128</div><p class="small">실제 학습 구간</p></div>
+<div class="box"><div class="stat">41</div><p class="small">별도 그룹 검증 구간</p></div>
+</div>
+<section class="box">
+<h2>01 · 실제 음성으로 구동한 턱·입술·3D 혀 모형</h2>
+<p class="small">6.40초, 음성 포함, 원본 얼굴 변경 없음. 왼쪽은 실제 사용자 영상이며 오른쪽 턱 회전·입술 개방은 학습된 2D 특징값을 반영했어. 오른쪽 혀는 실제 사용자 혀의 위치가 아니라 일반 조음 사전값이야.</p>
+<video id="v37" controls playsinline preload="metadata" aria-label="실제 사용자 발음 영상과 2D 학습으로 구동한 3D 턱/혀 모형을 같은 시간에 비교하는 v37 연구 영상"><source src="vision-owner/SONG_V37_REAL_OWNER_TRAINED_JAW_AND_3D_TONGUE_REVIEW.mp4" type="video/mp4">MP4 미지원</video>
+<div class="pills" id="vowel-seek"></div>
+<p class="small" id="status" role="status">아·야·어·여·오·요·우·유·으·이. 첫 그룹의 발음 순서 기반 임시 라벨이며 정답 시간은 확인 전이야.</p>
+<p><a target="_blank" rel="noopener" href="vision-owner/SONG_V37_REAL_OWNER_TRAINED_JAW_AND_3D_TONGUE_REVIEW.mp4">원본 음성 포함 비교 영상 크게 보기</a></p>
+</section>
+<section class="box">
+<h2>02 · 같은 사용자 영상의 별도 구간 검사</h2>
+<table><thead><tr><th>예측 대상 (2D 영상 특징)</th><th>정적 평균 대비 오차 감소</th></tr></thead>
+<tbody><tr><td>입술 색 영역 너비</td><td>58.45%</td></tr>
+<tr><td>입술 색 영역 높이</td><td>55.82%</td></tr>
+<tr><td>입안의 어두운 영역</td><td>26.14%</td></tr>
+<tr><td>입안 너비 후보</td><td>15.91%</td></tr>
+<tr><td>입안 높이 후보</td><td>14.35%</td></tr>
+<tr><td>턱끝 명암선 후보</td><td>33.84%</td></tr></tbody></table>
+<p class="small">오차는 0~1 정규화된 픽셀 특징의 평균절대오차. 턱끝 후보만 학습 120건 / 별도 검사 40건, 나머지는 학습 128건 / 별도 검사 41건이야. 입술·턱의 의료적 기준점 정확도나 실제 3D 턱관절 각도 정확도가 아니야.</p>
+</section>
+<section class="box">
+<h2>03 · 학습한 것과 아직 못한 것</h2>
+<p><strong>실제로 학습:</strong> 소리의 음향 특징에서 실제 영상의 입술 너비·높이, 입안 개방 후보, 턱끝 그림자 위치를 추정하는 모델. 3D 턱 회전과 입술 제어 엔진에도 값을 전달해.</p>
+<p><strong>연구용 제어값:</strong> 혀끝·혀날·혀몸통·혀뒤쪽·혀뿌리, 경구개·연구개, 치아와 자음 접촉, 후두 긴장·기식은 v35 조음 프리셋을 이용해 3D 움직임으로 연결했어.</p>
+<p class="warn"><strong>아직 미완료:</strong> 네 실제 턱뼈의 3D 관절각, 피부 근육 힘, 보이지 않는 개인 혀의 위치, 음절별 검증된 음성인식 라벨, 자연스러운 완성형 가창 립싱크. 음성에서 혀 위치를 유일하게 계산할 수는 없어. 이를 학습 완료로 표시하지 않았어.</p>
+<p class="small">모음 분류 약지도 실험은 별도 20개 구간에서 사용자 제공 순서와 35% 일치했어. 독립된 발음 정답이 없으므로 이 수치는 공식 음성인식 정확도가 아니며, 음소를 자동 확정하는 기능은 꺼둔 상태야.</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/tlco1003/Song/blob/main/song_vision/README_V37.md">학습 절차·논문·검증·코드 연결 설명</a> · <a href="song-vision-v36-acoustic-3d.html">이전 v36 음향·3D 비교</a></p>
+</section>
+</main>
+<script>
+(()=>{
+ const syllables=['아','야','어','여','오','요','우','유','으','이'],player=document.getElementById('v37'),buttons=document.getElementById('vowel-seek'),status=document.getElementById('status');
+ let end=-1;
+ syllables.forEach((v,i)=>{const b=document.createElement('button');b.type='button';b.textContent=v;b.setAttribute('aria-pressed','false');
+ b.onclick=()=>{buttons.querySelectorAll('button').forEach((q,j)=>q.setAttribute('aria-pressed',String(j===i)));
+ player.currentTime=i*.64;end=Math.min(6.4,(i+1)*.64);
+ status.textContent=v+'의 실제 원본 음성과 입술·턱 추정값, 3D 혀 사전값을 비교해. 발음 정답 라벨은 미검증이야.';
+ const p=player.play();if(p&&p.catch)p.catch(()=>status.textContent='영상의 재생 버튼을 직접 눌러줘.');};buttons.appendChild(b)});
+ player.addEventListener('timeupdate',()=>{if(end>=0&&player.currentTime>=end){player.pause();end=-1}});
+})();
+</script></body></html>

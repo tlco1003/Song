@@ -1,0 +1,56 @@
+name: SONG Vision v37 real-owner learning integration contracts
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/song-vision-v37-training.yml'
+      - 'song_vision/*v37*'
+      - 'song_vision/README_V37.md'
+      - 'docs/song-vision-v37-trained-owner.html'
+      - 'docs/vision-owner/SONG_V37_REAL_OWNER_TRAINED_JAW_AND_3D_TONGUE_REVIEW.mp4'
+      - 'docs/index.html'
+      - 'docs/song-vision-lab.html'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  controls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install 3D research and audio/visual unit-test dependencies
+        run: python -m pip install 'numpy>=1.26,<3' 'scipy>=1.11' 'scikit-learn>=1.4' 'opencv-python-headless>=4.8' 'soundfile>=0.12' 'trimesh>=4'
+      - name: Verify jaw-hinge, invisible tongue honesty, all Korean 399 onset+vowel pairs and training interface
+        run: python -m unittest discover -s song_vision -p 'test_owner_v37_training.py' -v
+      - name: Validate research page/video and prevent model weights from public repo
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          video='SONG_V37_REAL_OWNER_TRAINED_JAW_AND_3D_TONGUE_REVIEW.mp4'
+          p=Path('docs/vision-owner')/video
+          assert p.is_file() and p.stat().st_size>100_000
+          assert b'ftyp' in p.read_bytes()[:64]
+          for page in ('docs/index.html','docs/song-vision-lab.html','docs/song-vision-v37-trained-owner.html'):
+              s=Path(page).read_text(encoding='utf-8')
+              assert video in s,page
+          html=Path('docs/song-vision-v37-trained-owner.html').read_text(encoding='utf-8')
+          assert '미완료' in html and '미검증' in html
+          report=json.loads(Path('song_vision/SONG_V37_PUBLIC_VALIDATION_REPORT.json').read_text())
+          assert report['trainedFromUserVoiceAndVideo'] is True
+          assert report['verifiedPhoneLabels']==0
+          assert report['observed3DTongue'] is False
+          assert report['audioToOwnerVisible2DTargets']['chinEdgeYRatio']['status']=='passed'
+          assert not Path('song_vision/OWNER_V37_AV_MODEL_PRIVATE.npz').exists()
+          print('OWNER_AUDIO_TO_VISIBLE_2D_MODEL_TRAINED=YES (private weights)')
+          print('OWNER_JAW_BONE_3D_MEASURED=NO')
+          print('OWNER_HIDDEN_TONGUE_3D_LEARNED=NO')
+          print('KOREAN_PHONE_LABELS_VERIFIED=NO')
+          PY
+      - name: Compile source contracts
+        run: python -m py_compile song_vision/owner_v37_train_real_av.py song_vision/owner_v37_runtime_3d.py song_vision/owner_v37_cli.py song_vision/render_owner_v37_training_review.py

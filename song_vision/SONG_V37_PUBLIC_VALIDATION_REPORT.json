@@ -1,0 +1,129 @@
+{
+  "schema": "song-v37-training-report",
+  "source": "owner supplied actual audio+video",
+  "durationSec": 195.583,
+  "sourceFramesPerSpeechEvent": 1,
+  "segmentation": "energy VAD; not ASR",
+  "VADgroups": [
+    10,
+    14,
+    1,
+    10,
+    10,
+    1,
+    10,
+    10,
+    10,
+    21,
+    1,
+    10,
+    13,
+    10,
+    11,
+    11,
+    11,
+    5
+  ],
+  "VADspeechCandidateEvents": 169,
+  "trainingWithMeasuredPixels": 128,
+  "groupHoldoutEvents": 41,
+  "featureRows": 169,
+  "unsampledVideoFrames": 0,
+  "holdoutGroupIds": [
+    3,
+    7,
+    11,
+    15
+  ],
+  "audioToOwnerVisible2DTargets": {
+    "oralDarkAreaRatio": {
+      "status": "passed",
+      "train": 128,
+      "heldout": 41,
+      "mae": 0.02097,
+      "staticBaselineMAE": 0.02839,
+      "relativeImprovementPct": 26.14
+    },
+    "oralCandidateWidthRatio": {
+      "status": "passed",
+      "train": 128,
+      "heldout": 41,
+      "mae": 0.09319,
+      "staticBaselineMAE": 0.11082,
+      "relativeImprovementPct": 15.91
+    },
+    "oralCandidateHeightRatio": {
+      "status": "passed",
+      "train": 128,
+      "heldout": 41,
+      "mae": 0.09875,
+      "staticBaselineMAE": 0.11529,
+      "relativeImprovementPct": 14.35
+    },
+    "vermillionCandidateWidthRatio": {
+      "status": "passed",
+      "train": 128,
+      "heldout": 41,
+      "mae": 0.03706,
+      "staticBaselineMAE": 0.08921,
+      "relativeImprovementPct": 58.45
+    },
+    "vermillionCandidateHeightRatio": {
+      "status": "passed",
+      "train": 128,
+      "heldout": 41,
+      "mae": 0.04577,
+      "staticBaselineMAE": 0.10359,
+      "relativeImprovementPct": 55.82
+    },
+    "chinEdgeYRatio": {
+      "status": "passed",
+      "train": 120,
+      "heldout": 40,
+      "mae": 0.01151,
+      "staticBaselineMAE": 0.01739,
+      "relativeImprovementPct": 33.84
+    }
+  },
+  "observedMouthPCA": {
+    "dim": 12,
+    "heldoutReconstructionMAE": 0.024787,
+    "staticMeanMAE": 0.044437
+  },
+  "weakVowelClassification": {
+    "groupsUsed": [
+      0,
+      3,
+      4,
+      6,
+      7,
+      8,
+      11,
+      13
+    ],
+    "heldoutGroupIds": [
+      11,
+      13
+    ],
+    "heldoutSamples": 20,
+    "sequenceAgreement": 0.35,
+    "independentlyVerifiedPronunciationAccuracy": null
+  },
+  "3DRigMapping": {
+    "apertureHeightRatioP10": 0.13432836532592773,
+    "apertureHeightRatioP90": 0.5820895433425903,
+    "minJawRad": 0.015,
+    "maxJawRad": 0.245,
+    "source": "observed_2D_mouth_aperture_calibration_not_bone_angle_truth",
+    "anatomicalTmjAngleMeasured": false
+  },
+  "observed3DTongue": false,
+  "observedJawBoneAngle": false,
+  "research3DTongueMotorPrior": true,
+  "verifiedPhoneLabels": 0,
+  "deploymentGate": "PREVIEW_ONLY_BECAUSE_NO_OWNER_3D_TONGUE_OR_CONFIRMED_TIMINGS",
+  "trainedFromUserVoiceAndVideo": true,
+  "trainedFromSyntheticTongueOnly": false,
+  "statisticalCaution": "Holdouts are from same speaker/video, not unseen identity. Mouth targets are imperfect color/contrast/chin proxies. Weak vowel matches are not ASR accuracy.",
+  "video": "owner_authorized_pronunciation_source.mp4"
+}

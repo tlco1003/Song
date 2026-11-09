@@ -1,0 +1,50 @@
+name: SONG Vision v35 3D articulatory contracts
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/song-vision-v35-3d-contracts.yml'
+      - 'song_vision/*v35*'
+      - 'song_vision/README_V35.md'
+      - 'docs/song-vision-v35-articulatory-3d.html'
+      - 'docs/vision-owner/SONG_V35_TONGUE_3D_*.mp4'
+      - 'docs/index.html'
+      - 'docs/song-vision-lab.html'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  articulator_3d:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install the geometry testing dependencies
+        run: python -m pip install 'numpy>=1.26,<3' 'trimesh>=4,<6'
+      - name: Check 3D tongue, palate, mandible, teeth, contact, and 399 onset-vowel pairs
+        run: python -m unittest discover -s song_vision -p 'test_owner_v35_articulatory_3d.py' -v
+      - name: Check sample rendered MP4 and research page / homepage links
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          samples=['SONG_V35_TONGUE_3D_TEN_VOWELS.mp4','SONG_V35_TONGUE_3D_NINETEEN_CONSONANTS.mp4']
+          html=Path('docs/song-vision-v35-articulatory-3d.html').read_text(encoding='utf-8')
+          home=Path('docs/index.html').read_text(encoding='utf-8')
+          lab=Path('docs/song-vision-lab.html').read_text(encoding='utf-8')
+          for name in samples:
+              video=Path('docs/vision-owner')/name
+              assert video.is_file() and video.stat().st_size>120_000
+              assert b'ftyp' in video.read_bytes()[:64]
+              assert name in html and name in lab
+          assert samples[0] in home
+          assert 'song-vision-v35-articulatory-3d.html' in home
+          assert '미완료' in html and '실측' in html
+          print('OWNER_3D_TONGUE_FIT=NOT_PERFORMED')
+          print('REAL_AUDIO_SYNC=NOT_VALIDATED')
+          print('3D_GEOMETRY_TESTS=PASS')
+          PY
+      - name: Compile v35 Python modules
+        run: python -m py_compile song_vision/owner_v35_articulatory_3d.py song_vision/owner_v35_text_to_3d.py song_vision/render_owner_v35_3d.py

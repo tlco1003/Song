@@ -1,5 +1,6 @@
 /** Privacy-minimized, aggregate funnel metrics. No customer text or email stored. */
-import {FieldValue} from 'firebase-admin/firestore';
+// Firebase is installed in the deployed Functions package, not root test package.
+// Import it lazily only when an actual Firestore event is recorded.
 import {now,json,stop,checkOrigin,respond} from './production-runtime.mjs';
 export const PUBLIC_EVENTS=Object.freeze([
  'home_view','story_started','story_submitted','packages_view',
@@ -29,6 +30,7 @@ export async function handleFunnelEvent(req,res,{db,env}){
  let event;
  try{event=safeFunnelEvent(json(req,500));}
  catch(_){stop(400,'이벤트 형식이 올바르지 않습니다.');}
+ const {FieldValue}=await import('firebase-admin/firestore');
  await db.collection('withuAnalyticsDaily').doc(dayKey(now())).set({
   day:dayKey(now()),events:{[event]:FieldValue.increment(1)},
   updatedAt:now()
@@ -36,6 +38,7 @@ export async function handleFunnelEvent(req,res,{db,env}){
  respond(res,202,{status:'accepted'});return true;
 }
 export async function recordVerifiedPurchase(db,orderId,{upgrade=false}={}){
+ const {FieldValue}=await import('firebase-admin/firestore');
  const marker=db.collection('withuAnalyticsConversions').doc(
   (upgrade?'upgrade_':'order_')+orderId);
  const day=dayKey(now()),daily=db.collection('withuAnalyticsDaily').doc(day);

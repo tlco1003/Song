@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#211b29"><meta name="description" content="SONG AI v36 3D 혀 위치·구강 내 공간과 실제 한국어 발음 소리의 공명 차이 비교. 초성 19개, 중성 21개, 음향 학습 검증.">
+<title>WITHU | SONG AI v36 · 혀 3D와 발음 소리 학습</title>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}
+body{margin:0;background:#211b29;color:#f6eaf3;font-family:"Gowun Batang",serif}
+header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ffffff2b;padding:16px max(18px,calc((100% - 1100px)/2))}
+header a{color:#f6d2e5;text-decoration:none}.brand{font:30px "Cormorant Garamond",serif;letter-spacing:.17em}
+main{max-width:1100px;margin:0 auto;padding:34px 17px 80px}
+.eyebrow{display:inline-block;border:1px solid #c8acbb;border-radius:28px;padding:7px 12px;font:12px sans-serif;letter-spacing:.07em;color:#f0d6e4}
+h1{font-size:clamp(28px,4.4vw,43px);font-weight:400;line-height:1.48;margin:15px 0}
+h2{font-size:23px;font-weight:400;margin:6px 0 12px}
+p{line-height:1.9;color:#e2d0dd;word-break:keep-all}
+.panel{background:#ffffff0b;border:1px solid #ffffff25;border-radius:14px;padding:16px;margin:21px 0}
+video,audio{width:100%;display:block;background:#121018;border-radius:9px;max-height:75vh}
+button{font-family:inherit}
+.seek{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px;margin:14px 0 10px}
+.seek button{border:1px solid #b998aa;color:#f9e7f3;background:#ffffff12;padding:9px 2px;font-size:20px;border-radius:8px;cursor:pointer}
+.seek button[aria-pressed=true]{background:#8d637e;border-color:#f7d5e5}
+.small{font:13px/1.8 sans-serif;color:#dcc5d1}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+a{color:#f4c7d9;text-underline-offset:4px}
+.stat{font:15px/1.7 sans-serif;color:#e8d1dd}
+.warning{border-left:3px solid #edaa9f;padding-left:15px}
+table{width:100%;border-collapse:collapse;font:14px/1.6 sans-serif}
+th,td{padding:11px 9px;border-bottom:1px solid #ffffff1b;text-align:left}
+th{color:#f1d3e5;font-weight:500}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.panel{padding:11px}.seek button{font-size:17px}}
+</style></head><body>
+<header><a href="index.html" class="brand">WITHU</a><a href="song-vision-lab.html">← 전체 연구 영상</a></header>
+<main>
+<span class="eyebrow">SONG-VISION v36 · 3D TONGUE / VOCAL TRACT ACOUSTICS</span>
+<h1>숨겨진 혀의 위치가<br>실제로 소리를 어떻게 바꿀까?</h1>
+<p>기존 v35의 3D 혀·턱·입술·구개 모델에서 <strong>공기가 지나가는 성도 단면적</strong>을 계산하고, 그 공명 주파수를 실제 발음 영상의 음성과 비교하도록 확장했어. 음소 하나의 얼굴 그림을 저장하는 것이 아니라 혀·입술·턱·연구개·성문 제어를 독립적으로 계산해.</p>
+<section class="panel">
+<h2>01 · 실제 내 발음 소리와 숨겨진 3D 혀 대조</h2>
+<p class="small">9.13초 · 원본 사용자 Speaking 음성 포함 · 정면 발음 영상 + 연구용 3D 혀 단면 + 음향 공명 비교. 발음 시간은 사용자가 알려준 모음 순서를 바탕으로 자동 검출한 임시 후보야.</p>
+<video id="owner-audio-v36" controls playsinline preload="metadata" aria-label="실제 사용자 발음 영상과 3D 혀 구강 모델의 공명 주파수를 시간에 맞춰 비교하는 연구 영상"><source src="vision-owner/SONG_V36_3D_TONGUE_VS_REAL_VOICE.mp4" type="video/mp4">MP4를 지원하지 않아.</video>
+<div class="seek" id="seek-vowels" aria-label="모음별 실제 발음 재생 구간"></div>
+<p class="small" id="video-status" role="status">아·야·어·여·오·요·우·유·으·이. 이 구간의 음소 정답은 검증 대기 상태야.</p>
+<p><a href="vision-owner/SONG_V36_3D_TONGUE_VS_REAL_VOICE.mp4" rel="noopener" target="_blank">원본 음성 포함 영상 크게 보기</a></p>
+</section>
+<section class="panel">
+<h2>02 · 자음 19개 3D 접촉과 기식·후두 제어</h2>
+<p class="small">10.13초 · 무음. ㄱ·ㄲ·ㄴ·ㄷ·ㄸ·ㄹ·ㅁ·ㅂ·ㅃ·ㅅ·ㅆ·ㅇ·ㅈ·ㅉ·ㅊ·ㅋ·ㅌ·ㅍ·ㅎ의 접촉 위치와 다음 모음으로의 전이. 실제 한국어 자음 소리를 생성한 것은 아니야.</p>
+<video controls playsinline preload="metadata" aria-label="한국어 자음 초성 19개 혀끝 혀뒷부분 치아 입술 연구개 후두 3D 연구 영상"><source src="vision-owner/SONG_V36_19_CONSONANT_CONTACT_AND_AIRWAY.mp4" type="video/mp4">MP4를 지원하지 않아.</video>
+<p><a href="vision-owner/SONG_V36_19_CONSONANT_CONTACT_AND_AIRWAY.mp4" rel="noopener" target="_blank">자음 19개 영상 크게 보기</a></p>
+</section>
+<div class="grid">
+<section class="panel">
+<h2>03 · 소리 차이 실험</h2>
+<p>3D 혀·입술·턱 모형에서 계산한 단순화된 성도 공명을 이용해 만든 <strong>원본 합성 실험음</strong>이야. 어떤 모음처럼 들리는지 비교할 수 있지만 한국어 음성으로 검증된 합성기는 아니야.</p>
+<audio controls preload="metadata" aria-label="연구용 1차원 성도 공명으로 합성한 10개 모음의 실험음"><source src="vision-owner/SONG_V36_ARTICULATORY_FORMANT_PROBES_NOT_KOREAN_TTS.wav" type="audio/wav"></audio>
+<p class="small"><a href="vision-owner/SONG_V36_ARTICULATORY_FORMANT_PROBES_NOT_KOREAN_TTS.wav">실험음 WAV 파일</a></p>
+</section>
+<section class="panel">
+<h2>04 · 실제 음향 검증 결과</h2>
+<p class="stat">실험용 3D 자세 517개로 9개 조음 변수 → 단순 성도 공명값을 학습했고, 미사용 가상 자세 104개에서 F1 예측 MAE 약 7.7Hz, F2 약 17.7Hz였어.</p>
+<p class="small warning">이는 가상 시뮬레이터를 근사하는 정확도야. 실제 한국어 발음 합성이나 사용자 혀 위치의 정확도를 증명하지 않아.</p>
+</section>
+</div>
+<section class="panel">
+<h2>정확히 어떤 점이 아직 틀릴까?</h2>
+<p>실제 사용자 음성의 <strong>‘이’ F2 후보는 약 2,733Hz</strong>이지만, 현재 3D 구강 모형은 약 <strong>1,560Hz</strong>로 계산돼. 또한 단순 역방향 음향 후보 검사는 평가 가능한 9개 중 2개만 사용자가 알려준 발음 순서와 첫 후보가 일치했어.</p>
+<p class="warning">이 숫자는 음성 인식 정확도가 아니라 **현재 모델 불일치 진단**이야. 가려진 혀 위치를 정답으로 학습했다고 표시하지 않았고, 입술이 움직인다고 해서 자동으로 한국어 소리의 정확한 발음이 만들어지는 단계도 아니야.</p>
+<table>
+<tr><th>구조</th><th>현재 구현</th></tr>
+<tr><td>혀·경구개·턱·입술 3D</td><td>일반형 3D 메쉬와 움직임 제어 구현</td></tr>
+<tr><td>혀 위치 → 구강 단면적 → 소리 공명</td><td>단순 1D 음향 모델 연결</td></tr>
+<tr><td>자음·모음 전체</td><td>초성 19 × 중성 21 = 399개 조음 목표 생성</td></tr>
+<tr><td>개인 혀의 실제 3D 위치 학습</td><td>미완료 · 영상에서 보이지 않는 부분은 추정</td></tr>
+<tr><td>비강 분지·파열 기류·VOT·F0 실제 합성</td><td>미완료 · 제어값만 분리</td></tr>
+<tr><td>사용자 개인의 자연스러운 한국어 3D 립싱크</td><td>미완료 · 음향 차이 검증 필요</td></tr>
+</table>
+<p class="small">일차 연구: <a href="https://pubmed.ncbi.nlm.nih.gov/8675847/" rel="noopener" target="_blank">Story 외(1996), MRI 성도 단면적</a>, <a href="https://www.sciencedirect.com/science/article/pii/S0095447019303481" rel="noopener" target="_blank">Maeda(1991), 턱·혀 보상 조음</a>, <a href="https://www.kci.go.kr/kciportal/landing/article.kci?arti_id=ART002512535" rel="noopener" target="_blank">안미진(2019), 한국어 F0·VOT</a>.</p>
+<p><a href="https://github.com/tlco1003/Song/blob/main/song_vision/README_V36.md" rel="noopener" target="_blank">전체 논문 근거 · 코드 재현 · 검증 경계</a> · <a href="song-vision-v35-articulatory-3d.html">이전 3D 조음 v35</a></p>
+</section>
+</main>
+<script>
+(()=>{
+const vowels=['ㅏ','ㅑ','ㅓ','ㅕ','ㅗ','ㅛ','ㅜ','ㅠ','ㅡ','ㅣ'];
+const startSec=[.17,1.07,2.14,3.05,4.04,4.93,5.81,6.70,7.69,8.55];
+const endSec=[.73,1.69,2.60,3.47,4.46,5.34,6.27,7.21,8.15,8.92];
+const video=document.getElementById('owner-audio-v36'),container=document.getElementById('seek-vowels'),status=document.getElementById('video-status');let seekStop=-1;
+vowels.forEach((v,i)=>{
+ const b=document.createElement('button');b.textContent=v;b.type='button';b.setAttribute('aria-pressed','false');
+ b.onclick=()=>{
+  container.querySelectorAll('button').forEach((x,j)=>x.setAttribute('aria-pressed',String(j===i)));
+  video.currentTime=Math.max(0,startSec[i]-.05);seekStop=endSec[i]+.07;
+  status.textContent=v+'의 실제 사용자 음성, 3D 혀 모형, 공명 후보값 비교 중. 정답 발음 라벨은 아직 검증되지 않았어.';
+  const p=video.play();if(p&&p.catch)p.catch(()=>status.textContent='영상의 재생 버튼을 눌러줘.');
+ };container.appendChild(b);
+});
+video.addEventListener('timeupdate',()=>{if(seekStop>=0&&video.currentTime>=seekStop){video.pause();seekStop=-1}});
+video.addEventListener('error',()=>{status.textContent='재생할 수 없다면 위 링크를 새 창에서 열어줘.'},true);
+})();
+</script></body></html>

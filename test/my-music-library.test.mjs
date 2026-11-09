@@ -21,7 +21,7 @@ test('products and music configuration appear before bottom launch sale notes',(
  assert.ok(checkout.indexOf('class="promotion-note"')<
   checkout.indexOf('data-checkout-step="review"'));
  assert.doesNotMatch(checkout,/<em class="choice-highlight">출시 특가세일<\/em>/);
- assert.match(checkout,/출시 기념 특가세일/);
+ assert.match(checkout,/투명한 제작·가격 안내/);
  assert.match(checkout,/data-reference-for="audio"/);
  assert.ok(!checkout.includes('다운로드 제공'));
 });

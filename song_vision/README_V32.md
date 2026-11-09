@@ -25,3 +25,6 @@
 Required packages: numpy, scipy, opencv-python, Pillow, ffmpeg; locally mounted user source videos.
 
 The video is a diagnosis: left neutral, center appearance with REAL mouth pixels, right unverified segmentation mask overlays. The labels `ㅏ,ㅗ,ㅜ` are style targets mapped to visibly similar observed shapes, **not** phonetic labels measured from the corresponding video frame. Interpolation is not a trained physically-based motion path.
+
+## Self-supervised owner 2D motion training (executed)
+`train_owner_v32_motion_prior.py` learns a 3-component PCA basis of lower-face 24×40×2 optical-flow fields from six observed frames in `IMG_0853.mp4`; two distinct video samples from `IMG_0854.mp4` are held out as a probe. Training-reconstruction MAE 0.4576 flow units; heldout projection 1.7182 versus zero-motion 2.3144. **The heldout projection uses the target's flow for coefficients and therefore is NOT prediction accuracy or phoneme/3D training.** Private basis data is never published to the public Github site. This provides a reproducible starting point for later verified audio/text-conditioned 3D jaw/skin learning, not a working 3D model.

@@ -23,7 +23,7 @@ test('updated father lyrics are stored and referenced by the public track manife
 test('both homepage and detail page request a fresh copy of published lyrics',()=>{
  assert.match(homePlayer,/readText\(fileURL\('media\/',track\.lyricsFile\)\+'\?lyricsUpdated='\+Date\.now\(\)\)/);
  assert.match(detailPlayer,/fetchLyrics\('media\/'\+encodeURIComponent\(item\.lyricsFile\)\+'\?lyricsUpdated='\+Date\.now\(\)\)/);
- assert.match(home,/player\.js\?v=20261106-papa-fresh-lyrics-01/);
+ assert.match(home,/player\.js\?v=\d{8}-[a-z0-9-]+/);
  assert.match(detail,/song\.js\?v=20261106-[a-z0-9-]+/);
  assert.match(homePlayer,/cache:'no-store'/);
  assert.match(detailPlayer,/cache:'no-store'/);

@@ -22,7 +22,11 @@ test('published family MP4s remain audible without a separate audio asset',()=>{
  assert.match(detailPlayer,/video\.muted=hasSeparateAudio/);
  assert.match(detailPlayer,/player=hasSeparateAudio\|\|!isVideo\?audio:video/);
  assert.match(homePlayer,/videoPlayer\.muted=false;videoPlayer\.defaultMuted=false/);
- assert.match(homePlayer,/video\.muted=false;video\.defaultMuted=false;video\.controls=true/);
+ // Mother's MP4 is muted when a separate MP3 supplies its audio.
+ const mother=tracks.find(item=>item.id==='song-mother');
+ assert.equal(mother.audioFile,'mother-song.mp3');
+ assert.match(homePlayer,/video\.muted=true;video\.defaultMuted=true/);
+ assert.match(homePlayer,/video\.controls=false;video\.loop=true/);
 });
 
 test('audio-first upgrade supports dedicated audio without duplicate audible video',()=>{

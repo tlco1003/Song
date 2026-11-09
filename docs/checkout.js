@@ -62,6 +62,9 @@ function showPrices(){
  for(const node of document.querySelectorAll('[data-price-for]')){
   node.textContent=priceText(prices?.products.find(p=>p.id===node.dataset.priceFor));
  }
+ for(const node of document.querySelectorAll('[data-compare-price]')){
+  node.textContent=priceText(prices?.products.find(p=>p.id===node.dataset.comparePrice));
+ }
  $('order-price').textContent=totalText();
  $('selection-total').textContent=totalText();
  const extras=[];

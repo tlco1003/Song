@@ -1,0 +1,39 @@
+{
+  "type": "v33_acoustic_feature_to_2D_oral_candidate_ridge",
+  "trainSpeechEvents": 128,
+  "heldoutSpeechEvents": 41,
+  "heldoutGroups": [
+    3,
+    7,
+    11,
+    15
+  ],
+  "results": {
+    "oralDarkCandidateAreaPx": {
+      "mae": 198.5165,
+      "staticMeanMAE": 228.1068,
+      "betterThanStatic": true,
+      "improvementPct": 12.97
+    },
+    "oralCandidateHeightPx": {
+      "mae": 7.2888,
+      "staticMeanMAE": 8.3613,
+      "betterThanStatic": true,
+      "improvementPct": 12.83
+    },
+    "lipRedCandidateWidthPx": {
+      "mae": 6.3555,
+      "staticMeanMAE": 9.8207,
+      "betterThanStatic": true,
+      "improvementPct": 35.28
+    },
+    "lipRedCandidateHeightPx": {
+      "mae": 5.3141,
+      "staticMeanMAE": 6.2742,
+      "betterThanStatic": true,
+      "improvementPct": 15.3
+    }
+  },
+  "canDeployAsLipSync": false,
+  "reason": "regression targets are unverified 2D image proxies; vowel identity/timing is not independently labeled and cheek/jaw 3D are absent"
+}

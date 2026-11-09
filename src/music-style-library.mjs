@@ -11,6 +11,7 @@
 import {readFileSync} from 'node:fs';
 import {resolve,join} from 'node:path';
 import {AppError} from './lib.mjs';
+import {readPrivateStyleEvidence} from './private-style-evidence.mjs';
 
 export const GENRE_KEYS=Object.freeze(['발라드','어쿠스틱','재즈','트로트','R&B','K-POP','인디팝']);
 export const ERA_KEYS=Object.freeze(['auto','none','1960s','1970s','1980s','1990s','2000s','2010s','2020s']);
@@ -83,6 +84,11 @@ export function composeServerMusicStyle({
  const blendText=blendGenre?(privateRecipe('genre',blendGenre,privateDirectory)||GENERIC_GENRES[blendGenre]):'';
  const eraText=era==='none'?'':privateRecipe('era',era,privateDirectory)||GENERIC_ERAS[era];
  const moodText=privateRecipe('mood',mood,privateDirectory)||MOODS[mood];
+ // Evidence is optional until an operator has supplied sourced private records.
+ // Missing records never invent music statistics or replace customer choice.
+ const evidenced=era==='none'?null:readPrivateStyleEvidence(privateDirectory,{
+  genreSlug:SAFE_SLUGS[genre],era
+ });
  const phrasing=Object.freeze({
   auto:'Natural Korean syllable stress and spoken rhythm.',
   casual:'Respect informal Korean lyric sentence endings.',
@@ -105,6 +111,7 @@ export function composeServerMusicStyle({
   genre:'Chosen genre: '+genre+'. '+genreText,
   blend:blendGenre?'Blend in '+blendGenre+' while retaining the primary identity: '+blendText:'',
   era:eraText?'Era '+era+' (inspired, not copied): '+eraText:'',
+  evidence:evidenced?evidenced.cue:'',
   mood:moodText,
   phrasing,arc:emotionalArc,
   preserve:'Preserve the selected genre and customer story over era assumptions.',
@@ -114,7 +121,7 @@ export function composeServerMusicStyle({
  // arc options make the full scaffold exceed Suno's 1000-char Style limit,
  // compact ONLY generic scaffolding. Never silently drop a purchased arc.
  const assemble=p=>[
-  p.opening,p.genre,p.blend,p.era,p.mood,p.phrasing,
+  p.opening,p.genre,p.blend,p.era,p.evidence,p.mood,p.phrasing,
   p.arc,p.preserve,p.second
  ].filter(Boolean).join('\n');
  let stylePreset=assemble(parts);

@@ -71,10 +71,34 @@ async function refresh(){
  const result=await api('/api/admin/orders');
  orders=result.orders||[];
  renderOrders();
+ void refreshFunnel();
  if(selected){
   const current=orders.find(o=>o.id===selected.id);
   if(current)select(current);
  }
+}
+async function refreshFunnel(){
+ const panel=$('admin-funnel-summary');if(!panel)return;
+ try{
+  const result=await api('/api/admin/analytics');
+  const sum={};
+  for(const row of result.rows||[])
+   for(const [key,value] of Object.entries(row.events||{}))
+    sum[key]=(sum[key]||0)+Number(value||0);
+  const labels=[
+   ['home_view','홈 방문'],['story_started','사연 작성 시작'],
+   ['story_submitted','사연 작성 완료'],['packages_view','상품 페이지 방문'],
+   ['package_selected','상품 변경'],['checkout_opened','결제 페이지 방문'],
+   ['payment_attempted','결제 시도'],['purchase_verified','서버 결제 승인'],
+   ['upgrade_verified','원본 음원 추가 결제 승인']
+  ];
+  panel.replaceChildren();
+  for(const [key,label] of labels){
+   const p=document.createElement('p');
+   p.textContent=label+' · '+Number(sum[key]||0).toLocaleString('ko-KR')+'회';
+   panel.appendChild(p);
+  }
+ }catch(_){panel.textContent='운영 Firebase 서버에서만 방문·주문 집계를 확인할 수 있어요.';}
 }
 function txt(tag,content,cls=''){
  const el=document.createElement(tag);

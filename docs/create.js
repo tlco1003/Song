@@ -107,6 +107,7 @@ $('go-create').addEventListener('click',event=>{
  try{
   sessionStorage.setItem(ORDER_KEY,JSON.stringify(draft));
   save();
+  window.dispatchEvent(new Event('withu:story-submitted'));
  }catch(_){
   event.preventDefault();
   error('주문 선택값을 저장할 수 없습니다. Safari 일반 탭에서 다시 이용해 주세요.');

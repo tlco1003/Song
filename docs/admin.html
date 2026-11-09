@@ -4,7 +4,7 @@
 <meta name="robots" content="noindex,nofollow">
 <title>WITHU · 운영자 제작 관리실</title>
 <link rel="stylesheet" href="style.css"><link rel="stylesheet" href="admin.css?v=production-02">
-<script type="module" src="admin.js?v=production-02"></script>
+<script type="module" src="admin.js?v=20261109-funnel-01"></script>
 </head>
 <body class="admin-body">
 <header class="site-header"><div class="frame header-inner">
@@ -36,7 +36,13 @@
 </div><p>결제 확인 · 가사 제작 · 직접 음원 제작 · 고객 발송 상태를 확인할 수 있습니다.</p>
 <div id="admin-order-list" class="admin-order-list" aria-live="polite"></div>
 </section>
-<section class="admin-card" id="admin-production" hidden>
+<section class="admin-card" id="admin-funnel-panel">
+ <span class="small-caps">WITHU · BUSINESS METRICS</span>
+ <h2>지난 7일간의 주문 흐름</h2>
+ <p>사연·이메일을 저장하지 않는 집계입니다. 방문과 클릭은 중복 가능, 결제 수는 서버의 실제 PG 승인 건만 집계합니다.</p>
+ <div id="admin-funnel-summary" class="admin-order-list" role="status" aria-live="polite">집계 불러오는 중…</div>
+ </section>
+ <section class="admin-card" id="admin-production" hidden>
 <span class="small-caps">WITHU · PRIVATE PRODUCTION</span>
 <h2>고객 주문별 제작 및 전달</h2>
 <div class="admin-detail-info">

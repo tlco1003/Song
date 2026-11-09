@@ -127,6 +127,7 @@ function select(o){
  },null,2);
  $('admin-finalize').disabled=o.paymentStatus!=='paid'||o.delivery?.status==='sent';
  $('admin-retry-ai').disabled=o.paymentStatus!=='paid'||o.delivery?.status==='sent';
+  $('admin-resend-receipt').disabled=o.paymentStatus!=='paid';
  $('admin-revoke').disabled=!o.delivery?.messageId;
  const area=$('admin-song-editor');area.replaceChildren();
  const n=o.productId==='audio_duo'?2:1;
@@ -243,6 +244,13 @@ async function send(){
   '고객 링크 메일 발송 API가 접수했습니다. 실제 수신함 도착은 이메일 제공사에서 확인해야 합니다.');
  await refresh();
 }
+async function resendReceipt(){
+ if(!selected)throw Error('주문을 먼저 선택해 주세요.');
+ const result=await api('/api/admin/orders/'+selected.id+'/resend-receipt',{method:'POST',data:{}});
+ workStatus(result.status==='already_sent'?'주문 접수 이메일은 이미 발송 접수됐어요.':
+  '주문 접수 이메일을 발송사에 요청했어요. 실제 수신 여부는 별도 확인이 필요해요.');
+ await refresh();
+}
 async function retry(){
  if(!selected)throw Error('주문을 먼저 선택하세요.');
  const result=await api('/api/admin/orders/'+selected.id+'/retry-production',{
@@ -267,5 +275,6 @@ $('admin-sign-out').addEventListener('click',run(async()=>{
 $('admin-refresh').addEventListener('click',run(refresh));
 $('admin-finalize').addEventListener('click',run(send,workStatus));
 $('admin-retry-ai').addEventListener('click',run(retry,workStatus));
+$('admin-resend-receipt').addEventListener('click',run(resendReceipt,workStatus));
 $('admin-revoke').addEventListener('click',run(revoke,workStatus));
 void init().catch(error=>status(error.message));

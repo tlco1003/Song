@@ -127,3 +127,23 @@
 
 .download-recovery-label{display:block;font-size:13px;font-weight:700;margin:15px 0 8px;color:#72566b}
 #download-recovery-email{box-sizing:border-box;border:1px solid #dbc4d0;border-radius:9px;padding:13px 12px;background:white;color:#503a4b;width:100%;font-size:14px}
+
+/* Customer-only QR gift and printable keepsake. */
+.gift-extras{margin:28px auto;padding:26px 22px;background:#ffffff0b;border:1px solid #e3c5d44d;border-radius:16px}
+.gift-extras h2{font-size:clamp(21px,4vw,27px);margin:10px 0}
+.gift-extras p{line-height:1.8;color:#eadce5;font-size:14px}
+.gift-extra-actions{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+.gift-qr-container{margin:16px auto;text-align:center;background:#fff;padding:18px;border-radius:14px;width:max-content;max-width:100%}
+.gift-qr-container p{font-size:12px;color:#583d4f;max-width:270px}
+#gift-qr-code{width:240px;height:240px;max-width:100%;margin:auto}
+#gift-qr-code canvas,#gift-qr-code img{max-width:100%;height:auto}
+.withu-print-sheet{display:none}
+@media print{
+ body.withu-print-mode{background:#fff!important;color:#111!important}
+ body.withu-print-mode>:not(.withu-print-sheet){display:none!important}
+ body.withu-print-mode>.withu-print-sheet{display:block!important;margin:0 auto;width:100%;padding:24mm 15mm;box-sizing:border-box;background:white;color:black}
+ .withu-print-sheet h1{text-align:center;font:700 22pt/1.4 serif;margin:0 0 10mm}
+ .withu-print-sheet>p{text-align:center;font:11pt/1.5 sans-serif;color:#555;margin-bottom:15mm}
+ .withu-print-sheet pre{font:12pt/1.85 "Malgun Gothic",sans-serif;white-space:pre-wrap;word-break:keep-all}
+ .withu-print-sheet footer{text-align:center;margin-top:20mm;font-size:9pt;color:#666}
+}

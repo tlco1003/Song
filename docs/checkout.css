@@ -367,3 +367,10 @@
 .track-style-card label{font-size:12px;color:#765d6e}
 .track-style-card select{box-sizing:border-box;min-width:0;width:100%;font-size:13px;padding:10px;border-radius:8px;border:1px solid #d9c9d4;background:white;color:#4d3b49}
 @media(max-width:520px){.per-track-style-grid{grid-template-columns:1fr}}
+
+.gift-package-comparison{margin:20px 0 28px;padding:19px;border:1px solid #bcaab9;border-radius:14px;background:#fff9}
+.gift-package-comparison h3{font-size:21px;margin:0 0 9px}
+.gift-package-comparison>p{font-size:13px;line-height:1.7;opacity:.85}
+.package-compare-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.package-compare-scroll table{border-collapse:collapse;width:100%;min-width:530px;font-size:13px;line-height:1.5}
+.package-compare-scroll th,.package-compare-scroll td{text-align:left;padding:11px 10px;border-bottom:1px solid #d4c5d1}

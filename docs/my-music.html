@@ -7,8 +7,8 @@
 <title>WITHU · 나의 노래함</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="song.css?v=20261107-owner-download-02">
-<script src="cover-store.js" defer></script><script src="song.js?v=20261107-owner-download-02" defer></script>
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="song.css?v=20261109-gift-extras-01">
+<script src="cover-store.js" defer></script><script src="vendor/qrcode.min.js" defer></script><script src="song.js?v=20261109-gift-extras-01" defer></script>
 </head>
 <body class="song-detail-body my-music-body" data-withu-view="customer">
 <header class="site-header"><div class="frame header-inner">
@@ -95,7 +95,20 @@
     </div>
     <p class="sharing-caveat">인스타그램·틱톡은 기기 공유 메뉴에서 지원되는 경우 선택하거나 링크를 복사해 붙여넣을 수 있어요. 세로 카드 이미지는 저장해 스토리·사진 게시물에 올린 뒤, 노래 링크를 프로필이나 링크 스티커에 추가할 수 있어요. 음악 파일을 앱에 자동 게시하려면 플랫폼 승인과 별도 이용 권리가 필요해요.</p>
    </section>
-   <section class="gift-comments-section" id="gift-comments-section" aria-labelledby="gift-comments-title">
+   <section id="gift-extras" class="gift-extras" hidden aria-labelledby="gift-extras-heading">
+ <span class="small-caps">THE KEEPSAKE</span>
+ <h2 id="gift-extras-heading">나의 노래를 오래 기억하는 방법</h2>
+ <p>무료 감상 링크를 담은 QR 선물 카드와 인쇄용 가사를 만들 수 있어요. QR에는 원본 다운로드 권한이 포함되지 않습니다.</p>
+ <div class="gift-extra-actions">
+ <button id="gift-qr-show" type="button" class="detail-outline">선물용 QR 보기</button>
+ <button id="gift-qr-save" type="button" class="detail-outline" hidden>QR 카드 PNG 저장</button>
+ <button id="gift-lyrics-print" type="button" class="detail-outline">가사 인쇄 · PDF 저장</button>
+ </div>
+ <div id="gift-qr-container" class="gift-qr-container" hidden>
+ <div id="gift-qr-code" aria-label="노래 공유용 QR 코드"></div>
+ <p>스캔하면 무료 감상 링크가 열립니다. 감상 링크는 만료될 수 있어요.</p>
+ </div><p id="gift-extras-status" role="status" aria-live="polite"></p>
+ </section><section class="gift-comments-section" id="gift-comments-section" aria-labelledby="gift-comments-title">
     <span class="small-caps">WORDS THAT STAY</span>
     <h2 id="gift-comments-title">이 노래에 남기는 마음</h2>
     <p>축하·감사·응원의 한마디를 남겨 주세요. 개인정보와 광고를 보호하기 위해 운영자 확인 후 댓글이 공개돼요.</p>

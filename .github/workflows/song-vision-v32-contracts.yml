@@ -1,0 +1,64 @@
+name: SONG Vision v32 oral/phoneme/3D contracts
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/song-vision-v32-contracts.yml'
+      - 'song_vision/*v32*'
+      - 'song_vision/README_V32.md'
+      - 'docs/song-vision-v32-oral.html'
+      - 'docs/vision-owner/SONG_V32_REAL_INNER_ORAL_PIXELS_DIAGNOSTIC.mp4'
+      - 'docs/index.html'
+      - 'docs/song-vision-lab.html'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate all Hangul jamo and refuse guessed phonetic timing
+        shell: bash
+        run: |
+          PYTHONPATH=song_vision python - <<'PY'
+          from korean_phone_contract_v32 import *
+          assert (len(ONSETS),len(NUCLEI),len(CODAS)) == (19,21,28)
+          assert len(list(enumerate_all_syllables())) == 11172
+          assert split_hangul('감사')[0].nucleus == 'ㅏ'
+          try: validate_for_training(create_pending_annotations('엄마 안녕','speaking.mp4',25))
+          except ValueError: pass
+          else: raise AssertionError('Guessed phoneme labels were accepted')
+          from owner_v32_3d_contract import default_neutral,export_3d_job_contract
+          assert export_3d_job_contract('owner',default_neutral())['evidence']['owner3DFitPerformed'] is False
+          print('Full Hangul Unicode inventory, phoneme fail-closed, and conservative 3D contract verified')
+          PY
+      - name: Verify public assets and pages
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          video='SONG_V32_REAL_INNER_ORAL_PIXELS_DIAGNOSTIC.mp4'
+          p=Path('docs/vision-owner')/video
+          assert p.is_file() and p.stat().st_size>100_000
+          assert b'ftyp' in p.read_bytes()[:64]
+          for html in ['docs/index.html','docs/song-vision-lab.html','docs/song-vision-v32-oral.html']:
+              s=Path(html).read_text(encoding='utf-8')
+              assert video in s,html
+          page=Path('docs/song-vision-v32-oral.html').read_text(encoding='utf-8')
+          assert '미완료' in page and '미검증' in page
+          print('v32 media, navigation and honest status disclosures OK')
+          PY
+      - name: Validate source syntax
+        run: |
+          python -m py_compile song_vision/owner_v32_oral_segmentation.py song_vision/korean_phone_contract_v32.py song_vision/owner_v32_3d_contract.py song_vision/render_owner_v32.py
+      - name: Separate real accomplishments from unfinished 3D learning
+        run: |
+          echo 'OWNER_REAL_ORAL_PIXELS=YES'
+          echo 'KOREAN_ALL_JAMO_SCHEMA=YES'
+          echo 'MEDICAL_INNER_LIP_SEGMENTATION_VERIFIED=NO'
+          echo 'PHONEME_TIMINGS_HUMAN_VERIFIED=NO'
+          echo 'OWNER_3D_MESH_FITTED=NO'

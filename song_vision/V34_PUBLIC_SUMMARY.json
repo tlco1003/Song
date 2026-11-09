@@ -1,0 +1,64 @@
+{
+  "version": "SONG-Vision v34 audio/video cross-modal weak vowel verification",
+  "totalSpeechCandidates": 169,
+  "exactTenEventGroups": [
+    0,
+    3,
+    4,
+    6,
+    7,
+    8,
+    11,
+    13
+  ],
+  "excludedNonTenGroups": [
+    1,
+    2,
+    5,
+    9,
+    10,
+    12,
+    14,
+    15,
+    16,
+    17
+  ],
+  "modalityTraining": {
+    "audio": "audio waveform -> log-Mel and MFCC (no video features)",
+    "silent_video": "V33 ROI contrast/brightness proxies (no audio features)"
+  },
+  "trainingEvents": 60,
+  "testEvents": 20,
+  "heldoutGroups": [
+    11,
+    13
+  ],
+  "heldoutAgreementWithWeakPosition": {
+    "audio": 0.85,
+    "video": 0.5,
+    "audio_video_same_class": 0.45,
+    "both_match_weak_position": 9,
+    "chance10class": 0.1
+  },
+  "importantLimitations": [
+    "NOT pretrained ASR; no autonomous literal transcription or consonant recognition",
+    "VAD event count equals 10 is not proof of vowel row or correct order",
+    "Weak 10-vowel labels come only from user-reported fixed sequence; therefore these are not true phoneme recognition accuracies",
+    "Video input uses dark/red region proxies not verified inner lip/teeth anatomy",
+    "Small and uneven speaker dataset; room/acoustic variation and identity leakage possible",
+    "Cross-modal agreement cannot prove correctness if both models learn the same biases",
+    "Human-verified audio phone and time labels or independent Korean ASR are required before reporting reliable phoneme accuracy"
+  ],
+  "firstTenFromOwnerDeclaredOrder": [
+    "아",
+    "야",
+    "어",
+    "여",
+    "오",
+    "요",
+    "우",
+    "유",
+    "으",
+    "이"
+  ]
+}

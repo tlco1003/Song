@@ -24,14 +24,14 @@ test('seller proposed regular prices remain gated behind independently documente
  assert.equal((100000-29000)/100000*100,71);
  assert.equal((200000-39000)/200000*100,80.5);
  const html=read('docs/checkout.html'),js=read('docs/checkout.js');
- assert.match(html,/출시 기념 특가세일/);
+ assert.match(html,/투명한 제작·가격 안내/);
  assert.match(html,/data-promo-for="audio"[^>]*hidden/);
  assert.match(html,/data-promo-for="audio_duo"[^>]*hidden/);
  // The creator-defined price is displayed with an explicit explanation,
  // never masquerading as an earlier completed sale.
  assert.match(html,/data-reference-for="audio"/);
  assert.match(html,/data-reference-for="audio_duo"/);
- assert.match(html,/종전거래가격을 의미하지 않습니다/);
+ assert.match(html,/검증되지 않은 정상가·할인율/);
  assert.match(html,/제작자가 고객의 사연과 가사/);
  assert.match(js,/const verified=promotionFor\(node\.dataset\.referenceFor\)/);
  assert.match(js,/node\.hidden=!verified/);

@@ -1,0 +1,100 @@
+{
+  "modelVersion": "SONG_V33_OWNER_AUDIO_VISUAL_WEAK_LABEL",
+  "videoSourceFilename": "pronunciation_25mb.mp4",
+  "durationSec": 195.584,
+  "videoFps": 30.0,
+  "expectedUserScriptSyllables": 140,
+  "speechSegmentsCandidateCount": 169,
+  "speechGroups": 18,
+  "groupSizes": [
+    10,
+    14,
+    1,
+    10,
+    10,
+    1,
+    10,
+    10,
+    10,
+    21,
+    1,
+    10,
+    13,
+    10,
+    11,
+    11,
+    11,
+    5
+  ],
+  "firstTenProvisionalLabels": [
+    "아",
+    "야",
+    "어",
+    "여",
+    "오",
+    "요",
+    "우",
+    "유",
+    "으",
+    "이"
+  ],
+  "confirmedPhonemeTimingCount": 0,
+  "validMouthSegmentFeatures": 169,
+  "invalidSampleAttempts": 0,
+  "trainedModel": "PCA on grayscale actual mouth region, not predictive lip-sync",
+  "trainingEventCount": 135,
+  "holdoutEventCount": 34,
+  "pcaComponents": 12,
+  "holdoutMouthReconstructionMAE_0to1": 0.016153544187545776,
+  "holdoutStaticMeanMAE_0to1": 0.03258731961250305,
+  "holdoutReconstructionImprovementPct": 50.43,
+  "vowelPrototypeCount": 10,
+  "annotationStatus": "Weak labels for the initial 10 based on user-declared ordering; remaining VAD groups need verification and include possible retakes",
+  "notCompleted": [
+    "independently verified speech-to-text",
+    "150+ phoneme-level alignment",
+    "consonant+vowel supervised classifier",
+    "jaw-bone 3D",
+    "anatomical mouth landmarks and muscle ground truth"
+  ],
+  "privacy": "Training tensors must remain private, publish only summarized metrics and masked preview",
+  "audioToMouthSupervisedProxy": {
+    "type": "v33_acoustic_feature_to_2D_oral_candidate_ridge",
+    "trainSpeechEvents": 128,
+    "heldoutSpeechEvents": 41,
+    "heldoutGroups": [
+      3,
+      7,
+      11,
+      15
+    ],
+    "results": {
+      "oralDarkCandidateAreaPx": {
+        "mae": 198.5165,
+        "staticMeanMAE": 228.1068,
+        "betterThanStatic": true,
+        "improvementPct": 12.97
+      },
+      "oralCandidateHeightPx": {
+        "mae": 7.2888,
+        "staticMeanMAE": 8.3613,
+        "betterThanStatic": true,
+        "improvementPct": 12.83
+      },
+      "lipRedCandidateWidthPx": {
+        "mae": 6.3555,
+        "staticMeanMAE": 9.8207,
+        "betterThanStatic": true,
+        "improvementPct": 35.28
+      },
+      "lipRedCandidateHeightPx": {
+        "mae": 5.3141,
+        "staticMeanMAE": 6.2742,
+        "betterThanStatic": true,
+        "improvementPct": 15.3
+      }
+    },
+    "canDeployAsLipSync": false,
+    "reason": "regression targets are unverified 2D image proxies; vowel identity/timing is not independently labeled and cheek/jaw 3D are absent"
+  }
+}

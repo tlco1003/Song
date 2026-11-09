@@ -262,7 +262,8 @@ async function loadPrivate(token=null){
     }
    }catch(_){/* Not critical to playback. */}
   }
-  void loadGiftComments();
+  if($('gift-extras'))$('gift-extras').hidden=!privateShareUrl;
+   void loadGiftComments();
   if(j.testOnly===true){
    $('detail-private-note').textContent='[로컬 시연] 이 노래는 실제 결제 상품이 아닌 시험 주문의 음원입니다.';
    if(j.commercialUpgrade?.status==='active')
@@ -287,6 +288,7 @@ async function loadPrivate(token=null){
   audio.removeAttribute('src');video.removeAttribute('src');
   track=null;mediaReady=false;isPrivate=false;
   privateLicense=null;privateTrackChoices=[];privateShareUrl=null;
+   if($('gift-extras'))$('gift-extras').hidden=true;
   $('download-track').hidden=true;
   $('download-track').removeAttribute('href');
   $('commercial-upgrade-panel').hidden=true;
@@ -492,6 +494,89 @@ function saveVerticalGiftCard(){
  document.body.appendChild(a);a.click();a.remove();
  notice('9:16 세로형 선물 카드를 저장했어요. SNS에 올린 뒤 무료 노래 링크를 함께 붙여 주세요.');
 }
+
+/* QR generation runs locally; never upload share tokens to image services. */
+const giftQR=$('gift-qr-code'),giftQRWrap=$('gift-qr-container');
+let giftQRValue=null;
+function extraStatus(value){const node=$('gift-extras-status');if(node)node.textContent=value}
+function ensureGiftQR(){
+ const link=sharingLink();
+ if(!isPrivate||!privateShareUrl||link!==privateShareUrl){
+  extraStatus('고객 전용 무료 감상 링크를 먼저 확인해 주세요.');return false;
+ }
+ const url=new URL(link,location.href);
+ if(url.origin!==location.origin||url.pathname!=='/gift.html'
+   ||!/^#delivery=[A-Za-z0-9_-]{43}$/.test(url.hash)){
+  extraStatus('공유용 선물 링크의 형식이 올바르지 않습니다.');return false;
+ }
+ if(typeof QRCode!=='function'){
+  extraStatus('QR 모듈을 읽지 못했어요. 무료 감상 링크 복사 기능을 이용해 주세요.');return false;
+ }
+ if(giftQRValue!==link||!giftQR.hasChildNodes()){
+  giftQR.replaceChildren();
+  new QRCode(giftQR,{text:link,width:240,height:240,colorDark:'#261d29',
+   colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+  giftQRValue=link;
+ }
+ giftQRWrap.hidden=false;$('gift-qr-save').hidden=false;
+ extraStatus('이 QR은 무료 감상용이며 원본 다운로드 권한이 포함되지 않습니다.');
+ return true;
+}
+const qrShow=$('gift-qr-show');
+if(qrShow)qrShow.addEventListener('click',ensureGiftQR);
+const qrSave=$('gift-qr-save');
+if(qrSave)qrSave.addEventListener('click',()=>{
+ if(!ensureGiftQR())return;
+ const qr=giftQR.querySelector('canvas');
+ if(!qr){extraStatus('QR 이미지가 준비되지 않았어요.');return;}
+ try{
+  const card=document.createElement('canvas');card.width=900;card.height=1200;
+  const ctx=card.getContext('2d');if(!ctx)throw Error('canvas');
+  const gradient=ctx.createLinearGradient(0,0,900,1200);
+  gradient.addColorStop(0,'#fffafc');gradient.addColorStop(1,'#e7d2df');
+  ctx.fillStyle=gradient;ctx.fillRect(0,0,900,1200);
+  ctx.strokeStyle='#a87993';ctx.lineWidth=3;ctx.strokeRect(35,35,830,1130);
+  ctx.fillStyle='#593750';ctx.textAlign='center';
+  ctx.font='36px Georgia, serif';ctx.fillText('WITHU · MUSIC LETTER',450,175,810);
+  ctx.font='bold 42px sans-serif';
+  ctx.fillText(String(track?.title||'나의 음악 선물').slice(0,28),450,340,790);
+  ctx.fillStyle='#fff';ctx.fillRect(263,421,374,374);
+  ctx.imageSmoothingEnabled=false;ctx.drawImage(qr,285,443,330,330);
+  ctx.fillStyle='#593750';ctx.font='26px sans-serif';
+  ctx.fillText('QR을 스캔해 음악 선물을 열어보세요',450,890,790);
+  ctx.font='20px sans-serif';
+  ctx.fillText('무료 감상 · 원본 음원 다운로드 권한 미포함',450,953,800);
+  ctx.font='24px Georgia, serif';ctx.fillText('WITHU · ONLY FOR YOU',450,1075,800);
+  const a=document.createElement('a');a.href=card.toDataURL('image/png');
+  a.download='WITHU-share-qr-card.png';document.body.appendChild(a);a.click();a.remove();
+  extraStatus('QR 선물 카드 PNG 저장을 요청했어요.');
+ }catch(_){extraStatus('QR 선물 카드를 저장할 수 없어요. 다른 브라우저에서 시도해 주세요.');}
+});
+const printLyrics=$('gift-lyrics-print');
+if(printLyrics)printLyrics.addEventListener('click',()=>{
+ if(!track||!isPrivate||$('my-music-customer')?.hidden){
+  extraStatus('인증된 고객의 노래에서만 이용할 수 있어요.');return;
+ }
+ const lyrics=$('detail-lyrics-text').textContent||'';
+ if(lyrics.trim().length<10){
+  extraStatus('인쇄할 가사가 아직 준비되지 않았어요.');return;
+ }
+ const sheet=document.createElement('section');sheet.className='withu-print-sheet';
+ const title=document.createElement('h1');title.textContent=track.title||'WITHU 음악 선물';
+ const sub=document.createElement('p');sub.textContent='WITHU · '+(track.genre||'음악 선물');
+ const body=document.createElement('pre');body.textContent=lyrics;
+ const end=document.createElement('footer');end.textContent='WITHU · 당신의 마음이 노래가 되는 순간';
+ sheet.append(title,sub,body,end);document.body.appendChild(sheet);
+ document.body.classList.add('withu-print-mode');
+ const clear=()=>{
+  document.body.classList.remove('withu-print-mode');sheet.remove();
+  window.removeEventListener('afterprint',clear);
+ };
+ window.addEventListener('afterprint',clear,{once:true});
+ try{window.print()}catch(_){clear();extraStatus('이 기기에서는 인쇄를 열 수 없어요.');return;}
+ extraStatus('인쇄 화면에서 프린터 또는 PDF로 저장을 선택해 주세요.');
+});
+
 const cardButton=$('gift-share-card');
 if(cardButton)cardButton.addEventListener('click',saveVerticalGiftCard);
 $('share-button').addEventListener('click',()=>{void shareSong()});

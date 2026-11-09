@@ -7,6 +7,7 @@ import {admin,now,json,checkOrigin,stop,respond,paid,
  countTracks,adminSummary,hash,approvedTracks}
  from './production-runtime.mjs';
 import {sendCompletedEmail} from './production-delivery.mjs';
+import {sendPaidOrderReceipt} from './order-status-portal.mjs';
 
 function validateSound(name,bytes){
  if(typeof name!=='string'||!/^[a-zA-Z0-9_. -]{1,100}\.(mp3|m4a|wav)$/i.test(name))
@@ -112,7 +113,12 @@ export async function handleProductionAdmin(req,res,{db,bucket,auth,env,fetcher}
   });
   respond(res,200,{status:'approved',index});return true;
  }
- const deliver=/^\/api\/admin\/orders\/(withu_[a-f0-9]{32})\/deliver$/.exec(path);
+ const receipt=/^\/api\/admin\/orders\/(withu_[a-f0-9]{32})\/resend-receipt$/.exec(path);
+  if(req.method==='POST'&&receipt){
+   json(req,400);
+   respond(res,200,await sendPaidOrderReceipt({db,orderId:receipt[1],env,fetcher}));return true;
+  }
+  const deliver=/^\/api\/admin\/orders\/(withu_[a-f0-9]{32})\/deliver$/.exec(path);
  if(req.method==='POST'&&deliver){
   json(req,400);
   const ref=db.collection('withuOrders').doc(deliver[1]);

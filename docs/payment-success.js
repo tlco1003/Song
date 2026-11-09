@@ -28,7 +28,7 @@ async function confirm(){
   link.textContent='내 노래함에서 다운로드';link.hidden=false;
  }else{
   title.textContent='결제가 완료됐어요!';
-  detail.textContent='실제 결제 승인 금액을 서버에서 확인했어요. 고객이 선택한 내용에 따라 곡 제작이 시작되며, 완성 후 이메일로 개인 감상 링크를 보내드려요.';
+  detail.textContent='결제를 서버에서 확인했어요. 입력한 이메일로 주문 접수·제작 상태 링크 발송을 시도합니다. 완성곡 검수 이후에는 별도로 나의 노래함 감상 링크를 보내드려요. 실제 이메일 수신 여부는 메일함에서 확인해 주세요.';
   back.hidden=false;
  }
 }

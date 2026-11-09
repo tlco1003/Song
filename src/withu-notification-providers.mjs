@@ -10,7 +10,7 @@
  */
 import {normalizeKoreanMobile,normalizeDeliveryChannel}
  from './customer-notification-contact.mjs';
-import {composeCompletedMusicEmail} from './withu-customer-email-template.mjs';
+import {composeCompletedMusicEmail,composeOrderReceivedEmail} from './withu-customer-email-template.mjs';
 
 const BIZGO_URL='https://mars.ibapi.kr/api/comm/v1/send/omni';
 const RESEND_URL='https://api.resend.com/emails';
@@ -116,7 +116,26 @@ export function createResendTransactionalMailer({
 }={}){
  if(typeof fetcher!=='function')throw new Error('Server fetch capability required');
  return Object.freeze({
-  async sendPersonalListeningLink({to,listeningUrl,subject,idempotencyKey}={}){
+  async sendOrderStatusLink({to,orderStatusUrl,idempotencyKey}={}){
+    if(typeof to!=='string'||to.length>254||!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/u.test(to))
+     throw Error('Verified customer email required');
+    const base=new URL(config.WITHU_PUBLIC_BASE_URL),target=new URL(orderStatusUrl);
+    if(base.protocol!=='https:'||target.origin!==base.origin||
+      target.pathname!=='/order-status.html'||target.search||
+      !/^#status=[A-Za-z0-9_-]{43}$/.test(target.hash))
+     throw Error('Order status link must be HTTPS, same-origin, and token-scoped');
+    const mail=composeOrderReceivedEmail({statusUrl:target.href});
+    const result=await jsonResponse(await fetcher(RESEND_URL,{
+     method:'POST',headers:{Authorization:'Bearer '+configField(config.RESEND_API_KEY,'RESEND_API_KEY'),
+      'Content-Type':'application/json','Idempotency-Key':requireIdempotencyKey(idempotencyKey)},
+     body:JSON.stringify({from:configField(config.WITHU_FROM_EMAIL,'WITHU_FROM_EMAIL'),
+      to:[to],...mail}),signal:AbortSignal.timeout(10000)
+    }));
+    if(typeof result.id!=='string'||result.id.length<5)
+     throw Error('Receipt provider did not accept the email');
+    return {messageId:result.id,provider:'resend'};
+   },
+   async sendPersonalListeningLink({to,listeningUrl,subject,idempotencyKey}={}){
    if(typeof to!=='string'||to.length>254
      ||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/u.test(to))
     throw new Error('Verified customer email is required');

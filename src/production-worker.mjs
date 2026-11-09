@@ -7,6 +7,7 @@
 import {makeLyricsFromPrivatePrompt} from './providers.mjs';
 import {buildSongProductionPlan} from './song-production-plan.mjs';
 import {now,paid} from './production-runtime.mjs';
+import {sendPaidOrderReceipt} from './order-status-portal.mjs';
 
 function musicPlan(order,lyrics){
  const draft=order.draft;
@@ -95,7 +96,13 @@ export async function processVerifiedPaidWork({db,orderId,env=process.env,fetche
    updatedAt:now(),alertStatus:'pending'
   }
  });
- // Manual fallback always remains visible in Firestore regardless of email.
+ // Send a separate status email without granting media before delivery.
+  let receiptStatus='failed';
+  try{
+   const receipt=await sendPaidOrderReceipt({db,orderId,env,fetcher});
+   receiptStatus=receipt.status;
+  }catch(_){/* statusReceipt.failed is persisted for an operator retry. */}
+  // Manual fallback always remains visible in Firestore regardless of email.
  const updated={...order,confirmedLyrics:plan?lyrics:null};
  let receipt=null;
  try{receipt=await alertOwner({orderId,order:updated,env,fetcher});}
@@ -103,5 +110,5 @@ export async function processVerifiedPaidWork({db,orderId,env=process.env,fetche
  if(receipt)await ref.update({'production.alertStatus':'provider_accepted',
   'production.alertMessageId':receipt});
  return {status:'manual_required',lyricsReady:Boolean(plan),
-  operatorEmailAccepted:Boolean(receipt)};
+  operatorEmailAccepted:Boolean(receipt),receiptStatus};
 }

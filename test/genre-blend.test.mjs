@@ -39,8 +39,10 @@ test('catalog contains one 5000 KRW per-order option, no fake reference price',(
  assert.equal(catalog.addOns.genreBlend.chargeUnit,'per_order');
  assert.ok(!JSON.stringify(catalog).includes('referencePrice'));
  assert.ok(!checkoutPage.includes('100,000원'));
- assert.ok(checkoutPage.includes('58,000원'));
- assert.ok(checkoutPage.includes('39,000원'));
+ assert.ok(checkoutPage.includes('id="duo-price-explanation"'));
+ assert.ok(checkout.includes('singlePrice*2'));
+ assert.ok(checkout.includes('singlePrice*2-duoPrice'));
+ assert.ok(!checkoutPage.includes('<s>개별 구매 58,000원</s>'));
  assert.ok(checkoutPage.includes('맞춤 가사 + 음원 1곡 제작'));
  assert.ok(checkoutPage.includes('전용 링크로 감상'));
  assert.ok(!checkoutPage.includes('다운로드 제공'));

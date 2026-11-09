@@ -71,7 +71,7 @@ th{color:#f5d9e5;font-weight:500}
  let end=-1;
  syllables.forEach((v,i)=>{const b=document.createElement('button');b.type='button';b.textContent=v;b.setAttribute('aria-pressed','false');
  b.onclick=()=>{buttons.querySelectorAll('button').forEach((q,j)=>q.setAttribute('aria-pressed',String(j===i)));
- player.currentTime=i*.64;end=Math.min(6.4,(i+1)*.64);
+ const starts=[0,.75,1.55,2.15,2.75,3.35,3.95,4.55,5.2,5.85];const stops=[.75,1.55,2.15,2.75,3.35,3.95,4.55,5.2,5.85,6.4];player.currentTime=starts[i];end=stops[i];
  status.textContent=v+'의 실제 원본 음성과 입술·턱 추정값, 3D 혀 사전값을 비교해. 발음 정답 라벨은 미검증이야.';
  const p=player.play();if(p&&p.catch)p.catch(()=>status.textContent='영상의 재생 버튼을 직접 눌러줘.');};buttons.appendChild(b)});
  player.addEventListener('timeupdate',()=>{if(end>=0&&player.currentTime>=end){player.pause();end=-1}});

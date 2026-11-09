@@ -250,7 +250,7 @@ def train(video:Path,out:Path):
       'trainedFromUserVoiceAndVideo':True,'trainedFromSyntheticTongueOnly':False,
       'statisticalCaution':'Holdouts are from same speaker/video, not unseen identity. Mouth targets are imperfect color/contrast/chin proxies. Weak vowel matches are not ASR accuracy.'}
     (out/'OWNER_V37_TRAINING_REPORT.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2))
-    (out/'OWNER_V37_PRIVATE_EVENTS.json').write_text(json.dumps({'containsFacialData':True,'rows':rows,'featureTargets':Y.tolist()},ensure_ascii=False))
+    (out/'OWNER_V37_PRIVATE_EVENTS.json').write_text(json.dumps({'containsFacialData':True,'rows':rows,'featureTargets':[[None if not np.isfinite(v) else float(v) for v in row] for row in Y]},ensure_ascii=False,allow_nan=False))
     return summary
 
 

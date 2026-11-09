@@ -1,0 +1,34 @@
+{
+  "version": "v36_forward_synthetic_articulatory_acoustic_regression",
+  "supervision": "synthetic_1d_tube_simulator_only",
+  "features": [
+    "jaw_rad",
+    "tip_z",
+    "blade_z",
+    "body_z",
+    "dorsum_z",
+    "root_z",
+    "lip_width",
+    "lip_open",
+    "lip_protrusion"
+  ],
+  "inputDimension": 9,
+  "syntheticSamples": 517,
+  "trainCount": 413,
+  "testCount": 104,
+  "randomPerVowelHoldout": true,
+  "metrics": {
+    "F1": {
+      "heldoutMAE_Hz": 7.73,
+      "staticMeanBaselineMAE_Hz": 31.48
+    },
+    "F2": {
+      "heldoutMAE_Hz": 17.67,
+      "staticMeanBaselineMAE_Hz": 109.7
+    }
+  },
+  "actualKoreanSpeechSoundTrained": false,
+  "actualOwnerTonguePositionsLearned": false,
+  "simulatorPhysicalAccuracyClinicallyVerified": false,
+  "note": "Surrogate learns predicted resonance changes for tongue/lips/jaw poses; cannot recover unique tongue pose from audio"
+}

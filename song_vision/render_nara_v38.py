@@ -239,7 +239,8 @@ def active_interval(intervals:list[tuple[float,float]],t:float):
 def create_mp4(*,audio_path:Path,lyrics_path:Path,image_path:Path,weights_path:Path,
                mapping_path:Path,training_report:Path,output:Path,start:float,seconds:float,
                alignment_path:Path|None=None,draft_preview:bool=False,
-               fps:int=24,width:int=512,height:int=512):
+               fps:int=24,width:int=512,height:int=512,
+               phone_alignment_path:Path|None=None):
     if not (1<=seconds<=120) or fps not in (20,24,25,30):
         raise ValueError('Preview limited to 1-120 seconds, 20/24/25/30 fps')
     if not (256<=width<=1280 and 256<=height<=1280 and width%2==0 and height%2==0):
@@ -261,7 +262,29 @@ def create_mp4(*,audio_path:Path,lyrics_path:Path,image_path:Path,weights_path:P
         wave,sr,duration=decode_audio(audio_path,tmp/'owner_track.wav')
         if start<0 or start+seconds>duration+1e-4:
             raise ValueError(f'Requested clip {start}..{start+seconds}s outside audio {duration}s')
-        intervals,align_status=timing_contract(parts,duration,alignment_path,draft_preview)
+        # v39 gives the actual phone boundaries to the *existing native v38 renderer*.
+        # A forced-alignment guess is only permitted in explicit draft-preview mode.
+        phone_contract=None;phone_quality=None
+        if phone_alignment_path is not None:
+            from song_v39_alignment import validate_phone_alignment, verified_to_v38_syllables, phone_at
+            phone_contract=json.loads(Path(phone_alignment_path).read_text(encoding='utf-8'))
+            phone_quality=validate_phone_alignment(
+                phone_contract,lyric,duration,require_verified=not draft_preview)
+            if phone_quality['humanVerifiedPhonemeTiming']:
+                if alignment_path is not None:
+                    checked=json.loads(Path(alignment_path).read_text(encoding='utf-8'))
+                    truth=verified_to_v38_syllables(phone_contract,lyric,duration)
+                    if checked != truth:
+                        raise ValueError('Syllable and phone verified alignment do not match')
+                intervals=[(float(row['start']),float(row['end'])) for row in phone_contract['syllables']]
+                align_status='human_verified'
+            else:
+                if not draft_preview:
+                    raise ValueError('Cannot render unreviewed phoneme candidate in production')
+                intervals=[(float(row['start']),float(row['end'])) for row in phone_contract['syllables']]
+                align_status='mfa_candidate_NOT_verified'
+        else:
+            intervals,align_status=timing_contract(parts,duration,alignment_path,draft_preview)
         model=LearnedOwnerArticulator(weights_path,mapping_path)
         photo,box=load_portrait(image_path,width,height)
         visual=Visible3DFaceRenderer(photo,box)
@@ -285,7 +308,7 @@ def create_mp4(*,audio_path:Path,lyrics_path:Path,image_path:Path,weights_path:P
                 inferred=model.predict_rig(wave,sr,a,b,vowel=v,onset=None,explicit_prompt=align_status=='human_verified')
                 from owner_v35_articulatory_3d import RigControls
                 state=RigControls(**inferred['rigControls'])
-                if idx is not None and fraction<.21 and onset!='ㅇ':
+                if phone_contract is None and idx is not None and fraction<.21 and onset!='ㅇ':
                     consonant=consonant_pose(onset,v)
                     state=dataclasses.replace(state,
                       tip_z=(consonant.tip_z*(1-fraction/.21)+state.tip_z*fraction/.21),
@@ -305,6 +328,15 @@ def create_mp4(*,audio_path:Path,lyrics_path:Path,image_path:Path,weights_path:P
                         jaw_rad=float(tau*state.jaw_rad+(1-tau)*prev.jaw_rad),
                         lip_width=float(tau*state.lip_width+(1-tau)*prev.lip_width),
                         lip_open=float(tau*state.lip_open+(1-tau)*prev.lip_open))
+                # Apply the timed IPA / reviewed Hangul phone at this exact
+                # video frame; observed 2D voice-driven jaw/lips remain learned,
+                # while hidden tongue is an explicit v35 articulation prior.
+                timed_phone=None
+                if phone_contract is not None:
+                    from song_v39_phone_rig import update_controls
+                    timed_phone=phone_at(phone_contract,t)
+                    state=update_controls(state,timed_phone,t,
+                                          vowel_pose=vowel_pose,consonant_pose=consonant_pose)
                 state.validate()
                 # This is a live 3D tongue computation (not a decorative label).
                 # v35 enforces a hard-palate nonpenetration guard on the hidden
@@ -327,7 +359,10 @@ def create_mp4(*,audio_path:Path,lyrics_path:Path,image_path:Path,weights_path:P
                       'onset':onset if idx is not None else '', 'vowel':v if idx is not None else '',
                       'jawProxyRad':round(state.jaw_rad,5),'mouthOpening':round(state.lip_open,5),
                       'trainedOwnerAudioModelUsed':inferred['owner2DAudioVisualModelUsed'],
-                      'tonguePersonSpecificObserved':False})
+                      'tonguePersonSpecificObserved':False,
+                      'phoneSlot':timed_phone.get('slot') if timed_phone else None,
+                      'phoneSymbol':timed_phone.get('symbol') if timed_phone else None,
+                      'phoneBoundaryReviewed':bool(phone_quality and phone_quality['humanVerifiedPhonemeTiming'])})
                 prev=state
         finally:
             writer.release()
@@ -351,6 +386,9 @@ def create_mp4(*,audio_path:Path,lyrics_path:Path,image_path:Path,weights_path:P
       'videoWidth':width,'videoHeight':height,'videoSizeBytes':output.stat().st_size,
       'mouthMotionAdjacentMAE255':round(float(np.mean(visual_motion)),5),
       'lyricsSyllableCount':len(parts),'lyricsAlignmentStatus':align_status,
+      'timedPhoneModelApplied':phone_contract is not None,
+      'phoneIntervalsVerifiedByHuman':bool(phone_quality and phone_quality['humanVerifiedPhonemeTiming']),
+      'timedPhoneEvents':phone_quality['phones'] if phone_quality else 0,
       'ownerRealAudioToVisibleFaceWeightsUsed':True,
       'rigCalculatedPerFrame':True,
       'rigJawMotionAndLip3D':True,
@@ -364,6 +402,7 @@ def create_mp4(*,audio_path:Path,lyrics_path:Path,image_path:Path,weights_path:P
       'commercialQualityApproved':False,
       'outputPath':str(output)
     }
+    output.with_suffix('.controls.json').write_text(json.dumps(state_records,ensure_ascii=False,indent=2),encoding='utf-8')
     output.with_suffix('.validation.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2),encoding='utf-8')
     return summary
 
@@ -373,6 +412,7 @@ def main(argv=None):
     for arg in ('audio','lyrics','portrait','weights','mapping','training-report','output'):
         p.add_argument('--'+arg,type=Path,required=True)
     p.add_argument('--alignment',type=Path)
+    p.add_argument('--phone-alignment',type=Path)
     p.add_argument('--draft-preview',action='store_true',help='Unverified lyric timing for research only')
     p.add_argument('--start',type=float,default=0)
     p.add_argument('--seconds',type=float,default=8)
@@ -383,7 +423,8 @@ def main(argv=None):
     res=create_mp4(audio_path=a.audio,lyrics_path=a.lyrics,image_path=a.portrait,
            weights_path=a.weights,mapping_path=a.mapping,training_report=a.training_report,output=a.output,
            start=a.start,seconds=a.seconds,alignment_path=a.alignment,
-           draft_preview=a.draft_preview,fps=a.fps,width=a.width,height=a.height)
+           draft_preview=a.draft_preview,fps=a.fps,width=a.width,height=a.height,
+           phone_alignment_path=a.phone_alignment)
     print(json.dumps(res,ensure_ascii=False,indent=2))
 
 if __name__=='__main__':

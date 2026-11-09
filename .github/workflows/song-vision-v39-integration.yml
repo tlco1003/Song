@@ -1,0 +1,49 @@
+name: SONG AI v39 phone-to-3D integrated pipeline contracts
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'song_vision/song_v39_*'
+      - 'song_vision/test_song_v39_pipeline.py'
+      - 'song_vision/README_V39.md'
+      - 'song_vision/render_nara_v38.py'
+      - '.github/workflows/song-vision-v39-integration.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate_engine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      OMP_NUM_THREADS: '2'
+      MKL_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install codecs, geometry and learner contract dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install 'numpy>=1.26,<3' 'scipy>=1.11' 'scikit-learn>=1.4' 'opencv-python-headless>=4.8' 'soundfile>=0.12' 'trimesh>=4'
+      - name: Exercise all 14 phone alignment, rig, native FFmpeg/MP4 and fail-closed tests
+        run: python -m unittest discover -s song_vision -p 'test_song_v39_pipeline.py' -v
+      - name: Verify existing v38 renderer still passes its interface tests
+        run: python -m unittest discover -s song_vision -p 'test_render_nara_v38.py' -v
+      - name: Compile installed SONG AI stages
+        run: |
+          python -m py_compile song_vision/song_v39_alignment.py song_vision/song_v39_phone_rig.py song_vision/song_v39_pipeline.py song_vision/song_v39_validator.py song_vision/render_nara_v38.py
+      - name: Prevent private owner checkpoint and annotated original data from being committed
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          root=Path('song_vision')
+          for f in root.rglob('*'):
+              if not f.is_file():continue
+              assert not f.name.endswith('_PRIVATE.npz')
+              assert 'owner_face/reference' not in f.as_posix()
+          print('CI SOFTWARE CONTRACTS ONLY; PRIVATE NARA MP4 NOT YET VERIFIED')
+          PY

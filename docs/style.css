@@ -265,3 +265,62 @@ button:focus-visible,a:focus-visible,label:focus-visible,.lyrics-scroll:focus-vi
  .album-panel.has-visual>.music-visual-stage{margin-top:0;margin-bottom:7px}
  .album-panel.has-visual>.album-art{margin-top:11px;margin-bottom:12px}
 }
+
+
+/* Conversion experience: credible research, real stories, transparent products */
+.hero-promise{max-width:730px;margin:15px auto 0!important;font-size:clamp(14px,1.6vw,17px)!important;color:#f4e6eb!important;line-height:1.85;word-break:keep-all}
+.hero-actions{display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;margin:21px 0 14px}
+.hero-primary{min-height:54px;box-shadow:0 11px 27px #150e1d60}
+.hero-secondary{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:54px;padding:13px 22px;border:1px solid #c7adbb;border-radius:7px;font-size:14px;color:#f9e7f0}
+.hero-secondary:hover{background:#ffffff19}
+.hero-assurance{font-size:12px!important;color:#d8c6d0!important;line-height:1.9}
+.why-song-section{padding:88px 0 78px;background:#faf7f4}
+.why-song-intro,.story-path-intro,.home-package-intro{text-align:center;max-width:780px;margin:0 auto 34px}
+.why-song-intro .small-caps,.home-package-intro .small-caps{color:#986e82}
+.why-song-intro h2,.story-path-intro h2,.home-package-intro h2{font:400 clamp(31px,4.4vw,53px)/1.4 "Gowun Batang",serif;margin:14px 0;letter-spacing:-.04em;word-break:keep-all}
+.why-song-intro em,.story-path-intro em{font-style:normal;color:#a6788d}
+.why-song-intro p,.story-path-intro p,.home-package-intro p{font-size:15px;line-height:1.9;color:#715e6c;word-break:keep-all}
+.why-song-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.why-song-card{display:flex;flex-direction:column;align-items:flex-start;gap:13px;min-width:0;padding:27px 23px;border-radius:14px;border:1px solid #e8d9df;background:#fff;box-shadow:0 12px 29px #6a40530b}
+.why-song-kicker,.home-package-tag{color:#9a7287;font:600 11px/1.5 "Cormorant Garamond",serif;letter-spacing:2px}
+.why-song-card h3{font:700 19px/1.6 "Gowun Batang",serif;margin:0;word-break:keep-all}
+.why-song-card p{color:#6a5a67;font-size:13px;line-height:1.9;margin:0;flex:1;word-break:keep-all}
+.why-song-card a{font-size:12px;line-height:1.65;color:#765068;text-decoration:underline;text-underline-offset:4px}
+.research-scope-note{font-size:12px;line-height:1.9;color:#7d707a;text-align:center;max-width:880px;margin:23px auto 0}
+.story-path-section{background:linear-gradient(140deg,#302638,#3d2d40);padding:92px 0;color:#f9eff5;text-align:center}
+.story-path-intro .small-caps{color:#d9b5c5}
+.story-path-intro p{color:#e3d1dc}
+.story-path-grid{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:17px;margin:0 0 31px;padding:0;text-align:left}
+.story-path-grid li{display:flex;align-items:flex-start;gap:12px;border-top:1px solid #c6a2b666;padding:17px 6px}
+.story-path-grid li>span{font:600 26px/1.5 "Cormorant Garamond",serif;color:#d9b1c8}
+.story-path-grid h3{font-size:17px;line-height:1.55;margin:4px 0 9px;word-break:keep-all}
+.story-path-grid li p{font-size:13px;color:#dac8d5;line-height:1.85;margin:0;word-break:keep-all}
+.story-path-cta{min-height:54px}
+.home-package-section{background:#f0e8eb;padding:90px 0 82px;text-align:center}
+.home-package-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;text-align:left}
+.home-package-card{min-width:0;display:flex;flex-direction:column;gap:12px;background:#fffafc;border:1px solid #dac4cf;border-radius:16px;padding:27px 24px}
+.home-package-featured{border:2px solid #916d83;box-shadow:0 14px 35px #82566c22}
+.home-package-card h3{font:700 22px/1.55 "Gowun Batang",serif;margin:0}
+.home-package-card p{font-size:13px;line-height:1.85;color:#6c5b65;margin:0;word-break:keep-all}
+.home-package-card strong{font-size:clamp(22px,2.5vw,31px);line-height:1.5;color:#593850;margin-top:auto;padding-top:7px}
+.home-package-card .home-duo-savings{color:#805875;font-size:12px}
+.home-package-card a{display:flex;justify-content:space-between;align-items:center;gap:10px;border-radius:7px;background:#3d2a3c;color:#fff;padding:13px 16px;font-size:13px}
+.home-package-card a:hover{background:#76556c}
+.home-package-disclosure,.home-package-status{font-size:12px;max-width:920px;margin:21px auto 0;line-height:1.85;color:#715b6c}
+.home-package-status{margin-top:7px;font-weight:700}
+.home-package-all{display:inline-block;margin-top:19px;text-decoration:underline;text-underline-offset:5px;color:#593b52;font-size:14px}
+@media(max-width:930px){
+ .why-song-grid,.home-package-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .why-song-card:last-child,.home-package-card:last-child{grid-column:1/-1}
+ .story-path-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:690px){
+ .hero-actions{flex-direction:column;gap:9px}
+ .hero-actions>a{width:min(100%,355px)}
+ .hero-promise{font-size:13px!important}
+ .why-song-section,.story-path-section,.home-package-section{padding:57px 0}
+ .why-song-intro h2,.story-path-intro h2,.home-package-intro h2{font-size:clamp(28px,7vw,40px)}
+ .why-song-grid,.home-package-grid,.story-path-grid{grid-template-columns:1fr}
+ .why-song-card:last-child,.home-package-card:last-child{grid-column:auto}
+ .why-song-card,.home-package-card{padding:23px 20px}
+}

@@ -12,9 +12,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20261107-video-first-layout-01">
+  <link rel="stylesheet" href="style.css?v=20261109-emotion-science-01">
   <script type="module" src="player.js?v=20261107-video-first-layout-01"></script>
   <script defer src="analytics.js?v=20261109-1"></script>
+  <script defer src="home-story.js?v=20261109-emotion-science-01"></script>
   <style>
     .v17-research-section{background:#29212e;color:#f6edf2;padding:55px 0 64px}
     .v17-research-head{text-align:center;max-width:740px;margin:0 auto 25px}
@@ -46,13 +47,14 @@
         <div class="small-caps">WITHU · MUSIC LETTERS</div>
         <h1 id="listening-title"><span>세상에서 하나뿐인 당신의 노래로,</span><span>마음을 담은 감동을 선물해요.</span></h1>
         <p>소중한 이야기가 오래 기억될 음악이 되는 순간.</p>
+        <p class="hero-promise">늘 고마웠던 마음, 함께 웃었던 그날, 아직 전하지 못한 한마디.<br>두 사람만 아는 진짜 이야기를 음악 편지에 담아보세요.</p>
+        <div class="hero-actions">
+          <a class="main-cta-link hero-primary" href="create.html">그 사람을 위한 노래 만들기 <span aria-hidden="true">↗</span></a>
+          <a class="hero-secondary" href="#why-a-song">음악 선물이 특별한 이유 <span aria-hidden="true">↓</span></a>
+        </div>
+        <p class="hero-assurance">실제 추억을 담고 · 취향에 맞는 음악을 선택하고 · 편지처럼 전하는 맞춤 노래</p>
       </div>
 
-      <aside aria-label="내 얼굴 AI 영상 빠른 확인" style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;max-width:760px;margin:0 auto 24px;padding:15px 18px;border:1px solid #b69aa9;border-radius:12px;background:#ffffff12">
-        <div><strong style="font-size:14px">SONG-Vision v18 · 내 자료로 만든 AI 영상</strong>
-          <p style="font-size:12px;color:#dccbd6;margin:5px 0 0">다른 사람 얼굴이 아닌 내가 올린 스피킹·AI 가수 영상 확인</p></div>
-        <a href="song-vision-lab.html" style="border:1px solid #ecd9e4;border-radius:8px;padding:11px 15px;font-size:13px;white-space:nowrap;color:#fff">▶ 입모양 학습 영상 바로 보기</a>
-      </aside>
       <div class="listening-grid">
         <section class="album-panel" aria-label="음악 플레이어">
           <div class="music-visual-stage" id="music-visual-stage" hidden>
@@ -142,8 +144,125 @@
     </div>
   </section>
 
+
+  <section class="why-song-section" id="why-a-song" aria-labelledby="why-song-title">
+    <div class="frame">
+      <header class="why-song-intro">
+        <span class="small-caps">WHY A MUSIC LETTER</span>
+        <h2 id="why-song-title">그날의 기억을 노래에 담고,<br><em>말하지 못한 마음을 전하세요.</em></h2>
+        <p>우리는 선물과 기억, 음악에 관한 심리학 연구에서 영감을 받았어요. 그 사람만 아는 진짜 이야기가 가장 중요한 출발점입니다.</p>
+      </header>
+      <div class="why-song-grid">
+        <article class="why-song-card">
+          <span class="why-song-kicker">01 · REMEMBER</span>
+          <h3>음악은 기억을 떠올리는 단서가 될 수 있어요.</h3>
+          <p>음악과 개인의 자전적 기억이 뇌에서 연결되는 양상을 살펴본 연구가 있어요. WITHU는 고객이 직접 알려 준 장소·대화·장면을 가사의 출발점으로 삼습니다.</p>
+          <a href="https://doi.org/10.1093/cercor/bhp008" target="_blank" rel="noopener noreferrer">Janata (2009) · Cerebral Cortex · 원논문 보기 ↗</a>
+        </article>
+        <article class="why-song-card">
+          <span class="why-song-kicker">02 · EXPERIENCE</span>
+          <h3>받은 선물보다 함께 경험한 순간이 오래 남을 수도 있어요.</h3>
+          <p>실제 선물 교환을 조사한 실험에서는 경험형 선물이 물건형 선물보다 관계를 강화한 결과가 있었고, 선물을 경험할 때의 감정이 중요한 역할을 했습니다.</p>
+          <a href="https://doi.org/10.1093/jcr/ucw067" target="_blank" rel="noopener noreferrer">Chan &amp; Mogilner (2017) · Journal of Consumer Research · 원논문 보기 ↗</a>
+        </article>
+        <article class="why-song-card">
+          <span class="why-song-kicker">03 · MEANING</span>
+          <h3>좋은 선물은 취향뿐 아니라 의미를 담을 수 있어요.</h3>
+          <p>선물하는 사람은 받는 이가 감상적 의미를 지닌 선물을 얼마나 좋아할지 과소평가하기도 한다는 연구가 있어요. 마음을 전하고 싶은 이유를 떠올려 보세요.</p>
+          <a href="https://doi.org/10.1016/j.jcps.2017.06.002" target="_blank" rel="noopener noreferrer">Givi &amp; Galak (2017) · Journal of Consumer Psychology · 원논문 보기 ↗</a>
+        </article>
+      </div>
+      <p class="research-scope-note">연구의 발견을 참고한 디자인입니다. 위 논문이 WITHU 제품의 구매율·감동·관계 개선 효과를 직접 검증한 것은 아닙니다. 개인의 반응은 다를 수 있어요.</p>
+    </div>
+  </section>
+  <section class="story-path-section" id="how-it-works" aria-labelledby="story-path-title">
+    <div class="frame">
+      <header class="story-path-intro">
+        <span class="small-caps">YOUR STORY · YOUR MUSIC</span>
+        <h2 id="story-path-title">두 사람만 아는 순간부터,<br><em>한 편의 음악 편지까지.</em></h2>
+        <p>작곡을 몰라도 괜찮아요. 실제 기억과 전하고 싶은 말을 들려주세요.</p>
+      </header>
+      <ol class="story-path-grid">
+        <li><span>01</span><div><h3>소중한 장면을 떠올려요</h3><p>장소, 계절, 그날의 행동과 함께했던 말을 적어 주세요. 실제 기억만 가사에 담습니다.</p></div></li>
+        <li><span>02</span><div><h3>좋아할 음악을 선택해요</h3><p>장르·분위기·추억의 시대를 직접 선택해요. 나이보다 취향을 먼저 생각합니다.</p></div></li>
+        <li><span>03</span><div><h3>가사와 완성곡을 검수해요</h3><p>고객의 말투와 의미를 살리고, 제작자가 결과를 검토해 음악을 선정합니다.</p></div></li>
+        <li><span>04</span><div><h3>이메일로 노래를 전해요</h3><p>정식 운영 시 주문별 링크로 감상하고, 무료 공유·QR 카드·가사 인쇄를 이용할 수 있어요.</p></div></li>
+      </ol>
+      <a href="create.html" class="main-cta-link story-path-cta">우리만의 이야기를 노래로 만들기 <span aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+  <section class="home-package-section" id="home-packages" aria-labelledby="home-package-title">
+    <div class="frame">
+      <header class="home-package-intro">
+        <span class="small-caps">CHOOSE YOUR MUSIC LETTER</span>
+        <h2 id="home-package-title">전하고 싶은 만큼, 원하는 모습으로.</h2>
+        <p>완성곡 수와 받을 수 있는 것을 한눈에 확인하세요. 실제 가격은 상품 데이터에서 자동으로 표시합니다.</p>
+      </header>
+      <div class="home-package-grid">
+        <article class="home-package-card">
+          <span class="home-package-tag">MUSIC LETTER · ONE</span>
+          <h3>맞춤 노래 1곡</h3>
+          <p>그 사람을 위해 쓴 가사와 음원 한 곡. 한 가지 감정을 깊게 전하고 싶을 때.</p>
+          <strong data-home-price="audio" aria-live="polite">가격 확인 중</strong>
+          <a href="create.html">1곡 노래 선물 만들기 <span aria-hidden="true">↗</span></a>
+        </article>
+        <article class="home-package-card home-package-featured">
+          <span class="home-package-tag">MUSIC LETTER · TWO</span>
+          <h3>두 가지 분위기의 노래 2곡</h3>
+          <p>같은 가사를 서로 다른 음악 스타일로. 고객이 고른 구성에 맞춰 두 곡을 준비합니다.</p>
+          <strong data-home-price="audio_duo" aria-live="polite">가격 확인 중</strong>
+          <p id="home-duo-comparison" class="home-duo-savings">1곡씩 구매한 구성과 비교 중</p>
+          <a href="create.html">2곡 노래 선물 만들기 <span aria-hidden="true">↗</span></a>
+        </article>
+        <article class="home-package-card">
+          <span class="home-package-tag">MUSIC LETTER · FILM</span>
+          <h3>노래와 뮤직비디오</h3>
+          <p>노래에 영상의 장면까지. 촬영·편집 분량과 사용 자료에 따라 별도 견적으로 제작합니다.</p>
+          <strong data-home-price="audio_video" aria-live="polite">가격 확인 중</strong>
+          <a href="checkout.html?product=audio_video#video-media-section">영상 상품 살펴보기 <span aria-hidden="true">↗</span></a>
+        </article>
+      </div>
+      <p class="home-package-disclosure">기본 상품은 완성된 노래의 이메일 전용 감상 링크를 제공합니다. 원본 음원 다운로드와 상업적 이용은 별도 권리 확인과 결제가 필요합니다. 실제 결제·전달 기능은 운영 환경 승인 후 제공됩니다.</p>
+      <p id="home-commerce-status" class="home-package-status" role="status">정식 결제 운영 상태를 확인하고 있어요.</p>
+      <a class="home-package-all" href="checkout.html">가격 · 상품 구성 · 추가 옵션 자세히 보기 <span aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+
+    <section class="gift-section" id="gifts" aria-labelledby="gift-title">
+    <div class="frame gift-grid">
+      <div class="gift-intro">
+        <span class="small-caps">FOR SOMEONE YOU LOVE</span>
+        <h2 id="gift-title">전하지 못했던 한마디가<br><em>평생 남을 선물이 되도록.</em></h2>
+        <p>사랑하는 사람에게, 늘 곁을 지켜준 가족에게, 오래 함께한 친구에게.<br>당신이 마음에 담아둔 이야기는 특별한 노래가 될 수 있습니다.</p>
+        <a class="main-cta-link light" href="create.html">노래 제작하기 <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="gift-categories">
+        <div class="gift-row"><span class="gift-number">01</span><span class="gift-word">사랑을 전하는 노래</span><span class="gift-detail">LOVE & PROMISE</span></div>
+        <div class="gift-row"><span class="gift-number">02</span><span class="gift-word">고마움을 담은 노래</span><span class="gift-detail">GRATITUDE</span></div>
+        <div class="gift-row"><span class="gift-number">03</span><span class="gift-word">함께한 시간을 위한 노래</span><span class="gift-detail">MEMORY</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="review-section" id="reviews" aria-labelledby="reviews-title">
+    <div class="frame">
+      <div class="review-head"><span class="small-caps">WITHU STORIES</span><h2 id="reviews-title">노래가 닿은 순간</h2><p>노래에 담긴 마음이 전해지는 이야기. 실제 동의받은 영상 후기를 소개합니다.</p></div>
+      <div id="review-gallery" class="review-gallery" aria-live="polite">
+        <div class="empty-reviews"><span aria-hidden="true">▷</span><strong>진짜 이야기를 준비하고 있어요.</strong><p>공개에 동의한 영상 후기가 등록되면 이곳에서 바로 감상하실 수 있습니다.</p></div>
+      </div>
+      <div class="local-review-tools">
+        <label class="outline-button" for="local-review">영상 미리보기</label><input id="local-review" type="file" accept=".mp4,.webm,video/mp4,video/webm" hidden>
+        <span id="review-file-notice">파일을 선택하면 이 기기에서만 재생됩니다.</span>
+      </div>
+    </div>
+  </section>
   <section class="v17-research-section" id="vision-lab-preview" aria-labelledby="vision-lab-heading">
     <div class="frame">
+      <aside aria-label="내 얼굴 AI 영상 빠른 확인" style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;max-width:760px;margin:0 auto 24px;padding:15px 18px;border:1px solid #b69aa9;border-radius:12px;background:#ffffff12">
+        <div><strong style="font-size:14px">SONG-Vision v18 · 내 자료로 만든 AI 영상</strong>
+          <p style="font-size:12px;color:#dccbd6;margin:5px 0 0">다른 사람 얼굴이 아닌 내가 올린 스피킹·AI 가수 영상 확인</p></div>
+        <a href="song-vision-lab.html" style="border:1px solid #ecd9e4;border-radius:8px;padding:11px 15px;font-size:13px;white-space:nowrap;color:#fff">▶ 입모양 학습 영상 바로 보기</a>
+      </aside>
       <div class="v17-research-head">
         <span class="small-caps">SONG-VISION v37 · OWNER-TRAINED VISIBLE JAW · RESEARCH</span>
         <h2 id="vision-lab-heading">v37 실제 발음 영상에서 학습한 3D 턱·입술 제어</h2>
@@ -237,34 +356,7 @@
     </div>
   </section>
 
-    <section class="gift-section" id="gifts" aria-labelledby="gift-title">
-    <div class="frame gift-grid">
-      <div class="gift-intro">
-        <span class="small-caps">FOR SOMEONE YOU LOVE</span>
-        <h2 id="gift-title">전하지 못했던 한마디가<br><em>평생 남을 선물이 되도록.</em></h2>
-        <p>사랑하는 사람에게, 늘 곁을 지켜준 가족에게, 오래 함께한 친구에게.<br>당신이 마음에 담아둔 이야기는 특별한 노래가 될 수 있습니다.</p>
-        <a class="main-cta-link light" href="create.html">노래 제작하기 <span aria-hidden="true">↗</span></a>
-      </div>
-      <div class="gift-categories">
-        <div class="gift-row"><span class="gift-number">01</span><span class="gift-word">사랑을 전하는 노래</span><span class="gift-detail">LOVE & PROMISE</span></div>
-        <div class="gift-row"><span class="gift-number">02</span><span class="gift-word">고마움을 담은 노래</span><span class="gift-detail">GRATITUDE</span></div>
-        <div class="gift-row"><span class="gift-number">03</span><span class="gift-word">함께한 시간을 위한 노래</span><span class="gift-detail">MEMORY</span></div>
-      </div>
-    </div>
-  </section>
 
-  <section class="review-section" id="reviews" aria-labelledby="reviews-title">
-    <div class="frame">
-      <div class="review-head"><span class="small-caps">WITHU STORIES</span><h2 id="reviews-title">노래가 닿은 순간</h2><p>노래에 담긴 마음이 전해지는 이야기. 실제 동의받은 영상 후기를 소개합니다.</p></div>
-      <div id="review-gallery" class="review-gallery" aria-live="polite">
-        <div class="empty-reviews"><span aria-hidden="true">▷</span><strong>진짜 이야기를 준비하고 있어요.</strong><p>공개에 동의한 영상 후기가 등록되면 이곳에서 바로 감상하실 수 있습니다.</p></div>
-      </div>
-      <div class="local-review-tools">
-        <label class="outline-button" for="local-review">영상 미리보기</label><input id="local-review" type="file" accept=".mp4,.webm,video/mp4,video/webm" hidden>
-        <span id="review-file-notice">파일을 선택하면 이 기기에서만 재생됩니다.</span>
-      </div>
-    </div>
-  </section>
 </main>
 <footer class="site-footer">
   <div class="frame footer-inner"><span class="footer-brand">WITHU</span><p>마음이 노래가 되는 순간.</p><span class="copyright">© 2026 WITHU. All rights reserved.</span></div>

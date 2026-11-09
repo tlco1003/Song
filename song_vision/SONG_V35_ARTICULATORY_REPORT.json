@@ -1,0 +1,102 @@
+{
+  "version": "SONG_V35_ARTICULATORY_3D_RESEARCH",
+  "vowelsSupported": [
+    "ㅏ",
+    "ㅐ",
+    "ㅑ",
+    "ㅒ",
+    "ㅓ",
+    "ㅔ",
+    "ㅕ",
+    "ㅖ",
+    "ㅗ",
+    "ㅘ",
+    "ㅙ",
+    "ㅚ",
+    "ㅛ",
+    "ㅜ",
+    "ㅝ",
+    "ㅞ",
+    "ㅟ",
+    "ㅠ",
+    "ㅡ",
+    "ㅢ",
+    "ㅣ"
+  ],
+  "onsetsSupported": [
+    "ㄱ",
+    "ㄲ",
+    "ㄴ",
+    "ㄷ",
+    "ㄸ",
+    "ㄹ",
+    "ㅁ",
+    "ㅂ",
+    "ㅃ",
+    "ㅅ",
+    "ㅆ",
+    "ㅇ",
+    "ㅈ",
+    "ㅉ",
+    "ㅊ",
+    "ㅋ",
+    "ㅌ",
+    "ㅍ",
+    "ㅎ"
+  ],
+  "codaInventorySlots": 28,
+  "simpleCodaArticulatorPlans": {
+    "ㄱ": "velar_stop",
+    "ㄴ": "alveolar_nasal",
+    "ㄷ": "alveolar_stop",
+    "ㄹ": "alveolar_lateral",
+    "ㅁ": "bilabial_nasal",
+    "ㅂ": "bilabial_stop",
+    "ㅇ": "velar_nasal"
+  },
+  "videos": [
+    "SONG_V35_TONGUE_3D_TEN_VOWELS.mp4",
+    "SONG_V35_TONGUE_3D_NINETEEN_CONSONANTS.mp4"
+  ],
+  "frames": {
+    "vowels": 100,
+    "consonants": 171
+  },
+  "fps": 14,
+  "features": [
+    "3D tongue surface tip blade body dorsum root",
+    "3D upper hard palate and descending soft palate",
+    "independent 3D jaw hinge and upper/lower teeth",
+    "independent 3D lips width height protrusion",
+    "velum nasal port and glottal settings",
+    "tongue/palate nonpenetration and contact-place targets",
+    "coarticulatory consonant release vowel glides"
+  ],
+  "verification": "14 local automated tests pass, includes all 399 onset-vowel combos and text-to-3D fail-closed rules",
+  "limitations": {
+    "geometrySpace": "normalized illustration, no millimeter calibration",
+    "rigHasReal3DSurfaces": true,
+    "rigHasTongueTipBladeBodyDorsumRoot": true,
+    "rigHasPalateTongueContactGuard": true,
+    "rigHasJawHinge": true,
+    "rigHasTeethLipsVelumGlottalGesture": true,
+    "personSpecificTongueFit": false,
+    "personSpecificJawPivot": false,
+    "3DScannedTeethTongue": false,
+    "realMuscleFiniteElementSolver": false,
+    "audioSynthesisFromShape": false,
+    "phonemeTimingValidated": false
+  },
+  "referenceData": "published phonetic place/manner + normalized prototype authoring, NOT an individual's 3D tissue measurements",
+  "3dGLB": [
+    "ARTICULATORY_3D_a.glb",
+    "ARTICULATORY_3D_k.glb",
+    "ARTICULATORY_3D_m.glb",
+    "ARTICULATORY_3D_n.glb",
+    "ARTICULATORY_3D_o.glb",
+    "ARTICULATORY_3D_u.glb"
+  ],
+  "muscleControlProxies": "12 normalized artist controls only; not EMG or FEM muscle forces",
+  "learningStatus": "literature-inspired rule-based parametric articulator; NOT owner-specific 3D tongue learning",
+  "trajectorySource": "Hangul grapheme mapping and illustrative gestural timing, not actual recorded phoneme alignment"
+}

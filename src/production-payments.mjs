@@ -3,6 +3,7 @@ import {randomUUID} from 'node:crypto';
 import {prepareServerOrderDraft} from './order-draft-preparation.mjs';
 import {validateCheckoutDeliveryContact} from './customer-notification-contact.mjs';
 import {makeTossPaymentAdapter} from './toss-payment-adapter.mjs';
+import {recordVerifiedPurchase} from './production-analytics.mjs';
 import {commercialMode,makeProductionId,requireProductionId,
  assertExactTossPayment} from './production-contract.mjs';
 import {ensurePaidDownloadGrant,sendRecoveryEmail,hasDownloadGrant}
@@ -45,6 +46,7 @@ async function confirmPayment(req,db,env,fetcher,upgrade=false){
    stop(403,'해당 노래의 추가 결제만 승인할 수 있습니다.');
  }
  if(original.paymentStatus==='paid')
+  try{await recordVerifiedPurchase(db,id,{upgrade});}catch(_){/* Metrics never block verified payment. */}
   return {status:'paid_verified',orderId:id,upgrade,already:true};
  if(upgrade){
   const session=await currentSession(req,db);
@@ -99,6 +101,7 @@ async function confirmPayment(req,db,env,fetcher,upgrade=false){
     production:{status:'pending',attempts:0,updatedAt:now()}});
   }
  });
+ try{await recordVerifiedPurchase(db,id,{upgrade});}catch(_){/* Payment remains verified. */}
  return {status:'paid_verified',orderId:id,upgrade};
 }
 export async function handleProductionPayments(req,res,{db,env,fetcher}){

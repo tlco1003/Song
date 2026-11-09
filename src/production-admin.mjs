@@ -8,6 +8,7 @@ import {admin,now,json,checkOrigin,stop,respond,paid,
  from './production-runtime.mjs';
 import {sendCompletedEmail} from './production-delivery.mjs';
 import {sendPaidOrderReceipt} from './order-status-portal.mjs';
+import {readFunnelSummary} from './production-analytics.mjs';
 
 function validateSound(name,bytes){
  if(typeof name!=='string'||!/^[a-zA-Z0-9_. -]{1,100}\.(mp3|m4a|wav)$/i.test(name))
@@ -32,7 +33,12 @@ export async function handleProductionAdmin(req,res,{db,bucket,auth,env,fetcher}
   respond(res,200,{orders:docs.docs.map(snap=>adminSummary(snap.data()))});
   return true;
  }
- const detail=/^\/api\/admin\/orders\/(withu_[a-f0-9]{32})$/.exec(path);
+ if(req.method==='GET'&&path==='/api/admin/analytics'){
+   respond(res,200,{days:7,rows:await readFunnelSummary(db,7),
+    note:'방문과 클릭 수는 중복을 포함할 수 있으며 실제 구매는 PG 검증 주문만 집계합니다.'});
+   return true;
+  }
+  const detail=/^\/api\/admin\/orders\/(withu_[a-f0-9]{32})$/.exec(path);
  if(req.method==='GET'&&detail){
   const snap=await db.collection('withuOrders').doc(detail[1]).get();
   if(!snap.exists)stop(404,'주문을 찾지 못했습니다.');

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#211a28">
+<title>WITHU | SONG-Vision v32 · 입술 안쪽 경계와 3D 준비</title>
+<meta name="description" content="내 실제 Speaking 영상에서 가져온 구강 내부 픽셀, 자음·모음 전체 라벨 구조, 3D 턱·입술 분리 인터페이스 연구">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}html{color-scheme:dark}body{margin:0;background:#211a28;color:#f8edf4;font-family:"Gowun Batang",serif}
+header{border-bottom:1px solid #ffffff30;padding:18px max(17px,calc((100% - 1080px)/2));display:flex;justify-content:space-between;align-items:center}
+a{color:#f4ccdd;text-underline-offset:5px}.brand{font:29px "Cormorant Garamond",serif;letter-spacing:.16em;text-decoration:none}
+header>a:last-child{text-decoration:none;font-size:14px}
+main{max-width:1080px;margin:auto;padding:33px 17px 75px}
+.eyebrow{display:inline-block;border:1px solid #e2c3d17b;border-radius:30px;padding:8px 13px;font:12px sans-serif;letter-spacing:.08em}
+h1{font-weight:400;font-size:clamp(28px,4.4vw,43px);line-height:1.5;margin:17px 0}h2{font-size:23px;font-weight:400}
+p{line-height:1.88;color:#dfcfdc;word-break:keep-all}
+.card{border:1px solid #ffffff26;background:#ffffff0a;border-radius:14px;padding:17px;margin:20px 0}
+video{width:100%;display:block;max-height:70vh;object-fit:contain;background:#100e17;border-radius:10px}
+.pills{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin:18px 0 5px}
+.pills button{cursor:pointer;border:1px solid #bba4b6;color:#f5eaf3;background:#ffffff12;font:22px "Gowun Batang",serif;border-radius:8px;padding:10px}
+.pills button[aria-pressed="true"]{background:#82556f;border-color:#f0c2d9}
+.subtitle{font:13px/1.65 sans-serif;color:#e7cad8}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.warn{border-left:3px solid #efb2a1;padding-left:14px}
+.italic{font-style:italic}
+ul{line-height:1.85;color:#ddcad8}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.card{padding:11px}.pills{gap:4px}.pills button{padding:9px 3px;font-size:19px}}
+</style>
+</head>
+<body>
+<header><a class="brand" href="index.html">WITHU</a><a href="song-vision-lab.html">← 연구 영상</a></header>
+<main>
+<span class="eyebrow">SONG-VISION V32 · INNER ORAL PIXEL OBSERVATIONS</span>
+<h1>입술 안쪽 경계와 실제 구강 픽셀을<br>분리해서 확인하는 v32</h1>
+<p>이제 실제 Speaking 영상에서 <strong>입술 바깥 윤곽, 어두운 구강 후보, 치아 후보, 혀 후보</strong>를 따로 분석해. 입을 크게 벌린 장면에서는 실제 촬영된 구강 픽셀을 사용하고, v31처럼 인공 검은 타원으로 구멍을 그리지 않아.</p>
+<section class="card">
+<h2>01 · 실제 내 얼굴과 구강 구조 비교</h2>
+<p class="subtitle">6.53초 · 15fps · 1260×680 · 무음. 왼쪽 중립 얼굴, 가운데 실제 본인 픽셀로 바뀐 얼굴, 오른쪽 자동 분할 후보 시각화.</p>
+<video id="v32-video" controls playsinline preload="metadata" aria-label="사용자 실제 스피킹 얼굴로 만든 v32 입술 안쪽 영역, 치아와 혀 후보 분석 영상. 발음 정답 미검증"><source src="vision-owner/SONG_V32_REAL_INNER_ORAL_PIXELS_DIAGNOSTIC.mp4" type="video/mp4">MP4를 재생할 수 없어.</video>
+<div id="seeks" class="pills" aria-label="입모양 후보별 탐색"></div>
+<p class="subtitle" id="state" role="status">입모양 버튼을 누르면 해당 형태 후보 구간을 재생해. 실제 발음 정답으로 인증된 영상은 아니야.</p>
+<p><a href="vision-owner/SONG_V32_REAL_INNER_ORAL_PIXELS_DIAGNOSTIC.mp4" target="_blank" rel="noopener">동영상 파일 새 창에서 보기</a></p>
+</section>
+<div class="grid">
+<section class="card">
+<h2>02 · 분리한 구조</h2>
+<p>실제 확인 가능한 영역: 입술 외곽, 닫힘선, 어두운 구강 영역, 치아·혀 색상 후보, 볼·턱의 관찰 가능한 표면.</p>
+<p>3D 구조 연결용 데이터: 고정 상악과 코, 관절로 움직이는 하악, 독립적인 윗입술·아랫입술, 좌우 볼·광대·피부, 가려지는 치아·혀.</p>
+<p class="subtitle">후자의 실제 3D 뼈 위치와 보이지 않는 구강 구조는 아직 측정하거나 재구성하지 못했어.</p>
+</section>
+<section class="card">
+<h2>03 · 한글 전체 발음 구조</h2>
+<p><strong>초성 19개, 중성 21개, 종성 28개 슬롯</strong>과 11,172개 현대 한글 음절을 해체하는 코드를 만들었어. 모든 발음 정답을 학습했다는 의미는 아니야.</p>
+<p>받침 발음 변화와 동화, 연음, 음소 시작/끝 시각을 정확하게 학습하려면 사람 검증 발음 라벨과 실제 음성의 정렬 데이터가 필요해.</p>
+</section>
+</div>
+<section class="card">
+<h2>04 · v32 품질 판정</h2>
+<p class="warn"><strong>구조 구현·영상 생성 완료 / 실제 3D 안면 학습과 정확한 립싱크는 미완료.</strong> 현재 어두운 구강 픽셀 검출은 입술의 전체 안쪽 경계에 대한 의료적 정답이 아니며, 치아·혀 분류는 색상 기반 미검증 후보야.</p>
+<p>개인 얼굴의 3D 골격은 추측한 턱 회전각으로 만들지 않고, 실제 메쉬·회전 기준점·표정 랜드마크가 준비됐을 때 적용되도록 별도 인터페이스를 추가했어. 검증되지 않은 발음 라벨은 엔진에서 훈련 입력으로 거부해.</p>
+<p><a href="https://github.com/tlco1003/Song/blob/main/song_vision/README_V32.md" target="_blank" rel="noopener">관련 논문 및 정확한 재현 절차</a> · <a href="song-vision-v31-review.html">이전 v31 검증 실패 비교</a></p>
+</section>
+</main>
+<script>
+(()=>{
+const names=['ㅡ','ㅗ','ㅜ','ㅏ','ㅔ','ㅣ','ㅓ'],video=document.getElementById('v32-video'),root=document.getElementById('seeks'),state=document.getElementById('state');
+let stop=-1;
+names.forEach((name,i)=>{
+ const b=document.createElement('button');b.textContent=name;b.type='button';b.setAttribute('aria-pressed','false');
+ b.onclick=()=>{
+  root.querySelectorAll('button').forEach((q,j)=>q.setAttribute('aria-pressed',String(i===j)));
+  stop=(i+1)*14/15-0.03;video.currentTime=i*14/15+.02;
+  state.textContent=name+'에 가깝게 선택한 실제 관찰된 입모양. 해당 장면의 음성 발음 정답은 미검증.';
+  const p=video.play();if(p?.catch)p.catch(()=>{state.textContent='재생이 차단됐어. 동영상의 재생 버튼을 눌러줘.'});
+ };root.appendChild(b);
+});
+video.addEventListener('timeupdate',()=>{if(stop>=0&&video.currentTime>=stop){video.pause();stop=-1}});
+video.addEventListener('error',()=>{state.textContent='영상 재생에 문제가 있어. 새 창 링크로 열어줘.'},true);
+})();
+</script>
+</body>
+</html>

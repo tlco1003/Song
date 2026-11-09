@@ -70,6 +70,13 @@ export async function processVerifiedPaidWork({db,orderId,env=process.env,fetche
   }});
  });
  if(!order)return {status:'skipped'};
+ // Send the paid-order receipt before AI lyrics generation, which may take time.
+ // A failed email is recorded for authenticated operator retry; never block music.
+ let receiptStatus='failed';
+ try{
+  const receipt=await sendPaidOrderReceipt({db,orderId,env,fetcher});
+  receiptStatus=receipt.status;
+ }catch(_){/* statusReceipt.failed remains in Firestore. */}
  let lyrics=order.confirmedLyrics||null,plan=null;
  let lyricError=null;
  if(!lyrics){
@@ -96,13 +103,7 @@ export async function processVerifiedPaidWork({db,orderId,env=process.env,fetche
    updatedAt:now(),alertStatus:'pending'
   }
  });
- // Send a separate status email without granting media before delivery.
-  let receiptStatus='failed';
-  try{
-   const receipt=await sendPaidOrderReceipt({db,orderId,env,fetcher});
-   receiptStatus=receipt.status;
-  }catch(_){/* statusReceipt.failed is persisted for an operator retry. */}
-  // Manual fallback always remains visible in Firestore regardless of email.
+ // Manual fallback always remains visible in Firestore regardless of email.
  const updated={...order,confirmedLyrics:plan?lyrics:null};
  let receipt=null;
  try{receipt=await alertOwner({orderId,order:updated,env,fetcher});}

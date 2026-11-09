@@ -1,0 +1,34 @@
+name: SONG AI v38 MP4 runtime contracts (PUBLIC tests, NO owner data)
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'song_vision/render_nara_v38.py'
+      - 'song_vision/test_render_nara_v38.py'
+      - '.github/workflows/song-vision-v38-contracts.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  unit_test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test dependencies for real 3D rig and MP4 pipeline contracts
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg libgl1 libglib2.0-0
+          python -m pip install -q 'numpy>=1.26,<3' 'scipy>=1.11' 'scikit-learn>=1.4' 'soundfile>=0.12' 'opencv-python-headless>=4.8' 'trimesh>=4'
+      - name: Code validation with no owner footage or weights
+        run: |
+          python -m unittest discover -s song_vision -p 'test_render_nara_v38.py' -v
+          python -m py_compile song_vision/render_nara_v38.py
+      - name: Public repo must not contain private v37 model or owner source
+        run: |
+          test ! -f song_vision/OWNER_V37_AV_MODEL_PRIVATE.npz
+          test ! -f docs/vision-owner/SONG_V38_NARA_OWNER_ENGINE_PREVIEW.mp4
+          echo 'PRIVATE_OWNER_MODEL_AND_OUTPUT_NOT_PUBLISHED=YES'

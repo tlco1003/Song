@@ -117,7 +117,7 @@ export function createResendTransactionalMailer({
  if(typeof fetcher!=='function')throw new Error('Server fetch capability required');
  return Object.freeze({
   async sendOrderStatusLink({to,orderStatusUrl,idempotencyKey}={}){
-    if(typeof to!=='string'||to.length>254||!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/u.test(to))
+    if(typeof to!=='string'||to.length>254||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/u.test(to))
      throw Error('Verified customer email required');
     const base=new URL(config.WITHU_PUBLIC_BASE_URL),target=new URL(orderStatusUrl);
     if(base.protocol!=='https:'||target.origin!==base.origin||

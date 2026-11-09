@@ -33,6 +33,20 @@
 <nav aria-label="메뉴"><a href="index.html">홈</a><a href="index.html#vision-lab-preview">학습 결과</a></nav>
 </div></header>
 <main class="vision-lab"><div class="frame">
+<span class="vision-badge">LATEST · SONG-VISION v32 · OWNER'S REAL ORAL PIXELS</span>
+<h1>인공 검은 입안 대신, 실제 촬영한 입술·구강 픽셀</h1>
+<p class="vision-intro">자음·모음 전체 데이터 구조와 분리된 입술·턱·볼·3D 연결 인터페이스를 만들었어. 다만 3D 얼굴의 뼈·혀·치아 구조를 실측하거나 가창 음절 타이밍을 정답으로 학습한 것은 아니야.</p>
+<div class="vision-grid">
+<section class="vision-card">
+<h2>NEW · v32 실제 입안 픽셀과 경계 후보 확인</h2>
+<video id="v32-oral" controls playsinline preload="metadata" aria-label="본인의 실제 Speaking 영상의 입술 안쪽 경계, 입안 픽셀과 치아 혀 후보 탐지 결과"><source src="vision-owner/SONG_V32_REAL_INNER_ORAL_PIXELS_DIAGNOSTIC.mp4" type="video/mp4">MP4 미지원</video>
+<p>6.53초 · 15fps · 실제 원본 입안 텍스처 사용. 오른쪽 강조 마스크는 자동 추정이며 정답이 아니야.</p>
+<p><a href="song-vision-v32-oral.html">모음 후보별 영상 재생 · 3D 구조·발음 라벨 상태 보기</a></p>
+<p id="v32-oral-status" class="vision-status" role="status"></p>
+</section>
+</div>
+<h2 style="font-size:21px;font-weight:400;margin-top:29px">이전 v31·v30·v27 영상 비교</h2>
+
 <span class="vision-badge">LATEST · SONG-VISION v30 · VISIBLE LIP THICKNESS</span>
 <h1>윗입술과 아랫입술의 세로 높이까지<br>따로 비교해 볼 수 있어.</h1>
 <p class="vision-intro">네 스피킹 영상에서 실제 입술의 바깥·안쪽 경계 후보를 계산하고, 턱·볼·광대 피부 움직임과 별개로 윗입술·아랫입술 두께 조절을 추가했어. 원본 측면 회전 구간과 AM 6:30 원곡 시험 영상도 함께 확인할 수 있어. 모음별 정답 라벨은 아직 검증 전이야.</p>
@@ -178,6 +192,7 @@
 <footer class="site-footer"><div class="frame footer-inner"><span class="footer-brand">WITHU</span><p>직접 제공한 자료로 학습한 SONG-Vision 연구 영상</p></div></footer>
 <script>
 for(const [vid,status] of [
+ ['v32-oral','v32-oral-status'],
  ['v30-lip-thickness','v30-lip-thickness-status'],
  ['v30-am630','v30-am630-status'],
  ['v27-real-jaw','v27-real-jaw-status'],

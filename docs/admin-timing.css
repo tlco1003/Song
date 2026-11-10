@@ -1,0 +1,51 @@
+/* WITHU · private SONG AI timing console */
+.timing-shell{max-width:1280px}
+.timing-shell .admin-card{margin-bottom:18px}
+.timing-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.timing-stat{display:flex;flex-direction:column;gap:6px}
+.timing-stat small,.timing-stat span{color:#957c8b;font-size:12px}
+.timing-stat strong{font-family:"Gowun Batang",serif;color:#4a3044;font-size:19px}
+.timing-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.timing-heading h2{font-size:clamp(20px,2.5vw,27px);font-family:"Gowun Batang",serif;font-weight:700;margin:10px 0}
+.timing-heading p{max-width:850px}
+.timing-small{font-size:12px;color:#8d7283;line-height:1.85}
+.timing-library{border-top:1px solid #eadce5;padding-top:18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.timing-library label{font-size:13px;font-weight:700}
+.timing-library select{background:white;border:1px solid #d9c8d3;color:#4e3446;border-radius:9px;min-height:46px;padding:10px;flex:1;min-width:180px}
+.timing-current-track{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:18px 0 12px}
+.timing-current-track strong{font-size:18px;color:#573c50}
+.timing-current-track span{font-size:13px;color:#83677a}
+#timing-player{width:100%;display:block;min-height:55px}
+#timing-wave{width:100%;height:112px;display:block;background:linear-gradient(110deg,#231b2d,#46364c);border-radius:12px;cursor:crosshair;touch-action:pan-y;margin:10px 0}
+.timing-seek-bar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:12px 0}
+.timing-seek-bar strong{font-variant-numeric:tabular-nums;color:#704361}
+.timing-seek-bar span{font-size:12px;color:#9a7d8d;margin-right:auto}
+.timing-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:18px 0}
+.timing-upload-candidate{border:1px dashed #bea5b5;background:#f7f1f5;border-radius:9px;padding:10px;color:#6e5067;font-size:12px}
+.timing-upload-candidate input{display:block;margin-top:4px;max-width:240px;font-size:12px}
+.timing-pill{background:#faf4f0;color:#a16f37;border:1px solid #eddbbd;padding:7px 12px;border-radius:20px;font-size:12px}
+.timing-pill.verified{background:#ecf7f0;color:#256746;border-color:#b9d9c6}
+.timing-job-status{background:#fbf6fa;border:1px solid #eadce5;padding:11px 14px;border-radius:9px;font-size:13px}
+.timing-table-shell{max-height:520px;overflow:auto;border:1px solid #eadbe5;border-radius:12px;margin-top:18px}
+.timing-cues{width:100%;border-collapse:collapse;font-size:12px;min-width:750px}
+.timing-cues thead{position:sticky;top:0;background:#f7f0f5;z-index:1}
+.timing-cues th,.timing-cues td{border-bottom:1px solid #f1e8ed;padding:11px 9px;text-align:left;vertical-align:middle}
+.timing-cues th{color:#694d63}
+.timing-cues td:nth-child(2){font-size:13px;max-width:340px;line-height:1.55}
+.timing-cues tr.active{background:#fff3f8}
+.timing-cues input{background:white;color:#392c37;border:1px solid #d8c5d1;min-height:36px;border-radius:7px;padding:7px;width:104px;font-size:12px;font-variant-numeric:tabular-nums}
+.timing-cues button{border:1px solid #be9db0;border-radius:8px;background:white;color:#75556b;padding:7px 12px;cursor:pointer}
+.timing-cue-flag{display:inline-block;border-radius:5px;background:#fcf0df;color:#9b671f;padding:4px 6px;margin:2px}
+.timing-approve{border-top:1px solid #e9d8e4;padding-top:16px}
+.timing-approve label{font-size:13px;line-height:1.75;flex:1}
+.timing-export-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px 0}
+#timing-private[hidden],#timing-editor[hidden],#timing-sign-out[hidden]{display:none!important}
+@media(max-width:850px){
+ .timing-overview{grid-template-columns:1fr}
+ .timing-export-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:500px){
+ .timing-export-grid{grid-template-columns:1fr}
+ .timing-current-track strong{font-size:16px}
+ .timing-seek-bar button{width:100%}
+}

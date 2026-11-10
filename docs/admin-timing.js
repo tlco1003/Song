@@ -7,7 +7,7 @@ import {getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}
  from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js';
 
 const $=id=>document.getElementById(id);
-let auth=null,project=null,statusInfo=null,activeIndex=-1,previewUrl=null,pollTimer=null,points=[];
+let auth=null,project=null,statusInfo=null,activeIndex=-1,previewUrl=null,loadedAudioProjectId=null,pollTimer=null,points=[];
 const warn=message=>{$('timing-job-status').textContent=String(message)};
 const loginStatus=message=>{$('timing-auth-status').textContent=String(message)};
 function stamp(seconds){
@@ -50,7 +50,12 @@ async function initialize(){
  onAuthStateChanged(auth,async user=>{
   $('timing-private').hidden=true;
   $('timing-sign-out').hidden=!user;
-  if(!user){loginStatus('운영자 이메일과 비밀번호로 로그인하세요.');return;}
+  if(!user){
+   if(previewUrl){URL.revokeObjectURL(previewUrl);previewUrl=null;}
+   loadedAudioProjectId=null;project=null;points=[];
+   $('timing-player').removeAttribute('src');$('timing-player').load();
+   loginStatus('운영자 이메일과 비밀번호로 로그인하세요.');return;
+  }
   if(!user.emailVerified){loginStatus('관리자 계정의 이메일 확인을 먼저 완료해 주세요.');return;}
   $('timing-password').value='';
   loginStatus('서버에서 실제 운영자 UID를 검증하고 있어요.');
@@ -58,7 +63,7 @@ async function initialize(){
    statusInfo=await api('/status');
    if(!statusInfo.ownerVerified)throw Error('서버가 운영자 권한을 승인하지 않았습니다.');
    $('timing-owner-check').textContent='본인 인증 완료';
-   $('timing-worker-state').textContent=statusInfo.workerConfigured?'분석 서버 연결됨':'연결 대기';
+   $('timing-worker-state').textContent=statusInfo.workerConfigured?'서버 설정됨 · 실행 미검증':'연결 대기';
    $('timing-auto').disabled=!statusInfo.workerConfigured;
    $('timing-private').hidden=false;
    loginStatus('Firebase에서 운영자 본인 권한을 확인했습니다.');
@@ -154,18 +159,22 @@ async function loadProject(id){
  warn('분석 상태: '+(project.analysis?.status||'NOT_STARTED')+
   '. 자동 시간표와 검수 시간표는 서로 다른 자료입니다.');
  renderCues();
- if(previewUrl){URL.revokeObjectURL(previewUrl);previewUrl=null;}
- $('timing-player').removeAttribute('src');$('timing-player').load();
- try{
-  if(project.hasAudio){
-   const blob=await api('/projects/'+id+'/audio',{blob:true});
-   if(project.id!==id)return;
-   previewUrl=URL.createObjectURL(blob);
-   $('timing-player').src=previewUrl;
-   $('timing-player').load();
-   void drawWaveform(blob);
-  }
- }catch(error){warn('실제 음원 로딩 실패: '+error.message);}
+ if(loadedAudioProjectId!==id){
+  if(previewUrl){URL.revokeObjectURL(previewUrl);previewUrl=null;}
+  loadedAudioProjectId=null;points=[];
+  $('timing-player').removeAttribute('src');$('timing-player').load();
+  try{
+   if(project.hasAudio){
+    const blob=await api('/projects/'+id+'/audio',{blob:true});
+    if(project.id!==id)return;
+    previewUrl=URL.createObjectURL(blob);
+    loadedAudioProjectId=id;
+    $('timing-player').src=previewUrl;
+    $('timing-player').load();
+    void drawWaveform(blob);
+   }
+  }catch(error){warn('실제 음원 로딩 실패: '+error.message);}
+ }
  if(pollTimer){clearTimeout(pollTimer);pollTimer=null;}
  if(['QUEUED','RUNNING'].includes(project.analysis?.status)){
   pollTimer=setTimeout(()=>loadProject(id).catch(e=>warn(e.message)),4500);

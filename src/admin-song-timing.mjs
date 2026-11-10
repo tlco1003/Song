@@ -152,6 +152,7 @@ export async function handleAdminSongTiming(req,res,{db,bucket,auth,env}){
  const p=await readProject(db,id),ref=collection.doc(id);
  if(req.method==='GET'&&action===''){
   respond(res,200,{project:{...summary(p),lyrics:p.lyrics,
+   audioSHA256:p.audioSHA256||null,lyricsSHA256:p.lyricsSHA256,
    draft:p.draft||null,review:p.review||null,
    durationSec:p.durationSec||null}});return true;
  }

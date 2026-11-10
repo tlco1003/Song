@@ -179,6 +179,7 @@ export async function handleAdminSongTiming(req,res,{db,bucket,auth,env}){
   res.status(200).send(bytes);return true;
  }
  if(req.method==='POST'&&action==='candidate'){
+  if(['QUEUED','RUNNING'].includes(p.analysis?.status))stop(409,'분석 작업 중에는 다른 후보를 덮어쓸 수 없습니다.');
   if(!p.audioSHA256)stop(409,'원곡 MP3/WAV를 먼저 올려주세요.');
   const d=validateDraft(json(req,700000),p);
   await ref.update({draft:{...d,source:'external_local_asr_unverified'},
@@ -209,6 +210,7 @@ export async function handleAdminSongTiming(req,res,{db,bucket,auth,env}){
   respond(res,202,{status:'QUEUED',runId,timingVerified:false});return true;
  }
  if(req.method==='POST'&&action==='review'){
+  if(['QUEUED','RUNNING'].includes(p.analysis?.status))stop(409,'분석 중에는 검수 결과를 승인할 수 없습니다.');
   if(!p.draft||!p.audioSHA256)stop(409,'ASR 후보 또는 실제 음원이 없습니다.');
   const d=validateDraft(p.draft,p);
   const review=makeReview(d,json(req,700000),p);

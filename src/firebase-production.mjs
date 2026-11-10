@@ -14,6 +14,7 @@ import {handleProductionDelivery} from './production-delivery.mjs';
 import {handleOrderStatus} from './order-status-portal.mjs';
 import {handleFunnelEvent} from './production-analytics.mjs';
 import {handleProductionAdmin} from './production-admin.mjs';
+import {handleAdminSongTiming} from './admin-song-timing.mjs';
 import {handleProductionComments} from './production-comments.mjs';
 import {handleProductionWebhooks} from './production-webhooks.mjs';
 import {processVerifiedPaidWork} from './production-worker.mjs';
@@ -37,7 +38,7 @@ export const api=onRequest({
   res.setHeader('Referrer-Policy','no-referrer');
   res.setHeader('Cache-Control','private, no-store');
   for(const handle of [handleProductionWebhooks,handleProductionPayments,
-    handleFunnelEvent,handleOrderStatus,handleProductionDelivery,handleProductionComments,handleProductionAdmin]){
+    handleFunnelEvent,handleOrderStatus,handleProductionDelivery,handleProductionComments,handleAdminSongTiming,handleProductionAdmin]){
    if(await handle(req,res,context))return;
   }
   stop(404,'해당 API 경로가 없습니다.');

@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#221d27">
+<title>WITHU | SONG AI Nara v45 ↔ v47 실제 영상 검증</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#231d2b;color:#f4e9f0;font-family:"Gowun Batang",serif}
+header{border-bottom:1px solid #ffffff24;padding:18px max(20px,calc((100% - 1140px)/2));display:flex;justify-content:space-between;align-items:center;gap:15px}
+header a{color:#f7d5e3;text-decoration:none}header .brand{font:29px "Cormorant Garamond",serif;letter-spacing:.15em}
+main{max-width:1140px;margin:auto;padding:34px 20px 72px}
+h1{font-size:clamp(28px,4vw,42px);font-weight:400;line-height:1.45;margin:10px 0}
+h2{font-size:20px;font-weight:400;margin:3px 0 12px}
+p,li{line-height:1.85;word-break:keep-all}
+p{color:#e5d8e2}
+.eyebrow{font:12px sans-serif;letter-spacing:.12em;color:#f5d5e2}
+.status{padding:13px 16px;border-left:3px solid #d3a5b8;background:#ffffff0b;font-size:13px;line-height:1.8}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:25px 0}
+.card{padding:16px;border:1px solid #ffffff35;border-radius:12px;background:#ffffff0a;min-width:0}
+.card video{display:block;width:100%;aspect-ratio:1;background:#15101b;object-fit:contain;border-radius:9px}
+.small{font:13px/1.7 sans-serif;color:#d9c7d2}
+.alert{color:#ffc9bc;font-weight:bold}.good{color:#cde7d5}
+a{color:#ffdeec;text-underline-offset:4px}
+.button,input[type=file]::file-selector-button{border:1px solid #dec2d3;color:#fff0f6;background:#513b53;border-radius:8px;padding:11px 14px;cursor:pointer;font:14px sans-serif}
+button:disabled{opacity:.5;cursor:default}
+input[type=file]{font:12px sans-serif;width:100%;margin:12px 0;color:#e8d7e0}
+details{margin:18px 0;padding:16px;border:1px solid #ffffff30;border-radius:10px}summary{cursor:pointer}
+code{overflow-wrap:anywhere}ul{margin:12px 0 10px;padding-left:25px}
+@media(max-width:720px){.grid{grid-template-columns:1fr}main{padding:22px 14px 60px}header{padding:15px}}
+</style>
+</head>
+<body>
+<header><a class="brand" href="index.html">WITHU</a><a href="song-vision-lab.html">← SONG AI 연구실</a></header>
+<main>
+<div class="eyebrow">SONG AI · NARA · v35 3D CORE / v37 AV / v47 RESEARCH</div>
+<h1>Nara 실제 생성 영상 비교</h1>
+<p>실제 개인 발음 자료와 원곡을 사용하는 SONG AI 엔진이 생성한 8초 연구 영상을 비교하는 페이지야. 원본 3D 구조 보존과 최종 영상 자연스러움은 별개의 검증 항목이야.</p>
+<p class="status"><strong>2026-11-11 GitHub Actions 확인:</strong> 실제 v45와 v47 MP4 생성, 30에포크 피부 학습 완료. <span class="alert">v47은 입 주변 영상 차이 검사에서 탈락했으며 정식 모델로 채택되지 않았어.</span> 한국어 음소 시간·개인 3D 혀·턱 정확도는 검증 전.</p>
+<div class="grid">
+<section class="card"><h2>v45 · 원본 3D 엔진</h2>
+<video id="base" controls playsinline preload="metadata" aria-label="Nara v45 실제 3D 엔진 생성 영상"></video>
+<p id="base-status" class="small" role="status">영상 서버 등록 여부 확인 중…</p>
+<label class="small" for="base-file">동영상이 보이지 않으면 내려받은 <strong>v45 MP4</strong>를 직접 선택해 즉시 재생할 수 있어. 파일은 서버로 전송되지 않아.</label>
+<input id="base-file" type="file" accept="video/mp4">
+<p class="small">8초 · 24fps · H.264/AAC · 기존 v35 입술/턱/혀 3D 계산 기반</p>
+</section>
+<section class="card"><h2>v47 · 실제 피부 가중치 적용 <span class="alert">검증 불합격</span></h2>
+<video id="candidate" controls playsinline preload="metadata" muted aria-label="Nara v47 실제 개인 피부 신경망 적용 영상, 품질 불합격"></video>
+<p id="candidate-status" class="small" role="status">영상 서버 등록 여부 확인 중…</p>
+<label class="small" for="candidate-file">동영상이 보이지 않으면 내려받은 <strong>v47 MP4</strong>를 직접 선택해 즉시 재생할 수 있어. 파일은 서버로 전송되지 않아.</label>
+<input id="candidate-file" type="file" accept="video/mp4">
+<p class="small">30에포크 · 218개 개인 얼굴 프레임 표본 · 입술·턱·혀 구조 고정 · 피부 잔차 모델</p>
+</section>
+</div>
+<button id="synchronized-play" class="button" type="button" disabled>두 영상 같은 시점에서 비교 재생</button>
+<p class="small">동일 음원 중복 재생을 피하려고 오른쪽은 음소거 상태로 재생해. 앞부분을 0초로 되돌려 두 영상을 함께 시작해.</p>
+<details open>
+<summary>MP4 파일이 화면에 안 나오는 경우</summary>
+<p>이 페이지의 <code>&lt;video&gt;</code>는 GitHub Pages에서 공개된 MP4가 있어야 자동으로 재생돼. 현재 GitHub Actions 결과물은 <strong>비공개 Artifact</strong>로 보관돼 있기 때문에 HTML만 게시한 상태에서는 자동 스트리밍되지 않아. 다른 영상으로 몰래 대체하지 않아.</p>
+<ol>
+<li><a target="_blank" rel="noopener noreferrer" href="https://github.com/tlco1003/Song-Vision-Private-Data/actions/runs/42952006186/artifacts/13826645682">GitHub 비공개 실행 결과 ZIP 다운로드</a> (저장소 접근 권한 및 로그인 필요, 만료될 수 있음)</li>
+<li>ZIP 압축 해제 후 <code>NARA_V45_CANONICAL_3D.mp4</code>와 <code>NARA_V47_CANONICAL_3D_WITH_LEARNED_SKIN.mp4</code>를 찾기</li>
+<li>위의 각 파일 선택 버튼으로 지정하면 이 페이지에서 영상 재생과 나란히 비교가 가능해. 서버로 업로드하지 않음.</li>
+</ol>
+<p><a href="https://github.com/tlco1003/Song-Vision-Private-Data/actions/runs/42952006186" target="_blank" rel="noopener noreferrer">원본 Actions 기록과 품질 검사 확인</a></p>
+</details>
+<section class="card">
+<h2>학습·품질 판정의 범위</h2>
+<ul>
+<li><span class="good">확인됨:</span> 기존 3D GLB 표본 동일, 같은 원곡 AAC, v47 실제 개인 발음 영상 학습.</li>
+<li><span class="alert">실패:</span> v45 대비 v47의 최종 입 주변 픽셀 차이 기준 초과 — 정식 채택 금지.</li>
+<li>미검증: 한국어 음소별 시간 정확도, 개인 3D 혀와 턱뼈의 실측 정확도, 인물·영상의 자연스러움.</li>
+<li>v34~v47 누적 학습 이력은 추가 연결 검사가 필요해. 과거 모듈 존재만으로 가중치가 자동 누적 학습되는 것은 아니야.</li>
+</ul>
+</section>
+<p><a href="song-vision-lab.html">이전 3D 한국어 조음 연구 영상·기록 보기</a> · <a href="index.html">WITHU 홈으로</a></p>
+</main>
+<script>
+(function(){
+ const entries=[["base","SONG_AI_NARA_V45_REAL_3D_8S.mp4"],["candidate","SONG_AI_NARA_V47_LEARNED_SKIN_REJECTED_8S.mp4"]];
+ const chosen={};
+ const play=document.getElementById("synchronized-play");
+ for(const [id,name] of entries){
+   const video=document.getElementById(id);
+   const status=document.getElementById(id+"-status");
+   const src="vision-owner/"+name;
+   fetch(src,{method:"HEAD",cache:"no-store"}).then(r=>{
+     if(!r.ok)throw new Error(String(r.status));
+     video.src=src;status.textContent="사이트 MP4가 등록돼 있어. 재생 버튼을 눌러 확인해.";chosen[id]=true;play.disabled=!chosen.base||!chosen.candidate;
+   }).catch(()=>{
+     status.textContent="현재 공개 사이트에 MP4 파일이 아직 없어. 아래에서 다운로드한 파일을 선택해 재생해.";
+   });
+   document.getElementById(id+"-file").addEventListener("change",ev=>{
+     const f=ev.target.files?.[0];if(!f)return;
+     if(f.type!=="video/mp4"&&!f.name.toLowerCase().endsWith(".mp4")){
+       status.textContent="MP4 파일만 선택해.";return;
+     }
+     if(video.dataset.localUrl)URL.revokeObjectURL(video.dataset.localUrl);
+     const url=URL.createObjectURL(f);
+     video.dataset.localUrl=url;video.src=url;video.load();chosen[id]=true;
+     status.textContent="선택한 로컬 MP4 재생 준비 완료 (외부 업로드 없음).";
+     play.disabled=!chosen.base||!chosen.candidate;
+   });
+ }
+ play.addEventListener("click",async()=>{
+   const a=document.getElementById("base"),b=document.getElementById("candidate");
+   a.pause();b.pause();a.currentTime=0;b.currentTime=0;b.muted=true;
+   await Promise.allSettled([a.play(),b.play()]);
+ });
+})();
+</script>
+</body></html>

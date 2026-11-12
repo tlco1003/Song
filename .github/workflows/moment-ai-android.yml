@@ -22,10 +22,18 @@ jobs:
           java-version: '17'
       - name: Validate Gradle wrapper
         uses: gradle/actions/wrapper-validation@v4
-      - name: Install Android SDK
-        uses: android-actions/setup-android@v3
-      - name: Install compileSdk
-        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Verify Ubuntu runner Android SDK
+        shell: bash
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          sdkmanager --version
+          if [[ ! -d "$ANDROID_HOME/platforms/android-35" ]]; then
+            sdkmanager --install 'platforms;android-35'
+          fi
+          if [[ ! -d "$ANDROID_HOME/build-tools/35.0.0" ]]; then
+            sdkmanager --install 'build-tools;35.0.0'
+          fi
+          test -f "$ANDROID_HOME/platforms/android-35/android.jar"
       - name: Build MOMENT AI host (Pleos Vehicle 2.3.2 / NaviHelper 3.0.5)
         run: ./moment-ai-android/gradlew -p moment-ai-android :app:assembleDebug --stacktrace
       - name: Upload test APK

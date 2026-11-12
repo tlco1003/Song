@@ -26,12 +26,14 @@ jobs:
         shell: bash
         run: |
           echo "ANDROID_HOME=$ANDROID_HOME"
-          sdkmanager --version
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/16.0/bin/sdkmanager"
+          test -x "$SDKMANAGER"
+          "$SDKMANAGER" --version
           if [[ ! -d "$ANDROID_HOME/platforms/android-35" ]]; then
-            sdkmanager --install 'platforms;android-35'
+            "$SDKMANAGER" --install 'platforms;android-35'
           fi
           if [[ ! -d "$ANDROID_HOME/build-tools/35.0.0" ]]; then
-            sdkmanager --install 'build-tools;35.0.0'
+            "$SDKMANAGER" --install 'build-tools;35.0.0'
           fi
           test -f "$ANDROID_HOME/platforms/android-35/android.jar"
       - name: Build MOMENT AI host (Pleos Vehicle 2.3.2 / NaviHelper 3.0.5)

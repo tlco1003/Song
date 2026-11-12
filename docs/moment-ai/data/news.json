@@ -1,0 +1,10 @@
+{
+  "schema": "MOMENT_NEWS_RSS_v1",
+  "generatedAt": null,
+  "kind": "RECENT_PUBLISHER_RSS_NOT_POPULARITY_RANKING",
+  "coverage": "연합뉴스·뉴시스·동아일보·IT동아의 최신 헤드라인. 전국 인기 순위가 아닙니다.",
+  "categories": {"headlines":[],"technology":[],"culture":[],"economy":[]},
+  "sources": [],
+  "status": "not_collected_yet",
+  "licensing": "Only title, publisher, publication time and deep link. No article text, images or AI summaries."
+}

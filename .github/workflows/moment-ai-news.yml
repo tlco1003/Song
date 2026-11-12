@@ -1,0 +1,42 @@
+name: MOMENT AI · Korean RSS headlines
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/moment-news.mjs'
+      - 'scripts/moment-news.test.mjs'
+      - '.github/workflows/moment-ai-news.yml'
+  schedule:
+    - cron: '17 * * * *'
+permissions:
+  contents: write
+concurrency:
+  group: moment-ai-news
+  cancel-in-progress: false
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Contract tests
+        run: node --test scripts/moment-news.test.mjs
+      - name: Import publisher RSS
+        run: node scripts/moment-news.mjs docs/moment-ai/data/news.json
+      - name: Publish data without exposing API keys
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/moment-ai/data/news.json
+          if git diff --cached --quiet; then
+            echo 'News snapshot unchanged'; exit 0
+          fi
+          git commit -m 'data(moment-ai): refresh Korean headline metadata [skip ci]'
+          git push origin HEAD:main

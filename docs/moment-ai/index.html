@@ -193,7 +193,7 @@ html,body{overflow-x:clip}
 
     <section id="journey" data-screen="journey" hidden class="section screen-view journey-section">
       <div class="section-header"><div><div class="kicker">02 — CONTEXT AWARE TRAVEL</div><h2>경로는 하나지만, <span>경험은 무한하게.</span></h2></div><div class="section-side">주행 상황에 따라 여정 추천과<br>콘텐츠 길이가 함께 바뀝니다.</div></div>
-      <div class="journey-grid"><article class="panel route-panel"><div class="panel-top"><span class="tag"><svg><use href="#i-route"/></svg> JOURNEY CONTROL</span><span class="data-pill demo" id="naviDataSource">NAVI · SIMULATED</span></div><div class="route-picker"><div><label for="originSelect">출발지</label><select id="originSelect"><option value="seoul">서울</option><option value="namyangju">남양주</option></select></div><span class="route-chevron">→</span><div><label for="destinationSelect">목적지</label><select id="destinationSelect"><option value="gangneung">강릉</option><option value="busan">부산</option><option value="incheon">인천</option><option value="chuncheon">춘천</option></select></div></div><div class="route-map" aria-label="실제 도로 지도가 아닌 개념 경로 도식"><svg viewBox="0 0 700 270" preserveAspectRatio="xMidYMid meet" role="img" aria-label="가상 경로 표시"><defs><linearGradient id="pathGradient" x1="0" x2="1"><stop offset="0" stop-color="#d9e7dc" stop-opacity=".2"/><stop offset=".6" stop-color="#d9e7dc"/><stop offset="1" stop-color="#acd0cb"/></linearGradient><pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".8" fill="#edf5ef" opacity=".13"/></pattern></defs><rect width="700" height="270" fill="url(#dots)"/><path d="M50 226 C116 220 118 127 202 150 S327 222 410 151 S517 48 651 71" fill="none" stroke="#edf3f0" stroke-opacity=".1" stroke-width="22"/><path id="svgBaseRoute" d="M50 226 C116 220 118 127 202 150 S327 222 410 151 S517 48 651 71" fill="none" stroke="url(#pathGradient)" stroke-width="3.5" stroke-dasharray="7 7"/><circle cx="50" cy="226" r="9" fill="#d4e9e4"/><circle cx="50" cy="226" r="18" stroke="#d4e9e4" opacity=".35" fill="none"/><circle cx="651" cy="71" r="9" fill="#d4e9e4"/><circle id="svgCar" cx="50" cy="226" r="8" fill="#ffce99" stroke="#151e23" stroke-width="4"/><text x="43" y="252">START</text><text x="612" y="48">ARRIVAL</text></svg><span class="map-caption">CONCEPT ROUTE VISUALIZATION · 실제 지도 아님</span></div><p class="micro native-info" id="nativeRouteNotice">브라우저에서는 가상 경로만 표시합니다. Pleos 연동 시 실제 SDK 이벤트를 기다립니다.</p><div class="route-progress"><div class="range-head"><label for="progressRange">주행 진행 시뮬레이션</label><strong id="progressValue">0%</strong></div><input type="range" id="progressRange" min="0" max="100" step="5" value="0"><div class="range-numbers"><span>출발</span><span>여정 진행</span><span>도착</span></div></div><div class="route-bottom"><div><small>예상 남은 시간 · 데모</small><strong id="remainingTime">2시간 35분</strong></div><div><small>여정 진행</small><strong id="routeStatus">출발 전</strong></div><button class="btn btn-outline" id="btnResetRoute">여정 초기화 <svg><use href="#i-refresh"/></svg></button></div></article>
+      <div class="journey-grid"><article class="panel route-panel"><div class="panel-top"><span class="tag"><svg><use href="#i-route"/></svg> JOURNEY CONTROL</span><span class="data-pill demo" id="naviDataSource">NAVI · SIMULATED</span></div><div class="route-picker"><div><label for="originSelect">출발지</label><select id="originSelect"><option value="seoul">서울</option><option value="namyangju">남양주</option></select></div><span class="route-chevron">→</span><div><label for="destinationSelect">목적지</label><select id="destinationSelect"><option value="gangneung">강릉</option><option value="busan">부산</option><option value="incheon">인천</option><option value="chuncheon">춘천</option></select></div></div><div class="route-map" aria-label="실제 도로 지도가 아닌 개념 경로 도식"><svg viewBox="0 0 700 270" preserveAspectRatio="xMidYMid meet" role="img" aria-label="가상 경로 표시"><defs><linearGradient id="pathGradient" x1="0" x2="1"><stop offset="0" stop-color="#d9e7dc" stop-opacity=".2"/><stop offset=".6" stop-color="#d9e7dc"/><stop offset="1" stop-color="#acd0cb"/></linearGradient><pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".8" fill="#edf5ef" opacity=".13"/></pattern></defs><rect width="700" height="270" fill="url(#dots)"/><path d="M50 226 C116 220 118 127 202 150 S327 222 410 151 S517 48 651 71" fill="none" stroke="#edf3f0" stroke-opacity=".1" stroke-width="22"/><path id="svgBaseRoute" d="M50 226 C116 220 118 127 202 150 S327 222 410 151 S517 48 651 71" fill="none" stroke="url(#pathGradient)" stroke-width="3.5" stroke-dasharray="7 7"/><circle cx="50" cy="226" r="9" fill="#d4e9e4"/><circle cx="50" cy="226" r="18" stroke="#d4e9e4" opacity=".35" fill="none"/><circle cx="651" cy="71" r="9" fill="#d4e9e4"/><circle id="svgCar" cx="50" cy="226" r="8" fill="#ffce99" stroke="#151e23" stroke-width="4"/><text x="43" y="252">START</text><text x="612" y="48">ARRIVAL</text></svg><span class="map-caption">CONCEPT ROUTE VISUALIZATION · 실제 지도 아님</span></div><p class="micro native-info" id="nativeRouteNotice">브라우저에서는 가상 경로만 표시합니다. Pleos 연동 시 실제 SDK 이벤트를 기다립니다.</p><button class="ghost-small" type="button" id="btnNativeRefresh" hidden aria-label="Pleos 차량 및 경로 상태 새로고침">Pleos 실측 상태 다시 조회</button><div class="route-progress"><div class="range-head"><label for="progressRange">주행 진행 시뮬레이션</label><strong id="progressValue">0%</strong></div><input type="range" id="progressRange" min="0" max="100" step="5" value="0"><div class="range-numbers"><span>출발</span><span>여정 진행</span><span>도착</span></div></div><div class="route-bottom"><div><small>예상 남은 시간 · 데모</small><strong id="remainingTime">2시간 35분</strong></div><div><small>여정 진행</small><strong id="routeStatus">출발 전</strong></div><button class="btn btn-outline" id="btnResetRoute">여정 초기화 <svg><use href="#i-refresh"/></svg></button></div></article>
       <article class="panel" id="roadRoutePanel" style="padding:22px;grid-column:1/-1"><div class="card-heading"><span>OPEN ROAD · VERIFIED MAP ESTIMATE</span><span class="data-pill">ON-DEMAND DEMO API</span></div><h3 style="font-size:20px;margin:12px 0">실제 도로 경로 예상 시간</h3><p class="muted" style="font-size:12px">현재 선택한 도시 좌표를 OpenStreetMap 기반 OSRM 데모 서버로 전달해 운전 거리·예상 시간을 조회합니다. 교통량·현재 차량 위치는 반영되지 않으며 실차 NaviHelper와 무관합니다.</p><div class="road-cta"><button class="btn btn-outline" id="btnRoadEstimate" type="button">실제 도로 예측 조회 ↗</button><div id="roadEstimateStatus" role="status" class="road-result">조회를 선택하면 공식 SDK가 아닌 공개 도로망 데이터를 사용합니다.</div></div><small class="micro">출처: © OpenStreetMap contributors / OSRM demo · 경로 좌표 전송에 동의한 경우에만 호출 · 시연용 무료 서버, 상용 운영에는 별도 서비스 필요</small></article><article class="panel story-panel"><div class="story-art"><span class="tag tag-glass">JOURNEY COMPOSER</span><span class="story-number">02<span> / IMMERSIVE AUDIO</span></span></div><div class="story-content"><div class="story-title-row"><h3>길 위의 이야기가<br><em>당신을 따라옵니다.</em></h3><span class="story-indicator">● STORY</span></div><p id="storyText">여정의 시작. 서울의 아침 풍경을 지나 강릉의 바다를 향해 달립니다.</p><div class="story-progress"><div class="story-track"><i id="storyFill"></i></div><div class="story-meta"><span id="storyChapter">CHAPTER 01 · 출발의 설렘</span><span id="storyLength">남은 여정에 맞춘 구성</span></div></div><button class="btn btn-warm" id="btnStoryAudio"><svg><use href="#i-play"/></svg> 이 여정의 이야기 듣기</button><p class="micro">브라우저 음성합성(TTS) 시연. 실제 생성형 AI 서버는 연결되지 않았습니다.</p></div></article></div>
 <article class="panel live-destination-panel"><div class="card-heading"><span>DESTINATION / LIVE DATA</span><span class="data-pill">OPEN API</span></div><h3>도착지 날씨와 지역 이야기를<br>실제 공개 자료로 확인하세요.</h3><p id="arrivalWeather" class="muted" role="status">도착지 예보를 아직 조회하지 않았습니다.</p><p id="regionalKnowledge" class="muted">확인된 지역 자료를 불러오면 출처가 표시됩니다. AI가 사실을 만들어내지 않습니다.</p><div class="mini-actions"><button id="btnArrivalWeather" class="btn btn-outline">도착지 예보 조회</button><button id="btnRegionStory" class="btn btn-warm">지역 이야기 불러오기</button></div><div id="regionalCitation" class="micro"></div></article>
     </section>
@@ -327,6 +327,8 @@ html,body{overflow-x:clip}
     }));
   }
   function updateRoute(){
+    // The browser's synthetic progress must never overwrite an active navigation SDK view.
+    if(nativeState.naviReady){updateNativeBadges();return;}
     const cfg=routeConfig(); const remaining=Math.round(cfg.duration*(1-state.progress/100));
     $('originSelect').value=state.origin; $('destinationSelect').value=state.destination;$('progressRange').value=String(state.progress);
     $('progressValue').textContent=`${state.progress}%`;
@@ -398,9 +400,12 @@ html,body{overflow-x:clip}
   function stopAudio(){const wasSpeaking=isSpeaking;if('speechSynthesis' in window)window.speechSynthesis.cancel();isSpeaking=false;if(wasSpeaking)window.dispatchEvent(new Event('moment:tts-end')); $('briefingButtonLabel').textContent='오늘의 브리핑 듣기';$('btnStoryAudio').innerHTML=`${icons('play')} 이 여정의 이야기 듣기`;}
   function speak(kind){if(!('speechSynthesis' in window)){toast('이 브라우저는 음성 합성을 지원하지 않습니다.');return;}
     if(isSpeaking){stopAudio();toast('음성 안내를 중지했습니다.');return;}
-    const route=routeConfig();const remaining=minutesText(Math.round(route.duration*(1-state.progress/100)));
+    const route=routeConfig();
+    const sdkRemaining=numericOrNull(nativeState.route?.remainingMinutes,0,2880);
+    const remaining=nativeState.naviReady?(sdkRemaining===null?'미확인':minutesText(sdkRemaining))
+      :minutesText(Math.round(route.duration*(1-state.progress/100)));
     const weatherPart=weatherData?`현재 ${route.from} 기온은 ${weatherData.temp}도입니다.`:'실시간 날씨는 현재 확인할 수 없습니다.';
-    const text=kind==='briefing'?`${greeting()} MOMENT AI입니다. ${weatherPart} 오늘의 목적지는 ${route.to}, 남은 이동 시간은 데모 기준 ${remaining}입니다. ${window.MomentNewsFeed?.briefingText?.()||'국내 뉴스는 현재 확인되지 않았습니다.'} 식당 추천과 오디오 콘텐츠를 자유롭게 체험해 보세요.`:$('storyText').textContent;
+    const text=kind==='briefing'?`${greeting()} MOMENT AI입니다. ${weatherPart} 오늘의 목적지는 ${nativeState.naviReady?(nativeState.route?.destinationName||'확인 대기'):route.to}, 남은 이동 시간은 ${nativeState.naviReady?'차량 SDK 기준':'데모 기준'} ${remaining}입니다. ${window.MomentNewsFeed?.briefingText?.()||'국내 뉴스는 현재 확인되지 않았습니다.'} 식당 추천과 오디오 콘텐츠를 자유롭게 체험해 보세요.`:$('storyText').textContent;
     stopAudio();window.dispatchEvent(new Event('moment:tts-start'));const u=new SpeechSynthesisUtterance(text);u.lang='ko-KR';u.rate=.94;u.pitch=.97;
     const voices=window.speechSynthesis.getVoices();const korean=voices.find(v=>v.lang?.toLowerCase().startsWith('ko'));if(korean)u.voice=korean;
     u.onend=()=>{isSpeaking=false;window.dispatchEvent(new Event('moment:tts-end'));$('briefingButtonLabel').textContent='오늘의 브리핑 듣기';$('btnStoryAudio').innerHTML=`${icons('play')} 이 여정의 이야기 듣기`;};
@@ -464,43 +469,74 @@ html,body{overflow-x:clip}
     const first=pageFromUrl();navigateScreen(first,{replace:true});
   }
 
-  const nativeState={connected:false,vehicle:null,route:null,failed:null};
+  // In the browser, the UI remains an explicitly labelled simulation. Android host supplies
+  // separate readiness for Vehicle Service and Navi Service; one never implies the other.
+  const nativeState={connected:false,vehicleReady:false,naviReady:false,vehicle:null,route:null,failed:null};
   function numericOrNull(v,low,high){return typeof v==='number'&&Number.isFinite(v)&&v>=low&&v<=high?v:null;}
-  function updateNativeBadges(){
-    $('vehicleDataSource').textContent=nativeState.connected?'PLEOS SDK · CONNECTED':'SIMULATED';
-    $('vehicleDataSource').classList.toggle('demo',!nativeState.connected);
-    $('naviDataSource').textContent=nativeState.connected?'NAVI · SDK CONNECTED':'NAVI · SIMULATED';
-    $('naviDataSource').classList.toggle('demo',!nativeState.connected);
-    $('nativeRouteNotice').textContent=nativeState.connected
-      ? '실제 SDK 연결 모드입니다. 목적지 변경·경유지 요청은 승인된 위치 데이터가 필요하며, 응답 전에는 완료라고 표시하지 않습니다.'
-      : '브라우저에서는 가상 경로만 표시합니다. Pleos 연동 시 실제 SDK 이벤트를 기다립니다.';
-    ['originSelect','destinationSelect','progressRange','btnResetRoute'].forEach(id=>{$(id).disabled=nativeState.connected;});
-    if(nativeState.connected){
-      const battery=numericOrNull(nativeState.vehicle?.batteryPercent,0,100);
-      const range=numericOrNull(nativeState.vehicle?.rangeKm,0,2000);
-      $('vehicleBattery').innerHTML=battery===null?'—':`${Math.round(battery)}<sup>%</sup>`;
-      $('vehicleRange').innerHTML=range===null?'—':`${Math.round(range)}<sup>km</sup>`;
-      $('batteryFill').style.width=(battery===null?0:battery)+'%';
-      const eta=numericOrNull(nativeState.route?.remainingMinutes,0,2880);
-      $('remainingTime').textContent=eta===null?'조회 대기':minutesText(eta);
-      $('heroRouteTime').textContent=eta===null?'Pleos 연결 · 경로 대기':`Pleos 데이터 · ${minutesText(eta)} 남음`;
-      $('heroDestination').textContent=typeof nativeState.route?.destinationName==='string'&&nativeState.route.destinationName.length<90
-        ? nativeState.route.destinationName:'목적지 정보 대기';
-      $('routeStatus').textContent=nativeState.route?.routingCompleted===true?'내비게이션 경로 수신':'경로 정보 대기';
-      $('storyLength').textContent=eta===null?'SDK 경로 대기':`남은 이동 ${minutesText(eta)}`;
-      $('progressValue').textContent='SDK';
-    }else{updateRoute();}
+  function nativeCommand(command){
+    const bridge=window.MomentNativeBridge;
+    if(!bridge)return false;
+    try{
+      if(typeof bridge.postMessage==='function'){
+        bridge.postMessage(JSON.stringify({schema:'moment.pleos.command.v1',command}));return true;
+      }
+      // Legacy local-test wrapper compatibility; not used by the new Android host.
+      if(command==='ready'&&typeof bridge.ready==='function'){bridge.ready();return true;}
+    }catch(e){nativeState.failed=String(e).slice(0,120);}
+    return false;
   }
-  // Invoked only by the Android wrapper's local asset WebView; browser JS consoles cannot authenticate real sensor data.
+  function updateNativeBadges(){
+    const connected=nativeState.connected;
+    $('vehicleDataSource').textContent=nativeState.vehicleReady?'PLEOS · VEHICLE VERIFIED':connected?'VEHICLE · NO DATA':'SIMULATED';
+    $('vehicleDataSource').classList.toggle('demo',!nativeState.vehicleReady);
+    $('naviDataSource').textContent=nativeState.naviReady?'PLEOS · NAVI CONNECTED':connected?'NAVI · UNAVAILABLE':'NAVI · SIMULATED';
+    $('naviDataSource').classList.toggle('demo',!nativeState.naviReady);
+    $('btnNativeRefresh').hidden=!connected;
+    const information=connected
+      ?`차량 SDK ${nativeState.vehicleReady?'데이터 수신':'미확인'} · Navi SDK ${nativeState.naviReady?'연결됨':'연결 대기'}. `+
+       '경로 요청과 실제 완료는 다릅니다. 실측되지 않은 ETA·배터리 값은 표시하지 않습니다.'
+      :'브라우저에서는 가상 경로만 표시합니다. Pleos Android 호스트에서 실제 SDK 이벤트를 기다립니다.';
+    $('nativeRouteNotice').textContent=nativeState.failed?`${information} 최근 오류: ${nativeState.failed}`:information;
+    ['originSelect','destinationSelect','progressRange','btnResetRoute'].forEach(id=>{$(id).disabled=nativeState.naviReady;});
+    if(connected){
+      const battery=nativeState.vehicleReady?numericOrNull(nativeState.vehicle?.batteryPercent,0,100):null;
+      const range=nativeState.vehicleReady?numericOrNull(nativeState.vehicle?.rangeKm,0,2000):null;
+      $('vehicleBattery').textContent=battery===null?'조회 불가':`${Math.round(battery)}%`;
+      $('vehicleRange').textContent=range===null?'조회 불가':`${Math.round(range)} km`;
+      $('batteryFill').style.width=(battery===null?0:battery)+'%';
+    }
+    if(nativeState.naviReady){
+      const eta=numericOrNull(nativeState.route?.remainingMinutes,0,2880);
+      $('remainingTime').textContent=eta===null?'확인 대기':minutesText(eta);
+      $('heroRouteTime').textContent=eta===null?'Pleos · 도착시간 미확인':`Pleos 실측 · ${minutesText(eta)} 남음`;
+      $('heroDestination').textContent=typeof nativeState.route?.destinationName==='string'&&nativeState.route.destinationName.length<90
+        ?nativeState.route.destinationName:'목적지 정보 대기';
+      $('routeStatus').textContent=nativeState.route?.routingCompleted===true?'내비게이션 경로 확인됨':'경로 수신 대기';
+      $('storyLength').textContent=eta===null?'차량 ETA 확인 대기':`남은 여정 ${minutesText(eta)}`;
+      $('progressValue').textContent='SDK';
+    }
+  }
+  // A JS console alone is not hardware attestation. Actual trust boundary is the Android
+  // WebViewAssetLoader origin + main-frame-only WebMessage listener, not this callback.
   window.__MOMENT_NATIVE_EVENT__=function(json){
     let event;try{event=typeof json==='string'?JSON.parse(json):json;}catch(_){return false;}
     if(!event||event.schema!=='moment.pleos.bridge.v1'||typeof event.type!=='string')return false;
-    if(event.type==='connected')nativeState.connected=true;
-    else if(event.type==='disconnected'){nativeState.connected=false;nativeState.vehicle=null;nativeState.route=null;nativeState.failed=String(event.reason||'연결 해제').slice(0,120);}
-    else if(event.type==='vehicle'&&nativeState.connected){nativeState.vehicle={batteryPercent:event.batteryPercent,rangeKm:event.rangeKm};}
-    else if(event.type==='route'&&nativeState.connected){nativeState.route={remainingMinutes:event.remainingMinutes,destinationName:event.destinationName,routingCompleted:event.routingCompleted===true};}
-    else if(event.type==='error'){nativeState.failed=String(event.message||'SDK 오류').slice(0,120);}
-    else return false;
+    if(event.type==='connected'){
+      nativeState.connected=true;
+      nativeState.vehicleReady=event.vehicleReady===true;
+      nativeState.naviReady=event.naviReady===true;
+      nativeState.failed=null;
+    }else if(event.type==='disconnected'){
+      nativeState.connected=false;nativeState.vehicleReady=false;nativeState.naviReady=false;
+      nativeState.vehicle=null;nativeState.route=null;nativeState.failed=String(event.reason||'연결 해제').slice(0,120);
+    }else if(event.type==='vehicle'&&nativeState.connected&&nativeState.vehicleReady){
+      nativeState.vehicle={batteryPercent:event.batteryPercent,rangeKm:event.rangeKm};
+    }else if(event.type==='route'&&nativeState.connected&&nativeState.naviReady){
+      nativeState.route={remainingMinutes:event.remainingMinutes,destinationName:event.destinationName,routingCompleted:event.routingCompleted===true};
+    }else if(event.type==='error'){
+      nativeState.failed=String(event.message||'SDK 오류').slice(0,120);
+    }else return false;
+    if(event.type==='disconnected')updateRoute();
     updateNativeBadges();return true;
   };
 
@@ -527,11 +563,15 @@ html,body{overflow-x:clip}
     document.body.classList.toggle('driving',state.driving);
     bindScreenNavigation();
     updateNews();updateRoute();refreshWeather();
-    if(window.MomentNativeBridge&&typeof window.MomentNativeBridge.ready==='function'){try{window.MomentNativeBridge.ready();}catch(e){nativeState.failed=String(e);}}
+    $('btnNativeRefresh').addEventListener('click',()=>{
+      if(nativeCommand('refreshState'))toast('Pleos 실측 정보 조회를 요청했습니다.');
+      else toast('Pleos Android 호스트에 연결되지 않았습니다.');
+    });
+    nativeCommand('ready');
   }
   attach();
   // For deterministic browser automation and manual verification only; no private data exposed.
-  window.__MOMENT_DEMO_TEST__ = Object.freeze({status:()=>({origin:state.origin,destination:state.destination,progress:state.progress,detour:state.detour,weatherStatus,voice:isSpeaking,wellnessGoal:wellness.goal,screen:currentScreen,nativeConnected:nativeState.connected,nativeVehicle:nativeState.vehicle,nativeRoute:nativeState.route})});
+  window.__MOMENT_DEMO_TEST__ = Object.freeze({status:()=>({origin:state.origin,destination:state.destination,progress:state.progress,detour:state.detour,weatherStatus,voice:isSpeaking,wellnessGoal:wellness.goal,screen:currentScreen,nativeConnected:nativeState.connected,vehicleReady:nativeState.vehicleReady,naviReady:nativeState.naviReady,nativeVehicle:nativeState.vehicle,nativeRoute:nativeState.route})});
 })();
 
 </script>

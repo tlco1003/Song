@@ -10,6 +10,7 @@ import {getAuth} from 'firebase-admin/auth';
 import {onRequest} from 'firebase-functions/v2/https';
 import {onDocumentUpdated} from 'firebase-functions/v2/firestore';
 import {handleProductionPayments} from './production-payments.mjs';
+import {handleVideoAdInquiries} from './production-video-inquiries.mjs';
 import {handleProductionDelivery} from './production-delivery.mjs';
 import {handleOrderStatus} from './order-status-portal.mjs';
 import {handleFunnelEvent} from './production-analytics.mjs';
@@ -25,7 +26,7 @@ const db=getFirestore(app),auth=getAuth(app);
 const bucket=getStorage(app).bucket(process.env.WITHU_STORAGE_BUCKET);
 const context={db,auth,bucket,env:process.env,fetcher:globalThis.fetch};
 const apiSecrets=['TOSS_SECRET_KEY','RESEND_API_KEY','WITHU_LINK_ENCRYPTION_KEY',
- 'RESEND_WEBHOOK_SIGNING_SECRET'];
+ 'RESEND_WEBHOOK_SIGNING_SECRET','WITHU_VIDEO_LEAD_HMAC_KEY'];
 const workerSecrets=['RESEND_API_KEY','OPENAI_API_KEY','WITHU_LINK_ENCRYPTION_KEY'];
 
 export const api=onRequest({
@@ -38,6 +39,7 @@ export const api=onRequest({
   res.setHeader('Referrer-Policy','no-referrer');
   res.setHeader('Cache-Control','private, no-store');
   for(const handle of [handleProductionWebhooks,handleProductionPayments,
+    handleVideoAdInquiries,
     handleFunnelEvent,handleOrderStatus,handleProductionDelivery,handleProductionComments,handleAdminSongTiming,handleProductionAdmin]){
    if(await handle(req,res,context))return;
   }

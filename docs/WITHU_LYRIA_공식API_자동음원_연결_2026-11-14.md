@@ -4,7 +4,7 @@
 
 > 이 문서는 실제 추가한 **서버 코드**와 아직 검증하지 못한 **외부 서비스**를 구분한다.
 > GitHub Pages는 정적 사이트이며 서버에서 유료 음악을 만들지 않는다. Firebase Functions가 운영 백엔드이다.
-> 실제 Lyria 음악 생성 요청, PG 실거래, Google Drive 백업, 고객 수신함 전달은 이 작업에서 수행하지 않았다.
+> 실제 Lyria 음악 생성 요청, PG 실거래, Google Drive에 대한 실제 파일 업로드, 고객 수신함 전달은 이 작업에서 수행하지 않았다.
 
 ## 1. 공급자 선택에 대한 근거
 
@@ -58,7 +58,7 @@
 - Lyria 실제 API 자격/유료 생성 응답·한국어 가사 충실도·음질·비용 실측, 테스트 PG 주문 1건과 이메일 수신함 E2E.
 - 부정확한 가사 생성 시 고객 재생성/검수 UI 및 정식 작업 재조정/환불 정책.
 - 완전 무인 품질 출고가 필요하면 실제 음성 분리/ASR 정렬/가사 대응률과 품질 기준을 검증하고 인간 승인과 동등한 근거를 기록하는 별도 QA 절차 필요.
-- Google Drive 백업은 **아직 연결되지 않았다**. 현재는 Firebase Storage가 권한 및 고객별 접근을 검사하는 원본 저장소다. 필요시 비공개 Drive 폴더·서비스 계정 권한·중복 방지·삭제 동기화를 추가.
+- Google Drive 비공개 백업 **코드 연결 완료(옵션, 실제 업로드 미검증)**: `src/google-drive-private-music-backup.mjs`가 Firebase Storage 저장 직후 업로드를 시도하고 성공 파일 ID 또는 실패 사유를 곡별 작업에 기록. 실제 사용하려면 `WITHU_DRIVE_BACKUP_ENABLED=true`, `WITHU_DRIVE_FOLDER_ID` 및 Firebase Secret `WITHU_DRIVE_SERVICE_ACCOUNT_JSON` 필요. Google Workspace Shared Drive에서 서비스 계정 권한을 먼저 검증할 것. 개인 Google 계정의 My Drive는 서비스 계정 소유권·저장 할당량 문제로 동일하게 처리할 수 없음. 업로드 실패는 원본 GCS와 고객 검수를 중단하지 않으며 백업 재시도/삭제 동기화는 아직 미구현.
 - Firebase 배포·외부 키와 권리 기록은 실제 소유자가 승인해야 하며 공개 GitHub Pages는 그대로 정적 웹사이트다.
 
 ## 6. 검증 명령

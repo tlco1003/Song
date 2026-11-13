@@ -1,96 +1,103 @@
 {
   "schema": "MOMENT_NEWS_RSS_v1",
-  "generatedAt": "2026-11-13T16:22:59.272Z",
+  "generatedAt": "2026-11-13T22:37:30.732Z",
   "kind": "RECENT_PUBLISHER_RSS_NOT_POPULARITY_RANKING",
   "coverage": "연합뉴스·뉴시스·동아일보·IT동아 등 연결된 피드의 최신 헤드라인. 국가 전체 인기 순위가 아닙니다.",
   "categories": {
     "headlines": [
       {
-        "title": "[속보]한국 2-3 사우디(후반 24분 이재성)",
-        "link": "https://www.newsis.com/view/NISX20261114_0003867921",
+        "title": "케데헌 '골든', 英 오피셜 싱글 56위 반등…73주째 롱런",
+        "link": "https://www.newsis.com/view/NISX20261114_0003867955",
         "source": "뉴시스",
-        "publishedAt": "2026-11-13T16:03:10.000Z",
+        "publishedAt": "2026-11-13T22:31:32.000Z",
         "category": "headlines"
       },
       {
-        "title": "\"살 빠지고 목소리가 변했어요\"…혹시 '이 질환'?[몸의경고]",
-        "link": "https://www.newsis.com/view/NISX20261113_0003867580",
+        "title": "\"여기 제 자리입니다\"…임산부석 옆자리까지 짐으로 '찜'",
+        "link": "https://www.newsis.com/view/NISX20261113_0003866508",
         "source": "뉴시스",
-        "publishedAt": "2026-11-13T16:01:00.000Z",
+        "publishedAt": "2026-11-13T22:30:00.000Z",
         "category": "headlines"
       },
       {
-        "title": "차이콥스키 선율로 물드는 부산의 늦가을…27일 공연",
-        "link": "https://www.newsis.com/view/NISX20261113_0003867713",
+        "title": "충북, 대체로 흐리고 곳곳 빗방울….낮 최고 14도",
+        "link": "https://www.newsis.com/view/NISX20261114_0003867953",
         "source": "뉴시스",
-        "publishedAt": "2026-11-13T16:00:00.000Z",
+        "publishedAt": "2026-11-13T22:29:53.000Z",
         "category": "headlines"
       },
       {
-        "title": "해운대 모듈러 교실 5년째…박준영 시의원 \"과밀 해소책 마련해야\"",
-        "link": "https://www.newsis.com/view/NISX20261113_0003867315",
+        "title": "14일 전남광주 흐리며 40㎜ 안팎 비…낮 최고 18도",
+        "link": "https://www.newsis.com/view/NISX20261114_0003867952",
         "source": "뉴시스",
-        "publishedAt": "2026-11-13T16:00:00.000Z",
+        "publishedAt": "2026-11-13T22:29:44.000Z",
         "category": "headlines"
       },
       {
-        "title": "[속보]한국 1-3 사우디(후반 14분 압둘엘라 알암리)",
-        "link": "https://www.newsis.com/view/NISX20261114_0003867919",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-13T15:54:00.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "[속보]한국 1-2 사우디(후반 11분 모함메드 칸노)",
-        "link": "https://www.newsis.com/view/NISX20261114_0003867918",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-13T15:51:04.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "[속보]한국 1-1 사우디(후반 2분 오현규)",
-        "link": "https://www.newsis.com/view/NISX20261113_0003867907",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-13T15:41:25.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "연락 끊긴 80대 승객, 익산역 인근 선로서 구조",
-        "link": "https://www.yna.co.kr/view/AKR20261114001000055",
+        "title": "'18개월 연속 인구 감소' 인천 옹진군…내년엔 반등할까",
+        "link": "https://www.yna.co.kr/view/AKR20261113100400065",
         "source": "연합뉴스",
-        "publishedAt": "2026-11-13T15:36:57.000Z",
+        "publishedAt": "2026-11-13T22:27:00.000Z",
         "category": "headlines"
       },
       {
-        "title": "美 10월 도매물가 전년 대비 6.5%↑…약 4년만에 최고(종합)",
-        "link": "https://www.yna.co.kr/view/AKR20261113181351072",
+        "title": "남양주 오남읍 단독주택 불…60대 1명 사망",
+        "link": "https://www.yna.co.kr/view/AKR20261114013900060",
         "source": "연합뉴스",
-        "publishedAt": "2026-11-13T15:36:37.000Z",
+        "publishedAt": "2026-11-13T22:25:34.000Z",
         "category": "headlines"
       },
       {
-        "title": "답답한 모레노호, 사우디에 0-1 뒤진 채 전반 종료",
-        "link": "https://www.newsis.com/view/NISX20261113_0003867911",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-13T15:33:01.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "\"이스라엘 모사드 국장, CIA국장 만난다\"…이란공격 부추기나",
-        "link": "https://www.yna.co.kr/view/AKR20261114000600071",
+        "title": "美 미시시피강서 유람선-화물선 충돌…승객 129명 구조 진행",
+        "link": "https://www.yna.co.kr/view/AKR20261114012600075",
         "source": "연합뉴스",
-        "publishedAt": "2026-11-13T15:31:22.000Z",
+        "publishedAt": "2026-11-13T22:23:40.000Z",
         "category": "headlines"
       },
       {
-        "title": "[속보]한국 0-1 사우디(전반 46분 마르완 알사하피)",
-        "link": "https://www.newsis.com/view/NISX20261113_0003867905",
+        "title": "'해운대 빛 축제' 28일 점등…바다 탐험하는 풍경 연출",
+        "link": "https://www.yna.co.kr/view/AKR20261113126200051",
+        "source": "연합뉴스",
+        "publishedAt": "2026-11-13T22:20:05.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "인천공항에 '국내 최대·세계 3위 비즈니스 항공단지' 만든다",
+        "link": "https://www.yna.co.kr/view/AKR20261113135100065",
+        "source": "연합뉴스",
+        "publishedAt": "2026-11-13T22:17:01.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "\"우산 챙기세요\" 밤까지 비 '오락가락'…낮 14~17도",
+        "link": "https://www.newsis.com/view/NISX20261114_0003867938",
         "source": "뉴시스",
-        "publishedAt": "2026-11-13T15:21:43.000Z",
+        "publishedAt": "2026-11-13T22:15:44.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "뉴욕증시, 다우지수만 0.1% 상승…엔비디아 2%↓, 하락 지속(종합)",
+        "link": "https://www.yna.co.kr/view/AKR20261114009551072",
+        "source": "연합뉴스",
+        "publishedAt": "2026-11-13T22:14:46.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "익산역서 잘못 내린 80대 선로 진입…KTX 등 열차 5대 지연",
+        "link": "https://www.newsis.com/view/NISX20261114_0003867950",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-13T22:14:44.000Z",
         "category": "headlines"
       }
     ],
     "technology": [
+      {
+        "title": "\"신장암 수술전 미리 본다\"…비료기과로 간 AI[빠정예진]",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867231",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-13T21:01:00.000Z",
+        "category": "technology"
+      },
       {
         "title": "\"살 빠지고 목소리가 변했어요\"…혹시 '이 질환'?[몸의경고]",
         "link": "https://www.newsis.com/view/NISX20261113_0003867580",
@@ -117,13 +124,6 @@
         "link": "https://www.newsis.com/view/NISX20261113_0003867502",
         "source": "뉴시스",
         "publishedAt": "2026-11-13T09:57:01.000Z",
-        "category": "technology"
-      },
-      {
-        "title": "AI가 내 글을 인용했다면…창작자·이용자 모두 '직접 보상' 선호",
-        "link": "https://www.newsis.com/view/NISX20261113_0003867776",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-13T09:15:01.000Z",
         "category": "technology"
       },
       {
@@ -178,17 +178,52 @@
     ],
     "culture": [
       {
-        "title": "[이주의 공연]연극 '러브레터'·뮤지컬 '두 도시 이야기' 外",
-        "link": "https://www.newsis.com/view/NISX20261113_0003867690",
+        "title": "“日 홋카이도 겨울 여행, 킨텍스서 엿보세요”…호시노 리조트 토마무",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867706",
         "source": "뉴시스",
-        "publishedAt": "2026-11-13T15:05:00.000Z",
+        "publishedAt": "2026-11-13T22:00:00.000Z",
         "category": "culture"
       },
       {
-        "title": "욕망에 무너진 AI 황제…젠슨 황과 클림트의 유디트[박현주 아트클럽]",
-        "link": "https://www.newsis.com/view/NISX20261112_0003864866",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-13T15:01:00.000Z",
+        "title": "[오늘의 운세/11월 15일]",
+        "link": "https://www.donga.com/news/Culture/article/all/20261113/135022558/2",
+        "source": "동아일보",
+        "publishedAt": "2026-11-13T16:40:00.000Z",
+        "category": "culture"
+      },
+      {
+        "title": "[오늘의 운세/11월 14일]",
+        "link": "https://www.donga.com/news/Culture/article/all/20261113/135022560/2",
+        "source": "동아일보",
+        "publishedAt": "2026-11-13T16:40:00.000Z",
+        "category": "culture"
+      },
+      {
+        "title": "전태일 사진-수기 복제본 등 6875점 온라인 공개",
+        "link": "https://www.donga.com/news/People/article/all/20261113/135023070/2",
+        "source": "동아일보",
+        "publishedAt": "2026-11-13T16:40:00.000Z",
+        "category": "culture"
+      },
+      {
+        "title": "[책의 향기]토성은 왜 土星?… 80대 법조인이 본 우주",
+        "link": "https://www.donga.com/news/Culture/article/all/20261113/135022457/2",
+        "source": "동아일보",
+        "publishedAt": "2026-11-13T16:40:00.000Z",
+        "category": "culture"
+      },
+      {
+        "title": "[어린이 책]70년 전 어린이들도 궁금한 게 많았구나",
+        "link": "https://www.donga.com/news/Culture/article/all/20261113/135022447/2",
+        "source": "동아일보",
+        "publishedAt": "2026-11-13T16:40:00.000Z",
+        "category": "culture"
+      },
+      {
+        "title": "[책의 향기]AI시대 살길은 평생 학습하는 ‘호모 디스켄스’",
+        "link": "https://www.donga.com/news/Culture/article/all/20261113/135022439/2",
+        "source": "동아일보",
+        "publishedAt": "2026-11-13T16:40:00.000Z",
         "category": "culture"
       },
       {
@@ -225,49 +260,77 @@
         "source": "동아일보",
         "publishedAt": "2026-11-13T08:11:23.000Z",
         "category": "culture"
-      },
-      {
-        "title": "연세대, ‘심리학기반 조직코칭 전문가 양성과정’ 1기 모집",
-        "link": "https://www.donga.com/news/Society/article/all/20261113/135002478/1",
-        "source": "동아일보",
-        "publishedAt": "2026-11-13T08:10:00.000Z",
-        "category": "culture"
-      },
-      {
-        "title": "문체부, 제3기 공공디자인위원회 위촉…정책 심의·조정",
-        "link": "https://www.newsis.com/view/NISX20261113_0003867624",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-13T08:07:42.000Z",
-        "category": "culture"
-      },
-      {
-        "title": "임예진, 5000만원 주고 산 제주 땅 15년 만에 확인…“지분 가치 약 82만원”",
-        "link": "https://www.donga.com/news/Culture/article/all/20261113/135021854/2",
-        "source": "동아일보",
-        "publishedAt": "2026-11-13T08:07:08.000Z",
-        "category": "culture"
-      },
-      {
-        "title": "‘전태일 사진’ 등 노동인권 기록 6875점 온라인 공개",
-        "link": "https://www.donga.com/news/Society/article/all/20261113/135021321/1",
-        "source": "동아일보",
-        "publishedAt": "2026-11-13T07:30:00.000Z",
-        "category": "culture"
-      },
-      {
-        "title": "투숙에 K뷰티·면세점 혜택 더했다…신라스테이, 외국인 전용 패키지 선보여",
-        "link": "https://www.donga.com/news/Economy/article/all/20261113/135021172/1",
-        "source": "동아일보",
-        "publishedAt": "2026-11-13T06:50:33.000Z",
-        "category": "culture"
       }
     ],
     "economy": [
       {
-        "title": "\"아파트 있어야 결혼도 합니다\"…부동산 불평등이 쪼개놓은 청춘",
-        "link": "https://www.newsis.com/view/NISX20261111_0003864095",
+        "title": "한국, 중국 수입시장 6개월째 1위…미국선 9→6위",
+        "link": "https://www.yna.co.kr/view/AKR20261113170500003",
+        "source": "연합뉴스",
+        "publishedAt": "2026-11-13T22:01:00.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "[신상잇슈] 사조푸디스트 '케어포유 가루쌀 치킨'·오뚜기 '슈퍼레드 케첩'",
+        "link": "https://www.yna.co.kr/view/AKR20261113076500030",
+        "source": "연합뉴스",
+        "publishedAt": "2026-11-13T22:00:04.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "[단독]5년 10개월간 경고 이상 조치 28건…중징계 11건[공정위 내부감찰①]",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867368",
         "source": "뉴시스",
-        "publishedAt": "2026-11-13T15:00:00.000Z",
+        "publishedAt": "2026-11-13T22:00:00.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "[반려동물] 며느리 SNS로 대박 난 강아지 옷…20년 봉제공장 '역주행'",
+        "link": "https://www.yna.co.kr/view/AKR20261113149000030",
+        "source": "연합뉴스",
+        "publishedAt": "2026-11-13T21:55:01.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "국제 유가 변동 없이 마감…2일 동안 상승세 중단",
+        "link": "https://www.newsis.com/view/NISX20261114_0003867945",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-13T21:43:09.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "국제유가, 공급 과잉 전망 속 혼조 마감…WTI 0.2%↓",
+        "link": "https://www.yna.co.kr/view/AKR20261114008200072",
+        "source": "연합뉴스",
+        "publishedAt": "2026-11-13T21:00:16.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "주유소 기름값 26주째 내렸지만…두 달간 사실상 제자리",
+        "link": "https://www.yna.co.kr/view/AKR20261113084600003",
+        "source": "연합뉴스",
+        "publishedAt": "2026-11-13T21:00:03.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "[부동산캘린더] 내주 전국 10곳서 1천681가구 공급…수도권 집중",
+        "link": "https://www.yna.co.kr/view/AKR20261113166700003",
+        "source": "연합뉴스",
+        "publishedAt": "2026-11-13T21:00:01.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "서울에서 버티다 결국 짐 쌌다…경기로 순이동 1년 새 40% 급증[전월세 쇼크①]",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867390",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-13T21:00:00.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "시멘트·레미콘 실질가격 36년째 제자리…\"가격 정상화 필요\"",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867799",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-13T20:30:00.000Z",
         "category": "economy"
       },
       {
@@ -282,69 +345,6 @@
         "link": "https://www.newsis.com/view/NISX20261113_0003867904",
         "source": "뉴시스",
         "publishedAt": "2026-11-13T14:42:51.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "EU, 9월 상품교역 중국·노르웨이·한국 등에 적자…168억유로",
-        "link": "https://www.newsis.com/view/NISX20261113_0003867889",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-13T13:24:19.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "노사정, 초광역특구 '노동특례' 논의 물꼬…17일부터 본격화",
-        "link": "https://www.yna.co.kr/view/AKR20261113177600530",
-        "source": "연합뉴스",
-        "publishedAt": "2026-11-13T12:39:06.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "2차 모두의창업 정보 유출, 1차 사고 판박이…'취약한 API' 타깃(종합)",
-        "link": "https://www.yna.co.kr/view/AKR20261113174151030",
-        "source": "연합뉴스",
-        "publishedAt": "2026-11-13T12:25:19.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "노사정, 초광역특구 산업안전 지원 논의…'주52시간 예외'는 아직",
-        "link": "https://www.newsis.com/view/NISX20261113_0003867862",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-13T12:04:07.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "[올댓차이나] 대만 증시, 엔비디아 지배력 저하 기대로 반등 마감…1.35%↑",
-        "link": "https://www.newsis.com/view/NISX20261113_0003867860",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-13T11:56:39.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "경기도, 지방채 2천462억원 내년 또 발행…3년 누적 2조원 육박",
-        "link": "https://www.yna.co.kr/view/AKR20261113174700061",
-        "source": "연합뉴스",
-        "publishedAt": "2026-11-13T11:14:43.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "검역본부, 고병원성 AI 위험주의보 발령…가금농장 방역 강화",
-        "link": "https://www.yna.co.kr/view/AKR20261113173200030",
-        "source": "연합뉴스",
-        "publishedAt": "2026-11-13T10:42:04.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "[올댓차이나] 홍콩 증시, 미중 AI 갈등 우려에 사흘째 속락 마감… H주 1.48%↓",
-        "link": "https://www.newsis.com/view/NISX20261113_0003867830",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-13T10:33:40.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "[동포의 창] 미주한상총연, 뉴욕 BDNY 첫 한국관…중소기업 美진출 지원",
-        "link": "https://www.yna.co.kr/view/AKR20261113171500371",
-        "source": "연합뉴스",
-        "publishedAt": "2026-11-13T10:27:01.000Z",
         "category": "economy"
       }
     ]
@@ -378,7 +378,7 @@
       "name": "뉴시스",
       "category": "culture",
       "status": "ok",
-      "count": 34
+      "count": 36
     },
     {
       "name": "동아일보",
@@ -390,7 +390,7 @@
       "name": "뉴시스",
       "category": "technology",
       "status": "ok",
-      "count": 82
+      "count": 83
     },
     {
       "name": "IT동아",

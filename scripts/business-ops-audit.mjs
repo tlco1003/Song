@@ -26,8 +26,10 @@ export function validateCapabilityRecord(record){
      ||!record.evidence.ref.trim())return false;
   if(record.status==='verified_repository'&&record.evidence.kind!=='repo_path')return false;
   if(record.status==='assisted_external'&&record.evidence.kind!=='review_note')return false;
-  if(record.customerFacingAutomationReady===true
-     &&record.status!=='verified_repository')return false;
+  // A source file alone never proves commercial readiness. Until a separate
+  // live-license, payment and production integration contract is implemented,
+  // forbid every customer-facing automation-ready claim in this ledger.
+  if(record.customerFacingAutomationReady!==false)return false;
   return true;
 }
 

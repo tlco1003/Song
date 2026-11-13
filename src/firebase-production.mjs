@@ -28,7 +28,7 @@ const context={db,auth,bucket,env:process.env,fetcher:globalThis.fetch};
 const apiSecrets=['TOSS_SECRET_KEY','RESEND_API_KEY','WITHU_LINK_ENCRYPTION_KEY',
  'RESEND_WEBHOOK_SIGNING_SECRET','WITHU_VIDEO_LEAD_HMAC_KEY'];
 const workerSecrets=['RESEND_API_KEY','OPENAI_API_KEY','WITHU_LINK_ENCRYPTION_KEY',
- 'GEMINI_API_KEY'];
+ 'GEMINI_API_KEY','WITHU_DRIVE_SERVICE_ACCOUNT_JSON'];
 
 export const api=onRequest({
  region:'asia-northeast3',memory:'1GiB',
@@ -55,7 +55,7 @@ export const api=onRequest({
 });
 export const processPaidOrder=onDocumentUpdated({
  document:'withuOrders/{orderId}',region:'asia-northeast3',
- memory:'1GiB',timeoutSeconds:300,maxInstances:5,
+ memory:'1GiB',timeoutSeconds:540,maxInstances:5,
  retry:false,secrets:workerSecrets
 },async(event)=>{
  const current=event.data?.after?.data();

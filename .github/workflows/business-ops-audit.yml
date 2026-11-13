@@ -1,0 +1,50 @@
+name: WITHU business evidence audit
+on:
+  push:
+    paths:
+      - 'AGENTS.md'
+      - 'CLAUDE.md'
+      - 'docs/business/**'
+      - 'docs/prices.json'
+      - 'src/commerce.mjs'
+      - 'scripts/business-ops-audit.mjs'
+      - 'test/business-ops-audit.test.mjs'
+      - '.github/workflows/business-ops-audit.yml'
+  pull_request:
+    paths:
+      - 'AGENTS.md'
+      - 'CLAUDE.md'
+      - 'docs/business/**'
+      - 'docs/prices.json'
+      - 'src/commerce.mjs'
+      - 'scripts/business-ops-audit.mjs'
+      - 'test/business-ops-audit.test.mjs'
+      - '.github/workflows/business-ops-audit.yml'
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: withu-business-audit-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  audit:
+    name: Repository evidence only — no external sales or AI claims
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify business source, evidence and fail-closed payments
+        run: node scripts/business-ops-audit.mjs
+      - name: Business audit regression tests
+        run: node --test test/business-ops-audit.test.mjs
+      - name: Publish auditable summary
+        if: always()
+        run: |
+          echo '## WITHU Business OS audit' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Source, price SSOT, agent guidance and public payment fail-closed controls checked.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'External provider API status, business sales, contract rights, actual ML training and live deployment are **NOT** verified by this CI job.' >> "$GITHUB_STEP_SUMMARY"

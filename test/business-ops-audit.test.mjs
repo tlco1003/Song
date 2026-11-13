@@ -40,3 +40,11 @@ test('reviewed repository source may be recorded without claiming commercial rea
     customerFacingAutomationReady:false
   }),true);
 });
+
+test('existing checkout source alone cannot mark public commerce as automation-ready',()=>{
+  assert.equal(validateCapabilityRecord({
+    id:'checkout_ui',status:'verified_repository',
+    evidence:{kind:'repo_path',ref:'docs/checkout.html'},
+    customerFacingAutomationReady:true
+  }),false);
+});

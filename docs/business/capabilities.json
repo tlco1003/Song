@@ -97,10 +97,10 @@
     },
     {
       "id": "commercial_ad_offer",
-      "status": "designed_only",
+      "status": "verified_repository",
       "evidence": {
         "kind": "repo_path",
-        "ref": "docs/business/OPERATING_PLAN.md"
+        "ref": "docs/video-ads.html"
       },
       "customerFacingAutomationReady": false
     },
@@ -112,13 +112,49 @@
         "ref": "Training implementation and evaluation cannot be inferred from this business audit."
       },
       "customerFacingAutomationReady": false
+    },
+    {
+      "id": "video_ad_inquiry_backend",
+      "status": "verified_repository",
+      "evidence": {
+        "kind": "repo_path",
+        "ref": "src/production-video-inquiries.mjs"
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "video_ad_admin_inbox",
+      "status": "verified_repository",
+      "evidence": {
+        "kind": "repo_path",
+        "ref": "docs/video-ads-admin.js"
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "video_ad_inquiry_live",
+      "status": "blocked",
+      "evidence": {
+        "kind": "review_note",
+        "ref": "External customer request intake disabled until business identity, full privacy notice, server HMAC secret and deployment are verified."
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "payment_early_return_fix",
+      "status": "verified_repository",
+      "evidence": {
+        "kind": "repo_path",
+        "ref": "test/production-payments-integration.test.mjs"
+      },
+      "customerFacingAutomationReady": false
     }
   ],
   "nextGates": [
-    "Record authorized 15–20-second portfolio ad sample with actual MP4 and source licenses.",
-    "Measure real provider generation credits, human edit time and QC pass rate.",
-    "Validate 1 paid pilot proposal/contract without publicly posting private customer information.",
-    "Verify legal commercial licences, customer agreement, payment provider and runtime deployment before enabling checkout.",
-    "Only after provider official product API documentation and permission: implement adapter within existing production pipeline with idempotency tests."
+    "Finalize real business/operator information, privacy policy, controller/processor list, customer contact and data retention handling before enabling lead intake.",
+    "Configure Firebase hosting, Firestore private collections and 90-day TTL policy, provision WITHU_VIDEO_LEAD_HMAC_KEY as a server secret; test live staging inquiry and admin access.",
+    "Verify the actual Toss Payments test-mode checkout, received payment events and post-payment worker with controlled staging accounts before enabling live payment.",
+    "Prove lawful commercial music/video sourcing, rights documentation and authorized provider contract; do not bypass license gates.",
+    "Validate an authorized 15–20-second product portfolio MP4, inspect final output and measure generation/edit costs before signing the first paid video production contract."
   ]
 }

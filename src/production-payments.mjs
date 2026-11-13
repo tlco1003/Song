@@ -45,9 +45,13 @@ async function confirmPayment(req,db,env,fetcher,upgrade=false){
   if(session.orderId!==original.originalOrderId)
    stop(403,'해당 노래의 추가 결제만 승인할 수 있습니다.');
  }
- if(original.paymentStatus==='paid')
-  try{await recordVerifiedPurchase(db,id,{upgrade});}catch(_){/* Metrics never block verified payment. */}
+ if(original.paymentStatus==='paid'){
+  // Only a previously verified, persistently PAID order may take the
+  // idempotent return path. A pending order MUST reach Toss confirmation.
+  try{await recordVerifiedPurchase(db,id,{upgrade});}
+  catch(_){/* Metrics never block verified payment. */}
   return {status:'paid_verified',orderId:id,upgrade,already:true};
+ }
  if(upgrade){
   const session=await currentSession(req,db);
   if(session.orderId!==original.originalOrderId)

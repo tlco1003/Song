@@ -38,7 +38,7 @@ export async function auditBusinessOps(root=ROOT){
   const check=(id,ok,detail)=>checks.push({id,ok:ok===true,detail});
   const files=['AGENTS.md','CLAUDE.md','docs/business/OPERATING_PLAN.md',
     'docs/business/VIDEO_AGENT_CONTRACT.md','docs/business/PROGRESS.md',
-    'docs/business/capabilities.json','docs/prices.json','src/commerce.mjs',
+    'docs/business/capabilities.json','docs/business/index.html','docs/prices.json','src/commerce.mjs',
     'src/production-contract.mjs','src/paid-order-pipeline.mjs'];
   for(const rel of files){
     try{await access(path.join(root,rel));check('file:'+rel,true,'file exists');}

@@ -2,6 +2,9 @@
 
 ## 사업 운영·AI 영상 제작 확장 (2026-11-14)
 
+- [브랜드 영상 제작 상담 화면](docs/video-ads.html) — 실제 서버 연동 견적 신청 양식. 현재 운영·개인정보 승인 및 Firebase 배포 확인 전에는 고객 접수를 차단.
+- [영상 상담 API](src/production-video-inquiries.mjs) · [운영자 문의함](docs/video-ads-admin.js) — 기존 Firebase/API/관리자 인증 체계에 연결, 별도 결제 없이 견적 검토.
+- [결제 승인 결함 수정 및 검사](test/production-payments-integration.test.mjs) — PR #12 CI 통과 후 main 병합. pending 주문은 Toss 승인 영수증 확인 없이 paid_verified를 반환할 수 없음.
 - [사업 운영 대시보드](docs/business/index.html) — 검증 상태를 모바일에서도 보는 읽기 전용 화면
 - [사업 운영 계획·수익화 로드맵](docs/business/OPERATING_PLAN.md) — 가정과 실측을 분리한 제품·가격·90일 계획
 - [AI 영상/다중 에이전트 연결 계약](docs/business/VIDEO_AGENT_CONTRACT.md) — 기존 엔진 보호, 인물·영상·자막·모션그래픽 확장 기준

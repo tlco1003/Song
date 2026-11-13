@@ -75,8 +75,9 @@ function response(){
   json(data){this.body=data;return this;}
  };
 }
+const AUTH_TOKEN='realAdministratorSessionToken'.repeat(2);
 const auth={verifyIdToken:async(token)=>({
- uid:token==='realAdminBearerToken'?'withu_operator_001':'not_owner',email_verified:true
+ uid:token===AUTH_TOKEN?'withu_operator_001':'not_owner',email_verified:true
 })};
 
 test('intake is disabled until all operational, privacy and HMAC conditions are set',()=>{
@@ -150,7 +151,7 @@ test('operator inbox requires verified Firebase identity and returns private req
   db,auth,env
  }),/관리자 로그인이 필요/);
  assert.equal(r.body,null);
- const token='Bearer realAdminBearerToken';
+ const token='Bearer '+AUTH_TOKEN;
  const reply=response();
  await handleVideoAdInquiries(req({method:'GET',pathname:url,token}),reply,{db,auth,env});
  assert.equal(reply.statusCode,200);
@@ -163,7 +164,7 @@ test('authenticated operator updates only permitted inquiry statuses',async()=>{
  await handleVideoAdInquiries(req(),created,{db,auth,env});
  const id=created.body.inquiryId;
  const path='/api/admin/video-ads/inquiries/'+id+'/status';
- const token='Bearer realAdminBearerToken';
+ const token='Bearer '+AUTH_TOKEN;
  const updated=response();
  await handleVideoAdInquiries(req({pathname:path,token,body:{status:'reviewing'}}),updated,{
   db,auth,env

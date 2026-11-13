@@ -10,6 +10,7 @@
 import {randomUUID,createHash} from 'node:crypto';
 import {createLyriaMusicProvider,LYRIA_MODEL,LyriaGenerationError}
  from './lyria-music-provider.mjs';
+import {backupMusicToPrivateDrive} from './google-drive-private-music-backup.mjs';
 
 export const LYRIA_PROVIDER_ID='google_lyria';
 const PAYMENT_ORDER=/^withu_[a-f0-9]{32}$/;
@@ -105,6 +106,18 @@ export async function runLyriaPaidAutomation({
     sha256:createHash('sha256').update(music.bytes).digest('hex')
    });
   });
+  // Backup is optional and never causes regeneration of a billed candidate.
+  // A failed or unknown Drive upload is visible to the operator for review.
+  let driveBackup;
+  try{
+   driveBackup=await backupMusicToPrivateDrive({
+    env,bytes:music.bytes,orderId,index,fetcher
+   });
+  }catch(error){
+   driveBackup={status:'failed',
+    code:typeof error?.code==='string'?error.code:'DRIVE_BACKUP_UNKNOWN'};
+  }
+  await jobRef.update({driveBackup});
   generated.push({index,storagePath});
  }
  return Object.freeze({

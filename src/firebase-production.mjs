@@ -27,7 +27,8 @@ const bucket=getStorage(app).bucket(process.env.WITHU_STORAGE_BUCKET);
 const context={db,auth,bucket,env:process.env,fetcher:globalThis.fetch};
 const apiSecrets=['TOSS_SECRET_KEY','RESEND_API_KEY','WITHU_LINK_ENCRYPTION_KEY',
  'RESEND_WEBHOOK_SIGNING_SECRET','WITHU_VIDEO_LEAD_HMAC_KEY'];
-const workerSecrets=['RESEND_API_KEY','OPENAI_API_KEY','WITHU_LINK_ENCRYPTION_KEY'];
+const workerSecrets=['RESEND_API_KEY','OPENAI_API_KEY','WITHU_LINK_ENCRYPTION_KEY',
+ 'GEMINI_API_KEY'];
 
 export const api=onRequest({
  region:'asia-northeast3',memory:'1GiB',
@@ -62,7 +63,7 @@ export const processPaidOrder=onDocumentUpdated({
    ||current.production?.status!=='pending')return;
  try{
   await processVerifiedPaidWork({
-   db,orderId:event.params.orderId,env:process.env,fetcher:globalThis.fetch
+   db,bucket,orderId:event.params.orderId,env:process.env,fetcher:globalThis.fetch
   });
  }catch(error){
   console.error('Paid order worker failed',event.params.orderId,error?.name||'Error');

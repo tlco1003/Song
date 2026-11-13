@@ -62,3 +62,14 @@ No private accounting or actual qualified-lead registry is connected to this fil
 - 검증: `test/production-video-inquiries.test.mjs` 포함 GitHub Actions Node checks run 43526058602, `npm run check` 및 `npm test` 성공. main squash commit `2f1ea598b1b53dad25d39b1b3796d0b62491ddf4`.
 - 실제 개인정보 처리 공지·사업자·운영자 승인·Firebase 비밀키·서비스 배포 전까지 접수 기능 기본 OFF. 해당 제품은 견적 **상담**이며 카드결제, 자동 완성 영상, 결제 증빙, 유료 고객 확보를 의미하지 않음.
 - 향후 기준: 신원·법적 운영정보와 공급자 사용권 확인 → 실제 스테이징 Firebase 배포/접수/운영자 확인 → 파일럿 광고영상 납품 품질 및 원가 검증 → 실제 고객 계약·결제.
+
+
+## SONG AI 공식 Lyria 3.5 음악 생성 연결 — 2026-11-14 (미배포)
+
+- 개발 브랜치: `feature/lyria-official-music-20261114`, Draft PR #14: https://github.com/tlco1003/Song/pull/14. 본 기록의 변경은 main 병합/라이브 배포가 아닌 별도 브랜치 검증이다.
+- 소스: `src/lyria-music-provider.mjs` (Gemini Interactions 공식 Lyria 3.5, MP3 검증), `src/lyria-paid-automation.mjs` (실결제·비공개 사업 이용권 승인문서·곡별 중복방지·GCS 등록), `src/google-drive-private-music-backup.mjs` (선택적인 Workspace 공유 드라이브 비공개 백업), 기존 `src/production-worker.mjs` 및 `src/firebase-production.mjs` 연결, `src/order-status-portal.mjs` 상태 수정.
+- 유지: `src/commerce.mjs` fail-closed, `src/production-payments.mjs` PG 서버 확인, `docs/prices.json` 가격 SSOT, `src/production-admin.mjs` 관리자 검수, `src/production-delivery.mjs` 고객 검수 후 Resend 전달.
+- 검증: GitHub Actions Node checks https://github.com/tlco1003/Song/actions/runs/43530585061 — `npm run check`, `npm test` 성공. 테스트는 공식 HTTP 요청·미결제/라이선스 차단·MP3 모의 응답·Firestore/GCS·선택적 Drive 백업·중복 방지·주문 작업기 검증으로, 실제 Google API 호출/과금과 실제 MP3는 생성하지 않았다.
+- 환경 의존: `GEMINI_API_KEY` / `WITHU_AUTOMATED_MUSIC_PROVIDER=google_lyria` / 비공개 승인 기록 / 실제 Firebase 서비스가 모두 있어야 자동 제작. Google Drive는 공유 드라이브 폴더 및 서비스 계정 추가 구성이 있어야 비공개 백업 실행.
+- 고객 완료곡 이메일은 기존 관리자 검수·권리 승인 뒤에만 전송된다. **완전 무인 고객 납품, 실제 Google Drive 업로드, 실 PG 결제, 상업 권리 승인, 실제 배포는 미검증**이다.
+- 필수 후속: Google 소비자-facing 유료 음악 납품 약관 명확화; 한국어 가사·실제 음원 품질·서비스 원가 검증; 중단/부분성공 작업의 정산 재조정 및 환불; QA 자동화; 통합 시크릿/실배포 E2E. 외부 서비스 오류에서 암묵적 재과금을 금지한다.

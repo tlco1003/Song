@@ -2,6 +2,7 @@
 
 ## 사업 운영·AI 영상 제작 확장 (2026-11-14)
 
+- [사업 운영 대시보드](docs/business/index.html) — 검증 상태를 모바일에서도 보는 읽기 전용 화면
 - [사업 운영 계획·수익화 로드맵](docs/business/OPERATING_PLAN.md) — 가정과 실측을 분리한 제품·가격·90일 계획
 - [AI 영상/다중 에이전트 연결 계약](docs/business/VIDEO_AGENT_CONTRACT.md) — 기존 엔진 보호, 인물·영상·자막·모션그래픽 확장 기준
 - [사업 진행 및 검증 상태](docs/business/PROGRESS.md) · [기계 판독 가능 상태](docs/business/capabilities.json)

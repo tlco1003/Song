@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "project": "WITHU",
+  "reviewedOn": "2026-11-14",
+  "repositoryVisibility": "public",
+  "notes": "Evidence snapshot. No live sales, live provider credentials, customer records, live payment or customer-facing advertisement readiness is asserted.",
+  "capabilities": [
+    {
+      "id": "landing_ui",
+      "status": "verified_repository",
+      "evidence": {
+        "kind": "repo_path",
+        "ref": "docs/index.html"
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "checkout_ui",
+      "status": "verified_repository",
+      "evidence": {
+        "kind": "repo_path",
+        "ref": "docs/checkout.html"
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "price_catalog",
+      "status": "verified_repository",
+      "evidence": {
+        "kind": "repo_path",
+        "ref": "docs/prices.json"
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "payment_contract",
+      "status": "verified_repository",
+      "evidence": {
+        "kind": "repo_path",
+        "ref": "src/production-contract.mjs"
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "suno_commercial_music_api",
+      "status": "blocked",
+      "evidence": {
+        "kind": "review_note",
+        "ref": "Written commercial provider authorization and production API credentials not verified."
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "public_checkout",
+      "status": "blocked",
+      "evidence": {
+        "kind": "repo_path",
+        "ref": "src/commerce.mjs"
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "higgsfield_chatgpt_plugin",
+      "status": "assisted_external",
+      "evidence": {
+        "kind": "review_note",
+        "ref": "2026-11-14 authenticated Higgsfield ChatGPT plugin + account and balance readback. This is NOT an approved WITHU B2B API."
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "higgsfield_ai_influencer",
+      "status": "assisted_external",
+      "evidence": {
+        "kind": "review_note",
+        "ref": "2026-11-14 builder was opened; no generated character and no production API verified."
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "reel_effects_sandbox",
+      "status": "assisted_external",
+      "evidence": {
+        "kind": "review_note",
+        "ref": "2026-11-14 Higgsfield sandbox verified reel-effects scripts existed; no customer MP4 rendering yet."
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "invideo_multi_agent",
+      "status": "designed_only",
+      "evidence": {
+        "kind": "review_note",
+        "ref": "InVideo is vendor reference only. No connected InVideo account or working API verified."
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "commercial_ad_offer",
+      "status": "designed_only",
+      "evidence": {
+        "kind": "repo_path",
+        "ref": "docs/business/OPERATING_PLAN.md"
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "song_vision_production_training",
+      "status": "unknown",
+      "evidence": {
+        "kind": "review_note",
+        "ref": "Training implementation and evaluation cannot be inferred from this business audit."
+      },
+      "customerFacingAutomationReady": false
+    }
+  ],
+  "nextGates": [
+    "Record authorized 15–20-second portfolio ad sample with actual MP4 and source licenses.",
+    "Measure real provider generation credits, human edit time and QC pass rate.",
+    "Validate 1 paid pilot proposal/contract without publicly posting private customer information.",
+    "Verify legal commercial licences, customer agreement, payment provider and runtime deployment before enabling checkout.",
+    "Only after provider official product API documentation and permission: implement adapter within existing production pipeline with idempotency tests."
+  ]
+}

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#161b24">
+<meta name="robots" content="noindex,nofollow">
+<meta name="description" content="WITHU 사업 운영 및 AI 콘텐츠 파이프라인의 공개 가능한 검증 상태">
+<title>WITHU | Business OS 진행 현황</title>
+<style>
+:root{color-scheme:dark;--bg:#111720;--panel:#1c2430;--line:#334151;--text:#f1f2f4;--muted:#b5c0cc;--gold:#e7cfa3;--blue:#8cd4ea;--radius:20px}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse 100% 560px at 50% -70px,#27384a,transparent),var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;line-height:1.65;word-break:keep-all}
+a{color:var(--gold);text-decoration-thickness:1px;text-underline-offset:3px}a:focus-visible{outline:3px solid var(--blue);outline-offset:4px}
+.wrap{max-width:1080px;margin:auto;padding:24px 22px 72px}
+header{display:flex;align-items:center;justify-content:space-between;gap:14px;border-bottom:1px solid var(--line);padding-bottom:18px}.logo{font-size:22px;font-weight:700;letter-spacing:.18em;color:var(--text);text-decoration:none}.nav{font-size:13px;display:flex;gap:17px;flex-wrap:wrap}
+.eyebrow{font-size:11px;letter-spacing:.24em;color:var(--gold);font-weight:700;margin:48px 0 12px}
+h1{font-size:clamp(31px,6vw,52px);line-height:1.21;letter-spacing:-.05em;margin:0 0 18px;font-weight:650}h2{font-size:clamp(20px,3vw,27px);letter-spacing:-.02em;margin:0 0 16px}h3{font-size:16px;margin:0 0 8px}
+.lead{max-width:700px;color:var(--muted);margin:0 0 24px;font-size:16px}
+.mono{font-variant-numeric:tabular-nums;letter-spacing:0}
+.banner{border:1px solid #4f4b3c;background:#2a2923;border-radius:14px;padding:15px 18px;font-size:13px;color:#f2e7d1;line-height:1.8}
+.section{margin-top:36px}.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.metric{padding:18px 16px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel)}
+.metric .value{font-size:clamp(24px,4vw,35px);line-height:1.1;margin-bottom:8px;font-weight:650}.metric .label{font-size:12px;color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.item{border:1px solid var(--line);border-radius:16px;padding:18px;background:var(--panel)}.item-title{font-size:15px;font-weight:650;line-height:1.5;margin:0 0 7px;overflow-wrap:anywhere}.item-state{font-size:12px;color:var(--gold);margin:0 0 8px}.item-detail{font-size:12px;color:var(--muted);margin:0}.item .meta{font-size:11px;color:#9eb2c4;margin-top:8px}
+.details{display:grid;grid-template-columns:1fr 1fr;gap:20px}.block{background:var(--panel);border:1px solid var(--line);padding:23px;border-radius:var(--radius)}
+ul{margin:0;padding-left:20px;color:var(--muted);font-size:14px}li{margin-bottom:9px}.links{display:flex;flex-wrap:wrap;gap:12px}.links a{border:1px solid var(--line);border-radius:12px;padding:10px 13px;background:#232d38;font-size:13px}
+footer{margin-top:44px;border-top:1px solid var(--line);padding-top:18px;color:var(--muted);font-size:12px}
+small{color:var(--muted)}@media(max-width:660px){.wrap{padding:18px 15px 50px}header{align-items:flex-start;flex-direction:column}.eyebrow{margin-top:37px}.metrics{grid-template-columns:1fr 1fr}.metric:last-child{grid-column:1/-1}.cards,.details{grid-template-columns:1fr}.block{padding:19px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><a class="logo" href="../">WITHU</a><nav class="nav"><a href="../">홈페이지</a><a href="https://github.com/tlco1003/Song/issues/11" rel="noopener noreferrer">진행 이슈</a><a href="https://github.com/tlco1003/Song/actions/workflows/business-ops-audit.yml" rel="noopener noreferrer">자동 점검 기록</a></nav></header>
+<main>
+<p class="eyebrow">WITHU · BUSINESS OPERATING SYSTEM</p>
+<h1>계획과 실제 성과를<br>구분하는 작업 현황.</h1>
+<p class="lead">사업화와 AI 영상 제작의 확인 가능한 근거를 모아 보는 공개용 읽기 전용 페이지입니다. 자동으로 돈을 벌거나 AI가 학습을 완료했다는 의미는 아닙니다.</p>
+<div class="banner" role="note"><strong>상용 출시 및 매출 실측:</strong> 현재 이 대시보드에는 확인된 거래·이익 데이터가 연결되어 있지 않습니다. 제품 코드의 존재, 외부 도구 사용 가능, 서비스 운영 준비 완료는 서로 다른 상태입니다.</div>
+<section class="section" aria-label="확인된 능력 요약"><div class="metrics">
+<div class="metric"><div class="value mono" id="code-count">—</div><div class="label">코드·자료 존재 확인 항목</div></div>
+<div class="metric"><div class="value mono" id="external-count">—</div><div class="label">외부 도구로 사용 가능한 항목</div></div>
+<div class="metric"><div class="value mono" id="blocked-count">—</div><div class="label">차단·미연동·검증 대기 항목</div></div>
+</div><p><small>증빙 마지막 기록일: <span id="reviewed-on">확인 중</span> · 페이지 접속 시간이 아니라 저장소 검증 기준일입니다.</small></p></section>
+<section class="section"><h2>기능별 검증 상태</h2><div id="capability-list" class="cards" aria-live="polite"><p>상태 데이터를 불러오는 중입니다.</p></div><p id="load-message" role="status"></p></section>
+<section class="section details">
+<div class="block"><h2>다음 단계</h2><ul id="next-gates"><li>검증 항목을 불러오는 중입니다.</li></ul></div>
+<div class="block"><h2>진행 원칙</h2><ul><li>기존 WITHU 결제·라이선스 보호 조치는 승인 전 유지</li><li>Higgsfield ChatGPT 플러그인과 상용 서버 API는 분리</li><li>실제 고객·계약·매출·테스트 결과는 증빙 후 기록</li><li>SONG-Vision 모델 학습 완료는 별도 체크포인트·평가로 검증</li><li>개인정보와 영업 비밀은 공개 저장소에 등록하지 않음</li></ul></div>
+</section>
+<section class="section"><h2>사업 문서와 실행 기록</h2><div class="links">
+<a href="https://github.com/tlco1003/Song/blob/main/docs/business/OPERATING_PLAN.md">사업 운영 계획</a>
+<a href="https://github.com/tlco1003/Song/blob/main/docs/business/VIDEO_AGENT_CONTRACT.md">AI 영상 에이전트 설계</a>
+<a href="https://github.com/tlco1003/Song/blob/main/docs/business/PROGRESS.md">실행·검증 기록</a>
+<a href="https://github.com/tlco1003/Song/blob/main/docs/business/capabilities.json">기능 증빙 데이터</a>
+<a href="https://github.com/tlco1003/Song/blob/main/AGENTS.md">에이전트 작업 규칙</a>
+<a href="https://github.com/tlco1003/Song/issues/11">후속 작업 체크리스트</a>
+</div></section>
+</main>
+<footer>WITHU Business OS · source-controlled public status, not customer accounting, live sales reporting or proof of neural model training.</footer>
+</div>
+<script type="module">
+const labels={
+landing_ui:'WITHU 소개 웹 화면',checkout_ui:'WITHU 주문 구성 화면',price_catalog:'기존 음악 상품 가격 원본',payment_contract:'결제 검증 계약 코드',suno_commercial_music_api:'상업용 음악 생성 API',public_checkout:'고객 대상 결제 활성화',higgsfield_chatgpt_plugin:'Higgsfield 외부 플러그인',higgsfield_ai_influencer:'AI 인플루언서 제작',reel_effects_sandbox:'영상 자막·모션그래픽 편집',invideo_multi_agent:'InVideo 에이전트 연동',commercial_ad_offer:'AI 광고 제작 판매 상품',song_vision_production_training:'SONG-Vision 상용 학습 검증'
+};
+const states={verified_repository:'저장소 원본 확인',assisted_external:'외부 도구 지원·제품 연동 전',designed_only:'설계 단계',blocked:'차단·권리/연동 검증 대기',unknown:'검증 결과 불명'};
+const set=(id,text)=>{document.getElementById(id).textContent=String(text)};
+const list=document.getElementById('capability-list');
+const gates=document.getElementById('next-gates');
+try{
+const res=await fetch('./capabilities.json',{cache:'no-store'});
+if(!res.ok)throw new Error('상태 데이터 HTTP '+res.status);
+const data=await res.json();
+if(data.schemaVersion!==1||!Array.isArray(data.capabilities))throw new Error('상태 데이터 형식이 맞지 않습니다.');
+set('reviewed-on',data.reviewedOn||'알 수 없음');
+set('code-count',data.capabilities.filter(x=>x.status==='verified_repository').length);
+set('external-count',data.capabilities.filter(x=>x.status==='assisted_external').length);
+set('blocked-count',data.capabilities.filter(x=>!['verified_repository','assisted_external'].includes(x.status)).length);
+list.replaceChildren();
+for(const item of data.capabilities){
+const article=document.createElement('article');article.className='item';
+const title=document.createElement('h3');title.className='item-title';title.textContent=labels[item.id]||item.id;
+const state=document.createElement('p');state.className='item-state';state.textContent=states[item.status]||'상태 미확인';
+const detail=document.createElement('p');detail.className='item-detail';detail.textContent=item.customerFacingAutomationReady?'고객용 자동화 인증 여부 추가 확인 필요':'고객용 자동화 준비 완료로 확인되지 않음';
+const meta=document.createElement('p');meta.className='meta';meta.textContent=(item.evidence?.kind==='repo_path'?'저장소 근거: ':'검토 근거: ')+(item.evidence?.ref||'없음');
+article.append(title,state,detail,meta);list.append(article);
+}
+gates.replaceChildren();
+for(const next of data.nextGates||[]){const li=document.createElement('li');li.textContent=next;gates.append(li);}
+}catch(error){list.textContent='상태 데이터를 불러오지 못했습니다. GitHub 저장소의 capabilities.json 파일을 확인해 주세요.';gates.textContent='자동 데이터 연결을 확인하지 못했습니다.';set('reviewed-on','데이터 조회 실패');set('load-message',error.message);}
+</script>
+</body>
+</html>

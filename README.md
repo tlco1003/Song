@@ -1,5 +1,15 @@
 # WITHU — 마음을 노래로 전하는 선물곡 서비스 (코드 저장소: Song)
 
+## 사업 운영·AI 영상 제작 확장 (2026-11-14)
+
+- [사업 운영 계획·수익화 로드맵](docs/business/OPERATING_PLAN.md) — 가정과 실측을 분리한 제품·가격·90일 계획
+- [AI 영상/다중 에이전트 연결 계약](docs/business/VIDEO_AGENT_CONTRACT.md) — 기존 엔진 보호, 인물·영상·자막·모션그래픽 확장 기준
+- [사업 진행 및 검증 상태](docs/business/PROGRESS.md) · [기계 판독 가능 상태](docs/business/capabilities.json)
+- [에이전트 실행 지침](AGENTS.md) · [Claude 안내](CLAUDE.md)
+- [자동 확인 워크플로](.github/workflows/business-ops-audit.yml) — 읽기 전용 매일 실행·PR/변경 시 검사. 로컬: `node scripts/business-ops-audit.mjs`
+- **주의:** 기존 WITHU 결제 및 상업용 음악·영상 생성은 관련 계약·실사용 검증 전 활성화하지 않습니다. ChatGPT에서 사용하는 Higgsfield 플러그인은 WITHU 서버용 B2B API가 아닙니다.
+
+
 
 > **브랜드 변경:** 2026-11-04부터 대외 서비스명은 **WITHU**. 이전 대화·Suno 지원 메일·일부 내부 경로에 남아 있는 `SONG`은 기존 프로젝트를 가리키며, GitHub 저장소 경로 `tlco1003/Song`은 의도적으로 유지한다. 사이트 방문자에게는 WITHU가 표시된다. 회사 사업자 등록이나 상표등록이 완료됐다는 뜻은 아니다.
 

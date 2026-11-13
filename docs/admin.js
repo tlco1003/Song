@@ -4,6 +4,7 @@
  * Cloud Function against the exact WITHU_ADMIN_UID on every request.
  */
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js';
+import {loadVideoAdInquiries} from './video-ads-admin.js?v=20261114-video-pilot-01';
 import {getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}
  from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js';
 const $=id=>document.getElementById(id);
@@ -72,10 +73,17 @@ async function refresh(){
  orders=result.orders||[];
  renderOrders();
  void refreshFunnel();
+ void refreshVideoAdLeads();
  if(selected){
   const current=orders.find(o=>o.id===selected.id);
   if(current)select(current);
  }
+}
+async function refreshVideoAdLeads(){
+ const target=$('admin-video-lead-list');
+ if(!target)return;
+ try{await loadVideoAdInquiries(api,target);}
+ catch(error){target.textContent=error?.message||'광고 상담함을 확인하지 못했습니다.';}
 }
 async function refreshFunnel(){
  const panel=$('admin-funnel-summary');if(!panel)return;
@@ -297,6 +305,8 @@ $('admin-sign-out').addEventListener('click',run(async()=>{
  await signOut(firebaseAuth);$('admin-workspace').hidden=true;
 }));
 $('admin-refresh').addEventListener('click',run(refresh));
+const videoRefresh=$('admin-video-leads-refresh');
+if(videoRefresh)videoRefresh.addEventListener('click',run(refreshVideoAdLeads));
 $('admin-finalize').addEventListener('click',run(send,workStatus));
 $('admin-retry-ai').addEventListener('click',run(retry,workStatus));
 $('admin-resend-receipt').addEventListener('click',run(resendReceipt,workStatus));

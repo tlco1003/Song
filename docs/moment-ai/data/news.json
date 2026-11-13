@@ -1,350 +1,350 @@
 {
   "schema": "MOMENT_NEWS_RSS_v1",
-  "generatedAt": "2026-11-13T00:23:47.276Z",
+  "generatedAt": "2026-11-13T07:57:05.875Z",
   "kind": "RECENT_PUBLISHER_RSS_NOT_POPULARITY_RANKING",
   "coverage": "연합뉴스·뉴시스·동아일보·IT동아 등 연결된 피드의 최신 헤드라인. 국가 전체 인기 순위가 아닙니다.",
   "categories": {
     "headlines": [
       {
-        "title": "\"젠슨 황 후임 CEO 1순위는 '쿠다' 개발자\"…예측시장서 '이안 벅' 급부상",
-        "link": "https://www.newsis.com/view/NISX20261113_0003866617",
+        "title": "리가켐바이오, 3분기 매출액 145억…전년보다↓",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867641",
         "source": "뉴시스",
-        "publishedAt": "2026-11-13T00:21:44.000Z",
+        "publishedAt": "2026-11-13T07:55:10.000Z",
         "category": "headlines"
       },
       {
-        "title": "[부산소식]노동청, 부산·경남 지방노동감독 도입 협의 등",
-        "link": "https://www.newsis.com/view/NISX20261113_0003866623",
+        "title": "'백건우와 영 프렌즈' 대구서 세대·경계 넘는 앙상블",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867640",
         "source": "뉴시스",
-        "publishedAt": "2026-11-13T00:21:08.000Z",
+        "publishedAt": "2026-11-13T07:55:07.000Z",
         "category": "headlines"
       },
       {
-        "title": "금호건설, 3분기 호실적에 장 초반 '上'",
-        "link": "https://www.newsis.com/view/NISX20261113_0003866621",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-13T00:21:05.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "이기숙 명인과 함께하는 12월 '경기잇는식탁' 모집",
-        "link": "https://www.newsis.com/view/NISX20261113_0003866442",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-13T00:19:17.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "한국전력, 3분기 영업이익 급감에 9%대 하락",
-        "link": "https://www.newsis.com/view/NISX20261113_0003866615",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-13T00:17:22.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "서울 양천구서 아내 살해하고 직접 신고한 80대 체포",
-        "link": "https://www.yna.co.kr/view/AKR20261113039600004",
+        "title": "국고채 금리 상승…10년물, 열흘만에 다시 4%대로(종합)",
+        "link": "https://www.yna.co.kr/view/AKR20261113146751008",
         "source": "연합뉴스",
-        "publishedAt": "2026-11-13T00:16:24.000Z",
+        "publishedAt": "2026-11-13T07:53:47.000Z",
         "category": "headlines"
       },
       {
-        "title": "배민, 겨울철 라이더 500명에 1억원 규모 안전용품 지원",
-        "link": "https://www.yna.co.kr/view/AKR20261113038100030",
-        "source": "연합뉴스",
-        "publishedAt": "2026-11-13T00:14:50.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "성남시, 시흥동에 방위산업 연구단지 조성…2028년 착공",
-        "link": "https://www.yna.co.kr/view/AKR20261113039100061",
-        "source": "연합뉴스",
-        "publishedAt": "2026-11-13T00:14:47.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "경북도, 5차 국가철도망 계획에 '20개 노선 41조원' 건의",
-        "link": "https://www.newsis.com/view/NISX20261112_0003866341",
+        "title": "농협금융, 기금형 퇴직연금 대비해 그룹 TF 가동",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867631",
         "source": "뉴시스",
-        "publishedAt": "2026-11-13T00:13:10.000Z",
+        "publishedAt": "2026-11-13T07:52:25.000Z",
         "category": "headlines"
       },
       {
-        "title": "LS엠트론, 멕시코 플라스티마헨 참가…현지 테크센터 신설",
-        "link": "https://www.yna.co.kr/view/AKR20261113037800003",
-        "source": "연합뉴스",
-        "publishedAt": "2026-11-13T00:12:02.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "카카오게임즈 '도깨비의세계' 출시 한달 추정 매출 400억원",
-        "link": "https://www.yna.co.kr/view/AKR20261113037900017",
-        "source": "연합뉴스",
-        "publishedAt": "2026-11-13T00:11:40.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "코스피, 장 초반 2%대 상승…5500선 육박",
-        "link": "https://www.newsis.com/view/NISX20261113_0003866605",
+        "title": "[교육소식]한밭대 건축설비시스템공학과 BSTL연구실 수상 등",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867355",
         "source": "뉴시스",
-        "publishedAt": "2026-11-13T00:11:32.000Z",
+        "publishedAt": "2026-11-13T07:51:49.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "콜마홀딩스 3분기 영업익 195억, 전년比 19.5%↑…매출은 감소",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867606",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-13T07:51:49.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "'불펜 강화' MLB 애틀랜타, 필립스와 3년 468억원 계약",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867552",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-13T07:50:45.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "[속보]피살 10대 소녀에 '절도·성매매 교사 혐의' 20대女 구속영장 청구",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867633",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-13T07:50:41.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "\"추석 용돈 적어\" 따지다…말리는 80대 모친 폭행한 50대 아들",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867618",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-13T07:50:37.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "롯데건설, 3분기 영업이익 349억원…누적은 2천억원 넘어(종합)",
+        "link": "https://www.yna.co.kr/view/AKR20261113046051003",
+        "source": "연합뉴스",
+        "publishedAt": "2026-11-13T07:50:06.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "신원, 3분기 영업익 38억 전년비 154%↑…성장세 이어가",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867602",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-13T07:48:56.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "SK디스커버리, 3Q 매출·세전이익 역대 최대…\"자회사 실적 개선\"",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867620",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-13T07:47:19.000Z",
         "category": "headlines"
       }
     ],
     "technology": [
       {
-        "title": "\"접근성 강화\"…장애인 의약외품 가이드라인 개정",
-        "link": "https://www.newsis.com/view/NISX20261113_0003866586",
+        "title": "젠슨 황 떠난 엔비디아…이제 누가 백악관 설득하나",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867117",
         "source": "뉴시스",
-        "publishedAt": "2026-11-13T00:08:09.000Z",
+        "publishedAt": "2026-11-13T07:38:21.000Z",
         "category": "technology"
       },
       {
-        "title": "LGU+, 유럽 車 데이터망에 K-부품사 연결…수출 돕는다",
-        "link": "https://www.newsis.com/view/NISX20261113_0003866557",
+        "title": "오스코텍, 3분기 누적 매출 628억…영업익 흑자",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867592",
         "source": "뉴시스",
-        "publishedAt": "2026-11-13T00:00:00.000Z",
+        "publishedAt": "2026-11-13T07:35:20.000Z",
         "category": "technology"
       },
       {
-        "title": "\"내 데이터 양만 고르면 딱 맞는 요금제 추천\"…KT엠모바일, '다이렉트몰' 개편",
-        "link": "https://www.newsis.com/view/NISX20261113_0003866574",
+        "title": "영림원, 3분기 영업익 14억원·전년比 8.6%↑…ERP 사업 성장",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867565",
         "source": "뉴시스",
-        "publishedAt": "2026-11-12T23:59:01.000Z",
+        "publishedAt": "2026-11-13T07:26:26.000Z",
         "category": "technology"
       },
       {
-        "title": "\"2029년 과천에 새둥지\"…세라젬, 신사옥 기공식",
-        "link": "https://www.newsis.com/view/NISX20261113_0003866560",
+        "title": "유바이오, 3분기 매출 496억원…\"분기 최대 실적\"",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867541",
         "source": "뉴시스",
-        "publishedAt": "2026-11-12T23:53:09.000Z",
+        "publishedAt": "2026-11-13T07:21:03.000Z",
         "category": "technology"
       },
       {
-        "title": "게임쇼 주인공 된 AI…뤼튼, 지스타서 200부스 규모 '크랙' 전시",
-        "link": "https://www.newsis.com/view/NISX20261113_0003866507",
+        "title": "대원제약, 3분기 매출액 1393억…영업익 흑자",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867515",
         "source": "뉴시스",
-        "publishedAt": "2026-11-12T23:45:13.000Z",
+        "publishedAt": "2026-11-13T07:11:42.000Z",
         "category": "technology"
       },
       {
-        "title": "韓·佛 원자력공동위 개최…차세대 원전 SMR·핵주기 협력 확대",
-        "link": "https://www.newsis.com/view/NISX20261112_0003865759",
+        "title": "펄어비스, 23일까지 겨울 인턴십 모집…정규직 전환 기회",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867484",
         "source": "뉴시스",
-        "publishedAt": "2026-11-12T22:00:00.000Z",
+        "publishedAt": "2026-11-13T07:06:50.000Z",
         "category": "technology"
       },
       {
-        "title": "\"AI 안경 컨닝 막을 최후의 보루\"…시험장 무선통신 차단 필요성 급부상",
-        "link": "https://www.newsis.com/view/NISX20261112_0003866023",
+        "title": "젠슨 황 \"나는 인간 쓰레기\"…CEO 사임 전 무너진 모습",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867408",
         "source": "뉴시스",
-        "publishedAt": "2026-11-12T21:26:31.000Z",
+        "publishedAt": "2026-11-13T06:59:44.000Z",
         "category": "technology"
       },
       {
-        "title": "\"일 맡겼더니 9초 만에 회사 데이터 몽땅 삭제\"…믿었던 AI 비서가 사고쳤다",
-        "link": "https://www.newsis.com/view/NISX20261112_0003866154",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-12T21:00:00.000Z",
-        "category": "technology"
-      },
-      {
-        "title": "[오늘의 주요일정]식품의약품안전처(11월13일 금요일)",
-        "link": "https://www.newsis.com/view/NISX20261112_0003865936",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-12T20:01:00.000Z",
-        "category": "technology"
-      },
-      {
-        "title": "\"새벽 2~3시에 계속 깨요\"…숙면 되찾는 방법은",
-        "link": "https://www.newsis.com/view/NISX20261112_0003865114",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-12T20:00:00.000Z",
-        "category": "technology"
-      },
-      {
-        "title": "삼성 AI 안경 드디어 내달 10일 韓 출시…젠틀몬스터 협업 제품 65만원부터",
-        "link": "https://www.newsis.com/view/NISX20261112_0003865617",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-12T14:00:00.000Z",
-        "category": "technology"
-      },
-      {
-        "title": "[스타트업-ing] “문장 하나로 3분 만에 홈페이지 제작”...위븐, 브랜드 맞춤형 ‘재밋 AI 디자인’ 공개",
-        "link": "https://it.donga.com/109913/",
+        "title": "세컨드팀, 슈퍼코더 AI면접 응시자 후기 분석 “89%가 긍정적”",
+        "link": "https://it.donga.com/109921/",
         "source": "IT동아",
-        "publishedAt": "2026-11-12T09:15:38.000Z",
+        "publishedAt": "2026-11-13T06:30:39.000Z",
+        "category": "technology"
+      },
+      {
+        "title": "젠슨 황 사임에 AI전략위도 촉각…GPU 공급·韓 기업 협력 영향 살핀다",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867364",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-13T06:28:30.000Z",
+        "category": "technology"
+      },
+      {
+        "title": "엠게임, 3분기 영업익 27억원으로 전년比 34.7%↓…'귀혼키우기'로 반등 노린다",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867381",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-13T06:23:26.000Z",
+        "category": "technology"
+      },
+      {
+        "title": "LED 가리면 촬영 중단…삼성 AI 안경, '도촬 오명' 지울까",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867111",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-13T06:02:15.000Z",
+        "category": "technology"
+      },
+      {
+        "title": "젠슨 황 사임에 日정부 \"동향 주시할 것\"…피지컬 AI 영향 주목",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867101",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-13T05:56:21.000Z",
         "category": "technology"
       }
     ],
     "culture": [
       {
-        "title": "통영 TIMF아카데미 선발 이하느리, 제네바콩쿠르 1위",
-        "link": "https://www.newsis.com/view/NISX20261113_0003866493",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-12T23:57:15.000Z",
-        "category": "culture"
-      },
-      {
-        "title": "[베스트셀러] 하루키 열풍 지속…'가호' 3주 연속 1위",
-        "link": "https://www.newsis.com/view/NISX20261112_0003866224",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-12T23:00:00.000Z",
-        "category": "culture"
-      },
-      {
-        "title": "서인영 “공황장애, 설명못해…마비 오고 이상한 소리”",
-        "link": "https://www.donga.com/news/Culture/article/all/20261113/135018207/1",
+        "title": "‘전태일 사진’ 등 노동인권 기록 6875점 온라인 공개",
+        "link": "https://www.donga.com/news/Society/article/all/20261113/135021321/1",
         "source": "동아일보",
-        "publishedAt": "2026-11-12T22:52:05.000Z",
+        "publishedAt": "2026-11-13T07:30:00.000Z",
         "category": "culture"
       },
       {
-        "title": "38년 춤길에서 만난 두 예인…전통춤 '이화-두 개의 꽃'",
-        "link": "https://www.newsis.com/view/NISX20261112_0003866145",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-12T22:00:00.000Z",
-        "category": "culture"
-      },
-      {
-        "title": "30년 침묵 깬 '흙·붓 동행'…'이당이 빚고 법정 쓰다'展",
-        "link": "https://www.newsis.com/view/NISX20261112_0003866169",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-12T21:30:00.000Z",
-        "category": "culture"
-      },
-      {
-        "title": "김환기·장욱진·천경자 찍은 사진가 문선호…12월 회고전",
-        "link": "https://www.newsis.com/view/NISX20261112_0003865763",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-12T21:01:00.000Z",
-        "category": "culture"
-      },
-      {
-        "title": "[오늘의 주요일정]문화체육관광부(11월13일 금요일)",
-        "link": "https://www.newsis.com/view/NISX20261112_0003865278",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-12T21:00:00.000Z",
-        "category": "culture"
-      },
-      {
-        "title": "‘가슴춤 북부대공’ 열풍 에이티즈, 5개월만에 컴백",
-        "link": "https://www.donga.com/news/Culture/article/all/20261112/135017454/2",
+        "title": "“엄마는 언니·오빠만 봤다” 이혜영, 母에 전한 속마음",
+        "link": "https://www.donga.com/news/Culture/article/all/20261113/135021356/1",
         "source": "동아일보",
-        "publishedAt": "2026-11-12T19:30:00.000Z",
+        "publishedAt": "2026-11-13T07:09:55.000Z",
         "category": "culture"
       },
       {
-        "title": "반도체 기술력-자본 쌓은 대만… AI 콘텐츠 강국으로 ‘영토 확장’",
-        "link": "https://www.donga.com/news/Culture/article/all/20261112/135017452/2",
+        "title": "투숙에 K뷰티·면세점 혜택 더했다…신라스테이, 외국인 전용 패키지 선보여",
+        "link": "https://www.donga.com/news/Economy/article/all/20261113/135021172/1",
         "source": "동아일보",
-        "publishedAt": "2026-11-12T19:30:00.000Z",
+        "publishedAt": "2026-11-13T06:50:33.000Z",
         "category": "culture"
       },
       {
-        "title": "[녹유 오늘의 운세] 75년생 티격티격해도 양보가 우선",
-        "link": "https://www.newsis.com/view/NISX20261111_0003864483",
+        "title": "이정재, 1년 활동 쉰 이유 밝혔다…화장품 사업 론칭",
+        "link": "https://www.donga.com/news/Culture/article/all/20261113/135020899/1",
+        "source": "동아일보",
+        "publishedAt": "2026-11-13T06:21:48.000Z",
+        "category": "culture"
+      },
+      {
+        "title": "무라카미 셰프, 9년 만의 귀환…그랜드 머큐어 임피리얼 팰리스 ‘스시21’[미각지대]",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867009",
         "source": "뉴시스",
-        "publishedAt": "2026-11-12T15:00:00.000Z",
+        "publishedAt": "2026-11-13T06:00:00.000Z",
         "category": "culture"
       },
       {
-        "title": "신진서, 中 양당신 꺾고 삼성화재배 월드바둑마스터스 8강 진출",
-        "link": "https://www.donga.com/news/Culture/article/all/20261112/135017350/1",
+        "title": "男 4명 중 1명 “군 복무 때 기독교 세례”…42% “신앙 유지”",
+        "link": "https://www.donga.com/news/Culture/article/all/20261113/135020687/1",
         "source": "동아일보",
-        "publishedAt": "2026-11-12T11:40:59.000Z",
+        "publishedAt": "2026-11-13T05:51:17.000Z",
         "category": "culture"
       },
       {
-        "title": "한-아세안센터, 서울·전주서 ‘2026 아세안 위크’ 개최… 국내 최대 사이니지 ‘룩스’로도 소개",
-        "link": "https://www.donga.com/news/Culture/article/all/20261112/135016709/1",
+        "title": "제20회 유영번역상에 번역가 송예슬",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867180",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-13T05:08:18.000Z",
+        "category": "culture"
+      },
+      {
+        "title": "옥주현, 190억 ‘한남더힐’ 펜트하우스 구청 압류 5일만 해제",
+        "link": "https://www.donga.com/news/Culture/article/all/20261113/135020400/1",
         "source": "동아일보",
-        "publishedAt": "2026-11-12T09:52:00.000Z",
+        "publishedAt": "2026-11-13T05:02:35.000Z",
+        "category": "culture"
+      },
+      {
+        "title": "한국·현대무용·발레 한 무대에…3색 중견 춤꾼의 '메이저 M’",
+        "link": "https://www.newsis.com/view/NISX20261113_0003866921",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-13T04:43:37.000Z",
+        "category": "culture"
+      },
+      {
+        "title": "석암제 시조 지정 10주년 ‘제4회 호수문화제’ 마무리",
+        "link": "https://www.donga.com/news/Culture/article/all/20261113/135019748/1",
+        "source": "동아일보",
+        "publishedAt": "2026-11-13T03:16:00.000Z",
+        "category": "culture"
+      },
+      {
+        "title": "재규어 트윈, 12월 서울서 첫 단독 내한공연",
+        "link": "https://www.donga.com/news/Culture/article/all/20261113/135018683/1",
+        "source": "동아일보",
+        "publishedAt": "2026-11-13T02:22:00.000Z",
+        "category": "culture"
+      },
+      {
+        "title": "무신사, ‘한땀 프로젝트’로 전국 소상공인 10곳 작업복 지원",
+        "link": "https://www.donga.com/news/Culture/article/all/20261113/135018779/1",
+        "source": "동아일보",
+        "publishedAt": "2026-11-13T02:21:33.000Z",
         "category": "culture"
       }
     ],
     "economy": [
       {
-        "title": "배민, 겨울철 라이더 500명에 1억원 규모 안전용품 지원",
-        "link": "https://www.yna.co.kr/view/AKR20261113038100030",
+        "title": "롯데건설, 3분기 영업이익 349억원…누적은 2천억원 넘어(종합)",
+        "link": "https://www.yna.co.kr/view/AKR20261113046051003",
         "source": "연합뉴스",
-        "publishedAt": "2026-11-13T00:14:50.000Z",
+        "publishedAt": "2026-11-13T07:50:06.000Z",
         "category": "economy"
       },
       {
-        "title": "성남시, 시흥동에 방위산업 연구단지 조성…2028년 착공",
-        "link": "https://www.yna.co.kr/view/AKR20261113039100061",
+        "title": "강원랜드 등 4개 기관, 양양국제공항 활성화 '맞손'",
+        "link": "https://www.yna.co.kr/view/AKR20261113148000062",
         "source": "연합뉴스",
-        "publishedAt": "2026-11-13T00:14:47.000Z",
+        "publishedAt": "2026-11-13T07:45:41.000Z",
         "category": "economy"
       },
       {
-        "title": "[특징주] 한국전력, 3분기 어닝 쇼크에 장초반 9%대 하락",
-        "link": "https://www.yna.co.kr/view/AKR20261113038700008",
+        "title": "국고채 금리 일제히 상승…3년물 연 3.759%",
+        "link": "https://www.yna.co.kr/view/AKR20261113146700008",
         "source": "연합뉴스",
-        "publishedAt": "2026-11-13T00:12:24.000Z",
+        "publishedAt": "2026-11-13T07:40:21.000Z",
         "category": "economy"
       },
       {
-        "title": "[게시판] 신영문화재단 건축문화상 대상에 홍익대 박경민씨",
-        "link": "https://www.yna.co.kr/view/AKR20261113037500003",
-        "source": "연합뉴스",
-        "publishedAt": "2026-11-13T00:09:29.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "전국 비 소식에 교통량 감소…서울→부산 5시간50분[주말·휴일 고속도로]",
-        "link": "https://www.newsis.com/view/NISX20261113_0003866458",
+        "title": "젠슨 황 떠난 엔비디아…이제 누가 백악관 설득하나",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867117",
         "source": "뉴시스",
-        "publishedAt": "2026-11-13T00:08:11.000Z",
+        "publishedAt": "2026-11-13T07:38:21.000Z",
         "category": "economy"
       },
       {
-        "title": "원주시, 그린스타트업타운 운영기관 모집…연 9억3천만원 위탁",
-        "link": "https://www.yna.co.kr/view/AKR20261113035600062",
+        "title": "성북구 길음5구역 사업시행계획 인가…최고 33층 754세대",
+        "link": "https://www.yna.co.kr/view/AKR20261113145600004",
         "source": "연합뉴스",
-        "publishedAt": "2026-11-13T00:06:57.000Z",
+        "publishedAt": "2026-11-13T07:36:41.000Z",
         "category": "economy"
       },
       {
-        "title": "코스피, '젠슨황 퇴임' 속 장초반 2%대 상승…코스닥도 1%대↑",
-        "link": "https://www.yna.co.kr/view/AKR20261113036400008",
-        "source": "연합뉴스",
-        "publishedAt": "2026-11-13T00:04:50.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "노동부 \"작업장 한랭질환 조심\"…취약사업장 3만여곳 집중관리",
-        "link": "https://www.yna.co.kr/view/AKR20261112174800530",
-        "source": "연합뉴스",
-        "publishedAt": "2026-11-13T00:00:05.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "울산외곽순환고속도로 착공…동서 이동 1시간→20분 단축 기대",
-        "link": "https://www.yna.co.kr/view/AKR20261112174900057",
-        "source": "연합뉴스",
-        "publishedAt": "2026-11-13T00:00:03.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "가처분 소득 늘리는 방안은…정부 '월급방위대TF' 후속조치 논의",
-        "link": "https://www.yna.co.kr/view/AKR20261113030900002",
-        "source": "연합뉴스",
-        "publishedAt": "2026-11-13T00:00:02.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "LGU+, 카테나-X와 국내 제조기업 글로벌 공급망 진입 지원",
-        "link": "https://www.yna.co.kr/view/AKR20261113032700017",
-        "source": "연합뉴스",
-        "publishedAt": "2026-11-13T00:00:00.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "가짜 3.3·사업장 쪼개기 잡는다…노동부, 기획감독 착수",
-        "link": "https://www.newsis.com/view/NISX20261113_0003866539",
+        "title": "국세청 AI 시스템·백령도 공항 타당성 확보…후속 절차 추진",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867550",
         "source": "뉴시스",
-        "publishedAt": "2026-11-13T00:00:00.000Z",
+        "publishedAt": "2026-11-13T07:30:14.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "젠슨 황 질책받던 CFO, 임시 CEO로…황 사위 거래엔 '돈줄 브레이크'",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867273",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-13T07:24:10.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "'젠슨황 퇴임'에도 장중 3%까지 올랐던 코스피, 0.98% 하락 마감(종합)",
+        "link": "https://www.yna.co.kr/view/AKR20261113129251008",
+        "source": "연합뉴스",
+        "publishedAt": "2026-11-13T07:23:21.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "한국씨티은행, 3분기 순이익 1천255억원…작년 동기보다 92%↑",
+        "link": "https://www.yna.co.kr/view/AKR20261113140700002",
+        "source": "연합뉴스",
+        "publishedAt": "2026-11-13T07:23:00.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "환율, 달러 강세에 닷새 만에 반등…6.0원 오른 1,336.7원",
+        "link": "https://www.yna.co.kr/view/AKR20261113137600002",
+        "source": "연합뉴스",
+        "publishedAt": "2026-11-13T07:18:31.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "은평구, 내년 상반기 공공일자리 314명 모집",
+        "link": "https://www.yna.co.kr/view/AKR20261113139100004",
+        "source": "연합뉴스",
+        "publishedAt": "2026-11-13T07:13:07.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "[올댓차이나] 中 SMIC 3분기 순익 123%↑…\"반도체 부족에 내수 주문 확대\"",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867074",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-13T07:12:13.000Z",
         "category": "economy"
       }
     ]
@@ -378,7 +378,7 @@
       "name": "뉴시스",
       "category": "culture",
       "status": "ok",
-      "count": 46
+      "count": 64
     },
     {
       "name": "동아일보",
@@ -396,7 +396,7 @@
       "name": "IT동아",
       "category": "technology",
       "status": "ok",
-      "count": 19
+      "count": 16
     }
   ],
   "status": "partial_or_ready",

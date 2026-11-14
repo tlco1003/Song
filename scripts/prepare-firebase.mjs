@@ -27,9 +27,8 @@ const configPath=new URL('../docs/payment-widget-public.json',import.meta.url);
 const envPath=new URL('../functions/.env',import.meta.url);
 const localEnv=await readFile(envPath,'utf8').catch(()=>'');
 const setting=name=>{
- const match=localEnv.match(new RegExp('^'+name+'=(.*)
-,'m'));
- return match?match[1].trim():'';
+ const line=localEnv.split(String.fromCharCode(10)).find(row=>row.startsWith(name+'='));
+ return line?line.slice(name.length+1).trim():'';
 };
 const publicClientKey=setting('TOSS_CLIENT_KEY');
 const safePreview=setting('WITHU_PAYMENT_MODE')==='test'
@@ -37,7 +36,7 @@ const safePreview=setting('WITHU_PAYMENT_MODE')==='test'
  &&/^test_gck_[A-Za-z0-9_-]{8,}$/.test(publicClientKey);
 if(safePreview){
  await writeFile(configPath,JSON.stringify({schemaVersion:1,mode:'test',
-  previewOnly:true,tossClientKey:publicClientKey})+'\\n');
+  previewOnly:true,tossClientKey:publicClientKey})+String.fromCharCode(10));
  console.log('Prepared safe public TEST widget preview (payment remains server-gated).');
 }else{
  await rm(configPath,{force:true});

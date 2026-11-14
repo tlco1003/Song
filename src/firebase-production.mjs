@@ -28,12 +28,26 @@ const app=getApps().length?getApp():initializeApp();
 const db=getFirestore(app),auth=getAuth(app);
 const bucket=getStorage(app).bucket(process.env.WITHU_STORAGE_BUCKET);
 const context={db,auth,bucket,env:process.env,fetcher:globalThis.fetch};
-const apiSecrets=['TOSS_SECRET_KEY','RESEND_API_KEY','WITHU_LINK_ENCRYPTION_KEY',
- 'MUREKA_API_KEY',
- 'RESEND_WEBHOOK_SIGNING_SECRET','WITHU_VIDEO_LEAD_HMAC_KEY',
- 'WITHU_SUPPORT_HMAC_KEY'];
-const workerSecrets=['RESEND_API_KEY','OPENAI_API_KEY','WITHU_LINK_ENCRYPTION_KEY',
- 'GEMINI_API_KEY','WITHU_DRIVE_SERVICE_ACCOUNT_JSON','MUREKA_API_KEY'];
+// Attach only credentials required by ENABLED providers. Referencing a
+// nonexistent optional Secret blocks deployment of the whole paid-order
+// pipeline, even when that provider is deliberately disabled.
+// Every optional endpoint/provider still rejects use without its own key.
+export function enabledFunctionSecrets(env=process.env){
+ const api=['TOSS_SECRET_KEY','RESEND_API_KEY','WITHU_LINK_ENCRYPTION_KEY',
+  'MUREKA_API_KEY','WITHU_VIDEO_LEAD_HMAC_KEY','WITHU_SUPPORT_HMAC_KEY'];
+ if(env.WITHU_RESEND_WEBHOOK_ENABLED==='true')
+  api.push('RESEND_WEBHOOK_SIGNING_SECRET');
+ const worker=['RESEND_API_KEY','WITHU_LINK_ENCRYPTION_KEY','MUREKA_API_KEY'];
+ const lyrics=env.WITHU_LYRICS_PROVIDER||'openai';
+ if(lyrics==='openai')worker.push('OPENAI_API_KEY');
+ if(lyrics==='gemini'||env.WITHU_ARTIST_RESEARCH_ENABLED==='true'
+  ||env.WITHU_AUTOMATED_MUSIC_PROVIDER==='google_lyria')
+  worker.push('GEMINI_API_KEY');
+ if(env.WITHU_DRIVE_BACKUP_ENABLED==='true')
+  worker.push('WITHU_DRIVE_SERVICE_ACCOUNT_JSON');
+ return {api,worker};
+}
+const {api:apiSecrets,worker:workerSecrets}=enabledFunctionSecrets();
 
 export const api=onRequest({
  region:'asia-northeast3',memory:'1GiB',

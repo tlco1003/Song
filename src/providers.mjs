@@ -1,5 +1,6 @@
 import {AppError,buildLyricPrompt,buildSunoPackage} from './lib.mjs';
 import {createGeminiLyricsProvider} from './gemini-lyrics-provider.mjs';
+import {createMurekaLyricsProvider} from './mureka-lyrics-provider.mjs';
 
 // SONG production path: OpenAI GPT creates the lyrics; official Suno MCP creates music.
 // Google Gemini/Lyria and unofficial Suno wrappers are NOT used here.
@@ -48,6 +49,10 @@ export async function makeLyricsFromPrivatePrompt({prompt,lyricLength='full'},en
   rawLyrics=await createGeminiLyricsProvider({
    apiKey:requireKey(env,'GEMINI_API_KEY'),
    model:modelName(env,'WITHU_GEMINI_LYRICS_MODEL','gemini-3.6-flash')
+  }).generate({prompt,lyricLength});
+ }else if(vendor==='mureka'){
+  rawLyrics=await createMurekaLyricsProvider({
+   apiKey:requireKey(env,'MUREKA_API_KEY')
   }).generate({prompt,lyricLength});
  }else if(vendor==='openai'){
   const model=modelName(env,'OPENAI_LYRICS_MODEL','gpt-6-astra');

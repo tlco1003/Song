@@ -237,3 +237,15 @@ test('transient GET polling errors back off automatically without a second paid 
  assert.equal(calls.filter(c=>c.url.endsWith('/v1/song/generate')).length,1);
  assert.equal(bucket.files.size,0);
 });
+
+
+test('missing verified CDN host blocks Mureka music before any billable request',async()=>{
+ const db=mockDB(),remote=fetchMock();
+ await assert.rejects(submitMurekaPaidAutomation({
+  db,orderId:ID,order,plan,
+  env:{...env,WITHU_MUREKA_AUDIO_HOST_ALLOWLIST:''},
+  fetcher:remote.fetcher
+ }),/MUREKA_CDN_ALLOWLIST_NOT_CONFIGURED/);
+ assert.equal(remote.calls.length,0);
+ assert.equal(db.job(),undefined);
+});

@@ -385,3 +385,34 @@
 .payment-entry .refund-consent-row{margin:14px 0;padding:13px 15px;border:1px solid #d8b9c9;background:#f8edf3;border-radius:10px;line-height:1.85;word-break:keep-all}
 .payment-entry .refund-consent-row input{flex:0 0 auto;margin-top:5px;min-width:17px;min-height:17px}
 .payment-entry .refund-consent-row a{text-decoration:underline;text-underline-offset:3px}
+
+/* Center the official Toss SDK widget in WITHU payment only.
+   The generic .payment-methods uses two columns elsewhere; no fake methods. */
+.payment-page-layout .payment-entry .payment-methods{
+ display:flex;flex-direction:column;align-items:stretch;gap:12px;
+ grid-template-columns:none;width:100%;max-width:100%;min-width:0;
+ margin:28px auto 22px;padding:22px 0 18px;
+ border-top:1px solid #e9dde4;border-bottom:1px solid #e9dde4;
+ box-sizing:border-box;
+}
+.payment-page-layout .payment-entry .payment-methods>h3{
+ width:100%;margin:0;text-align:center;font-size:20px;line-height:1.6;
+ font-weight:700;color:#4d3547;
+}
+.payment-page-layout .payment-entry .payment-methods>p{
+ width:100%;max-width:500px;margin:0 auto;text-align:center;
+ line-height:1.75;word-break:keep-all;
+}
+.payment-page-layout .payment-entry #toss-payment-methods,
+.payment-page-layout .payment-entry #toss-payment-agreement{
+ display:block;width:100%;max-width:530px;min-width:0;
+ margin-inline:auto;box-sizing:border-box;
+}
+.payment-page-layout .payment-entry #toss-payment-methods iframe,
+.payment-page-layout .payment-entry #toss-payment-agreement iframe{
+ display:block;max-width:100%;
+}
+@media(max-width:560px){
+ .payment-page-layout .payment-entry .payment-methods{padding:19px 0 15px;gap:10px}
+ .payment-page-layout .payment-entry .payment-methods>h3{font-size:18px}
+}

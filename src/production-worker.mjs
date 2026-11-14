@@ -23,7 +23,7 @@ function musicPlan(order,lyrics){
    recipientAgeGroup:draft.delivery?.recipientAgeGroup||'unknown',
    speechStyle:draft.delivery?.speechStyle||'auto',
    eraPreference:draft.eraPreference},
-  sharedStyleNotes:''
+  sharedStyleNotes:'',artistPreference:draft.artistPreference||''
  });
 }
 async function alertOwner({orderId,order,env,fetcher}){

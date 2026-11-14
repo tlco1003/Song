@@ -87,7 +87,12 @@ try{
     await page.locator('[data-cinematic-action="replay"]').click();
     await page.waitForFunction(()=>document.querySelector('#cinematic-counter')?.textContent?.includes('01 / 04'));
     await seek(.78);
-    await page.waitForTimeout(250);
+    await page.waitForFunction(()=>{
+      const n=document.getElementById('cinematic-intro'), r=n.getBoundingClientRect();
+      const p=parseFloat(document.querySelector('#cinematic-progress')?.style.width||'0');
+      return p>76&&p<80&&r.top<0&&r.bottom>innerHeight;
+    },null,{timeout:8000});
+    await page.waitForTimeout(350);
     await page.screenshot({path:'artifacts/cinematic-'+cfg.name+'-arrival.png'});
     if(jsErrors.length)console.warn(cfg.name+' console errors:',JSON.stringify(jsErrors.slice(0,8)));
     console.log('PASS '+cfg.name+': '+JSON.stringify(diagnostic));

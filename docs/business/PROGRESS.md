@@ -157,3 +157,19 @@ No private accounting or actual qualified-lead registry is connected to this fil
 
 
 - [추가 안전장치] 토스 테스트 승인만으로 실비가 드는 Mureka 음악 생성을 호출하지 않도록 `configuredMurekaAutoMode()`에 `WITHU_TEST_MUREKA_SPEND_APPROVED=true` 명시적 별도 허용을 요구. 실제 유료 결제 운영 모드에서는 기존 상업적 권리 승인·PG 영수증 검증이 선행되어야 한다. 집중 테스트 10/10 및 전체 회귀 **323/323 통과**. 운영 `functions/.env`에는 이 테스트 크레딧 허용 플래그를 설정하지 않음.
+
+
+## 2026-11-15 — Blaze 전환 후 Firebase 서버 실배포 및 자동 전달 트리거
+
+- 사용자가 Blaze 요금제 전환 및 `RESEND_API_KEY` Secret v1 등록을 알림. 원격 Windows 프로젝트 `C:\song\song-ai-ready`에서 `git pull --ff-only`, `npm run check`, `npm test`, `npm run firebase:prepare` 수행.
+- 신규 `src/firebase-secret-config.mjs`와 자동 생성 비밀값 없는 `functions/deployment-profile.json`: Firebase Functions 코드 분석 이전에 `WITHU_LYRICS_PROVIDER=mureka`, `WITHU_AUTOMATED_MUSIC_PROVIDER=mureka`를 읽어 불필요한 OpenAI/Gemini/Drive/Webhook Secret 등록 요구를 제외. 다른 제공자가 실제 활성화되면 기존 Secret 필요 조건을 유지. `scripts/prepare-firebase.mjs`, `src/firebase-production.mjs`, `.gitignore` 수정 및 관련 테스트 추가.
+- **Firebase 2세대 Cloud Functions 실제 배포 성공 (서울 asia-northeast3):** `api` (HTTPS), `processPaidOrder` (Firestore 결제 상태 업데이트 감지), `pollMurekaMusic` (2분 간격 비공개 생성 상태 폴링), `autoDeliverReviewedOrder` (결제 검증·전체 음원 검수 및 권리 승인 뒤 개인 감상 링크 이메일 자동 발송). Eventarc 서비스 계정 권한 전파로 첫 배포 실패 후 재시도 성공.
+- 자동 전달 신규 파일: `src/production-auto-delivery-gate.mjs`, `test/paid-review-auto-delivery.test.mjs`, `functions/index.mjs`. 유효한 실제 결제 + 전체 곡 권리확인 + 관리자 검수 + `not_sent` 상태에서만 한 번 전송. 미완성/미결제/환불/미검수/2곡 중 1곡만 확인/재처리 등은 자동 발송 금지. 이메일 실패 시 기존 관리자 수동 재시도.
+- 컨테이너 빌드 Artifact Registry 불필요한 비용을 줄이도록 `asia-northeast3` 빌드 이미지 **14일 보존 정리 정책** 실제 적용. 원본 GitHub 코드나 고객 음원 삭제와 별개.
+- Mureka 실시간 GET `/v1/account/billing`는 HTTP 200, 계정 ID/동시 요청 한도 응답으로 API 인증 확인. **잔액 `balance` 필드는 이 계정 응답에서 생략**되어 확인 불가. `src/mureka-account.mjs`와 관리자 UI는 누락 잔액을 0으로 잘못 표시하지 않게 수정. API 명세 참조: `https://platform.mureka.ai/docs/api/operations/get-v1-account-billing.html`. 실제 음악 생성 POST는 아직 하지 않음.
+- Resend 등록 Secret의 `re_` 키 형식 확인. 발신 `WITHU <onboarding@resend.dev>` / 수신 `tlco1003@naver.com`으로 **테스트 메시지 1건 Resend API 접수 성공**. 받은편지함 수신/발신 도메인 운영 인증까지 확인했다는 의미 아님. `GET /domains` 401은 발송 전용 제한 API 키의 권한 때문일 수도 있으므로 단순 인증 실패로 단정하지 않음. `WITHU_FROM_EMAIL`은 운영 도메인이 아직 검증되지 않아 플레이스홀더 유지.
+- **HTTPS 실측:** `https://song-cab41.web.app/api/runtime` **200**, `canCharge=false`; `/api/support/readiness` 200 / `canSubmit=false`; `admin.js`, `payment.html`, `order-status.js` 200. `firebase functions:list`에서 위 4개 Functions 실재 확인. 구매 버튼은 서버의 결제 준비 완료 전까지 잠금.
+- **결제 차단 원인:** Firebase `TOSS_SECRET_KEY` 활성 버전의 값은 서버 코드가 필요로 하는 `test_gsk_` 또는 `live_gsk_` 형식이 아니라 `UNRECOGNIZED` (키 내용 비공개). `WITHU_ADMIN_UID`와 `WITHU_FROM_EMAIL`도 플레이스홀더. 테스트 클라이언트 키는 `test_gck_` 형식 확인. 시크릿 키를 사용자가 토스 개발자센터에서 같은 상점의 **주문서형 테스트 시크릿 키**로 재등록해야 실제 토스 테스트 승인 경로 사용 가능.
+- **비공개 음원 저장 블로커:** `firebase deploy --only storage`는 `Firebase Storage has not been set up`으로 실패. 사용자가 Firebase 콘솔 `https://console.firebase.google.com/project/song-cab41/storage`에서 Storage 기본 버킷을 생성한 뒤 `storage.rules` (기본 전면 차단)를 배포해야 실제 MP3 저장/전달이 가능. 데이터베이스 Firestore와 Storage는 별개.
+- **권리/비용 가드:** 공식 Mureka 유료 API 사용권은 플랫폼 FAQ에 안내되지만, 해당 WITHU 실제 계정과 고객 맞춤 판매에 적용할 약관·승인 증빙은 검토 필요. `withuProviderApprovals/mureka` 권리 기록은 임의 생성하지 않음. Toss 테스트 결제에서는 `WITHU_TEST_MUREKA_SPEND_APPROVED` 명시적 승인 없이는 유료 음악 생성 크레딧 사용 금지(현재 설정 없음).
+- 최종 전체 회귀 `npm test`: **331 통과 / 실패 0**, `npm run check` 통과. Firebase API/Hosting 재배포 모두 성공. **실제 결제 승인→Mureka 유료 생성→GCS 음원 저장→수신함 전달 종단 간 실거래는 아직 검증되지 않음.**

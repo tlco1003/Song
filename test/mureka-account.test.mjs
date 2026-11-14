@@ -27,6 +27,20 @@ test('read-only Mureka balance probe is authenticated without generating any son
  assert.ok(!Object.hasOwn(out,'account_id'));
  assert.ok(!JSON.stringify(out).includes('mureka_test_secret_key'));
 });
+test('live authorized billing response without balance does not fabricate credits',async()=>{
+ const result=await checkMurekaAccount({
+  apiKey:'mureka_test_secret_key_only',
+  fetcher:async()=>({ok:true,json:async()=>({
+   account_id:83921,concurrent_request_limit:5,trace_id:'trace'
+  })})
+ });
+ assert.equal(result.status,'api_authenticated');
+ assert.equal(result.balanceCents,null);
+ assert.equal(result.balanceVerified,false);
+ assert.equal(result.concurrentRequestLimit,5);
+ assert.ok(!Object.hasOwn(result,'account_id'));
+ assert.equal(result.musicGenerationNotTested,true);
+});
 test('broken Mureka billing credentials and invalid balances fail closed',async()=>{
  await assert.rejects(checkMurekaAccount({
   apiKey:'mureka_test_secret_key_only',

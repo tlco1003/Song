@@ -30,6 +30,23 @@ const setting=name=>{
  const line=localEnv.split(String.fromCharCode(10)).find(row=>row.startsWith(name+'='));
  return line?line.slice(name.length+1).trim():'';
 };
+// Pack validated deployment-time provider flags. These are NOT credentials.
+// The Firebase Functions analyzer runs before its runtime .env is guaranteed
+// to be loaded, so build the private worker's Secret list from this file.
+const lyricsProvider=setting('WITHU_LYRICS_PROVIDER')||'openai';
+const musicProvider=setting('WITHU_AUTOMATED_MUSIC_PROVIDER')||'';
+if(!['openai','gemini','mureka'].includes(lyricsProvider)
+ ||!['','mureka','google_lyria'].includes(musicProvider))
+ throw new Error('Unknown deployment music/lyrics provider');
+const profile={
+ schemaVersion:1,lyricsProvider,musicProvider,
+ artistResearch:setting('WITHU_ARTIST_RESEARCH_ENABLED')==='true',
+ driveBackup:setting('WITHU_DRIVE_BACKUP_ENABLED')==='true',
+ resendWebhook:setting('WITHU_RESEND_WEBHOOK_ENABLED')==='true'
+};
+await writeFile(new URL('../functions/deployment-profile.json',import.meta.url),
+ JSON.stringify(profile,null,2)+String.fromCharCode(10));
+console.log('Prepared nonsecret provider-scoped Firebase function deployment profile.');
 const publicClientKey=setting('TOSS_CLIENT_KEY');
 const safePreview=setting('WITHU_PAYMENT_MODE')==='test'
  &&setting('WITHU_LIVE_PAYMENTS_ENABLED')==='false'

@@ -73,3 +73,14 @@ No private accounting or actual qualified-lead registry is connected to this fil
 - 환경 의존: `GEMINI_API_KEY` / `WITHU_AUTOMATED_MUSIC_PROVIDER=google_lyria` / 비공개 승인 기록 / 실제 Firebase 서비스가 모두 있어야 자동 제작. Google Drive는 공유 드라이브 폴더 및 서비스 계정 추가 구성이 있어야 비공개 백업 실행.
 - 고객 완료곡 이메일은 기존 관리자 검수·권리 승인 뒤에만 전송된다. **완전 무인 고객 납품, 실제 Google Drive 업로드, 실 PG 결제, 상업 권리 승인, 실제 배포는 미검증**이다.
 - 필수 후속: Google 소비자-facing 유료 음악 납품 약관 명확화; 한국어 가사·실제 음원 품질·서비스 원가 검증; 중단/부분성공 작업의 정산 재조정 및 환불; QA 자동화; 통합 시크릿/실배포 E2E. 외부 서비스 오류에서 암묵적 재과금을 금지한다.
+
+
+## SONG AI 시대·장르·선호 가수·단일 Google API 통합 확장 — 2026-11-14
+
+- 작업 브랜치 `feature/lyria-official-music-20261114`, 기존 Draft PR #14, `main`은 병합하지 않았음.
+- 소스 변경: `docs/create.html`, `docs/create.js`, `docs/checkout.html`, `docs/checkout.js`, `docs/admin.js`, `src/lib.mjs`, `src/order-draft-preparation.mjs`, `src/song-production-plan.mjs`, `src/music-style-library.mjs`, `src/production-worker.mjs`, `src/production-runtime.mjs`, `src/providers.mjs`, `src/artist-style-evidence.mjs`, `src/artist-research-provider.mjs`, `src/gemini-lyrics-provider.mjs`, `functions/.env.example`, `package.json`.
+- 연결: 고객의 선호 가수 선택 → 입력/기존 서버 작사 → 곡별 편곡 계획. 서명된 근거가 있는 가수·시대·장르 편곡 특성만 음악 생성 프롬프트에 추가할 수 있으며, 출처가 없는 경우 이름을 음악 생성 모델에 넘기지 않는다.
+- 선택적 유료 Google `google_search` 분석은 인용과 후보 상태만 기록하며 승인 전에는 검증된 근거로 승격되지 않는다. 선택적 Gemini 가사는 기존 OpenAI 작사를 유지하는 provider 스위치다. Lyria 음악 생성, Google Drive 후보 백업, 관리자 검수·Resend 고객 발송의 기존 경로를 그대로 유지.
+- 실제 회귀 증거: https://github.com/tlco1003/Song/actions/runs/43534136625 — `npm run check`, `npm test` **292/292 통과**, `npm run firebase:prepare` 및 배포 패키지 문법 검사 성공. 기존 실패 `artist newline normalization`은 실제 정규화 순서를 고쳐 해결 (테스트 기대값 완화 아님).
+- 별도 문서: `docs/SONG_AI_취향_검색_자동작사_통합API_2026-11-14.md`. 데이터/기존 가격·결제 장벽은 변경하지 않았음.
+- **BLOCKED/UNKNOWN:** 실제 Gemini 및 Lyria 키·사용량 과금·사업 권리 허가, 실제 검색 및 출처 검증, 실제 한국어 음원과 가사 일치, 고객 이메일 수신, 새 UI의 GitHub Pages 배포, Google Drive 실업로드, 시네마틱 영상 생성, 무인 권리·음질 출고.

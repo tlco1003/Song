@@ -4,7 +4,7 @@ const $=id=>document.getElementById(id);
 const STORY_KEY='withu-story-steps-v1',ORDER_KEY='withu-order-draft-v1';
 const MAX_AGE=30*60*1000,STEP_COUNT=6;
 const INPUTS=['recipient','memory','message','gratitudeApology','occasion',
- 'recipientAgeGroup','relativePosition','speechStyle','genre','mood','eraPreference','lyricLength'];
+ 'recipientAgeGroup','relativePosition','speechStyle','genre','mood','eraPreference','lyricLength','favoriteArtist'];
 const STEPS=['누구에게 전할까요?','소중한 추억','꼭 전할 말','고마움과 미안함','말투와 관계','장르와 분위기'];
 let step=1;
 function story(){return Object.fromEntries(INPUTS.map(id=>[id,$(id).value]));}

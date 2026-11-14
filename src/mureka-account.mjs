@@ -27,13 +27,19 @@ export async function checkMurekaAccount({
  let body;
  try{body=await response.json();}
  catch(_){throw new MurekaBillingError('MUREKA_BILLING_INVALID_RESPONSE');}
- if(!Number.isSafeInteger(body?.balance)||body.balance<0
+ // The documented billing response includes account_id and concurrency.
+ // Some real authenticated accounts omit balance: do not invent zero credits,
+ // and do not reject a valid read-only authenticated account check.
+ const hasBalance=Object.hasOwn(body||{},'balance');
+ if(!Number.isSafeInteger(body?.account_id)||body.account_id<=0
   ||!Number.isSafeInteger(body?.concurrent_request_limit)
-  ||body.concurrent_request_limit<0)
+  ||body.concurrent_request_limit<0
+  ||(hasBalance&&(!Number.isSafeInteger(body.balance)||body.balance<0)))
   throw new MurekaBillingError('MUREKA_BILLING_INVALID_RESPONSE');
  return Object.freeze({
   provider:'mureka',status:'api_authenticated',
-  balanceCents:body.balance,
+  balanceCents:hasBalance?body.balance:null,
+  balanceVerified:hasBalance,
   concurrentRequestLimit:body.concurrent_request_limit,
   musicGenerationNotTested:true
  });

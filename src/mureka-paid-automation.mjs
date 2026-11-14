@@ -99,12 +99,13 @@ async function setJobStatusAfterPoll({db,orderId,index,status,errorCode}){
   const data=snap.data();
   if(data.provider!==MUREKA_PROVIDER_ID
    ||data.status==='candidate_stored_awaiting_review')return;
+  const terminal=['mureka_reconcile_manually','mureka_failed'].includes(status);
+  // Firestore transactions require ALL reads before ANY writes.
+  const orderRef=terminal?db.collection(ORDER_COLLECTION).doc(orderId):null;
+  const orderSnap=terminal?await tx.get(orderRef):null;
   tx.update(ref,{status,lastError:errorCode||null,
    leaseUntil:0,updatedAt:Date.now()});
-  if(!['mureka_reconcile_manually','mureka_failed'].includes(status))return;
-  const orderRef=db.collection(ORDER_COLLECTION).doc(orderId);
-  const orderSnap=await tx.get(orderRef);
-  if(orderSnap.exists&&orderSnap.data().delivery?.status!=='sent'){
+  if(terminal&&orderSnap?.exists&&orderSnap.data().delivery?.status!=='sent'){
    tx.update(orderRef,{'production.status':'manual_required',
     'production.reason':errorCode||'MUREKA_OPERATOR_ACTION_REQUIRED',
     'production.updatedAt':Date.now()});

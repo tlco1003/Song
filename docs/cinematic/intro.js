@@ -103,28 +103,74 @@ const pageFragment = [
 
 function Train({time}) {
  const group=useRef();
- useFrame(({clock})=>{
-  const j=journeyAt(time.current.value), el=group.current;
+ const shell=useMemo(()=>{
+  const shape=new THREE.Shape();
+  shape.moveTo(-3.26,-.58);
+  shape.lineTo(3.20,-.58);
+  shape.quadraticCurveTo(3.32,-.58,3.32,-.42);
+  shape.lineTo(3.32,.48);
+  shape.quadraticCurveTo(3.32,.61,3.18,.64);
+  shape.lineTo(-3.14,.64);
+  shape.quadraticCurveTo(-3.31,.61,-3.31,.43);
+  shape.lineTo(-3.31,-.43);
+  shape.quadraticCurveTo(-3.31,-.58,-3.26,-.58);
+  return new THREE.ExtrudeGeometry(shape,{depth:1.38,bevelEnabled:true,steps:1,bevelThickness:.075,bevelSize:.06,bevelSegments:3,curveSegments:6});
+ },[]);
+ useEffect(()=>()=>shell.dispose(),[shell]);
+ useFrame(()=>{
+  const j=journeyAt(time.current.value),el=group.current;
   if(!el)return;
-  el.visible=j.train>.002;
-  el.position.set(-1.2+smoothstep(0,6,j.time)*.55,-.52,-1.38);
-  el.rotation.y=-.16+Math.sin(j.time*.12)*.015;
-  el.scale.setScalar(1-smoothstep(4.8,7.3,j.time)*.18);
+  el.visible=j.train>.005;
+  el.position.set(-.45+smoothstep(0,6,j.time)*.45,-.38,-1.12);
+  el.rotation.y=-.21+Math.sin(j.time*.2)*.012;
+  el.scale.setScalar(1-smoothstep(4.9,7.3,j.time)*.14);
  });
  const parts=[
-  h('mesh',{key:'carriage',position:[0,.04,0]},h('boxGeometry',{args:[6.6,1.24,1.48]}),h('meshStandardMaterial',{color:'#101824',metalness:.92,roughness:.24})),
-  h('mesh',{key:'roof',position:[0,.73,0]},h('boxGeometry',{args:[6.3,.16,1.47]}),h('meshStandardMaterial',{color:'#202e3c',metalness:.85,roughness:.24})),
-  h('mesh',{key:'stripe',position:[0,-.52,.755]},h('boxGeometry',{args:[6.3,.012,.018]}),h('meshBasicMaterial',{color:'#b2b8c5'})),
-  h('mesh',{key:'foot',position:[0,-.7,0]},h('boxGeometry',{args:[6.5,.10,1.52]}),h('meshStandardMaterial',{color:'#151d29',metalness:.8,roughness:.35}))
+  h('mesh',{key:'shell',geometry:shell,position:[0,0,-.7]},
+    h('meshStandardMaterial',{color:'#667f91',metalness:.46,roughness:.3,emissive:'#152c40',emissiveIntensity:.27})),
+  h('mesh',{key:'roof',position:[0,.73,0]},
+    h('boxGeometry',{args:[6.5,.16,1.51]}),
+    h('meshStandardMaterial',{color:'#c0c7c7',metalness:.49,roughness:.34})),
+  h('mesh',{key:'roof-highlight',position:[0,.82,.37]},
+    h('boxGeometry',{args:[6.3,.026,.055]}),
+    h('meshBasicMaterial',{color:'#cfe6f5'})),
+  h('mesh',{key:'underbody',position:[0,-.65,0]},
+    h('boxGeometry',{args:[6.45,.14,1.45]}),
+    h('meshStandardMaterial',{color:'#344657',metalness:.57,roughness:.31})),
+  h('mesh',{key:'beltrail',position:[0,-.52,.79]},
+    h('boxGeometry',{args:[6.48,.027,.05]}),
+    h('meshBasicMaterial',{color:'#f3deba'})),
+  h('mesh',{key:'uppertrim',position:[0,.53,.79]},
+    h('boxGeometry',{args:[6.46,.021,.037]}),
+    h('meshBasicMaterial',{color:'#ddeff5'})),
+  h('mesh',{key:'door',position:[2.9,-.02,.79]},
+    h('planeGeometry',{args:[.41,.97]}),
+    h('meshStandardMaterial',{color:'#2d4758',metalness:.55,roughness:.3})),
+  h('mesh',{key:'door-trim',position:[2.9,.31,.803]},
+    h('planeGeometry',{args:[.32,.25]}),
+    h('meshBasicMaterial',{color:'#c9e0dd'}))
  ];
- for(let i=0;i<8;i++){
-  const x=-2.76+i*.79;
-  parts.push(h('mesh',{key:'pane'+i,position:[x,.18,.756]},h('planeGeometry',{args:[.55,.55]}),h('meshBasicMaterial',{color:i===2?'#d9d8bd':'#b2bbba',transparent:true,opacity:i===2?.91:.43,side:THREE.DoubleSide})));
-  parts.push(h('mesh',{key:'rim'+i,position:[x,.18,.763]},h('planeGeometry',{args:[.63,.63]}),h('meshBasicMaterial',{color:'#718296',transparent:true,opacity:.11,wireframe:true})));
+ for(let i=0;i<7;i++){
+  const x=-2.76+i*.81;
+  const gold=i%3===1;
+  parts.push(h('mesh',{key:'glass'+i,position:[x,.15,.805]},
+   h('planeGeometry',{args:[.625,.57]}),
+   h('meshBasicMaterial',{color:gold?'#ffe8b5':'#b9e9f7',transparent:true,opacity:gold?.97:.86,side:THREE.DoubleSide})));
+  parts.push(h('mesh',{key:'inside'+i,position:[x,.09,.81]},
+   h('planeGeometry',{args:[.36,.28]}),
+   h('meshBasicMaterial',{color:'#243c53',transparent:true,opacity:.34})));
+  parts.push(h('mesh',{key:'frame'+i,position:[x,.15,.82]},
+   h('planeGeometry',{args:[.66,.61]}),
+   h('meshBasicMaterial',{color:'#d8e7ea',transparent:true,opacity:.66,wireframe:true})));
+  parts.push(h('mesh',{key:'mullion'+i,position:[x,.15,.823]},
+   h('planeGeometry',{args:[.021,.57]}),
+   h('meshBasicMaterial',{color:'#b9c7ce'})));
  }
  for(let i=0;i<4;i++){
   const x=-2.4+i*1.6;
-  parts.push(h('mesh',{key:'wheel'+i,position:[x,-.82,.48],rotation:[Math.PI/2,0,0]},h('torusGeometry',{args:[.19,.055,8,24]}),h('meshStandardMaterial',{color:'#232b32',metalness:.83,roughness:.4})));
+  parts.push(h('mesh',{key:'wheel'+i,position:[x,-.83,.49],rotation:[Math.PI/2,0,0]},
+   h('torusGeometry',{args:[.18,.054,10,32]}),
+   h('meshStandardMaterial',{color:'#cad6dc',metalness:.62,roughness:.36})));
  }
  return h('group',{ref:group},...parts);
 }
@@ -230,18 +276,28 @@ function Book({time}) {
  );
 }
 function CinematicScene({time,quality}) {
- useFrame(({camera,pointer,clock})=>{
+ const current=useRef(new THREE.Vector3(0,.32,9.1));
+ useFrame(({camera})=>{
   const j=journeyAt(time.current.value);
-  camera.position.set(pointer.x*.11+Math.sin(clock.elapsedTime*.11)*.04,.28+pointer.y*.06,j.cameraZ);
-  camera.lookAt(0,.08,0);
+  const pointer=time.current.pointer;
+  const mobile=quality==='low';
+  const targetX=mobile?pointer.x*.12:pointer.x*.33;
+  const targetY=.24+(mobile?pointer.y*.07:pointer.y*.21);
+  current.current.lerp(new THREE.Vector3(targetX,targetY,j.cameraZ-.55),.085);
+  camera.position.copy(current.current);
+  camera.lookAt(0,.12,0);
  });
  return h(React.Fragment,null,
-  h('color',{attach:'background',args:['#03070e']}),
-  h('fog',{attach:'fog',args:['#03070e',12,26]}),
-  h('ambientLight',{intensity:.28}),
-  h('pointLight',{position:[-2,2,4],color:'#87a8d1',intensity:23,distance:14}),
-  h('pointLight',{position:[3,-1,1],color:'#6375aa',intensity:10,distance:11}),
-  h(Train,{time}),h(Clouds,{time}),h(ParticleCloud,{time,quality}),h(MemoryOrb,{time}),h(Book,{time})
+  h('color',{attach:'background',args:['#15263a']}),
+  h('fog',{attach:'fog',args:['#253c52',14,35]}),
+  h('ambientLight',{intensity:1.8,color:'#cde9ff'}),
+  h('hemisphereLight',{args:['#f2f4ff','#4b6680',2.1]}),
+  h('directionalLight',{position:[-3,6,5],intensity:5,color:'#fff0cb'}),
+  h('directionalLight',{position:[4,1,7],intensity:4,color:'#c5e6ff'}),
+  h('pointLight',{position:[2,2,5],color:'#f9d3a4',intensity:28,distance:15}),
+  h('pointLight',{position:[-3,-1,5],color:'#77c4f7',intensity:20,distance:12}),
+  h('group',{position:[quality==='low'?.55:1.25,.12,0]},
+   h(Train,{time}),h(Clouds,{time}),h(ParticleCloud,{time,quality}),h(MemoryOrb,{time}),h(Book,{time}))
  );
 }
 class SceneBoundary extends React.Component {

@@ -19,3 +19,6 @@ functions/가사 프롬프트.md
 functions/.env
 functions/.env.*
 !functions/.env.example
+
+# Public-only test widget config generated locally from functions/.env at deploy time.
+docs/payment-widget-public.json

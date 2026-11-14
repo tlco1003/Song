@@ -123,3 +123,11 @@ No private accounting or actual qualified-lead registry is connected to this fil
 - Firebase 비밀키 `WITHU_SUPPORT_HMAC_KEY` 및 운영·개인정보 승인 플래그가 필요. `src/firebase-production.mjs` 기존 함수/스케줄러 유지하면서 지원 API 핸들러 추가.
 - 신규 `test/support-board.test.mjs` 포함하여 Node CI 검증. 실제 배포와 Firestore 개인정보 보존 정책(TTL)은 미완료.
 - GitHub Pages에서 현재 이메일 `mailto:`는 사용 가능. 문의 작성/공개 목록은 Firebase Hosting + 운영 서버 배포/승인 전까지 동작하는 것처럼 가장하지 않고 이메일 안내를 표시.
+
+## 2026-11-15 — 실제 토스 SDK 결제수단 가시성 개선 (서버 미배포 상태)
+
+- 기존 `docs/payment.js`의 `/api/runtime` 404 즉시 종료 때문에 공식 결제수단 위젯이 나타나지 않았음. 서버 활성화 여부와 **Toss 공식 결제수단 테스트 UI 표시**를 분리. 버튼과 주문 생성은 기존 `commercialMode`/PG 서버가 승인하기 전까지 잠김.
+- `scripts/prepare-firebase.mjs`는 로컬 `functions/.env`의 **공개 가능한 `test_gck_` 클라이언트 키만** 검증해 `docs/payment-widget-public.json`(Git 무시)을 생성. 서버 비밀키·실결제 키·결제 권한은 절대 정적 파일에 넣지 않음. 테스트 키가 없으면 과거 설정 파일을 삭제하여 fail-closed.
+- `docs/payment.html` 상태 안내, `docs/checkout.css` 진단 스타일. 선택 가능한 수단은 토스 상점에서 실제 등록한 위젯 설정에 따름. 주문서 없이 들어온 방문객에게는 기존 가격 SSOT의 '1곡 예시' 금액으로 위젯만 보여주고 구매 버튼 잠금.
+- `NOT_REGISTERED_PAYMENT_WIDGET` / `UNAUTHORIZED_KEY` 등의 오류를 고객 화면에 판별 가능한 상태로 표시. **카드·간편결제 자체 버튼을 가짜로 구현하지 않음.** 토스가 승인한 수단만 실제 공식 위젯이 렌더링.
+- Firebase Firestore Standard `(default)` DB는 원격 CLI에서 서울 `asia-northeast3`로 생성 완료했으나, Functions 실배포와 실제 Toss 결제는 아직 미완료. 테스트/배포 결과는 별도 확인 필요.

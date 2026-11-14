@@ -385,3 +385,8 @@
 .payment-entry .refund-consent-row{margin:14px 0;padding:13px 15px;border:1px solid #d8b9c9;background:#f8edf3;border-radius:10px;line-height:1.85;word-break:keep-all}
 .payment-entry .refund-consent-row input{flex:0 0 auto;margin-top:5px;min-width:17px;min-height:17px}
 .payment-entry .refund-consent-row a{text-decoration:underline;text-underline-offset:3px}
+
+/* Official Toss SDK payment methods may be previewed with the public test key.
+   No purchase can begin while /api/runtime is not ready. */
+#payment-widget-mode{padding:11px 14px;background:#faf1f6;border:1px solid #ead9e3;border-radius:9px;color:#705168;line-height:1.75;word-break:keep-all}
+#toss-payment-methods{min-height:38px}

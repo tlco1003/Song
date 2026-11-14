@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="checkout.css?v=20261106-production-01">
 <script defer src="https://js.tosspayments.com/v2/standard"></script>
-<script defer src="payment.js?v=20261115-refund-01"></script>
+<script defer src="payment.js?v=20261115-toss-preview-01"></script>
 <script defer src="analytics.js?v=20261109-1"></script>
 </head>
 <body>
@@ -50,7 +50,8 @@
     <section class="payment-methods" id="payment-methods" aria-label="실제 결제 수단 선택">
      <h3>결제수단 선택</h3>
      <p class="small-explain">토스페이먼츠 결제창에서 신용·체크카드, 토스페이, 카카오페이, 네이버페이와 계좌이체 등 상점에서 승인된 수단을 선택할 수 있어요.</p>
-     <div id="toss-payment-methods" aria-label="결제수단"></div>
+     <p id="payment-widget-mode" class="small-explain" role="status" aria-live="polite">결제수단 연동 상태를 확인하고 있습니다.</p>
+     <div id="toss-payment-methods" aria-label="토스페이먼츠 공식 결제수단 위젯"></div>
      <div id="toss-payment-agreement" aria-label="결제기관 약관"></div>
     </section>
     <aside class="refund-preview" aria-labelledby="refund-preview-title">

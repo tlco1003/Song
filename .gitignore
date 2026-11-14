@@ -17,6 +17,7 @@ functions/docs/
 functions/node_modules/
 functions/가사 프롬프트.md
 functions/.env
+functions/deployment-profile.json
 functions/.env.*
 !functions/.env.example
 

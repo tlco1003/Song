@@ -56,9 +56,18 @@ try{
     assert.equal(diagnostic.createLink,true);
     await page.locator('[data-cinematic-action="skip"]').click();
     await page.waitForFunction(()=>document.querySelector('#cinematic-counter')?.textContent?.includes('04 / 04'));
+    await page.waitForTimeout(350);
+    await page.screenshot({path:'artifacts/cinematic-'+cfg.name+'-book.png'});
     await page.locator('[data-cinematic-action="replay"]').click();
     await page.waitForFunction(()=>document.querySelector('#cinematic-counter')?.textContent?.includes('01 / 04'));
-    await page.screenshot({path:'artifacts/cinematic-'+cfg.name+'.png'});
+    await page.waitForTimeout(500);
+    await page.screenshot({path:'artifacts/cinematic-'+cfg.name+'-train.png'});
+    if(!cfg.mobile){
+      await page.waitForTimeout(6600);
+      await page.screenshot({path:'artifacts/cinematic-desktop-clouds.png'});
+      await page.waitForTimeout(6200);
+      await page.screenshot({path:'artifacts/cinematic-desktop-arrival.png'});
+    }
     if(jsErrors.length)console.warn(cfg.name+' console errors:',JSON.stringify(jsErrors.slice(0,8)));
     console.log('PASS '+cfg.name+': '+JSON.stringify(diagnostic));
     await context.close();

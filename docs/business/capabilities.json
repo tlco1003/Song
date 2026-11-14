@@ -175,6 +175,42 @@
         "ref": "src/google-drive-private-music-backup.mjs"
       },
       "customerFacingAutomationReady": false
+    },
+    {
+      "id": "singer_preference_user_wizard",
+      "status": "verified_repository",
+      "evidence": {
+        "kind": "repo_path",
+        "ref": "docs/create.js"
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "approved_artist_evidence_style_engine",
+      "status": "verified_repository",
+      "evidence": {
+        "kind": "repo_path",
+        "ref": "src/artist-style-evidence.mjs"
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "optional_gemini_lyrics_provider",
+      "status": "verified_repository",
+      "evidence": {
+        "kind": "repo_path",
+        "ref": "src/gemini-lyrics-provider.mjs"
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "optional_grounded_artist_research",
+      "status": "verified_repository",
+      "evidence": {
+        "kind": "repo_path",
+        "ref": "src/artist-research-provider.mjs"
+      },
+      "customerFacingAutomationReady": false
     }
   ],
   "nextGates": [
@@ -185,6 +221,9 @@
     "Validate an authorized 15–20-second product portfolio MP4, inspect final output and measure generation/edit costs before signing the first paid video production contract.",
     "Confirm written legal/provider permission for a Korean consumer-facing paid Lyria music-delivery website and retain evidence privately.",
     "Deploy Firebase with GEMINI_API_KEY only after approval, validate a real paid Lyria song, and configure an authorized Google Workspace Shared Drive before optional private backup.",
-    "Validate Korean lyric fidelity and a reviewed customer email in staging before considering unattended delivery."
+    "Validate Korean lyric fidelity and a reviewed customer email in staging before considering unattended delivery.",
+    "Review grounded singer/era/genre music profiles before including musical features in prompts.",
+    "Verify actual paid Gemini lyrics and grounded search requests, costs, citations, and user privacy.",
+    "Verify real licensed Lyria music generation and private Firebase/Resend E2E before live sale."
   ]
 }

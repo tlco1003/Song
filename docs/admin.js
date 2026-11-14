@@ -154,7 +154,8 @@ function select(o){
   '원 · '+o.paymentStatus+' · 고객 발송: '+(o.delivery?.status||'대기');
  $('admin-story').textContent=JSON.stringify(o.story||{},null,2);
  $('admin-style').textContent=JSON.stringify({
-  production:o.production,genres:o.genreSelection,
+  production:o.production,artistPreference:o.artistPreference,
+  artistResearch:o.artistResearch,genres:o.genreSelection,
   songStyles:o.songStyles,trackPreferences:o.trackPreferences
  },null,2);
  $('admin-finalize').disabled=o.paymentStatus!=='paid'||o.delivery?.status==='sent';

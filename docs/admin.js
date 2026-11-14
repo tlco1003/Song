@@ -318,9 +318,12 @@ $('admin-mureka-check').addEventListener('click',run(async()=>{
  const out=$('admin-mureka-status');
  out.textContent='Mureka 공식 API에서 키·크레딧 상태를 확인하고 있어요…';
  const result=await api('/api/admin/providers/mureka/account');
+ const balanceLabel=Number.isSafeInteger(result.balanceCents)
+  ?'잔여 크레딧 '+result.balanceCents.toLocaleString('ko-KR')+' cents (공식 계정 단위)'
+  :'API가 잔액을 제공하지 않아 미확인 · Mureka 대시보드에서 확인 필요';
  out.textContent=result.status==='api_authenticated'
-  ?'API 키 인증 성공 · 잔여 크레딧 '+Number(result.balanceCents).toLocaleString('ko-KR')+
-   ' cents (공식 계정 단위) · 동시 요청 한도 '+Number(result.concurrentRequestLimit).toLocaleString('ko-KR')+
+  ?'API 키 인증 성공 · '+balanceLabel+
+   ' · 동시 요청 한도 '+Number(result.concurrentRequestLimit).toLocaleString('ko-KR')+
    '건 · 음악 생성은 아직 실행하지 않았습니다.'
   :'API 응답을 검증할 수 없습니다.';
 },message=>$('admin-mureka-status').textContent=message));

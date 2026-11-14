@@ -9,6 +9,7 @@ import {admin,now,json,checkOrigin,stop,respond,paid,
 import {sendCompletedEmail} from './production-delivery.mjs';
 import {sendPaidOrderReceipt} from './order-status-portal.mjs';
 import {readFunnelSummary} from './production-analytics.mjs';
+import {checkMurekaAccount} from './mureka-account.mjs';
 
 function validateSound(name,bytes){
  if(typeof name!=='string'||!/^[a-zA-Z0-9_. -]{1,100}\.(mp3|m4a|wav)$/i.test(name))
@@ -28,6 +29,14 @@ export async function handleProductionAdmin(req,res,{db,bucket,auth,env,fetcher}
  const path=new URL(req.originalUrl||req.url,'https://placeholder.invalid').pathname;
  if(!path.startsWith('/api/admin/'))return false;
  await admin(req,auth,env);
+ if(req.method==='GET'&&path==='/api/admin/providers/mureka/account'){
+  // Read-only connection check, restricted by verified admin UID.
+  // Mureka returns billing cents; never expose credentials/account_id.
+  const billing=await checkMurekaAccount({
+   apiKey:env.MUREKA_API_KEY,fetcher
+  });
+  respond(res,200,billing);return true;
+ }
  if(req.method==='GET'&&path==='/api/admin/orders'){
   const docs=await db.collection('withuOrders').orderBy('createdAt','desc').limit(100).get();
   respond(res,200,{orders:docs.docs.map(snap=>adminSummary(snap.data()))});

@@ -15,7 +15,12 @@ const MAX_JOB_AGE_MS=24*60*60*1000;
 const POLL_INTERVAL_MS=2*60*1000;
 
 export function configuredMurekaAutoMode(env={}){
- return env.WITHU_AUTOMATED_MUSIC_PROVIDER===MUREKA_PROVIDER_ID;
+ if(env.WITHU_AUTOMATED_MUSIC_PROVIDER!==MUREKA_PROVIDER_ID)return false;
+ // Toss TEST payments are not revenue, while every Mureka POST spends real API
+ // credits. Require explicit operator permission before billing the music API.
+ if(env.WITHU_PAYMENT_MODE==='test'&&env.WITHU_TEST_MUREKA_SPEND_APPROVED!=='true')
+  return false;
+ return true;
 }
 export function verifyMurekaRightsRecord(record,{adminUid,at=Date.now()}={}){
  return Boolean(

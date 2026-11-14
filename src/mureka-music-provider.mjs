@@ -1,3 +1,4 @@
+import {isIP} from 'node:net';
 /**
  * Mureka official paid song generation adapter (2026-11-14).
  * Official spec: https://platform.mureka.ai/docs/api/operations/post-v1-song-generate.html
@@ -65,7 +66,9 @@ export function allowedMurekaAudioUrl(rawUrl,hosts){
  try{url=new URL(rawUrl);}catch(_){throw new MurekaProviderError('MUREKA_AUDIO_URL_INVALID');}
  if(url.protocol!=='https:'||!url.hostname||url.username||url.password
   ||url.port&&url.port!=='443'||url.hash
-  ||url.hostname==='localhost'
+  ||url.hostname==='localhost'||url.hostname.endsWith('.localhost')
+  ||url.hostname.endsWith('.local')||url.hostname.endsWith('.internal')
+  ||isIP(url.hostname)!==0||!url.hostname.includes('.')
   ||url.hostname.includes('..'))
   throw new MurekaProviderError('MUREKA_AUDIO_URL_FORBIDDEN');
  const allow=String(hosts||'').split(',').map(x=>x.trim().toLowerCase())
@@ -141,8 +144,26 @@ export function createMurekaProvider({apiKey,fetcher=globalThis.fetch,
     ||type.toLowerCase().startsWith('application/octet-stream')))
     throw new MurekaProviderError('MUREKA_AUDIO_NOT_AUDIO');
    let bytes;
-   try{bytes=Buffer.from(await response.arrayBuffer());}
-   catch(_){throw new MurekaProviderError('MUREKA_AUDIO_READ_FAILED');}
+   try{
+    if(response.body?.getReader){
+     const reader=response.body.getReader();
+     const chunks=[];let total=0;
+     try{
+      for(;;){
+       const {done,value}=await reader.read();
+       if(done)break;
+       total+=value.byteLength;
+       if(total>MUREKA_MAX_AUDIO_BYTES)
+        throw new MurekaProviderError('MUREKA_AUDIO_TOO_LARGE');
+       chunks.push(Buffer.from(value));
+      }
+     }finally{reader.releaseLock();}
+     bytes=Buffer.concat(chunks,total);
+    }else bytes=Buffer.from(await response.arrayBuffer());
+   }catch(error){
+    if(error?.code==='MUREKA_AUDIO_TOO_LARGE')throw error;
+    throw new MurekaProviderError('MUREKA_AUDIO_READ_FAILED');
+   }
    if(bytes.byteLength<1024||bytes.byteLength>MUREKA_MAX_AUDIO_BYTES||!mp3Header(bytes))
     throw new MurekaProviderError('MUREKA_AUDIO_INVALID_MP3');
    return Object.freeze({bytes,sizeBytes:bytes.byteLength,

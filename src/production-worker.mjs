@@ -44,7 +44,7 @@ async function researchPaidArtistIfEnabled({db,orderId,order,env,fetcher}){
    apiKey:env.GEMINI_API_KEY,fetcher
   });
   await ref.update({...result,updatedAt:now()});
-  return {...result,summary:undefined,sources:undefined};
+  return result;
  }catch(error){
   const code=typeof error?.code==='string'?error.code:'RESEARCH_FAILED';
   await ref.update({status:'needs_operator_review',reason:code,updatedAt:now()});

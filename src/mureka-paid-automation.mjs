@@ -5,7 +5,7 @@
  * Candidate assets remain private and unreviewed until production-admin approves.
  */
 import {randomUUID,createHash} from 'node:crypto';
-import {createMurekaProvider,MUREKA_MODEL,MUREKA_PROVIDER_ID,
+import {createMurekaProvider,makeMurekaRequest,MUREKA_MODEL,MUREKA_PROVIDER_ID,
  MurekaProviderError} from './mureka-music-provider.mjs';
 export const MUREKA_ORDER_ID=/^withu_[a-f0-9]{32}$/;
 const JOB_COLLECTION='withuMusicJobs';
@@ -64,6 +64,8 @@ export async function submitMurekaPaidAutomation({
  const provider=createMurekaProvider({apiKey:env.MUREKA_API_KEY,fetcher});
  const submitted=[];
  for(const song of plan.songs){
+  // Validate existing, server-computed plan before claiming a billable job.
+  makeMurekaRequest(song);
   const ref=localJobRef(db,orderId,song.index);
   const storagePath='orders/'+orderId+'/tracks/'+song.index+'-'+randomUUID()+'.mp3';
   // The claim is the start of the billed operation. A failed/unknown POST
@@ -228,6 +230,15 @@ async function pollOne({db,bucket,jobRef,env,fetcher,clock=Date.now}){
   // Never retry a billable create POST or re-download after an unknown GCS
   // write. The operator reconciles private storage and provider task first.
   const code=typeof error?.code==='string'?error.code:'MUREKA_POLL_OR_STORAGE_UNKNOWN';
+  // GET polling is safe to retry: it does NOT spend another generation credit.
+  // Bound transient retries and respect the original creation time.
+  if(code==='MUREKA_QUERY_RETRYABLE'&&(work.attempts||0)<5
+   &&clock()-(work.submittedAt||work.createdAt)<MAX_JOB_AGE_MS){
+   const retryDelay=Math.min(900000,POLL_INTERVAL_MS*Math.pow(2,work.attempts||0));
+   await jobRef.update({status:'mureka_queued',lastError:code,
+    nextPollAt:clock()+retryDelay,leaseUntil:0,updatedAt:clock()});
+   return {status:'retry_later'};
+  }
   await setJobStatusAfterPoll({db,orderId,index,
    status:'mureka_reconcile_manually',errorCode:code});
   return {status:'needs_operator_review',reason:code};

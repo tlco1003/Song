@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#06090e">
+  <meta name="description" content="MOMENT AI — 음악, 여행, 기억이 하나의 공간이 되는 시네마틱 모빌리티 라운지. 별도 데모 환경.">
+  <title>MOMENT AI — Beyond the Drive</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23070b12'/%3E%3Cpath d='M12 43V20l20 20 20-20v23' fill='none' stroke='%23dfd4b9' stroke-width='5'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./cinema.css">
+  <script src="./scene.js" defer></script>
+  <script src="./cinema.js" defer></script>
+</head>
+<body data-screen="home">
+  <a class="skip" href="#main">본문으로 건너뛰기</a>
+  <div class="backdrop" aria-hidden="true">
+    <canvas id="world" aria-label="움직이는 은색 조형물 3D 렌더링"></canvas>
+    <div class="dust"></div><div class="light-line"></div><div class="grain"></div>
+  </div>
+
+  <header class="topbar">
+    <a class="wordmark" href="?screen=home" id="brand" aria-label="MOMENT AI 첫 화면"><span class="wordmark-symbol">M<span>·</span></span><span class="wordmark-text">MOMENT <em>AI</em><small>PERSONAL MOBILITY UNIVERSE</small></span></a>
+    <div class="top-center"><span class="live-dot"></span><span>AN IMMERSIVE EXPERIENCE</span><span class="top-center-sep">/</span><span>VOL. 01</span></div>
+    <div class="top-actions"><button id="motionToggle" class="icon-btn" type="button" aria-label="움직임 줄이기" title="애니메이션 켜기/끄기">Ⅱ</button><button class="menu-btn" type="button" id="menuToggle" aria-expanded="false" aria-controls="fullMenu"><span>EXPLORE</span><i></i><i></i></button></div>
+  </header>
+
+  <nav class="full-menu" id="fullMenu" aria-label="MOMENT AI 화면 이동" hidden>
+    <span class="menu-eyebrow">EXPLORE YOUR MOMENT</span>
+    <div class="menu-list" id="menuList"></div>
+    <p>차량용 데이터 미연결 구간은 데모로 명시합니다. 음악 파일은 기존 웹앱의 로컬 저장소에서 관리합니다.</p>
+  </nav>
+
+  <main id="main" class="stage">
+    <section id="hero" class="hero screen" aria-labelledby="heroTitle">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="index">01 / ANOTHER WAY TO MOVE</span><span class="dash"></span><span class="descriptor">MOBILITY · MUSIC · MEMORY</span></div>
+        <h1 id="heroTitle">EVERY<br><span>JOURNEY.</span><br><i>YOUR MOMENT.</i></h1>
+        <p class="hero-kr">자동차를 넘어, 나만의 세계로.</p>
+        <p class="hero-desc">내가 만든 음악을 들으며 세상을 만나고,<br>지나가는 모든 순간을 특별한 이야기로 남기는 공간.</p>
+        <div class="hero-actions"><button class="btn-enter" id="enterBtn" data-go="music" type="button"><span>ENTER THE LOUNGE</span><span class="btn-arrow">↗</span></button><button class="btn-link" data-go="journey" type="button">EXPLORE THE JOURNEY <span>→</span></button></div>
+      </div>
+      <div class="hero-guide"><span class="ring-label">THE FUTURE IS PERSONAL</span><span>DRAG TO EXPLORE <b>↗</b></span></div>
+      <div class="hero-bottom"><span>CONCEPT EXPERIENCE / DEVELOPED INDEPENDENTLY</span><span>02: INTERACTIVE UNIVERSE</span><span id="renderStatus">REAL-TIME WEBGL</span></div>
+    </section>
+
+    <section id="experience" class="experience screen" aria-labelledby="experienceTitle" hidden>
+      <div class="experience-copy">
+        <div class="eyebrow"><span id="featureNumber">02 / 07</span><span class="dash"></span><span id="featureMeta">PERSONAL SOUNDTRACK</span></div>
+        <h2 id="experienceTitle">YOUR<br><em>OWN</em><br>RHYTHM.</h2>
+        <p class="experience-subtitle" id="experienceSubtitle">나의 하루를 위한 음악 라운지</p>
+        <p class="experience-description" id="experienceDescription">직접 만든 음악을 저장하고, 재생하고, 자신만의 여정을 기록하세요.</p>
+        <div class="feature-actions"><a id="openFullApp" href="../?screen=music" target="_blank" rel="noopener" class="btn-stroke">FULL EXPERIENCE <span>↗</span></a><button class="btn-back" type="button" data-go="home">← BACK TO UNIVERSE</button></div>
+        <div class="experience-pagination"><span id="experienceIndex">02</span><div class="tiny-rule"></div><span>07</span></div>
+      </div>
+      <div class="experience-frame-wrap">
+        <div class="frame-caption"><span><i class="frame-dot"></i><span id="frameCaption">MUSIC / PERSONAL PLAYER</span></span><span>LIVE MODULE · EXISTING APP</span></div>
+        <div class="experience-frame" id="frameShell">
+          <div class="frame-loading" id="frameLoading" role="status"><span class="loading-orbit"></span><span>OPENING YOUR SPACE</span></div>
+          <div class="frame-error" id="frameError" hidden><span class="error-symbol">↗</span><strong>직접 화면을 열어주세요.</strong><p>내부 앱 화면을 불러오지 못했습니다. 기존 MOMENT AI 기능은 원본 웹페이지에서 그대로 사용할 수 있습니다.</p><a id="frameErrorLink" href="../?screen=music" target="_blank" rel="noopener">OPEN ORIGINAL EXPERIENCE →</a></div>
+          <iframe id="featureFrame" title="MOMENT AI 기존 기능 화면" loading="lazy" referrerpolicy="same-origin" allow="autoplay" src="about:blank"></iframe>
+        </div>
+        <div class="frame-foot"><span>FUNCTIONAL EXISTING APP / PRESERVED</span><button id="reloadFrame" type="button">REFRESH EXPERIENCE ↻</button></div>
+      </div>
+    </section>
+  </main>
+
+  <nav id="chapterNav" class="chapter-nav" aria-label="챕터 이동">
+    <button type="button" data-go="home" class="chapter active"><span class="chapter-no">00</span><span class="chapter-title">INTRO</span></button>
+    <button type="button" data-go="music" class="chapter"><span class="chapter-no">01</span><span class="chapter-title">MUSIC</span></button>
+    <button type="button" data-go="journey" class="chapter"><span class="chapter-no">02</span><span class="chapter-title">JOURNEY</span></button>
+    <button type="button" data-go="lounge" class="chapter"><span class="chapter-no">03</span><span class="chapter-title">DAILY</span></button>
+    <button type="button" data-go="memory" class="chapter"><span class="chapter-no">04</span><span class="chapter-title">MEMORY</span></button>
+    <button type="button" data-go="wellness" class="chapter"><span class="chapter-no">05</span><span class="chapter-title">WELLNESS</span></button>
+    <button type="button" data-go="creative" class="chapter"><span class="chapter-no">06</span><span class="chapter-title">CREATE</span></button>
+  </nav>
+
+  <div class="corner-meta" aria-hidden="true"><span class="corner-line"></span><span>MOMENT AI / THE LIVING LOUNGE</span></div>
+  <noscript><div class="noscript">JavaScript를 켜면 시네마틱 화면을 이용할 수 있습니다. <a href="../?screen=music">기존 MOMENT AI 웹앱 열기</a></div></noscript>
+</body>
+</html>

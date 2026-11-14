@@ -33,6 +33,8 @@ function checkContact(){
   throw Error('완성곡 수령 방법을 선택하세요.');
  if(!$('consent-delivery').checked||!$('consent-service').checked)
   throw Error('배송 안내·개인정보 및 서비스 약관을 확인하고 동의해 주세요.');
+ if(!$('consent-refund').checked)
+  throw Error('맞춤 제작·취소 및 환불 정책의 별도 고지에 동의해 주세요.');
  return {customerEmail:email,customerPhone:phone,
   deliveryChannel:channel,deliveryConsent:true};
 }
@@ -120,7 +122,8 @@ async function placeOrder(){
      story:prepared.data.story
     },
     contact,clientAmount:prepared.localPrice,
-    termsAccepted:true,privacyAccepted:true
+    termsAccepted:true,privacyAccepted:true,
+    refundPolicyAcknowledged:true,refundPolicyVersion:'2026-11-15'
    })
   });
   const record=await r.json();
@@ -141,7 +144,7 @@ async function placeOrder(){
  }
 }
 $('confirm-checkout').addEventListener('click',()=>{void placeOrder();});
-for(const id of ['delivery-email','delivery-phone','consent-delivery','consent-service']){
+for(const id of ['delivery-email','delivery-phone','consent-delivery','consent-service','consent-refund']){
  $(id).addEventListener('change',()=>{if(!busy&&enabled)message('연락처와 약관을 확인한 뒤 결제할 수 있습니다.');});
 }
 void configure();

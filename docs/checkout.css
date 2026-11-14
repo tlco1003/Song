@@ -374,3 +374,14 @@
 .package-compare-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .package-compare-scroll table{border-collapse:collapse;width:100%;min-width:530px;font-size:13px;line-height:1.5}
 .package-compare-scroll th,.package-compare-scroll td{text-align:left;padding:11px 10px;border-bottom:1px solid #d4c5d1}
+
+/* Checkout refund policy: visible before payment; the statutory caveat never collapses. */
+.payment-entry .refund-preview{margin:24px 0 16px;padding:18px 20px;border:1px solid #d6c1cf;border-radius:14px;background:linear-gradient(135deg,#fcf5f9,#fffafc);color:#583c51}
+.payment-entry .refund-preview-header{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.payment-entry .refund-preview-header a,.payment-entry .refund-preview p a{font-size:12px;color:#755067;text-decoration:underline;text-underline-offset:3px}
+.payment-entry .refund-preview h3{font:700 17px/1.5 "Gowun Batang",serif;margin:11px 0}
+.payment-entry .refund-preview ul{padding-left:20px;margin:0}.payment-entry .refund-preview li,.payment-entry .refund-preview p{font-size:12px;line-height:1.85;word-break:keep-all}
+.payment-entry .refund-preview p{margin:12px 0 0}
+.payment-entry .refund-consent-row{margin:14px 0;padding:13px 15px;border:1px solid #d8b9c9;background:#f8edf3;border-radius:10px;line-height:1.85;word-break:keep-all}
+.payment-entry .refund-consent-row input{flex:0 0 auto;margin-top:5px;min-width:17px;min-height:17px}
+.payment-entry .refund-consent-row a{text-decoration:underline;text-underline-offset:3px}

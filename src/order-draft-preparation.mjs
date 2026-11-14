@@ -46,7 +46,8 @@ export function prepareServerOrderDraft(request){
    eraPreference:trackPreferences[i].eraPreference,
    recipientAgeGroup:input.delivery.recipientAgeGroup,
    speechStyle:input.delivery.speechStyle,songIndex:i+1,mode:selected.mode,blendGenre,
-   thirdVerse,dedicationOutro:dedication.enabled
+   thirdVerse,dedicationOutro:dedication.enabled,
+   artistPreference:input.favoriteArtist
   });
   if(style.length>1000)
    throw new AppError(503,'서버 스타일 지시문은 1000자 이하여야 합니다.');
@@ -65,6 +66,7 @@ export function prepareServerOrderDraft(request){
   story:input.brief,
   delivery:input.delivery,
   mood:input.mood,eraPreference:input.eraPreference,lyricLength:input.lyricLength,
+  artistPreference:input.favoriteArtist,
   lyricPrompt:buildLyricPrompt(input)+verseInstruction+dedicationInstruction+(blendGenre?'\n선택한 혼합 음악 장르: '+blendGenre+'. 메인 장르 '+selected.genres[0]+'에 어울리는 내용으로 자연스럽게 가사를 구성해라.':''),
   songStyles:Object.freeze(songStyles),
   generatedLyrics:null,

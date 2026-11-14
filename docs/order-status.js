@@ -1,10 +1,12 @@
 (()=>{
  'use strict';
  const $=id=>document.getElementById(id);
- const token=new URLSearchParams(location.hash.slice(1)).get('status');let busy=false;
+ const token=new URLSearchParams(location.hash.slice(1)).get('status');
+ let busy=false,delivered=false,pollTimer=null;
+ const validToken=/^[A-Za-z0-9_-]{43}$/.test(token||'');
  async function load(){
   if(busy)return;
-  if(!/^[A-Za-z0-9_-]{43}$/.test(token||'')){
+  if(!validToken){
    $('order-phase').textContent='이메일의 주문 확인 링크가 필요해요.';return;
   }
   busy=true;$('order-refresh').disabled=true;$('order-error').textContent='';
@@ -27,10 +29,22 @@
     if(url.origin!==location.origin||url.pathname!=='/my-music.html'
       ||!/^#delivery=[A-Za-z0-9_-]{43}$/.test(url.hash))throw Error('감상 링크를 검증하지 못했어요.');
     $('order-listen').href=url.href;$('order-listen').hidden=false;
+    delivered=true;
+    if(pollTimer!==null){clearInterval(pollTimer);pollTimer=null;}
    }
   }catch(e){$('order-error').textContent=e.message||'주문을 확인할 수 없어요.';}
   finally{busy=false;$('order-refresh').disabled=false;}
  }
  $('order-refresh').addEventListener('click',()=>{void load()});
+ // After a verified purchase, update the customer status automatically until
+ // the private listening link is available. No polling without an opaque token.
+ if(validToken){
+  pollTimer=setInterval(()=>{
+   if(!document.hidden&&!busy&&!delivered)void load();
+  },20000);
+  document.addEventListener('visibilitychange',()=>{
+   if(!document.hidden&&!busy&&!delivered)void load();
+  });
+ }
  void load();
 })();

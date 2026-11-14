@@ -13,6 +13,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=20261109-emotion-science-01">
+  <link rel="stylesheet" href="cinematic/intro.css?v=20261114-1">
+  <script type="importmap">
+    {"imports":{
+      "react":"https://esm.sh/react@19.1.0",
+      "react/jsx-runtime":"https://esm.sh/react@19.1.0/jsx-runtime",
+      "react-dom":"https://esm.sh/react-dom@19.1.0?external=react",
+      "react-dom/client":"https://esm.sh/react-dom@19.1.0/client?external=react",
+      "three":"https://esm.sh/three@0.175.0",
+      "@react-three/fiber":"https://esm.sh/@react-three/fiber@9.1.2?bundle&external=react,react-dom,three"
+    }}
+  </script>
   <script type="module" src="player.js?v=20261107-video-first-layout-01"></script>
   <script defer src="analytics.js?v=20261109-1"></script>
   <script defer src="home-story.js?v=20261109-emotion-science-01"></script>
@@ -40,6 +51,32 @@
     <a class="header-create" href="create.html">나만의 노래 만들기 <span aria-hidden="true">↗</span></a>
   </div>
 </header>
+<section id="cinematic-intro" class="song-cinematic" aria-label="WITHU 기억의 여정 3D 시네마틱 인트로">
+  <div class="song-cinematic__fallback" aria-hidden="true"></div>
+  <div class="song-cinematic__canvas" id="cinematic-canvas" aria-hidden="true"></div>
+  <span class="song-cinematic__note">WITHU — AN EXPERIENCE IN SOUND</span>
+  <div class="song-cinematic__content">
+    <div class="song-cinematic__eyebrow">MEMORIES IN MOTION</div>
+    <div class="song-cinematic__middle">
+      <p id="cinematic-phase" class="song-cinematic__chapter">01 / THE JOURNEY</p>
+      <h2 class="song-cinematic__headline">기억의 순간이<br><em>음악이 되는 곳.</em></h2>
+      <p class="song-cinematic__sub">하나의 이야기가 기차를 떠나<br>구름을 건너, 당신의 노래가 되기까지.</p>
+    </div>
+    <div class="song-cinematic__footer">
+      <div class="song-cinematic__actions">
+        <a class="song-cinematic__cta" href="create.html">나의 노래 만들기 <span aria-hidden="true">↗</span></a>
+        <a class="song-cinematic__textlink" href="#listening-title">실제 노래 감상하기 ↘</a>
+      </div>
+      <div class="song-cinematic__controls" id="cinematic-controls" aria-label="3D 인트로 재생 조작">
+        <span class="song-cinematic__counter" id="cinematic-counter">01 / 04</span>
+        <button class="song-cinematic__control" type="button" data-cinematic-action="toggle" id="cinematic-state" aria-label="인트로 일시정지 또는 재생">PAUSE</button>
+        <button class="song-cinematic__control" type="button" data-cinematic-action="replay">REPLAY ↺</button>
+        <button class="song-cinematic__control" type="button" data-cinematic-action="skip">SKIP ↗</button>
+      </div>
+    </div>
+  </div>
+  <div id="cinematic-progress" class="song-cinematic__line" aria-hidden="true"></div>
+</section>
 <main id="top">
   <section class="listening-section" aria-labelledby="listening-title">
     <div class="frame">
@@ -368,5 +405,6 @@
 <footer class="site-footer">
   <div class="frame footer-inner"><span class="footer-brand">WITHU</span><p>마음이 노래가 되는 순간.</p><span class="copyright">© 2026 WITHU. All rights reserved.</span><a href="video-ads.html" style="font-size:12px;color:#ded1dc;text-decoration:underline;text-underline-offset:3px">브랜드 영상 상담</a><a class="owner-entry" href="admin.html" rel="nofollow" aria-label="WITHU 운영자 로그인">운영자</a></div>
 </footer>
+  <script type="module" src="cinematic/intro.js?v=20261114-1"></script>
 </body>
 </html>

@@ -23,31 +23,17 @@ import {handleProductionWebhooks} from './production-webhooks.mjs';
 import {processVerifiedPaidWork} from './production-worker.mjs';
 import {pollMurekaMusicJobs} from './mureka-paid-automation.mjs';
 import {respond,stop} from './production-runtime.mjs';
+import {enabledFunctionSecrets,readDeploymentSecretProfile}
+ from './firebase-secret-config.mjs';
 
 const app=getApps().length?getApp():initializeApp();
 const db=getFirestore(app),auth=getAuth(app);
 const bucket=getStorage(app).bucket(process.env.WITHU_STORAGE_BUCKET);
 const context={db,auth,bucket,env:process.env,fetcher:globalThis.fetch};
-// Attach only credentials required by ENABLED providers. Referencing a
-// nonexistent optional Secret blocks deployment of the whole paid-order
-// pipeline, even when that provider is deliberately disabled.
-// Every optional endpoint/provider still rejects use without its own key.
-export function enabledFunctionSecrets(env=process.env){
- const api=['TOSS_SECRET_KEY','RESEND_API_KEY','WITHU_LINK_ENCRYPTION_KEY',
-  'MUREKA_API_KEY','WITHU_VIDEO_LEAD_HMAC_KEY','WITHU_SUPPORT_HMAC_KEY'];
- if(env.WITHU_RESEND_WEBHOOK_ENABLED==='true')
-  api.push('RESEND_WEBHOOK_SIGNING_SECRET');
- const worker=['RESEND_API_KEY','WITHU_LINK_ENCRYPTION_KEY','MUREKA_API_KEY'];
- const lyrics=env.WITHU_LYRICS_PROVIDER||'openai';
- if(lyrics==='openai')worker.push('OPENAI_API_KEY');
- if(lyrics==='gemini'||env.WITHU_ARTIST_RESEARCH_ENABLED==='true'
-  ||env.WITHU_AUTOMATED_MUSIC_PROVIDER==='google_lyria')
-  worker.push('GEMINI_API_KEY');
- if(env.WITHU_DRIVE_BACKUP_ENABLED==='true')
-  worker.push('WITHU_DRIVE_SERVICE_ACCOUNT_JSON');
- return {api,worker};
-}
-const {api:apiSecrets,worker:workerSecrets}=enabledFunctionSecrets();
+// Nonsecret profile is generated BEFORE Functions source analysis by the
+// existing predeploy script. This also works before Firebase CLI loads .env.
+const {api:apiSecrets,worker:workerSecrets}=
+ enabledFunctionSecrets(readDeploymentSecretProfile());
 
 export const api=onRequest({
  region:'asia-northeast3',memory:'1GiB',

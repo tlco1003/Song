@@ -1,39 +1,50 @@
-# MOMENT AI CINEMA — immersive public-facing presentation layer
+# MOMENT AI CINEMA — Motion Atelier v2 (2026-11-14)
 
-## What it does
+Standalone cinematic presentation layer for the existing MOMENT AI web demo. This directory does not contain WITHU, ChefOS, private AI models, API keys or training data. The original app's features are reached via same-origin `../?screen=<feature>` deep links and an embedded iframe, and remain implemented by the original app.
 
-This is a **separate, additive cinematic front end** that keeps the already-built MOMENT AI source files unchanged.
+## Experience
 
-- Standalone route: `/Song/moment-ai/cinema/?screen=home` (intro)
-- 3D Chrome Orbital object: custom WebGL2 shaders + sphere/torus meshes, full camera animation, mouse/touch dragging; CSS fallback without WebGL2.
-- 7 deep-linkable chapters `home`, `music`, `journey`, `lounge`, `memory`, `wellness`, `creative` via `?screen=...`; native browser Back/Forward work.
-- Actual MOMENT AI modules are rendered from same-origin `../?screen=<chapter>` in an embedded frame. No duplicate business logic or private WITHU/ChefOS code.
-- The current app retains its local personal music player (IndexedDB), audio briefing, news, weather, route demo, wellness settings, and local journey memory.
-- The `FULL EXPERIENCE` link opens the original full-screen app to avoid any limitations of embedding.
-- Accessibility: keyboard navigation, reduced-motion preference and manual toggle, WebGL fallback, mobile-responsive layout.
+`?screen=home&step=0` through `?screen=home&step=5` — a scroll, swipe, keyboard, or button-controlled six-chapter **procedurally modeled 3D vehicle assembly**:
 
-## Why this architecture
+0. The Blueprint — immersive opening
+1. Chassis — structural rails and frame
+2. Motion — four wheel units
+3. Form — body panels
+4. Cabin — upper body / glazed enclosure and trim
+5. Your World — completed vehicle with six clickable services
 
-The car-facing Android/Pleos prototype has an existing tested UI and data adapters. We do not discard or fork its calculations into a new, inconsistent frontend. This is a **separate brand/experience shell**, not a second nutrition/navigation/music engine. Existing features are only called through same-origin interface/frame.
+On the final chapter, tapping the choices opens the existing MOMENT AI functionality:
 
-## Privacy and security
+`?screen=music`, `?screen=lounge`, `?screen=journey`, `?screen=wellness`, `?screen=memory`, `?screen=creative`.
 
-- Does **not** contain private WITHU or ChefOS source, keys, model weights, or copyrighted music.
-- Public GitHub Pages are **public**. This UI contains only showcase code. Do not upload confidential inventions, user health or travel records to the repository.
-- Existing browser-local audio and memories are preserved under the existing domain; cross-origin URL changes require a migration strategy.
-- If a private preview is necessary, use a separately authorized private deployment with authentication. GitHub Pages alone is not private.
+The cinematic scene includes an original brand-neutral concept vehicle. It is **not** a licensed Hyundai/Kia model, a scanned CAD design, a factory assembly simulation, nor an assertion that all vehicle features are ready to use in a real car. The vehicle is procedurally rendered on an HTML canvas using original 3D vertices projected to 2D, without external GLB assets or paid AI endpoints. The atmospheric backdrop retains the existing WebGL2/CPU fallback scene. Motion is limited by user preferences and the motion toggle; controls are keyboard accessible.
 
-## Dependency status
+## Input and URL semantics
 
-Self-contained: WebGL2 JavaScript and CSS animations. **No external Spline, GSAP, Three.js library used in this version**: real 3D is implemented directly with WebGL2 shaders to keep the showcase operational without an external 3D asset/license. Later Spline GLB assets can be integrated only after asset ownership/license is checked.
+- Desktop: scroll down/up on the intro (one chapter per deliberate wheel input); ArrowDown/ArrowUp and PageDown/PageUp; previous/next chapter buttons; step dots.
+- Touch: swipe up/down on the intro to change chapters; horizontal drag to rotate the car; controls and chapter dots can be tapped.
+- Each step is deep-linkable as `?screen=home&step=N`, and changes are stored in browser history. Back/Forward restores the relevant chapter.
+- After the final chapter, six actual buttons navigate to the feature screens without resetting the user's music, daily-news or route logic in the original app.
+- When inside the feature page, regular internal scroll is left alone; the assembly scroll handler applies only to the intro screen.
 
-## Local preview
+## Implementation
 
-Place these files in `docs/moment-ai/cinema/`, and serve the parent `docs/moment-ai/` folder through `python3 -m http.server 8000 -d docs/moment-ai` with current directory as root. Then navigate to `/cinema/?screen=home`. The existing app is served at `/`.
+- `index.html`: layout, controls, menu and accessible chapter markers
+- `cinema.css`: editorial visual system, responsive grid, focus and motion reduction
+- `scene.js`: existing atmospheric WebGL2 + software scene
+- `car.js`: *new* isolated procedural vehicle and progressive assembly renderer
+- `cinema.js`: extended state machine, URL routing, touch/wheel/keyboard events and iframe bridge
 
-## Known constraints
+## Verified locally
 
-- Embedding full-screen legacy UI is a **transition architecture**: mobile embedded content may scroll internally. A native scene-level UI migration would require extracting original UI components and introducing a shared design system and state adapters.
-- WebGL is decorative. Vehicle usage should provide safe audio-first mode without cinematic transitions while driving.
-- No new Pleos vehicle SDK integration is added here. Existing Android SDK module remains unchanged; real vehicle callbacks require official emulator/hardware validation.
-- Intro scene intentionally does not autoplay audio. Music only plays after a user action inside the existing app.
+- JavaScript syntax checked with `node --check`.
+- Browser tests in desktop 1440 × 900 and touch-enabled 390 × 844: step buttons, final chapter menu, navigation to previous application modules, no page JavaScript errors.
+- Browser gesture tests: mouse wheel, ArrowDown and touch swipe advance stages; feature URL receives the correct screen parameter.
+- Rendering was evaluated in headless Chromium with software canvas; this does not prove real-car Pleos WebView/GPU performance or embedded-app end-to-end network data correctness.
+
+## Limits and protection
+
+- Existing business logic, news pipeline, vehicle SDK, native Android host, music library and health service connectors were not altered or reimplemented.
+- Pleos hardware SDK can only be verified in a supported Android host/car emulator. No vehicle sensor data is fabricated in the cinematic scene.
+- No secret URL, private API, repository key or source code from WITHU/ChefOS is included.
+- GitHub Pages is public. A restricted private preview needs access-controlled hosting and should be addressed before submitting confidential material.

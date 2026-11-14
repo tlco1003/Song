@@ -9,12 +9,14 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23070b12'/%3E%3Cpath d='M12 43V20l20 20 20-20v23' fill='none' stroke='%23dfd4b9' stroke-width='5'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="./cinema.css">
   <script src="./scene.js" defer></script>
+  <script src="./car.js" defer></script>
   <script src="./cinema.js" defer></script>
 </head>
 <body data-screen="home">
   <a class="skip" href="#main">본문으로 건너뛰기</a>
   <div class="backdrop" aria-hidden="true">
-    <canvas id="world" aria-label="움직이는 은색 조형물 3D 렌더링"></canvas>
+    <canvas id="world" aria-hidden="true"></canvas>
+    <canvas id="carWorld" aria-hidden="true"></canvas>
     <div class="dust"></div><div class="light-line"></div><div class="grain"></div>
   </div>
 
@@ -39,8 +41,29 @@
         <p class="hero-desc">내가 만든 음악을 들으며 세상을 만나고,<br>지나가는 모든 순간을 특별한 이야기로 남기는 공간.</p>
         <div class="hero-actions"><button class="btn-enter" id="enterBtn" data-go="music" type="button"><span>ENTER THE LOUNGE</span><span class="btn-arrow">↗</span></button><button class="btn-link" data-go="journey" type="button">EXPLORE THE JOURNEY <span>→</span></button></div>
       </div>
-      <div class="hero-guide"><span class="ring-label">THE FUTURE IS PERSONAL</span><span>DRAG TO EXPLORE <b>↗</b></span></div>
-      <div class="hero-bottom"><span>CONCEPT EXPERIENCE / DEVELOPED INDEPENDENTLY</span><span>02: INTERACTIVE UNIVERSE</span><span id="renderStatus">REAL-TIME WEBGL</span></div>
+      <div class="assembly-panel" id="assemblyPanel" aria-live="polite">
+        <span class="assembly-kicker" id="assemblyKicker">00 / MOTION ATELIER</span>
+        <strong id="assemblyTitle">움직임, 하나의 감각이 되다.</strong>
+        <p id="assemblyDescription">아래로 스크롤하거나 화면을 위로 밀어 자동차를 완성해 보세요.</p>
+        <div class="assembly-controls">
+          <button type="button" id="assemblyPrev" aria-label="이전 조립 장면">←</button>
+          <div class="assembly-dots" id="assemblyDots" aria-label="조립 장면 선택"></div>
+          <button type="button" id="assemblyNext" aria-label="다음 조립 장면">→</button>
+        </div>
+      </div>
+      <div class="assembly-feature-deck" id="assemblyFeatureDeck" hidden aria-label="완성된 차량에서 탐험할 기능">
+        <div class="deck-heading"><span>YOUR CAR. YOUR WORLD.</span><strong>오늘의 라운지를 선택하세요.</strong></div>
+        <div class="deck-grid">
+          <button type="button" data-go="music"><span>01 / MUSIC</span><b>나의 음악</b><small>내 노래 듣기 ↗</small></button>
+          <button type="button" data-go="lounge"><span>02 / DAILY</span><b>오늘의 정보</b><small>날씨 · 뉴스 ↗</small></button>
+          <button type="button" data-go="journey"><span>03 / JOURNEY</span><b>살아 있는 여정</b><small>경로 · 이야기 ↗</small></button>
+          <button type="button" data-go="wellness"><span>04 / DINING</span><b>나만의 식사</b><small>장소 · 취향 ↗</small></button>
+          <button type="button" data-go="memory"><span>05 / MEMORY</span><b>하루의 기록</b><small>추억 보관 ↗</small></button>
+          <button type="button" data-go="creative"><span>06 / CREATE</span><b>영감의 공간</b><small>아이디어 ↗</small></button>
+        </div>
+      </div>
+      <div class="hero-guide"><span class="ring-label">DESIGNED AROUND YOUR LIFE</span><span id="scrollHint">SCROLL / SWIPE TO BUILD <b>↧</b></span></div>
+      <div class="hero-bottom"><span>CONCEPT EXPERIENCE / DEVELOPED INDEPENDENTLY</span><span id="assemblyStageLabel">00: THE BLUEPRINT</span><span id="renderStatus">REAL-TIME WEBGL</span></div>
     </section>
 
     <section id="experience" class="experience screen" aria-labelledby="experienceTitle" hidden>

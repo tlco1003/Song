@@ -17,3 +17,73 @@ body.is-travelling .hero-copy,body.is-travelling .experience-copy,body.is-travel
 
 .frame-error{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:14px;padding:clamp(23px,5vw,70px);background:radial-gradient(circle at 80% 15%,rgba(69,79,103,.2),transparent 55%),#0a1019}.frame-error[hidden]{display:none!important}.frame-error .error-symbol{font-size:38px;color:#d8c19c}.frame-error strong{font-size:clamp(18px,2.4vw,26px);letter-spacing:-.04em}.frame-error p{max-width:355px;color:#acb6c4;line-height:1.8;font-size:12px}.frame-error a{margin-top:14px;display:inline-flex;border:1px solid #c7b99e;padding:15px;color:#eadcc5;font-size:10px;font-weight:800;letter-spacing:.12em}.experience-frame.failed #featureFrame{opacity:0}.experience-frame.failed .frame-loading{display:none}
 body.is-travelling:after{content:"";position:fixed;z-index:13;pointer-events:none;inset:0;background:radial-gradient(circle at 72% 46%,rgba(244,235,214,.26),rgba(191,206,233,.07) 25%,transparent 62%);animation:portalFlash .8s both}@keyframes portalFlash{0%{opacity:0;transform:scale(.3)}35%{opacity:1}100%{opacity:0;transform:scale(1.3)}}
+
+/* MOTION ATELIER / scroll-assembled cinematic car, progressive enhancement */
+#world{transition:opacity .7s ease}
+#carWorld{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0;transition:opacity .8s ease;filter:contrast(1.12) saturate(.8)}
+body[data-screen="home"] #world{opacity:.075}
+body[data-screen="home"] #carWorld{opacity:1}
+body[data-screen="home"] .backdrop:after{background:linear-gradient(90deg,rgba(3,6,12,.98),rgba(3,7,13,.77) 25%,rgba(3,7,12,.14) 60%,rgba(2,5,9,.26)),linear-gradient(0deg,rgba(2,4,8,.86),transparent 32%,transparent 78%,rgba(2,4,8,.5));pointer-events:none}
+body[data-screen="home"] .dust{background:radial-gradient(ellipse at 68% 57%,rgba(87,116,145,.16),transparent 40%),radial-gradient(ellipse at 76% 44%,rgba(216,217,213,.06),transparent 60%)}
+.assembly-panel{position:absolute;z-index:6;bottom:143px;left:clamp(22px,7vw,134px);width:min(370px,43vw);padding:16px 0 0;border-top:1px solid rgba(221,233,245,.31);transition:opacity .4s,transform .5s;pointer-events:auto}
+.assembly-kicker{display:block;margin-bottom:11px;color:var(--accent);font-size:9px;font-weight:800;letter-spacing:.23em}
+.assembly-panel strong{font-size:clamp(15px,1.5vw,20px);letter-spacing:-.045em;font-weight:600;display:block}
+.assembly-panel p{margin:7px 0 16px;font-size:10px;line-height:1.7;min-height:17px;color:#aeb7c4}
+.assembly-controls{display:flex;align-items:center;gap:14px}
+.assembly-controls>button{border:1px solid rgba(220,235,245,.25);background:rgba(13,19,29,.8);border-radius:50%;width:32px;height:32px;color:#e9e3d5;transition:border-color .2s,background .2s}
+.assembly-controls>button:hover{background:#1c2937;border-color:#d7c7ad}.assembly-controls>button:disabled{opacity:.28;cursor:default}
+.assembly-dots{display:flex;align-items:center;gap:8px}.assembly-dots button{width:29px;height:17px;display:grid;place-items:center;border:0;background:transparent;padding:0}
+.assembly-dots button:after{content:"";width:20px;height:2px;background:#6b7786;transition:background .3s,height .3s,box-shadow .3s}.assembly-dots button[aria-current="step"]:after{height:3px;background:var(--accent);box-shadow:0 0 14px rgba(231,215,188,.28)}
+.assembly-feature-deck{position:absolute;right:clamp(20px,5.4vw,90px);top:47%;z-index:6;width:min(580px,47vw);transform:translateY(-30%);animation:deckIn .75s var(--ease) both}
+.assembly-feature-deck[hidden]{display:none!important}.deck-heading{margin-bottom:13px;padding-left:6px;text-shadow:0 2px 20px #000}.deck-heading span{display:block;color:#e6d4b7;font-size:9px;font-weight:700;letter-spacing:.17em}.deck-heading strong{display:block;margin-top:6px;font-size:clamp(17px,2vw,26px);letter-spacing:-.05em}
+.deck-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.deck-grid button{min-width:0;min-height:112px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:9px;padding:17px;border:1px solid rgba(204,221,236,.26);background:linear-gradient(145deg,rgba(16,28,42,.92),rgba(7,12,19,.87));text-align:left;backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);transition:transform .23s,border-color .2s,background .2s}
+.deck-grid button:hover,.deck-grid button:focus-visible{transform:translateY(-5px);border-color:rgba(245,227,199,.9);background:rgba(33,48,64,.96)}
+.deck-grid button>span{font-size:8px;font-weight:800;letter-spacing:.14em;color:#d7c9af}.deck-grid button b{font-size:14px;font-weight:600;letter-spacing:-.04em}.deck-grid button small{font-size:9px;color:#abb4c1}
+body.assembly-complete .assembly-panel{opacity:0;transform:translateY(15px);pointer-events:none}
+body.assembly-complete .hero-copy{opacity:.27;transform:translateY(-12px) scale(.98);pointer-events:none;transition:opacity .75s,transform .75s}
+body.assembly-complete .hero-guide{opacity:0}
+@keyframes deckIn{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:translateY(-30%)}}
+body.assembly-complete .hero-copy :is(.hero-actions button){pointer-events:none}
+@media(max-width:1100px){.assembly-feature-deck{width:53vw;right:23px}.deck-grid button{padding:11px;min-height:97px}}
+@media(max-width:760px){
+ body[data-screen="home"] .hero-copy{margin-top:clamp(18px,3vh,38px)}
+ body[data-screen="home"] .hero h1{font-size:clamp(44px,10.6vw,68px);margin:19px 0 21px}
+ body[data-screen="home"] .hero-kr{font-size:16px}
+ body[data-screen="home"] .hero-desc{max-width:265px;font-size:10px;line-height:1.65;margin:10px 0 17px}
+ body[data-screen="home"] .btn-enter{min-height:42px;min-width:215px}
+ body[data-screen="home"] .hero-actions{gap:11px}
+ .assembly-panel{bottom:143px;left:24px;width:min(calc(100vw - 48px),410px);padding-top:10px;backdrop-filter:blur(4px)}
+ .assembly-panel strong{font-size:15px}.assembly-panel p{font-size:9px;margin:5px 0 9px}
+ .assembly-controls>button{width:29px;height:29px}
+ .assembly-feature-deck{top:auto;bottom:156px;left:22px;right:22px;width:auto;transform:none;animation:deckMobile .5s ease both}
+ .deck-heading strong{font-size:18px}.deck-heading{margin-bottom:9px}
+ .deck-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+ .deck-grid button{min-height:75px;padding:10px 9px;gap:5px}
+ .deck-grid button b{font-size:11px}.deck-grid button>span{font-size:7px}.deck-grid button small{font-size:7px}
+ body.assembly-complete .hero-copy{opacity:.15}
+ .hero-guide{right:23px;top:40%;gap:21vh}
+}
+@media(max-height:700px){.assembly-panel{bottom:115px}.assembly-feature-deck{bottom:110px}.deck-grid button{min-height:67px}.hero-copy{transform:scale(.9);transform-origin:left center}}
+@keyframes deckMobile{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.assembly-feature-deck{animation:none!important}body.assembly-complete .hero-copy{transition:none!important}}
+
+/* Editorial composition correction: keep the 3D vehicle and actions apart. */
+@media(min-width:761px){
+ .assembly-panel{left:clamp(22px,7vw,134px);right:auto;bottom:128px}
+ body.assembly-building .hero h1{max-width:700px;font-size:clamp(54px,6.3vw,98px)}
+ body.assembly-building .hero-actions{opacity:0;pointer-events:none;transition:opacity .35s}
+ body.assembly-building .hero-desc{max-width:400px}
+ .assembly-feature-deck{top:54%;transform:translateY(0);width:min(560px,46vw)}
+ .deck-grid button{min-height:91px;gap:7px}
+ .assembly-feature-deck{animation:deckCompact .65s var(--ease) both}
+}
+@keyframes deckCompact{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:760px){
+ body.assembly-building .hero-actions{opacity:0;pointer-events:none}
+ body.assembly-building .hero h1{font-size:clamp(42px,10vw,62px)}
+ body.assembly-building .hero-copy{max-width:90vw}
+ .assembly-feature-deck{animation:deckMobile .5s ease both}
+}
+
+body.assembly-complete .hero-copy .hero-actions{visibility:hidden;opacity:0}

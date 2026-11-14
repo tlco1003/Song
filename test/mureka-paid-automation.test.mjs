@@ -213,3 +213,27 @@ test('succeeded but missing CDN allowlist falls back to operator, never exposes 
  assert.equal(bucket.files.size,0);
  assert.equal(remote.calls.length,2);
 });
+
+
+test('transient GET polling errors back off automatically without a second paid POST',async()=>{
+ const db=mockDB(),bucket=fakeBucket(),calls=[];
+ const fetcher=async(url,options)=>{
+  calls.push({url,options});
+  if(url==='https://api.mureka.ai/v1/song/generate')
+   return {ok:true,json:async()=>({id:'10436',status:'preparing',model:'mureka-9.5'})};
+  if(url==='https://api.mureka.ai/v1/song/query/10436')
+   throw Error('temporary read timeout');
+  throw Error('Unexpected provider endpoint '+url);
+ };
+ await submitMurekaPaidAutomation({db,orderId:ID,order,plan,env,fetcher});
+ const result=await pollMurekaMusicJobs({
+  db,bucket,env,fetcher,clock:()=>Date.now()+1000
+ });
+ assert.equal(result.needsOperator,0);
+ assert.equal(db.job().status,'mureka_queued');
+ assert.equal(db.job().lastError,'MUREKA_QUERY_RETRYABLE');
+ assert.ok(db.job().nextPollAt>Date.now()+10000);
+ assert.equal(db.order().production.status,'generating_music');
+ assert.equal(calls.filter(c=>c.url.endsWith('/v1/song/generate')).length,1);
+ assert.equal(bucket.files.size,0);
+});

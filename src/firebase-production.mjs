@@ -17,6 +17,7 @@ import {handleFunnelEvent} from './production-analytics.mjs';
 import {handleProductionAdmin} from './production-admin.mjs';
 import {handleAdminSongTiming} from './admin-song-timing.mjs';
 import {handleProductionComments} from './production-comments.mjs';
+import {handleSupportBoard} from './production-support.mjs';
 import {handleProductionWebhooks} from './production-webhooks.mjs';
 import {processVerifiedPaidWork} from './production-worker.mjs';
 import {respond,stop} from './production-runtime.mjs';
@@ -26,7 +27,8 @@ const db=getFirestore(app),auth=getAuth(app);
 const bucket=getStorage(app).bucket(process.env.WITHU_STORAGE_BUCKET);
 const context={db,auth,bucket,env:process.env,fetcher:globalThis.fetch};
 const apiSecrets=['TOSS_SECRET_KEY','RESEND_API_KEY','WITHU_LINK_ENCRYPTION_KEY',
- 'RESEND_WEBHOOK_SIGNING_SECRET','WITHU_VIDEO_LEAD_HMAC_KEY'];
+ 'RESEND_WEBHOOK_SIGNING_SECRET','WITHU_VIDEO_LEAD_HMAC_KEY',
+ 'WITHU_SUPPORT_HMAC_KEY'];
 const workerSecrets=['RESEND_API_KEY','OPENAI_API_KEY','WITHU_LINK_ENCRYPTION_KEY'];
 
 export const api=onRequest({
@@ -40,7 +42,7 @@ export const api=onRequest({
   res.setHeader('Cache-Control','private, no-store');
   for(const handle of [handleProductionWebhooks,handleProductionPayments,
     handleVideoAdInquiries,
-    handleFunnelEvent,handleOrderStatus,handleProductionDelivery,handleProductionComments,handleAdminSongTiming,handleProductionAdmin]){
+    handleFunnelEvent,handleOrderStatus,handleProductionDelivery,handleSupportBoard,handleProductionComments,handleAdminSongTiming,handleProductionAdmin]){
    if(await handle(req,res,context))return;
   }
   stop(404,'해당 API 경로가 없습니다.');

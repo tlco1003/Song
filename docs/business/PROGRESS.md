@@ -83,3 +83,13 @@ No private accounting or actual qualified-lead registry is connected to this fil
 - 법원 판례나 경쟁사 규정을 복제하지 않고 국가법령정보센터 원문과 토스페이먼츠 공식 결제 취소 가이드를 근거로 독자 작성. 업계 STIZ 유사 맞춤제작 고지 방식 참조.
 - 추가 테스트: `test/refund-policy-contract.test.mjs`. CI 실제 통과 여부는 확인 후에만 보고.
 - 실결제 및 자동환급 기능 활성화 없음. 정식 판매 전 실사업자 연락처·고객센터·주문별 착수 증빙·환불 승인 및 PG 취소 API 연결·법적 검토 필요.
+
+## 2026-11-15 — 고객센터 이메일 및 문의 게시판 구현
+
+- 고객센터 이메일 `tlco1003@naver.com`을 `docs/refund-policy.html`, `docs/payment.html`, `docs/terms.html`, `docs/privacy.html`, `docs/support.html`에 게시. 메인/주문 페이지에 고객센터 링크 추가.
+- 신규: `docs/support.html`, `docs/support.css`, `docs/support.js`: 공개 승인된 질의·답변만 목록 표시, 비공개 기본 문의, 메일 문의 대체 수단, 환불 문의 비공개 강제, 개인정보·공개 동의.
+- 신규: `src/production-support.mjs`: 기존 Firebase API/Firestore/관리자 인증 사용, 기본 OFF, 서버 개인정보 동의·원본 텍스트 검증, HMAC 기반 네트워크 일일 제한, 별도 관리 승인 전 공개 금지, 이메일과 환불문의 비공개.
+- 신규: `docs/support-admin.js`, 기존 `docs/admin.html`/`docs/admin.js` 관리자 문의함: 실관리자 JWT 검증, 공개 답변 승인·비공개 수동 처리·숨김.
+- 설정: `WITHU_SUPPORT_INQUIRIES_ENABLED`, `WITHU_SUPPORT_PRIVACY_REVIEWED`, `WITHU_SUPPORT_OPERATOR_VERIFIED`, `WITHU_SUPPORT_HMAC_KEY` (비공개 Firebase Secret). Firestore TTL `deleteAfter` 준비. `functions/.env.example`에 사후 운영 필요 구성 표기.
+- 신규 테스트: `test/support-board.test.mjs`에서 개인정보 누출·비공개·승인·일일 제한 검증. Node syntax check에 신규 모듈 포함.
+- **주의:** GitHub Pages는 정적 웹사이트여서 문의 양식 접수 불가. 고객 이메일은 작동 가능하고, Firebase Hosting/Functions 배포 및 비공개 운영 가드 활성화 전까지 게시판은 공개 UI와 이메일 대체 안내만 제공. 90/365일 TTL 필드는 실제 Firebase 정책으로 활성화하기 전까지 자동 삭제 보장 아님. 실제 자동 답변 메일·PG 환불 기능은 구축하지 않음.

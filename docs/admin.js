@@ -5,6 +5,7 @@
  */
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js';
 import {loadVideoAdInquiries} from './video-ads-admin.js?v=20261114-video-pilot-01';
+import {loadSupportQuestions} from './support-admin.js?v=20261115-support-01';
 import {getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}
  from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js';
 const $=id=>document.getElementById(id);
@@ -74,10 +75,17 @@ async function refresh(){
  renderOrders();
  void refreshFunnel();
  void refreshVideoAdLeads();
+ void refreshSupportQuestions();
  if(selected){
   const current=orders.find(o=>o.id===selected.id);
   if(current)select(current);
  }
+}
+async function refreshSupportQuestions(){
+ const target=$('admin-support-list');
+ if(!target)return;
+ try{await loadSupportQuestions(api,target);}
+ catch(error){target.textContent=error?.message||'고객문의함을 확인하지 못했습니다.';}
 }
 async function refreshVideoAdLeads(){
  const target=$('admin-video-lead-list');
@@ -307,6 +315,8 @@ $('admin-sign-out').addEventListener('click',run(async()=>{
 $('admin-refresh').addEventListener('click',run(refresh));
 const videoRefresh=$('admin-video-leads-refresh');
 if(videoRefresh)videoRefresh.addEventListener('click',run(refreshVideoAdLeads));
+ const supportRefresh=$('admin-support-refresh');
+ if(supportRefresh)supportRefresh.addEventListener('click',run(refreshSupportQuestions));
 $('admin-finalize').addEventListener('click',run(send,workStatus));
 $('admin-retry-ai').addEventListener('click',run(retry,workStatus));
 $('admin-resend-receipt').addEventListener('click',run(resendReceipt,workStatus));

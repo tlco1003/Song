@@ -255,17 +255,29 @@ function Book({time}) {
   const j=journeyAt(time.current.value);
   if(!body.current)return;
   body.current.visible=j.page>.004;
-  body.current.position.set(0,-1.08+(.34*j.page),.2);
-  body.current.rotation.set(-.16,Math.sin(j.time*.12)*.015,0);
-  body.current.scale.setScalar(.62+j.page*.36);
+  body.current.position.set(0,-.65+(.24*j.page),.4);
+  body.current.rotation.set(-.12,Math.sin(j.time*.12)*.015,0);
+  body.current.scale.setScalar(.82+j.page*.58);
   left.current.rotation.y=-(1-j.bookOpen)*1.42;
   right.current.rotation.y=(1-j.bookOpen)*1.42;
   uniforms.uGlow.value=j.landing;
   if(ripple.current){ripple.current.visible=j.ripple>.001;ripple.current.scale.setScalar(.5+j.ripple*1.8);ripple.current.material.opacity=j.ripple*.7;}
  });
  const page=(side)=>h('group',{ref:side<0?left:right,position:[0,0,0]},
-  h('mesh',{position:[side*1.03,0,0]},h('planeGeometry',{args:[2.08,1.56,30,18]}),h('shaderMaterial',{vertexShader:pageVertex,fragmentShader:pageFragment,uniforms,side:THREE.DoubleSide,transparent:true,depthWrite:true})),
-  h('mesh',{position:[side*1.04,-.79,-.02]},h('boxGeometry',{args:[2.1,.015,.015]}),h('meshBasicMaterial',{color:'#d1eefb'}))
+  h('mesh',{position:[side*1.03,0,-.038]},h('planeGeometry',{args:[2.14,1.62]}),
+   h('meshBasicMaterial',{color:'#638fa5',side:THREE.DoubleSide,transparent:true,opacity:.86})),
+  h('mesh',{position:[side*1.03,0,.012]},h('planeGeometry',{args:[2.08,1.56,30,18]}),
+   h('shaderMaterial',{vertexShader:pageVertex,fragmentShader:pageFragment,uniforms,side:THREE.DoubleSide,transparent:true,depthWrite:false})),
+  h('mesh',{position:[side*1.03,0,.031]},h('planeGeometry',{args:[2.13,1.60]}),
+   h('meshBasicMaterial',{color:'#cdeefe',transparent:true,opacity:.85,wireframe:true,side:THREE.DoubleSide,depthWrite:false})),
+  h('mesh',{position:[side*1.07,.30,.04]},h('planeGeometry',{args:[1.42,.024]}),
+   h('meshBasicMaterial',{color:'#f2d59b',transparent:true,opacity:.81,depthWrite:false})),
+  h('mesh',{position:[side*1.07,.11,.04]},h('planeGeometry',{args:[1.62,.014]}),
+   h('meshBasicMaterial',{color:'#d7f0ff',transparent:true,opacity:.61,depthWrite:false})),
+  h('mesh',{position:[side*1.07,-.13,.04]},h('planeGeometry',{args:[1.48,.014]}),
+   h('meshBasicMaterial',{color:'#d7f0ff',transparent:true,opacity:.48,depthWrite:false})),
+  h('mesh',{position:[side*1.04,-.79,-.02]},h('boxGeometry',{args:[2.12,.019,.019]}),
+   h('meshBasicMaterial',{color:'#e1f5ff'}))
  );
  return h('group',{ref:body,visible:false},
   page(-1),page(1),

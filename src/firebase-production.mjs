@@ -21,6 +21,9 @@ import {handleProductionComments} from './production-comments.mjs';
 import {handleSupportBoard} from './production-support.mjs';
 import {handleProductionWebhooks} from './production-webhooks.mjs';
 import {processVerifiedPaidWork} from './production-worker.mjs';
+import {sendCompletedEmail} from './production-delivery.mjs';
+import {reviewedPaidOrderReadyForAutoDelivery}
+ from './production-auto-delivery-gate.mjs';
 import {pollMurekaMusicJobs} from './mureka-paid-automation.mjs';
 import {respond,stop} from './production-runtime.mjs';
 import {enabledFunctionSecrets,readDeploymentSecretProfile}
@@ -73,6 +76,31 @@ export const processPaidOrder=onDocumentUpdated({
  }catch(error){
   console.error('Paid order worker failed',event.params.orderId,error?.name||'Error');
   // The order remains visible to operator; use guarded retry from admin.
+ }
+});
+
+/**
+ * Final verified-delivery transition. The Mureka provider stores PRIVATE
+ * unreviewed candidates; after operator approves every purchased track,
+ * securely email the existing personal listening link automatically.
+ * Status receipt and manual admin resend remain available on email failure.
+ */
+export const autoDeliverReviewedOrder=onDocumentUpdated({
+ document:'withuOrders/{orderId}',region:'asia-northeast3',
+ memory:'512MiB',timeoutSeconds:120,maxInstances:5,
+ retry:false,secrets:['RESEND_API_KEY','WITHU_LINK_ENCRYPTION_KEY']
+},async(event)=>{
+ const before=event.data?.before?.data();
+ const after=event.data?.after?.data();
+ if(!reviewedPaidOrderReadyForAutoDelivery(before,after))return;
+ try{
+  await sendCompletedEmail({
+   db,env:process.env,fetcher:globalThis.fetch,id:event.params.orderId
+  });
+ }catch(error){
+  console.error('Reviewed paid order auto-delivery failed',
+   event.params.orderId,error?.name||'Error');
+  // Delivery error is stored on the order; operator can safely retry manually.
  }
 });
 

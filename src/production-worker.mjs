@@ -9,6 +9,8 @@ import {buildSongProductionPlan} from './song-production-plan.mjs';
 import {now,paid} from './production-runtime.mjs';
 import {sendPaidOrderReceipt} from './order-status-portal.mjs';
 import {configuredLyriaAutoMode,runLyriaPaidAutomation} from './lyria-paid-automation.mjs';
+import {artistSearchEnabled,researchArtistMusicalTraits}
+ from './artist-research-provider.mjs';
 
 function musicPlan(order,lyrics){
  const draft=order.draft;
@@ -25,6 +27,29 @@ function musicPlan(order,lyrics){
    eraPreference:draft.eraPreference},
   sharedStyleNotes:'',artistPreference:draft.artistPreference||''
  });
+}
+async function researchPaidArtistIfEnabled({db,orderId,order,env,fetcher}){
+ const artist=order.draft?.artistPreference;
+ if(!artist||!artistSearchEnabled(env))return null;
+ const ref=db.collection('withuArtistResearch').doc(orderId);
+ // Payable search requests are claimed once. An unknown outcome requires
+ // reconciliation rather than an implicit second charge.
+ try{await ref.create({
+  status:'submitted',artistName:artist,createdAt:now(),orderId
+ });}catch(_){return {status:'previous_research_must_be_reviewed'};}
+ try{
+  const result=await researchArtistMusicalTraits({
+   artistName:artist,genre:order.genreSelection.genres[0],
+   era:order.draft?.eraPreference||'auto',
+   apiKey:env.GEMINI_API_KEY,fetcher
+  });
+  await ref.update({...result,updatedAt:now()});
+  return {...result,summary:undefined,sources:undefined};
+ }catch(error){
+  const code=typeof error?.code==='string'?error.code:'RESEARCH_FAILED';
+  await ref.update({status:'needs_operator_review',reason:code,updatedAt:now()});
+  return {status:'needs_operator_review',reason:code};
+ }
 }
 async function alertOwner({orderId,order,env,fetcher}){
  if(typeof env.WITHU_OPERATOR_EMAIL!=='string'||!env.WITHU_OPERATOR_EMAIL.includes('@')
@@ -80,6 +105,7 @@ export async function processVerifiedPaidWork({db,bucket,orderId,env=process.env
   const receipt=await sendPaidOrderReceipt({db,orderId,env,fetcher});
   receiptStatus=receipt.status;
  }catch(_){/* statusReceipt.failed remains in Firestore. */}
+ const artistResearch=await researchPaidArtistIfEnabled({db,orderId,order,env,fetcher});
  let lyrics=order.confirmedLyrics||null,plan=null;
  let lyricError=null;
  if(!lyrics){
@@ -95,7 +121,8 @@ export async function processVerifiedPaidWork({db,bucket,orderId,env=process.env
   catch(error){lyricError='STYLE_CONTRACT_ERROR';plan=null;}
  }
  // Record approved server-only lyrics/style before any billable provider call.
- if(lyrics&&plan)await ref.update({confirmedLyrics:lyrics,privateProductionPlan:plan});
+ if(lyrics&&plan)await ref.update({confirmedLyrics:lyrics,privateProductionPlan:plan,
+  ...(artistResearch?{artistResearch}:{} )});
  let generation=null,generationError=null;
  if(lyrics&&plan&&configuredLyriaAutoMode(env)){
   try{

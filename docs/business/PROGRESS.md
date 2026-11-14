@@ -62,3 +62,15 @@ No private accounting or actual qualified-lead registry is connected to this fil
 - 검증: `test/production-video-inquiries.test.mjs` 포함 GitHub Actions Node checks run 43526058602, `npm run check` 및 `npm test` 성공. main squash commit `2f1ea598b1b53dad25d39b1b3796d0b62491ddf4`.
 - 실제 개인정보 처리 공지·사업자·운영자 승인·Firebase 비밀키·서비스 배포 전까지 접수 기능 기본 OFF. 해당 제품은 견적 **상담**이며 카드결제, 자동 완성 영상, 결제 증빙, 유료 고객 확보를 의미하지 않음.
 - 향후 기준: 신원·법적 운영정보와 공급자 사용권 확인 → 실제 스테이징 Firebase 배포/접수/운영자 확인 → 파일럿 광고영상 납품 품질 및 원가 검증 → 실제 고객 계약·결제.
+
+
+## SONG/WITHU 홈페이지 3D 시네마틱 확장 — 2026-11-14
+
+- 목적: 현재 docs/index.html의 음악 플레이어·가사·주문 및 기존 기능을 보존하면서 첫 화면에 실시간 3D 인트로 추가.
+- PR: https://github.com/tlco1003/Song/pull/15 (feature/song-cinematic-memory-journey-20261114).
+- 추가/수정: docs/cinematic/intro.js, docs/cinematic/intro.css, docs/cinematic/timeline.mjs, docs/index.html, package.json, .github/workflows/ci.yml, test/cinematic-intro.test.mjs, test/cinematic-home-integration.test.mjs.
+- 기술: React Three Fiber + Three.js + 커스텀 GLSL 셰이더의 프로시저럴 금속 기차, 창문에서 나오는 기억구슬, 구름 이동, 펼쳐지는 블루프린트형 페이지. 기존 public/create, docs/create.html 및 음악 감상/가격 흐름 유지.
+- 테스트 근거: PR #15의 GitHub Actions Node checks run 43568111366에서 npm run check와 npm test 각각 success. 이후 run 43568228561에서 node scripts/business-ops-audit.mjs, npm run check, npm test 모두 success. 새 홈페이지 보존 테스트 추가 후 CI 재확인 필요.
+- 미검증: CDN ESM 의존성 로드, 실제 WebGL 브라우저 렌더·모바일 GPU 성능, 실제 광고 원본 프레임과의 정밀 일치. 첨부 MP4 원본을 공개 저장소에 업로드하지 않았으며 기차는 영화 영상 복원 모델이 아닌 프로시저럴 형상이다.
+- 보안/서비스: 유료 결제, 고객 전달, 실제 음원 생성 API, SONG-Vision 학습 코드는 수정하지 않음. WebGL 실패/모션 감소 시 기존 사이트로 이동할 수 있는 정적 첫 화면을 유지.
+- 후속: PR 최종 테스트 및 병합 후 GitHub Pages 경로/캐시/브라우저·모바일 실제 렌더링 점검, 원본 광고 클립 또는 검증된 3D 모델 정밀 매칭, 프레임 전환 품질 개선.

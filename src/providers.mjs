@@ -1,4 +1,5 @@
 import {AppError,buildLyricPrompt,buildSunoPackage} from './lib.mjs';
+import {createGeminiLyricsProvider} from './gemini-lyrics-provider.mjs';
 
 // SONG production path: OpenAI GPT creates the lyrics; official Suno MCP creates music.
 // Google Gemini/Lyria and unofficial Suno wrappers are NOT used here.
@@ -41,11 +42,21 @@ export async function makeLyricsFromPrivatePrompt({prompt,lyricLength='full'},en
  if(typeof prompt!=='string'||prompt.length<40||prompt.length>50000
   ||!['full','short'].includes(lyricLength))
   throw new AppError(400,'비공개 작사 지시문이나 출력 길이가 유효하지 않습니다.');
- const model=modelName(env,'OPENAI_LYRICS_MODEL','gpt-6-astra');
- const result=await callOpenAI({
-  model,input:prompt,max_output_tokens:lyricLength==='full'?4500:1800
- },env,120000);
- const lyric=responseText(result).replace(/^\x60\x60\x60(?:text|markdown)?\s*/i,'')
+ const vendor=env.WITHU_LYRICS_PROVIDER||'openai';
+ let rawLyrics;
+ if(vendor==='gemini'){
+  rawLyrics=await createGeminiLyricsProvider({
+   apiKey:requireKey(env,'GEMINI_API_KEY'),
+   model:modelName(env,'WITHU_GEMINI_LYRICS_MODEL','gemini-3.6-flash')
+  }).generate({prompt,lyricLength});
+ }else if(vendor==='openai'){
+  const model=modelName(env,'OPENAI_LYRICS_MODEL','gpt-6-astra');
+  const result=await callOpenAI({
+   model,input:prompt,max_output_tokens:lyricLength==='full'?4500:1800
+  },env,120000);
+  rawLyrics=responseText(result);
+ }else throw new AppError(503,'Unsupported private lyrics provider');
+ const lyric=rawLyrics.replace(/^\x60\x60\x60(?:text|markdown)?\s*/i,'')
   .replace(/\s*\x60\x60\x60$/,'').trim();
  const maximum=lyricLength==='full'?4200:1400;
  if(lyric.length<12||lyric.length>maximum

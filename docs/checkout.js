@@ -257,6 +257,7 @@ function updateReview(){
  }
  $('order-mood-era').textContent=summaryValue('mood',draft?.mood)+' · '+
   summaryValue('eraPreference',draft?.eraPreference);
+ $('order-favoriteArtist').textContent=draft?.story?.favoriteArtist?.trim()||'선택 안 함';
  $('order-product').textContent=selectedPrice()?.name||'상품 선택';
  $('order-verse-selection').textContent=$('third-verse').checked?'3절에서 감정이 고조되고 마지막 후렴에 절정 (+10,000원)':'기본 가사 구성';
  $('order-dedication').textContent=$('dedication-outro').checked?

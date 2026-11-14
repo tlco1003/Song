@@ -148,6 +148,123 @@
         "ref": "test/production-payments-integration.test.mjs"
       },
       "customerFacingAutomationReady": false
+    },
+    {
+      "id": "official_lyria_provider_adapter",
+      "status": "verified_repository",
+      "evidence": {
+        "kind": "repo_path",
+        "ref": "src/lyria-music-provider.mjs"
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "official_lyria_post_payment_candidate_storage",
+      "status": "verified_repository",
+      "evidence": {
+        "kind": "repo_path",
+        "ref": "src/lyria-paid-automation.mjs"
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "private_google_drive_music_backup_adapter",
+      "status": "verified_repository",
+      "evidence": {
+        "kind": "repo_path",
+        "ref": "src/google-drive-private-music-backup.mjs"
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "singer_preference_user_wizard",
+      "status": "verified_repository",
+      "evidence": {
+        "kind": "repo_path",
+        "ref": "docs/create.js"
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "approved_artist_evidence_style_engine",
+      "status": "verified_repository",
+      "evidence": {
+        "kind": "repo_path",
+        "ref": "src/artist-style-evidence.mjs"
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "optional_gemini_lyrics_provider",
+      "status": "verified_repository",
+      "evidence": {
+        "kind": "repo_path",
+        "ref": "src/gemini-lyrics-provider.mjs"
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "optional_grounded_artist_research",
+      "status": "verified_repository",
+      "evidence": {
+        "kind": "repo_path",
+        "ref": "src/artist-research-provider.mjs"
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "mureka_music_official_async_adapter",
+      "status": "verified_repository",
+      "evidence": {
+        "kind": "repo_path",
+        "ref": "src/mureka-music-provider.mjs"
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "mureka_post_payment_async_jobs_and_private_storage",
+      "status": "verified_repository",
+      "evidence": {
+        "kind": "repo_path",
+        "ref": "src/mureka-paid-automation.mjs"
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "mureka_native_lyrics_optional",
+      "status": "verified_repository",
+      "evidence": {
+        "kind": "repo_path",
+        "ref": "src/mureka-lyrics-provider.mjs"
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "mureka_scheduler_function",
+      "status": "verified_repository",
+      "evidence": {
+        "kind": "repo_path",
+        "ref": "src/firebase-production.mjs"
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "mureka_admin_billing_health_check",
+      "status": "verified_repository",
+      "evidence": {
+        "kind": "repo_path",
+        "ref": "src/mureka-account.mjs"
+      },
+      "customerFacingAutomationReady": false
+    },
+    {
+      "id": "mureka_operator_billing_ui",
+      "status": "verified_repository",
+      "evidence": {
+        "kind": "repo_path",
+        "ref": "docs/admin.html"
+      },
+      "customerFacingAutomationReady": false
     }
   ],
   "nextGates": [
@@ -155,6 +272,16 @@
     "Configure Firebase hosting, Firestore private collections and 90-day TTL policy, provision WITHU_VIDEO_LEAD_HMAC_KEY as a server secret; test live staging inquiry and admin access.",
     "Verify the actual Toss Payments test-mode checkout, received payment events and post-payment worker with controlled staging accounts before enabling live payment.",
     "Prove lawful commercial music/video sourcing, rights documentation and authorized provider contract; do not bypass license gates.",
-    "Validate an authorized 15–20-second product portfolio MP4, inspect final output and measure generation/edit costs before signing the first paid video production contract."
+    "Validate an authorized 15–20-second product portfolio MP4, inspect final output and measure generation/edit costs before signing the first paid video production contract.",
+    "Confirm written legal/provider permission for a Korean consumer-facing paid Lyria music-delivery website and retain evidence privately.",
+    "Deploy Firebase with GEMINI_API_KEY only after approval, validate a real paid Lyria song, and configure an authorized Google Workspace Shared Drive before optional private backup.",
+    "Validate Korean lyric fidelity and a reviewed customer email in staging before considering unattended delivery.",
+    "Review grounded singer/era/genre music profiles before including musical features in prompts.",
+    "Verify actual paid Gemini lyrics and grounded search requests, costs, citations, and user privacy.",
+    "Verify real licensed Lyria music generation and private Firebase/Resend E2E before live sale.",
+    "Set MUREKA_API_KEY only as Firebase Secret; confirm account read-only balance and registered billing before generating.",
+    "Verify real Mureka 9.5 response and verified media CDN hostname in staging, then configure exact allowlist.",
+    "Review paid-API commercial terms with private rights record, actual Korean song fidelity, Firebase poller, private GCS and completed email.",
+    "Activate Firebase Functions and Cloud Scheduler only after approved business/payment/credential configuration; customer-facing commerce remains fail closed."
   ]
 }

@@ -91,7 +91,8 @@ export function buildSongProductionPlan(order){
     genre,mood:preferences[index].mood,
     eraPreference:preferences[index].eraPreference,recipientAgeGroup,
     speechStyle,songIndex:index+1,mode:selected.mode,blendGenre,
-    thirdVerse:order.thirdVerse===true,dedicationOutro:order.dedicationOutro===true
+    thirdVerse:order.thirdVerse===true,dedicationOutro:order.dedicationOutro===true,
+    artistPreference:order.artistPreference||''
    });
    // Customer notes are quoted DATA; they may refine approved choices but
    // may never replace internal instructions or read server secrets.

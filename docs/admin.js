@@ -154,7 +154,8 @@ function select(o){
   '원 · '+o.paymentStatus+' · 고객 발송: '+(o.delivery?.status||'대기');
  $('admin-story').textContent=JSON.stringify(o.story||{},null,2);
  $('admin-style').textContent=JSON.stringify({
-  production:o.production,genres:o.genreSelection,
+  production:o.production,artistPreference:o.artistPreference,
+  artistResearch:o.artistResearch,genres:o.genreSelection,
   songStyles:o.songStyles,trackPreferences:o.trackPreferences
  },null,2);
  $('admin-finalize').disabled=o.paymentStatus!=='paid'||o.delivery?.status==='sent';
@@ -305,6 +306,16 @@ $('admin-sign-out').addEventListener('click',run(async()=>{
  await signOut(firebaseAuth);$('admin-workspace').hidden=true;
 }));
 $('admin-refresh').addEventListener('click',run(refresh));
+$('admin-mureka-check').addEventListener('click',run(async()=>{
+ const out=$('admin-mureka-status');
+ out.textContent='Mureka 공식 API에서 키·크레딧 상태를 확인하고 있어요…';
+ const result=await api('/api/admin/providers/mureka/account');
+ out.textContent=result.status==='api_authenticated'
+  ?'API 키 인증 성공 · 잔여 크레딧 '+Number(result.balanceCents).toLocaleString('ko-KR')+
+   ' cents (공식 계정 단위) · 동시 요청 한도 '+Number(result.concurrentRequestLimit).toLocaleString('ko-KR')+
+   '건 · 음악 생성은 아직 실행하지 않았습니다.'
+  :'API 응답을 검증할 수 없습니다.';
+},message=>$('admin-mureka-status').textContent=message));
 const videoRefresh=$('admin-video-leads-refresh');
 if(videoRefresh)videoRefresh.addEventListener('click',run(refreshVideoAdLeads));
 $('admin-finalize').addEventListener('click',run(send,workStatus));

@@ -1,13 +1,17 @@
 /**
  * Durable Firestore post-payment processing.
  * Real paid state -> private AI lyrics -> private style plan -> operator alert.
- * Without a licensed commercial Suno REST contract, work is manual.
+ * Official Lyria is an optional protected branch; unapproved use stays manual.
  * Trigger events are at least-once, claimed with a Firestore transaction.
  */
 import {makeLyricsFromPrivatePrompt} from './providers.mjs';
 import {buildSongProductionPlan} from './song-production-plan.mjs';
 import {now,paid} from './production-runtime.mjs';
 import {sendPaidOrderReceipt} from './order-status-portal.mjs';
+import {configuredLyriaAutoMode,runLyriaPaidAutomation} from './lyria-paid-automation.mjs';
+import {configuredMurekaAutoMode,submitMurekaPaidAutomation} from './mureka-paid-automation.mjs';
+import {artistSearchEnabled,researchArtistMusicalTraits}
+ from './artist-research-provider.mjs';
 
 function musicPlan(order,lyrics){
  const draft=order.draft;
@@ -22,8 +26,31 @@ function musicPlan(order,lyrics){
    recipientAgeGroup:draft.delivery?.recipientAgeGroup||'unknown',
    speechStyle:draft.delivery?.speechStyle||'auto',
    eraPreference:draft.eraPreference},
-  sharedStyleNotes:''
+  sharedStyleNotes:'',artistPreference:draft.artistPreference||''
  });
+}
+async function researchPaidArtistIfEnabled({db,orderId,order,env,fetcher}){
+ const artist=order.draft?.artistPreference;
+ if(!artist||!artistSearchEnabled(env))return null;
+ const ref=db.collection('withuArtistResearch').doc(orderId);
+ // Payable search requests are claimed once. An unknown outcome requires
+ // reconciliation rather than an implicit second charge.
+ try{await ref.create({
+  status:'submitted',artistName:artist,createdAt:now(),orderId
+ });}catch(_){return {status:'previous_research_must_be_reviewed'};}
+ try{
+  const result=await researchArtistMusicalTraits({
+   artistName:artist,genre:order.genreSelection.genres[0],
+   era:order.draft?.eraPreference||'auto',
+   apiKey:env.GEMINI_API_KEY,fetcher
+  });
+  await ref.update({...result,updatedAt:now()});
+  return result;
+ }catch(error){
+  const code=typeof error?.code==='string'?error.code:'RESEARCH_FAILED';
+  await ref.update({status:'needs_operator_review',reason:code,updatedAt:now()});
+  return {status:'needs_operator_review',reason:code};
+ }
 }
 async function alertOwner({orderId,order,env,fetcher}){
  if(typeof env.WITHU_OPERATOR_EMAIL!=='string'||!env.WITHU_OPERATOR_EMAIL.includes('@')
@@ -36,7 +63,11 @@ async function alertOwner({orderId,order,env,fetcher}){
   '상품: '+(order.productId==='audio_duo'?'2곡':'1곡'),
   '주문금액: '+order.amountKrw+'원',
   'AI 가사 상태: '+(order.confirmedLyrics?'자동 작사 완료':'관리자 수동 작사 필요'),
-  '음악 제작: Suno 사업용 API 미연동 — 관리자 직접 제작 및 음원 등록',
+  '음악 제작: '+(order.production?.status==='awaiting_review'
+   ?'공식 음악 API로 비공개 후보 저장 완료 — 관리자 품질·권리 검수 필요'
+   :order.production?.status==='generating_music'
+    ?'공식 Mureka API 작업 등록 완료 — 서버가 완료 상태를 확인 중'
+    :'관리자 직접 제작 또는 자동 제작 실패 점검 필요'),
   '고객 사연과 서버 전용 스타일 지시를 관리자 화면에서만 확인:',
   page
  ].join('\n');
@@ -55,7 +86,7 @@ async function alertOwner({orderId,order,env,fetcher}){
  if(typeof data?.id!=='string')throw new Error('Operator alert not accepted');
  return data.id;
 }
-export async function processVerifiedPaidWork({db,orderId,env=process.env,fetcher=fetch}){
+export async function processVerifiedPaidWork({db,bucket,orderId,env=process.env,fetcher=fetch}){
  const ref=db.collection('withuOrders').doc(orderId);
  let order;
  await db.runTransaction(async tx=>{
@@ -77,6 +108,7 @@ export async function processVerifiedPaidWork({db,orderId,env=process.env,fetche
   const receipt=await sendPaidOrderReceipt({db,orderId,env,fetcher});
   receiptStatus=receipt.status;
  }catch(_){/* statusReceipt.failed remains in Firestore. */}
+ const artistResearch=await researchPaidArtistIfEnabled({db,orderId,order,env,fetcher});
  let lyrics=order.confirmedLyrics||null,plan=null;
  let lyricError=null;
  if(!lyrics){
@@ -91,25 +123,43 @@ export async function processVerifiedPaidWork({db,orderId,env=process.env,fetche
   try{plan=musicPlan(order,lyrics);}
   catch(error){lyricError='STYLE_CONTRACT_ERROR';plan=null;}
  }
- await ref.update({
-  ...(lyrics&&plan?{confirmedLyrics:lyrics,privateProductionPlan:plan}:{}),
-  production:{
-   status:'manual_required',
-   lyricsReady:Boolean(lyrics&&plan),
-   styleReady:Boolean(plan),
-   lyricError,source:'verified_paid_order',
-   reason:'commercial_suno_api_not_connected',
-   attempts:(order.production?.attempts||0)+1,
-   updatedAt:now(),alertStatus:'pending'
+ // Record approved server-only lyrics/style before any billable provider call.
+ if(lyrics&&plan)await ref.update({confirmedLyrics:lyrics,privateProductionPlan:plan,
+  ...(artistResearch?{artistResearch}:{} )});
+ let generation=null,generationError=null;
+ if(lyrics&&plan&&(configuredLyriaAutoMode(env)||configuredMurekaAutoMode(env))){
+  try{
+   generation=configuredMurekaAutoMode(env)
+    ?await submitMurekaPaidAutomation({db,orderId,order,plan,env,fetcher})
+    :await runLyriaPaidAutomation({db,bucket,orderId,order,plan,env,fetcher});
+  }catch(error){
+   // External calls can have unknown billable outcomes. Never silently retry.
+   generationError=typeof error?.code==='string'?error.code:'AUTOMATIC_GENERATION_FAILED';
   }
- });
+ }
+ const production={
+  status:generation?.status==='awaiting_review'?'awaiting_review':
+   generation?.status==='generating_music'?'generating_music':'manual_required',
+  lyricsReady:Boolean(lyrics&&plan),
+  styleReady:Boolean(plan),
+  lyricError,source:'verified_paid_order',
+  reason:generation?(generation.status==='generating_music'
+   ?'mureka_async_task_submitted':'generated_private_candidates_review_required'):
+   generationError||'commercial_music_api_not_enabled',
+  ...(generation?{provider:generation.provider,
+   ...(generation.candidateCount!==undefined?{candidateCount:generation.candidateCount}:{}),
+   ...(generation.submittedCount!==undefined?{submittedCount:generation.submittedCount}:{})}:{}),
+  attempts:(order.production?.attempts||0)+1,
+  updatedAt:now(),alertStatus:'pending'
+ };
+ await ref.update({production});
  // Manual fallback always remains visible in Firestore regardless of email.
- const updated={...order,confirmedLyrics:plan?lyrics:null};
+ const updated={...order,confirmedLyrics:plan?lyrics:null,production};
  let receipt=null;
  try{receipt=await alertOwner({orderId,order:updated,env,fetcher});}
  catch(_){/* Keep persistent pending alert for admin to see/retry. */}
  if(receipt)await ref.update({'production.alertStatus':'provider_accepted',
   'production.alertMessageId':receipt});
- return {status:'manual_required',lyricsReady:Boolean(plan),
+ return {status:production.status,lyricsReady:Boolean(plan),
   operatorEmailAccepted:Boolean(receipt),receiptStatus};
 }

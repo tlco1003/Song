@@ -104,7 +104,12 @@
        <label class="music-choice"><input type="radio" name="eraChoice" value="2020s" ><span>2020년대</span></label>
      </div>
     </fieldset>
-    <input type="hidden" id="genre" value="발라드">
+    <div class="music-artist-preference">
+      <label for="favoriteArtist">좋아하는 가수·밴드 (선택)</label>
+      <p class="wizard-intro">음악적 취향 참고용입니다. 가수의 실제 목소리나 기존 노래를 복제하지 않고, 확인된 편곡·장르 특징만 사용합니다.</p>
+      <input id="favoriteArtist" name="favoriteArtist" type="text" maxlength="80" autocomplete="off" placeholder="예: 좋아하는 가수나 밴드 이름">
+     </div>
+     <input type="hidden" id="genre" value="발라드">
     <input type="hidden" id="mood" value="따뜻한">
     <input type="hidden" id="eraPreference" value="auto">
     <input type="hidden" id="lyricLength" value="full">

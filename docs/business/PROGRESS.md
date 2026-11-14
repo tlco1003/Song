@@ -62,3 +62,37 @@ No private accounting or actual qualified-lead registry is connected to this fil
 - 검증: `test/production-video-inquiries.test.mjs` 포함 GitHub Actions Node checks run 43526058602, `npm run check` 및 `npm test` 성공. main squash commit `2f1ea598b1b53dad25d39b1b3796d0b62491ddf4`.
 - 실제 개인정보 처리 공지·사업자·운영자 승인·Firebase 비밀키·서비스 배포 전까지 접수 기능 기본 OFF. 해당 제품은 견적 **상담**이며 카드결제, 자동 완성 영상, 결제 증빙, 유료 고객 확보를 의미하지 않음.
 - 향후 기준: 신원·법적 운영정보와 공급자 사용권 확인 → 실제 스테이징 Firebase 배포/접수/운영자 확인 → 파일럿 광고영상 납품 품질 및 원가 검증 → 실제 고객 계약·결제.
+
+
+## SONG AI 공식 Lyria 3.5 음악 생성 연결 — 2026-11-14 (미배포)
+
+- 개발 브랜치: `feature/lyria-official-music-20261114`, Draft PR #14: https://github.com/tlco1003/Song/pull/14. 본 기록의 변경은 main 병합/라이브 배포가 아닌 별도 브랜치 검증이다.
+- 소스: `src/lyria-music-provider.mjs` (Gemini Interactions 공식 Lyria 3.5, MP3 검증), `src/lyria-paid-automation.mjs` (실결제·비공개 사업 이용권 승인문서·곡별 중복방지·GCS 등록), `src/google-drive-private-music-backup.mjs` (선택적인 Workspace 공유 드라이브 비공개 백업), 기존 `src/production-worker.mjs` 및 `src/firebase-production.mjs` 연결, `src/order-status-portal.mjs` 상태 수정.
+- 유지: `src/commerce.mjs` fail-closed, `src/production-payments.mjs` PG 서버 확인, `docs/prices.json` 가격 SSOT, `src/production-admin.mjs` 관리자 검수, `src/production-delivery.mjs` 고객 검수 후 Resend 전달.
+- 검증: GitHub Actions Node checks https://github.com/tlco1003/Song/actions/runs/43530585061 — `npm run check`, `npm test` 성공. 테스트는 공식 HTTP 요청·미결제/라이선스 차단·MP3 모의 응답·Firestore/GCS·선택적 Drive 백업·중복 방지·주문 작업기 검증으로, 실제 Google API 호출/과금과 실제 MP3는 생성하지 않았다.
+- 환경 의존: `GEMINI_API_KEY` / `WITHU_AUTOMATED_MUSIC_PROVIDER=google_lyria` / 비공개 승인 기록 / 실제 Firebase 서비스가 모두 있어야 자동 제작. Google Drive는 공유 드라이브 폴더 및 서비스 계정 추가 구성이 있어야 비공개 백업 실행.
+- 고객 완료곡 이메일은 기존 관리자 검수·권리 승인 뒤에만 전송된다. **완전 무인 고객 납품, 실제 Google Drive 업로드, 실 PG 결제, 상업 권리 승인, 실제 배포는 미검증**이다.
+- 필수 후속: Google 소비자-facing 유료 음악 납품 약관 명확화; 한국어 가사·실제 음원 품질·서비스 원가 검증; 중단/부분성공 작업의 정산 재조정 및 환불; QA 자동화; 통합 시크릿/실배포 E2E. 외부 서비스 오류에서 암묵적 재과금을 금지한다.
+
+
+## SONG AI 시대·장르·선호 가수·단일 Google API 통합 확장 — 2026-11-14
+
+- 작업 브랜치 `feature/lyria-official-music-20261114`, 기존 Draft PR #14, `main`은 병합하지 않았음.
+- 소스 변경: `docs/create.html`, `docs/create.js`, `docs/checkout.html`, `docs/checkout.js`, `docs/admin.js`, `src/lib.mjs`, `src/order-draft-preparation.mjs`, `src/song-production-plan.mjs`, `src/music-style-library.mjs`, `src/production-worker.mjs`, `src/production-runtime.mjs`, `src/providers.mjs`, `src/artist-style-evidence.mjs`, `src/artist-research-provider.mjs`, `src/gemini-lyrics-provider.mjs`, `functions/.env.example`, `package.json`.
+- 연결: 고객의 선호 가수 선택 → 입력/기존 서버 작사 → 곡별 편곡 계획. 서명된 근거가 있는 가수·시대·장르 편곡 특성만 음악 생성 프롬프트에 추가할 수 있으며, 출처가 없는 경우 이름을 음악 생성 모델에 넘기지 않는다.
+- 선택적 유료 Google `google_search` 분석은 인용과 후보 상태만 기록하며 승인 전에는 검증된 근거로 승격되지 않는다. 선택적 Gemini 가사는 기존 OpenAI 작사를 유지하는 provider 스위치다. Lyria 음악 생성, Google Drive 후보 백업, 관리자 검수·Resend 고객 발송의 기존 경로를 그대로 유지.
+- 실제 회귀 증거: https://github.com/tlco1003/Song/actions/runs/43534136625 — `npm run check`, `npm test` **292/292 통과**, `npm run firebase:prepare` 및 배포 패키지 문법 검사 성공. 기존 실패 `artist newline normalization`은 실제 정규화 순서를 고쳐 해결 (테스트 기대값 완화 아님).
+- 별도 문서: `docs/SONG_AI_취향_검색_자동작사_통합API_2026-11-14.md`. 데이터/기존 가격·결제 장벽은 변경하지 않았음.
+- **BLOCKED/UNKNOWN:** 실제 Gemini 및 Lyria 키·사용량 과금·사업 권리 허가, 실제 검색 및 출처 검증, 실제 한국어 음원과 가사 일치, 고객 이메일 수신, 새 UI의 GitHub Pages 배포, Google Drive 실업로드, 시네마틱 영상 생성, 무인 권리·음질 출고.
+
+
+## SONG AI Mureka 공식 API 자동 제작 통합 — 2026-11-14
+
+- 기존 브랜치 `feature/lyria-official-music-20261114`, Draft PR #14. `main` 변경·배포·실제 API 과금 없음.
+- 기존 SONG AI 결제·가사·서버 전용 스타일·권리·배송 파이프라인을 수정해 `WITHU_AUTOMATED_MUSIC_PROVIDER=mureka` 공식 공급자 분기 추가. Lyria·수동 음악 업로드·기존 OpenAI/Gemini 작사 선택 유지.
+- 신규 코드: `src/mureka-music-provider.mjs` (`n:1`, 비동기 작업ID, 상태확인, MP3 서명 URL/HTTP/실제 MP3 검증, 허용 CDN 호스트 검사), `src/mureka-paid-automation.mjs` (Firestore 금액 중복 생성 방지, 비과금 GET 재조회, 비공개 GCS, 수동 음질·가사·권리 검수), `src/mureka-lyrics-provider.mjs` (기존 작사 정책 기반 같은 API 키), `src/mureka-account.mjs` (비과금 잔액 확인).
+- 수정: `src/providers.mjs`, `src/production-worker.mjs`, `src/order-status-portal.mjs`, `src/firebase-production.mjs`, `functions/index.mjs`, `src/production-admin.mjs`, `docs/admin.html`, `docs/admin.js`, `functions/.env.example`, `package.json`. Firebase `pollMurekaMusic`은 Cloud Scheduler 매 2분 작동하도록 소스 작성됨. 운영 Firebase 배포는 미실행.
+- 테스트: `test/mureka-music-provider.test.mjs`, `test/mureka-paid-automation.test.mjs`, `test/production-worker-mureka-integration.test.mjs`, `test/mureka-account.test.mjs`. HTTP/API/파일은 모든 케이스에서 가짜 fixtures로 모사; 실제 MP3를 생성했다는 뜻 아님. 이전 신뢰 가능한 GitHub Node checks https://github.com/tlco1003/Song/actions/runs/43553606193 는 **309개 테스트 309 통과, 0 실패**, `npm run check`, `npm run firebase:prepare` PASS. 그 이후의 비용 보호 게이트(`WITHU_MUREKA_AUDIO_HOST_ALLOWLIST` 필수)까지 포함한 최종 HEAD는 후속 CI 결과를 따로 확인할 것.
+- 새 코드 동작: 결제 승인 → 고객 선택에 따른 비공개 가사·시대·장르 스타일 → Mureka API에 `n:1`로 과금 작업 단 한 번 등록 → DB 저장된 작업 ID를 Scheduler가 확인 → 실제 MP3 후보를 비공개 저장 → 관리자 검수 → 기존 Resend 고객 전용 링크. 미승인·오류·기존 음원은 자동 생성/고객 송신 차단.
+- 신규 문서: `docs/WITHU_MUREKA_공식API_음악자동화_운영_2026-11-14.md`.
+- **아직 미완료/외부 의존:** 운영자 본인 MUREKA_API_KEY Firebase Secret 등록, 실제 Mureka API 잔액 진단, 확인된 공급자 CDN 호스트, 비공개 상업적 이용 허가 증빙 및 관리자 권리 승인, Firebase Functions/Cloud Scheduler/Storage·인증·PG/Resend 배포, 실제 한국어 MP3/가사 일치/고객 전달 실측. `src/commerce.mjs` fail-closed 유지. Mureka 영상·스템·보컬 복제는 공식 기능 존재, SONG AI 실연결 아님.

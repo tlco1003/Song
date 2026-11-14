@@ -12,6 +12,7 @@ import {readFileSync} from 'node:fs';
 import {resolve,join} from 'node:path';
 import {AppError} from './lib.mjs';
 import {readPrivateStyleEvidence} from './private-style-evidence.mjs';
+import {normalizeFavoriteArtist,readPrivateArtistEvidence} from './artist-style-evidence.mjs';
 
 export const GENRE_KEYS=Object.freeze(['발라드','어쿠스틱','재즈','트로트','R&B','K-POP','인디팝']);
 export const ERA_KEYS=Object.freeze(['auto','none','1960s','1970s','1980s','1990s','2000s','2010s','2020s']);
@@ -72,7 +73,7 @@ export function resolveEraChoice({eraPreference='auto',recipientAgeGroup='unknow
 export function composeServerMusicStyle({
  genre,mood='따뜻한',eraPreference='auto',recipientAgeGroup='unknown',
  speechStyle='auto',songIndex=1,mode='single',blendGenre=null,
- thirdVerse=false,dedicationOutro=false
+ thirdVerse=false,dedicationOutro=false,artistPreference=''
 }={}, {privateDirectory=process.env.WITHU_PRIVATE_STYLE_DIR||null}={}){
  if(!GENRE_KEYS.includes(genre)||!Object.hasOwn(MOODS,mood)
   ||(blendGenre!==null&&(!GENRE_KEYS.includes(blendGenre)||blendGenre===genre)))
@@ -84,6 +85,13 @@ export function composeServerMusicStyle({
  const blendText=blendGenre?(privateRecipe('genre',blendGenre,privateDirectory)||GENERIC_GENRES[blendGenre]):'';
  const eraText=era==='none'?'':privateRecipe('era',era,privateDirectory)||GENERIC_ERAS[era];
  const moodText=privateRecipe('mood',mood,privateDirectory)||MOODS[mood];
+ const selectedArtist=normalizeFavoriteArtist(artistPreference);
+ // Use only operator-approved and source-bearing observations in the same
+ // genre/decade context; never pass the artist's identity to music provider.
+ const artistEvidence=selectedArtist&&era!=='none'
+  ?readPrivateArtistEvidence(privateDirectory,{
+    artistName:selectedArtist,genreSlug:SAFE_SLUGS[genre],era
+   }):null;
  // Evidence is optional until an operator has supplied sourced private records.
  // Missing records never invent music statistics or replace customer choice.
  const evidenced=era==='none'?null:readPrivateStyleEvidence(privateDirectory,{
@@ -112,6 +120,7 @@ export function composeServerMusicStyle({
   blend:blendGenre?'Blend in '+blendGenre+' while retaining the primary identity: '+blendText:'',
   era:eraText?'Era '+era+' (inspired, not copied): '+eraText:'',
   evidence:evidenced?evidenced.cue:'',
+  artist:artistEvidence?.cue||'',
   mood:moodText,
   phrasing,arc:emotionalArc,
   preserve:'Preserve the selected genre and customer story over era assumptions.',
@@ -121,7 +130,7 @@ export function composeServerMusicStyle({
  // arc options make the full scaffold exceed Suno's 1000-char Style limit,
  // compact ONLY generic scaffolding. Never silently drop a purchased arc.
  const assemble=p=>[
-  p.opening,p.genre,p.blend,p.era,p.evidence,p.mood,p.phrasing,
+  p.opening,p.genre,p.blend,p.era,p.evidence,p.artist,p.mood,p.phrasing,
   p.arc,p.preserve,p.second
  ].filter(Boolean).join('\n');
  let stylePreset=assemble(parts);

@@ -12,3 +12,12 @@ jobs:
           node-version: 22
       - run: npm run check
       - run: npm test
+      - run: npm run firebase:prepare
+      - run: |
+          test -s functions/src/lyria-music-provider.mjs
+          test -s functions/src/lyria-paid-automation.mjs
+          test -s functions/src/google-drive-private-music-backup.mjs
+          node --check functions/src/lyria-music-provider.mjs
+          node --check functions/src/lyria-paid-automation.mjs
+          node --check functions/src/google-drive-private-music-backup.mjs
+          node --check functions/src/firebase-production.mjs

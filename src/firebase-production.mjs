@@ -9,6 +9,7 @@ import {getStorage} from 'firebase-admin/storage';
 import {getAuth} from 'firebase-admin/auth';
 import {onRequest} from 'firebase-functions/v2/https';
 import {onDocumentUpdated} from 'firebase-functions/v2/firestore';
+import {onSchedule} from 'firebase-functions/v2/scheduler';
 import {handleProductionPayments} from './production-payments.mjs';
 import {handleVideoAdInquiries} from './production-video-inquiries.mjs';
 import {handleProductionDelivery} from './production-delivery.mjs';
@@ -19,6 +20,7 @@ import {handleAdminSongTiming} from './admin-song-timing.mjs';
 import {handleProductionComments} from './production-comments.mjs';
 import {handleProductionWebhooks} from './production-webhooks.mjs';
 import {processVerifiedPaidWork} from './production-worker.mjs';
+import {pollMurekaMusicJobs} from './mureka-paid-automation.mjs';
 import {respond,stop} from './production-runtime.mjs';
 
 const app=getApps().length?getApp():initializeApp();
@@ -26,8 +28,10 @@ const db=getFirestore(app),auth=getAuth(app);
 const bucket=getStorage(app).bucket(process.env.WITHU_STORAGE_BUCKET);
 const context={db,auth,bucket,env:process.env,fetcher:globalThis.fetch};
 const apiSecrets=['TOSS_SECRET_KEY','RESEND_API_KEY','WITHU_LINK_ENCRYPTION_KEY',
+ 'MUREKA_API_KEY',
  'RESEND_WEBHOOK_SIGNING_SECRET','WITHU_VIDEO_LEAD_HMAC_KEY'];
-const workerSecrets=['RESEND_API_KEY','OPENAI_API_KEY','WITHU_LINK_ENCRYPTION_KEY'];
+const workerSecrets=['RESEND_API_KEY','OPENAI_API_KEY','WITHU_LINK_ENCRYPTION_KEY',
+ 'GEMINI_API_KEY','WITHU_DRIVE_SERVICE_ACCOUNT_JSON','MUREKA_API_KEY'];
 
 export const api=onRequest({
  region:'asia-northeast3',memory:'1GiB',
@@ -54,7 +58,7 @@ export const api=onRequest({
 });
 export const processPaidOrder=onDocumentUpdated({
  document:'withuOrders/{orderId}',region:'asia-northeast3',
- memory:'1GiB',timeoutSeconds:300,maxInstances:5,
+ memory:'1GiB',timeoutSeconds:540,maxInstances:5,
  retry:false,secrets:workerSecrets
 },async(event)=>{
  const current=event.data?.after?.data();
@@ -62,10 +66,31 @@ export const processPaidOrder=onDocumentUpdated({
    ||current.production?.status!=='pending')return;
  try{
   await processVerifiedPaidWork({
-   db,orderId:event.params.orderId,env:process.env,fetcher:globalThis.fetch
+   db,bucket,orderId:event.params.orderId,env:process.env,fetcher:globalThis.fetch
   });
  }catch(error){
   console.error('Paid order worker failed',event.params.orderId,error?.name||'Error');
   // The order remains visible to operator; use guarded retry from admin.
+ }
+});
+
+/**
+ * Official Mureka music query/MP3 finalizer. Server-side schedule survives
+ * a customer browser closing. Never submits a new billable song request.
+ * Cloud Scheduler needs an active Firebase project with billing.
+ */
+export const pollMurekaMusic=onSchedule({
+ schedule:'every 2 minutes',timeZone:'Etc/UTC',
+ region:'asia-northeast3',memory:'1GiB',
+ timeoutSeconds:240,maxInstances:1,
+ retryCount:0,secrets:['MUREKA_API_KEY']
+},async()=>{
+ try{
+  const result=await pollMurekaMusicJobs({
+   db,bucket,env:process.env,fetcher:globalThis.fetch
+  });
+  if(result.needsOperator>0)console.warn('Mureka tasks need manual reconciliation',result.needsOperator);
+ }catch(error){
+  console.error('Mureka queued job polling error',error?.code||error?.name||'Error');
  }
 });

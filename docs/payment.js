@@ -84,9 +84,12 @@ async function configure(){
    if(note)note.textContent='추후 연동 예정';
   }
  }
- const liveReady=Boolean(data&&runtime?.canCharge===true
-  &&typeof runtime?.tossClientKey==='string'
-  &&/^test_gck_|^live_gck_/.test(runtime.tossClientKey));
+ const cfg=runtime||{};
+ // The server is the only source of truth for payment enablement.
+ const liveReady=Boolean(data&&cfg.canCharge!==true
+  ? false : data&&cfg.canCharge===true
+   &&typeof cfg.tossClientKey==='string'
+   &&/^(test|live)_gck_/.test(cfg.tossClientKey));
  const preview=liveReady?null:await publicWidgetConfig();
  const clientKey=liveReady?runtime.tossClientKey:preview?.tossClientKey;
  if(!clientKey){

@@ -105,3 +105,12 @@ No private accounting or actual qualified-lead registry is connected to this fil
 - 사용자가 공유한 Firebase Web SDK의 `apiKey`는 Firebase-only API 제한과 보안 규칙/App Check가 적용될 때 공개 구성 식별자이며 `MUREKA_API_KEY` 같은 서버 비밀키가 아님. 그래도 이 개발 변경에서는 웹 API 키 문자열/개인 비밀을 GitHub에 저장하지 않음.
 - 환경값은 운영자가 **로컬 무시된** `functions/.env`에 넣어야 함: `WITHU_FIREBASE_PROJECT_ID=song-cab41`, `WITHU_FIREBASE_AUTH_DOMAIN=song-cab41.firebaseapp.com`, `WITHU_STORAGE_BUCKET=song-cab41.firebasestorage.app`, `WITHU_PUBLIC_BASE_URL=https://song-cab41.web.app/` (이 URL은 배포 전 예상 형식일 뿐 실제 Hosting 사용 가능 여부 미측정); `WITHU_FIREBASE_WEB_API_KEY`는 Firebase 콘솔에서 복사.
 - 실제 서비스 준비 미확인: Blaze 요금제·Firestore/Storage 생성·Auth 공급자 및 운영자 UID·Mureka Firebase Secret 등록·실제 Mureka CDN 허용 호스트·PG/Resend·Functions/Scheduler 배포·고객 전달 시험. `.firebaserc`만 생성한 것으로 Firebase 서비스를 개통했다고 주장하지 않음.
+
+## 2026-11-15 — 결제 전 맞춤 음악 환불 정책 게시 준비
+
+- `docs/refund-policy.html` 정책 원문 재작성: 전자상거래법 제17·18조, 시행령 제21조, 제작 착수 전 전액 취소, 법정 예외의 엄격한 요건, 계약 불일치의 별도 철회권, 별도 유료 다운로드 권리, 환급 절차.
+- 결제 화면 `docs/payment.html` 정책 요약과 법정 권리 유지 문구·별도 필수 체크박스. `docs/checkout.html` 사전 정책 링크. `docs/checkout.css` 반응형 디자인.
+- `docs/payment.js` 정책 동의 누락 결제 진행 차단; `src/production-payments.mjs` 주문 서버에서 동의 버전·승인 상태 검사 및 Firestore 주문별 동의 시각/버전 기록. 정책 동의는 법정 청약철회권 포기가 아님.
+- 법원 판례나 경쟁사 규정을 복제하지 않고 국가법령정보센터 원문과 토스페이먼츠 공식 결제 취소 가이드를 근거로 독자 작성. 업계 STIZ 유사 맞춤제작 고지 방식 참조.
+- 추가 테스트: `test/refund-policy-contract.test.mjs`. CI 실제 통과 여부는 확인 후에만 보고.
+- 실결제 및 자동환급 기능 활성화 없음. 정식 판매 전 실사업자 연락처·고객센터·주문별 착수 증빙·환불 승인 및 PG 취소 API 연결·법적 검토 필요.

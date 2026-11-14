@@ -129,6 +129,9 @@ export async function handleProductionPayments(req,res,{db,env,fetcher}){
   const input=json(req,15000);
   if(input.termsAccepted!==true||input.privacyAccepted!==true)
    stop(400,'이용약관과 개인정보 처리 동의를 완료해 주세요.');
+  // Versioned transaction-specific policy notice; statutory rights remain intact.
+  if(input.refundPolicyAcknowledged!==true||input.refundPolicyVersion!=='2026-11-15')
+   stop(400,'맞춤 제작의 취소·환불 기준을 별도로 확인하고 동의해 주세요.');
   const draft=prepareServerOrderDraft(input.draft);
   const contact=validateCheckoutDeliveryContact(input.contact);
   // Until a contracted Bizgo account and approved Alimtalk template are
@@ -152,7 +155,10 @@ export async function handleProductionPayments(req,res,{db,env,fetcher}){
    id,createdAt:now(),productId:draft.productId,
    genreSelection:draft.genreSelection,
    trackPreferences:draft.trackPreferences,
-   draft,contact,thirdVerse:draft.thirdVerse===true,
+   draft,contact,
+   refundPolicyConsent:{version:'2026-11-15',acknowledgedAt:now(),
+    type:'specific_order_notice',statutoryRightsWaived:false},
+   thirdVerse:draft.thirdVerse===true,
    dedicationOutro:draft.dedicationOutro===true,
    dedicationText:draft.dedicationText||'',
    amountKrw:quote.amountKrw,currency:'KRW',

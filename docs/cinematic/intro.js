@@ -350,7 +350,7 @@ function Experience() {
   const seek=ratio=>{
    const top=section.getBoundingClientRect().top+window.scrollY;
    const travel=Math.max(1,section.offsetHeight-window.innerHeight);
-   window.scrollTo({top:top+travel*clamp(ratio),behavior:'auto'});
+   window.scrollTo({top:top+travel*clamp(ratio),behavior:'instant'});
    onScroll();
   };
   const onClick=e=>{

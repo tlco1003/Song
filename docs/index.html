@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Gowun+Batang:wght@400;700&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=20261109-emotion-science-01">
-  <link rel="stylesheet" href="cinematic/intro.css?v=20261114-1">
+  <link rel="stylesheet" href="cinematic/intro.css?v=20261114-scroll-v2">
   <script type="importmap">
     {"imports":{
       "react":"https://esm.sh/react@19.1.0",
@@ -51,16 +51,18 @@
     <a class="header-create" href="create.html">나만의 노래 만들기 <span aria-hidden="true">↗</span></a>
   </div>
 </header>
-<section id="cinematic-intro" class="song-cinematic" aria-label="WITHU 기억의 여정 3D 시네마틱 인트로">
+<section id="cinematic-intro" class="song-cinematic" aria-label="WITHU 스크롤로 움직이는 기억의 여정 3D 시네마틱 인트로">
+  <div class="song-cinematic__stage">
   <div class="song-cinematic__fallback" aria-hidden="true"></div>
   <div class="song-cinematic__canvas" id="cinematic-canvas" aria-hidden="true"></div>
   <span class="song-cinematic__note">WITHU — AN EXPERIENCE IN SOUND</span>
   <div class="song-cinematic__content">
-    <div class="song-cinematic__eyebrow">MEMORIES IN MOTION</div>
+    <div class="song-cinematic__eyebrow">AN INTERACTIVE MEMORY JOURNEY</div>
     <div class="song-cinematic__middle">
       <p id="cinematic-phase" class="song-cinematic__chapter">01 / THE JOURNEY</p>
       <h2 class="song-cinematic__headline">기억의 순간이<br><em>음악이 되는 곳.</em></h2>
-      <p class="song-cinematic__sub">하나의 이야기가 기차를 떠나<br>구름을 건너, 당신의 노래가 되기까지.</p>
+      <p class="song-cinematic__sub">기차의 창에 머물렀던 기억이<br>구름을 지나 이야기의 한 페이지가 되는 순간.</p>
+      <p class="song-cinematic__scroll-cue"><span aria-hidden="true">↓</span> 아래로 스크롤하거나 손가락으로 밀어 장면을 움직여보세요</p>
     </div>
     <div class="song-cinematic__footer">
       <div class="song-cinematic__actions">
@@ -69,13 +71,14 @@
       </div>
       <div class="song-cinematic__controls" id="cinematic-controls" aria-label="3D 인트로 재생 조작">
         <span class="song-cinematic__counter" id="cinematic-counter">01 / 04</span>
-        <button class="song-cinematic__control" type="button" data-cinematic-action="toggle" id="cinematic-state" aria-label="인트로 일시정지 또는 재생">PAUSE</button>
-        <button class="song-cinematic__control" type="button" data-cinematic-action="replay">REPLAY ↺</button>
-        <button class="song-cinematic__control" type="button" data-cinematic-action="skip">SKIP ↗</button>
+        <span class="song-cinematic__control song-cinematic__status" id="cinematic-state">SCROLL TO EXPLORE</span>
+        <button class="song-cinematic__control" type="button" data-cinematic-action="replay">처음으로 ↺</button>
+        <button class="song-cinematic__control" type="button" data-cinematic-action="skip">마지막 장면 ↗</button>
       </div>
     </div>
   </div>
   <div id="cinematic-progress" class="song-cinematic__line" aria-hidden="true"></div>
+  </div>
 </section>
 <main id="top">
   <section class="listening-section" aria-labelledby="listening-title">
@@ -405,6 +408,6 @@
 <footer class="site-footer">
   <div class="frame footer-inner"><span class="footer-brand">WITHU</span><p>마음이 노래가 되는 순간.</p><span class="copyright">© 2026 WITHU. All rights reserved.</span><a href="video-ads.html" style="font-size:12px;color:#ded1dc;text-decoration:underline;text-underline-offset:3px">브랜드 영상 상담</a><a class="owner-entry" href="admin.html" rel="nofollow" aria-label="WITHU 운영자 로그인">운영자</a></div>
 </footer>
-  <script type="module" src="cinematic/intro.js?v=20261114-1"></script>
+  <script type="module" src="cinematic/intro.js?v=20261114-scroll-v2"></script>
 </body>
 </html>

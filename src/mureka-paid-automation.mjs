@@ -5,8 +5,8 @@
  * Candidate assets remain private and unreviewed until production-admin approves.
  */
 import {randomUUID,createHash} from 'node:crypto';
-import {createMurekaProvider,makeMurekaRequest,MUREKA_MODEL,MUREKA_PROVIDER_ID,
- MurekaProviderError} from './mureka-music-provider.mjs';
+import {createMurekaProvider,makeMurekaRequest,allowedMurekaAudioUrl,
+ MUREKA_MODEL,MUREKA_PROVIDER_ID,MurekaProviderError} from './mureka-music-provider.mjs';
 export const MUREKA_ORDER_ID=/^withu_[a-f0-9]{32}$/;
 const JOB_COLLECTION='withuMusicJobs';
 const ORDER_COLLECTION='withuOrders';
@@ -61,6 +61,13 @@ export async function submitMurekaPaidAutomation({
  if(Array.isArray(order.tracks)&&order.tracks.some(Boolean))
   throw new MurekaProviderError('MUREKA_EXISTING_TRACKS_REVIEW_MANUALLY');
  await checkRights(db,env);
+ // Never spend credits if the completed song cannot be downloaded securely.
+ const hosts=String(env.WITHU_MUREKA_AUDIO_HOST_ALLOWLIST||'')
+  .split(',').map(s=>s.trim()).filter(Boolean);
+ if(!hosts.length)throw new MurekaProviderError('MUREKA_CDN_ALLOWLIST_NOT_CONFIGURED');
+ for(const host of hosts)allowedMurekaAudioUrl(
+  'https://'+host+'/preflight.mp3',env.WITHU_MUREKA_AUDIO_HOST_ALLOWLIST
+ );
  const provider=createMurekaProvider({apiKey:env.MUREKA_API_KEY,fetcher});
  const submitted=[];
  for(const song of plan.songs){

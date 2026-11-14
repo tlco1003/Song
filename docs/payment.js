@@ -86,10 +86,11 @@ async function configure(){
  }
  const cfg=runtime||{};
  // Only the trusted /api/runtime response may authorize checkout.
- const serverReady=Boolean(data&&runtime?.canCharge===true
+ const serverBlocked=cfg.canCharge!==true;
+ const liveReady=Boolean(data&&runtime?.canCharge===true
+  &&!serverBlocked
   &&typeof runtime?.tossClientKey==='string'
   &&/^(test|live)_gck_/.test(runtime.tossClientKey));
- const liveReady=cfg.canCharge!==true?false:serverReady;
  const preview=liveReady?null:await publicWidgetConfig();
  const clientKey=liveReady?runtime.tossClientKey:preview?.tossClientKey;
  if(!clientKey){

@@ -96,3 +96,12 @@ No private accounting or actual qualified-lead registry is connected to this fil
 - 새 코드 동작: 결제 승인 → 고객 선택에 따른 비공개 가사·시대·장르 스타일 → Mureka API에 `n:1`로 과금 작업 단 한 번 등록 → DB 저장된 작업 ID를 Scheduler가 확인 → 실제 MP3 후보를 비공개 저장 → 관리자 검수 → 기존 Resend 고객 전용 링크. 미승인·오류·기존 음원은 자동 생성/고객 송신 차단.
 - 신규 문서: `docs/WITHU_MUREKA_공식API_음악자동화_운영_2026-11-14.md`.
 - **아직 미완료/외부 의존:** 운영자 본인 MUREKA_API_KEY Firebase Secret 등록, 실제 Mureka API 잔액 진단, 확인된 공급자 CDN 호스트, 비공개 상업적 이용 허가 증빙 및 관리자 권리 승인, Firebase Functions/Cloud Scheduler/Storage·인증·PG/Resend 배포, 실제 한국어 MP3/가사 일치/고객 전달 실측. `src/commerce.mjs` fail-closed 유지. Mureka 영상·스템·보컬 복제는 공식 기능 존재, SONG AI 실연결 아님.
+
+
+## Firebase 프로젝트 실명 연결 — 2026-11-14 (사용자가 Firebase 콘솔 설정 제공)
+
+- 사용자가 Firebase 콘솔에서 `song` 프로젝트와 웹 앱 `song-withu` 생성 화면의 설정을 공유함. **콘솔에 표시된 사용자 제공 정보로 프로젝트 생성/웹 앱 등록이 확인됨**. ChatGPT의 Firebase 프로젝트 관리자 API 접속 또는 GCP 리소스 실측 확인과는 구분.
+- 개발 브랜치에 신규 `.firebaserc` `projects.default=song-cab41` 파일 추가. 기존 `firebase.json`, hosting rewrites, Firestore/Storage 규칙, Firebase functions, GitHub Pages main/배포 상태는 변경하지 않음.
+- 사용자가 공유한 Firebase Web SDK의 `apiKey`는 Firebase-only API 제한과 보안 규칙/App Check가 적용될 때 공개 구성 식별자이며 `MUREKA_API_KEY` 같은 서버 비밀키가 아님. 그래도 이 개발 변경에서는 웹 API 키 문자열/개인 비밀을 GitHub에 저장하지 않음.
+- 환경값은 운영자가 **로컬 무시된** `functions/.env`에 넣어야 함: `WITHU_FIREBASE_PROJECT_ID=song-cab41`, `WITHU_FIREBASE_AUTH_DOMAIN=song-cab41.firebaseapp.com`, `WITHU_STORAGE_BUCKET=song-cab41.firebasestorage.app`, `WITHU_PUBLIC_BASE_URL=https://song-cab41.web.app/` (이 URL은 배포 전 예상 형식일 뿐 실제 Hosting 사용 가능 여부 미측정); `WITHU_FIREBASE_WEB_API_KEY`는 Firebase 콘솔에서 복사.
+- 실제 서비스 준비 미확인: Blaze 요금제·Firestore/Storage 생성·Auth 공급자 및 운영자 UID·Mureka Firebase Secret 등록·실제 Mureka CDN 허용 호스트·PG/Resend·Functions/Scheduler 배포·고객 전달 시험. `.firebaserc`만 생성한 것으로 Firebase 서비스를 개통했다고 주장하지 않음.

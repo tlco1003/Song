@@ -86,10 +86,11 @@ async function configure(){
  }
  const cfg=runtime||{};
  // The server is the only source of truth for payment enablement.
- const liveReady=Boolean(data&&cfg.canCharge!==true
-  ? false : data&&cfg.canCharge===true
-   &&typeof cfg.tossClientKey==='string'
-   &&/^(test|live)_gck_/.test(cfg.tossClientKey));
+ // Keep the required runtime gate explicit; client-side previews never charge.
+ const liveReady=Boolean(data&&runtime?.canCharge===true
+  &&cfg.canCharge!==true?false:data&&runtime?.canCharge===true
+  &&typeof runtime?.tossClientKey==='string'
+  &&/^(test|live)_gck_/.test(runtime.tossClientKey));
  const preview=liveReady?null:await publicWidgetConfig();
  const clientKey=liveReady?runtime.tossClientKey:preview?.tossClientKey;
  if(!clientKey){

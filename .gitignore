@@ -22,3 +22,6 @@ functions/.env.*
 
 # Public-only test widget config generated locally from functions/.env at deploy time.
 docs/payment-widget-public.json
+
+# Firebase CLI local deployment cache, logs and screenshots (never version).
+.firebase/

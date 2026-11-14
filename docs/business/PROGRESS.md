@@ -131,3 +131,15 @@ No private accounting or actual qualified-lead registry is connected to this fil
 - `docs/payment.html` 상태 안내, `docs/checkout.css` 진단 스타일. 선택 가능한 수단은 토스 상점에서 실제 등록한 위젯 설정에 따름. 주문서 없이 들어온 방문객에게는 기존 가격 SSOT의 '1곡 예시' 금액으로 위젯만 보여주고 구매 버튼 잠금.
 - `NOT_REGISTERED_PAYMENT_WIDGET` / `UNAUTHORIZED_KEY` 등의 오류를 고객 화면에 판별 가능한 상태로 표시. **카드·간편결제 자체 버튼을 가짜로 구현하지 않음.** 토스가 승인한 수단만 실제 공식 위젯이 렌더링.
 - Firebase Firestore Standard `(default)` DB는 원격 CLI에서 서울 `asia-northeast3`로 생성 완료했으나, Functions 실배포와 실제 Toss 결제는 아직 미완료. 테스트/배포 결과는 별도 확인 필요.
+
+
+## 2026-11-15 — Firebase 결제 UI 중앙 정렬·서버 배포 실제 점검
+
+- [완료/실측] `docs/checkout.css`의 기존 2열 `.payment-methods` 스타일 때문에 공식 토스 결제 위젯이 오른쪽으로 쏠린 현상을 `.payment-entry` 전용 1열/중앙 정렬로 수정. `docs/payment.html` CSS 캐시 버전 갱신. `song-cab41.web.app` Firebase Hosting 재배포 성공, HTTPS CSS 본문에서 새 선택자 확인. 토스 결제수단은 본래 공식 SDK 소유로 유지; 가짜 버튼 없음.
+- [검사] `npm run check` 성공, `npm test` 총 321개 통과/실패 0(레이아웃 수정 후). 결제 `/api/runtime` 실제 GET은 404이므로 Functions 결제 서버 배포·결제 검증 완료 아님.
+- [Firestore] `song-cab41`의 서울 Standard `(default)` Firestore DB가 존재하며 `firestore.rules`의 전면 차단 규칙을 Firebase에 실제 배포 성공. 별도로 이름이 `default`인 DB도 콘솔에서 관측되어 필요 시 운영자가 확인; 자동 컬렉션 생성/고객데이터 생성은 하지 않음.
+- [운영 로컬] `functions/.env`의 `WITHU_OPERATOR_EMAIL`을 사용자 제공 `tlco1003@naver.com`으로 설정. `WITHU_ADMIN_UID`와 `WITHU_FROM_EMAIL`은 아직 플레이스홀더. Firebase Auth 사용자 조회 시 `CONFIGURATION_NOT_FOUND`로 Authentication 초기화 미완료 확인, 콘솔 활성화 및 실제 운영자 이메일 인증 필요.
+- [비밀키 내용 미출력 검증] `TOSS_SECRET_KEY`, `MUREKA_API_KEY`, `WITHU_LINK_ENCRYPTION_KEY`, `WITHU_SUPPORT_HMAC_KEY`, `WITHU_VIDEO_LEAD_HMAC_KEY`는 Firebase Secret 활성 버전 확인. `WITHU_LINK_ENCRYPTION_KEY` 64자 16진수 형식 검사 통과. **중요: 현재 `TOSS_SECRET_KEY` 저장값은 `test_gsk_` 및 `live_gsk_` 접두사 형식 검사 실패** (실제 값은 출력하지 않음). 브라우저의 `test_gck_` 키는 확인됐으나 서버는 키 쌍 교정 전 결제 불가.
+- [미완료/외부 서비스] `RESEND_API_KEY` 및 `RESEND_WEBHOOK_SIGNING_SECRET` 미등록. `WITHU_FROM_EMAIL`은 Resend에서 실제 발신 도메인 검증 후 설정 필요. 토스 개발자센터에서 동일 상점의 주문서형 테스트 시크릿 키를 사용자가 직접 확인해 Firebase Secret에 재등록해야 함; 비밀키를 채팅/GitHub에 보내면 안 됨.
+- [Functions 배포 장애] 기존 `functions/node_modules` 부재 확인 후 `npm install --prefix functions --ignore-scripts` 실행, Firebase Functions/Admin SDK 설치 성공. `functions/package-lock.json` 커밋·푸시하여 재현 가능한 의존성 버전 고정. `firebase deploy --only functions:api --dry-run`은 함수 소스 분석/패키징 단계까지 성공하나 `Failed to list functions for song-cab41`로 종료; 실제 API 배포하지 못함. Firebase Cloud Functions는 Blaze 요금제가 필요하므로 현재 요금제/권한을 콘솔에서 확인해야 하며 원인을 Blaze로 단정하지 않음.
+- [환경 원칙] `WITHU_PAYMENT_MODE=test`, `WITHU_LIVE_PAYMENTS_ENABLED=false` 유지; 결제 승인·사용자 이메일·고객 주문·실결제는 테스트 완료 전 활성화하지 않음. `docs/payment-widget-public.json`은 공개 가능한 테스트 클라이언트 키만 포함하고 Git 추적 제외. 로컬 `.firebase/` 로그와 임시 스크린샷도 Git 추적 제외.

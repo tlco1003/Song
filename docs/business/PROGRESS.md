@@ -154,3 +154,6 @@ No private accounting or actual qualified-lead registry is connected to this fil
 - 실측: `npm run check` 통과, `npm test` **322 통과, 실패 0**; Firebase Hosting 재배포 성공, `order-status.js` HTTPS 200 및 새 자동 갱신 코드 확인. 그러나 `/api/runtime`은 여전히 HTTPS 404이므로 **Cloud Functions, 실결제, 실제 Mureka 생성, Resend 발송은 배포/검증 미완료**.
 - Firebase Auth: 이메일/비밀번호 방식 활성화 후 `firebase auth:export` 정상 응답 확인, 현재 등록 사용자 1명이나 `tlco1003@naver.com` 계정은 확인되지 않음. 고객 주문마다 Authentication 사용자 수동 생성이 필요한 구조는 아님. 관리자 UID는 실제 본인확인된 별도 Auth 사용자로 지정한다.
 - 서버 기능 완성 조건: Toss 공식 테스트 비밀키 교정, Cloud Functions 배포·계정 권한/Blaze 점검, Resend 발신 도메인·API 키, Mureka 유료 API 이용권 자료, 관리자 검수/안전한 자동 품질 승인 정책. **검수 없는 무조건 즉시 전달로 변경하지 않음**.
+
+
+- [추가 안전장치] 토스 테스트 승인만으로 실비가 드는 Mureka 음악 생성을 호출하지 않도록 `configuredMurekaAutoMode()`에 `WITHU_TEST_MUREKA_SPEND_APPROVED=true` 명시적 별도 허용을 요구. 실제 유료 결제 운영 모드에서는 기존 상업적 권리 승인·PG 영수증 검증이 선행되어야 한다. 집중 테스트 10/10 및 전체 회귀 **323/323 통과**. 운영 `functions/.env`에는 이 테스트 크레딧 허용 플래그를 설정하지 않음.

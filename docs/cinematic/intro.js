@@ -254,10 +254,11 @@ function Book({time}) {
  useFrame(({clock})=>{
   const j=journeyAt(time.current.value);
   if(!body.current)return;
-  body.current.visible=j.page>.004;
+  // Use scale rather than a permanently hidden parent: preserve rendering after scroll-seek.
+  body.current.visible=true;
   body.current.position.set(0,-.65+(.24*j.page),.4);
   body.current.rotation.set(-.12,Math.sin(j.time*.12)*.015,0);
-  body.current.scale.setScalar(.82+j.page*.58);
+  body.current.scale.setScalar((.82+j.page*.58)*Math.max(.00001,j.page));
   left.current.rotation.y=-(1-j.bookOpen)*1.42;
   right.current.rotation.y=(1-j.bookOpen)*1.42;
   uniforms.uGlow.value=j.landing;
@@ -279,7 +280,8 @@ function Book({time}) {
   h('mesh',{position:[side*1.04,-.79,-.02]},h('boxGeometry',{args:[2.12,.019,.019]}),
    h('meshBasicMaterial',{color:'#e1f5ff'}))
  );
- return h('group',{ref:body,visible:false},
+ return h('group',{ref:body},
+  h('pointLight',{color:'#d7edff',position:[0,.5,.45],intensity:22,distance:8}),
   page(-1),page(1),
   h('mesh',{position:[0,0,-.05]},h('boxGeometry',{args:[.018,1.67,.04]}),h('meshBasicMaterial',{color:'#f4e6c5'})),
   h('mesh',{ref:ripple,position:[0,-.14,.32],visible:false},

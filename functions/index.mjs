@@ -1,1 +1,1 @@
-export {api,processPaidOrder,pollMurekaMusic} from './src/firebase-production.mjs';
+export {api,processPaidOrder,pollMurekaMusic,autoDeliverReviewedOrder} from './src/firebase-production.mjs';

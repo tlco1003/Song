@@ -143,3 +143,14 @@ No private accounting or actual qualified-lead registry is connected to this fil
 - [미완료/외부 서비스] `RESEND_API_KEY` 및 `RESEND_WEBHOOK_SIGNING_SECRET` 미등록. `WITHU_FROM_EMAIL`은 Resend에서 실제 발신 도메인 검증 후 설정 필요. 토스 개발자센터에서 동일 상점의 주문서형 테스트 시크릿 키를 사용자가 직접 확인해 Firebase Secret에 재등록해야 함; 비밀키를 채팅/GitHub에 보내면 안 됨.
 - [Functions 배포 장애] 기존 `functions/node_modules` 부재 확인 후 `npm install --prefix functions --ignore-scripts` 실행, Firebase Functions/Admin SDK 설치 성공. `functions/package-lock.json` 커밋·푸시하여 재현 가능한 의존성 버전 고정. `firebase deploy --only functions:api --dry-run`은 함수 소스 분석/패키징 단계까지 성공하나 `Failed to list functions for song-cab41`로 종료; 실제 API 배포하지 못함. Firebase Cloud Functions는 Blaze 요금제가 필요하므로 현재 요금제/권한을 콘솔에서 확인해야 하며 원인을 Blaze로 단정하지 않음.
 - [환경 원칙] `WITHU_PAYMENT_MODE=test`, `WITHU_LIVE_PAYMENTS_ENABLED=false` 유지; 결제 승인·사용자 이메일·고객 주문·실결제는 테스트 완료 전 활성화하지 않음. `docs/payment-widget-public.json`은 공개 가능한 테스트 클라이언트 키만 포함하고 Git 추적 제외. 로컬 `.firebase/` 로그와 임시 스크린샷도 Git 추적 제외.
+
+
+## 2026-11-15 — 결제 후 자동 음악 제작과 고객 노래함 흐름 재검증
+
+- 확인: `POST /api/payments/confirm`는 토스 결제 결과의 주문번호·키·금액·통화·완료 상태를 서버에서 확인한 뒤 Firestore `paymentStatus='paid'` 및 `production.status='pending'`을 기록한다. `src/firebase-production.mjs`의 `onDocumentUpdated(withuOrders/{orderId})` 워커가 결제 확인 주문만 처리한다. 결제 미승인 시 Mureka 자동 제작은 호출하면 안 된다.
+- 실제 블로커: 로컬 `functions/.env`에서 `WITHU_AUTOMATED_MUSIC_PROVIDER`, `WITHU_LYRICS_PROVIDER`, `WITHU_MUREKA_AUDIO_HOST_ALLOWLIST` 미설정 확인. 테스트 준비용으로 `WITHU_AUTOMATED_MUSIC_PROVIDER=mureka`, `WITHU_LYRICS_PROVIDER=mureka`, 공식 문서 예시에 있는 정확한 CDN 호스트 `cdn.mureka.ai,cdn.mureka.cn`을 **로컬 환경에만** 등록했다. 실제 태스크의 파일 호스트가 동일한지는 별도 검증 필요. `WITHU_LIVE_PAYMENTS_ENABLED=false` 유지. 테스트 결제 승인 시 유료 Mureka API 크레딧 사용 가능성에 주의.
+- 권리/품질 기준: `withuProviderApprovals/mureka`의 사업자 계정 권리 승인 증빙이 없으면 자동 유료 Mureka 생성은 fail-closed. 생성 음원은 `reviewed:false`, `rightsVerified:false`로 저장되어 **아직 고객에게 자동 전달되지 않는다**. 관리자 검수 후 `sendCompletedEmail`로 노래함 링크를 이메일에 발송하는 단계가 별도로 남아 있다. 임의로 검수 완료 처리하거나 법정 이용권 확인을 우회하지 않음.
+- 고객 편의 수정: `docs/order-status.js`는 유효한 비공개 상태 토큰이 있을 때만 화면이 열려 있는 동안 20초 주기로 제작/전달 상태를 자동 갱신하고, 완성된 개인 감상 링크 확인 시 자동 확인을 중단하도록 확장. `docs/order-status.html` 스크립트 캐시 갱신. 새 `test/customer-order-auto-refresh.test.mjs` 추가.
+- 실측: `npm run check` 통과, `npm test` **322 통과, 실패 0**; Firebase Hosting 재배포 성공, `order-status.js` HTTPS 200 및 새 자동 갱신 코드 확인. 그러나 `/api/runtime`은 여전히 HTTPS 404이므로 **Cloud Functions, 실결제, 실제 Mureka 생성, Resend 발송은 배포/검증 미완료**.
+- Firebase Auth: 이메일/비밀번호 방식 활성화 후 `firebase auth:export` 정상 응답 확인, 현재 등록 사용자 1명이나 `tlco1003@naver.com` 계정은 확인되지 않음. 고객 주문마다 Authentication 사용자 수동 생성이 필요한 구조는 아님. 관리자 UID는 실제 본인확인된 별도 Auth 사용자로 지정한다.
+- 서버 기능 완성 조건: Toss 공식 테스트 비밀키 교정, Cloud Functions 배포·계정 권한/Blaze 점검, Resend 발신 도메인·API 키, Mureka 유료 API 이용권 자료, 관리자 검수/안전한 자동 품질 승인 정책. **검수 없는 무조건 즉시 전달로 변경하지 않음**.

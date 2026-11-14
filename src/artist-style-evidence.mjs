@@ -10,8 +10,9 @@ import {validatePrivateStyleEvidence} from './private-style-evidence.mjs';
 
 export function normalizeFavoriteArtist(value=''){
  if(typeof value!=='string')throw Error('Favorite artist must be text');
+ if(/[\x00-\x1f\x7f<>]/u.test(value))throw Error('Invalid favorite artist preference');
  const name=value.normalize('NFC').trim().replace(/\s+/g,' ');
- if(name.length>80||/[\x00-\x1f\x7f<>]/u.test(name))
+ if(name.length>80)
   throw Error('Invalid favorite artist preference');
  return name;
 }

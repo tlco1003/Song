@@ -205,10 +205,16 @@ async function pollOne({db,bucket,jobRef,env,fetcher,clock=Date.now}){
     source:MUREKA_PROVIDER_ID,model:MUREKA_MODEL,
     generatedAt:clock(),sizeBytes:audio.sizeBytes,sha256};
    const complete=tracks.every(Boolean);
+   // A previously failed duo track must remain visible as needing operator
+   // action even when the other track successfully finishes.
+   const partialStatus=state.production?.status==='manual_required'
+    ?'manual_required':'generating_music';
    tx.update(orderRef,{tracks,
-    'production.status':complete?'awaiting_review':'generating_music',
+    'production.status':complete?'awaiting_review':partialStatus,
     'production.reason':complete?
-     'mureka_candidates_stored_awaiting_human_qa':'mureka_generation_in_progress',
+     'mureka_candidates_stored_awaiting_human_qa':partialStatus==='manual_required'
+      ?(state.production?.reason||'MUREKA_PARTIAL_MANUAL_REVIEW')
+      :'mureka_generation_in_progress',
     'production.provider':MUREKA_PROVIDER_ID,
     'production.candidateCount':tracks.filter(Boolean).length,
     'production.updatedAt':clock()});

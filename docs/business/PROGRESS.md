@@ -114,3 +114,12 @@ No private accounting or actual qualified-lead registry is connected to this fil
 - 법원 판례나 경쟁사 규정을 복제하지 않고 국가법령정보센터 원문과 토스페이먼츠 공식 결제 취소 가이드를 근거로 독자 작성. 업계 STIZ 유사 맞춤제작 고지 방식 참조.
 - 추가 테스트: `test/refund-policy-contract.test.mjs`. CI 실제 통과 여부는 확인 후에만 보고.
 - 실결제 및 자동환급 기능 활성화 없음. 정식 판매 전 실사업자 연락처·고객센터·주문별 착수 증빙·환불 승인 및 PG 취소 API 연결·법적 검토 필요.
+
+## 2026-11-15 — 고객센터 이메일 및 문의 게시판 구현
+
+- 공개 문의 이메일 `tlco1003@naver.com`을 환불·결제·약관·개인정보·고객센터 화면에 명시. `docs/index.html` 및 `docs/checkout.html`에서 문의 게시판 진입 제공.
+- 신규 `docs/support.html`, `docs/support.css`, `docs/support.js` 고객센터 UI·공개 검수 게시판·비공개 문의(기본값)·이메일 문의 대체 수단.
+- 신규 `src/production-support.mjs`: 기존 Firebase API와 Firestore 기반 게시판, HMAC 기반 일일 3회 제한, 별도 개인정보 동의, 환불 문의 비공개 강제, 관리자 인증 후 게시글 공개 승인. `docs/support-admin.js`는 기존 `docs/admin.js`에 연결해 고객 문의 관리.
+- Firebase 비밀키 `WITHU_SUPPORT_HMAC_KEY` 및 운영·개인정보 승인 플래그가 필요. `src/firebase-production.mjs` 기존 함수/스케줄러 유지하면서 지원 API 핸들러 추가.
+- 신규 `test/support-board.test.mjs` 포함하여 Node CI 검증. 실제 배포와 Firestore 개인정보 보존 정책(TTL)은 미완료.
+- GitHub Pages에서 현재 이메일 `mailto:`는 사용 가능. 문의 작성/공개 목록은 Firebase Hosting + 운영 서버 배포/승인 전까지 동작하는 것처럼 가장하지 않고 이메일 안내를 표시.

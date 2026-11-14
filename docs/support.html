@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#241d29">
+<meta name="description" content="WITHU 맞춤 음악 제작·결제·환불 고객센터. 문의글을 남기거나 이메일로 문의하세요.">
+<title>고객센터 · 문의 게시판 | WITHU</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="support.css?v=20261115-1">
+<script defer src="support.js?v=20261115-1"></script>
+</head>
+<body>
+<header class="site-header"><div class="frame header-inner">
+<a class="brand" href="./" aria-label="WITHU 홈">♪ WITHU</a>
+<nav aria-label="사이트 메뉴"><a href="./">음악 감상</a><a href="create.html">노래 만들기</a><a href="refund-policy.html">환불 정책</a></nav>
+</div></header>
+<main class="support-shell">
+<div class="support-intro">
+<span class="small-caps">WITHU · CUSTOMER CARE</span>
+<h1>궁금한 마음도<br><em>편하게 남겨주세요.</em></h1>
+<p>노래 제작, 결제, 음원 감상, 취소·환불까지. 고객의 문의를 신중하게 확인하겠습니다.</p>
+</div>
+<section class="support-contact" aria-labelledby="support-contact-title">
+<div><span class="small-caps">EMAIL SUPPORT</span><h2 id="support-contact-title">이메일 고객문의</h2><p>현재 가장 빠르게 문의를 전달할 수 있는 방법은 이메일입니다. 주문 관련 문의에는 주문번호와 문제 상황만 적어주세요. 비밀번호나 카드정보는 보내지 마세요.</p><a class="support-mail" href="mailto:tlco1003@naver.com?subject=WITHU%20%EA%B3%A0%EA%B0%9D%20%EB%AC%B8%EC%9D%98">tlco1003@naver.com ↗</a></div>
+<div class="support-contact-note"><strong>환불·결제 문의</strong><p>개인정보와 결제 내역이 포함된 문의는 공개 게시판에 쓰지 말고 이메일이나 비공개 문의를 이용해주세요.</p><a href="refund-policy.html">취소·환불 정책 확인 →</a></div>
+</section>
+<section class="support-board" aria-labelledby="support-board-title">
+<div class="support-board-title"><div><span class="small-caps">QUESTIONS &amp; ANSWERS</span><h2 id="support-board-title">문의글 게시판</h2><p>공개에 동의한 질문도 운영자 확인과 답변 승인 후에만 표시됩니다.</p></div><button id="support-reload" type="button" class="support-outline">게시글 새로고침 ↻</button></div>
+<p id="support-readiness" class="support-readiness" role="status" aria-live="polite">게시판 연결 상태 확인 중…</p>
+<div id="support-list" class="support-list" aria-live="polite"><p class="support-empty">게시글을 불러오는 중입니다.</p></div>
+</section>
+<section class="support-write" aria-labelledby="support-write-title">
+<span class="small-caps">WRITE YOUR QUESTION</span><h2 id="support-write-title">문의 남기기</h2>
+<p class="support-description">비공개가 기본값입니다. 게시판 접수가 준비되기 전에는 위의 이메일로 문의해 주세요.</p>
+<form id="support-form" novalidate>
+<div class="support-grid">
+<div><label for="support-category">문의 유형</label><select id="support-category" required><option value="general">일반 문의</option><option value="order">주문·제작</option><option value="technical">음원 재생·기술</option><option value="refund">결제·취소·환불 (비공개)</option><option value="other">기타</option></select></div>
+<div><label for="support-nickname">별명</label><input id="support-nickname" minlength="2" maxlength="24" autocomplete="nickname" placeholder="게시판에 표시할 별명" required></div>
+<div><label for="support-email">답변 받을 이메일</label><input id="support-email" type="email" maxlength="254" autocomplete="email" placeholder="name@example.com" required></div>
+<div><label for="support-visibility">문의 공개 범위</label><select id="support-visibility"><option value="private">비공개 (권장)</option><option value="public">게시판 공개 요청 (운영자 승인 후)</option></select></div>
+</div>
+<label for="support-title">문의 제목</label><input id="support-title" minlength="4" maxlength="90" placeholder="무엇을 도와드릴까요?" required>
+<label for="support-body">문의 내용</label><textarea id="support-body" minlength="10" maxlength="1200" rows="6" placeholder="문의 상황을 적어주세요. 카드번호·주민번호·비밀번호·민감한 사연·제3자 개인정보를 적지 마세요." required></textarea>
+<div class="support-hp" aria-hidden="true"><label for="support-website">홈페이지</label><input id="support-website" tabindex="-1" autocomplete="off"></div>
+<label class="support-check"><input id="support-privacy" type="checkbox" required><span>문의 접수 및 답변을 위해 별명·이메일·문의 내용이 비공개 서버에 저장·처리되는 데 동의합니다. <a href="privacy.html" target="_blank" rel="noopener noreferrer">개인정보 처리 안내</a></span></label>
+<label class="support-check"><input id="support-reply" type="checkbox" required><span>운영자가 답변을 위해 제공한 이메일로 연락하는 데 동의합니다. 자동 발송을 보장하지 않습니다.</span></label>
+<label id="support-public-consent-row" class="support-check" hidden><input id="support-public-consent" type="checkbox"><span>내가 작성한 별명·제목·질문과 운영자 답변을 웹사이트에 공개하는 데 별도로 동의합니다. 이메일 주소는 공개하지 않습니다.</span></label>
+<button id="support-submit" type="submit" class="support-submit" disabled>운영 게시판 연결 확인 중</button>
+<p id="support-result" role="status" aria-live="polite"></p>
+</form>
+</section>
+</main>
+<footer class="site-footer"><div class="frame footer-inner"><span class="footer-brand">WITHU</span><p>고객센터: <a href="mailto:tlco1003@naver.com">tlco1003@naver.com</a></p><span class="copyright">© 2026 WITHU</span></div></footer>
+</body></html>

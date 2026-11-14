@@ -45,7 +45,7 @@ test('support board fails closed unless operational privacy and admin gates are 
  assert.equal(supportReady({...env,WITHU_SUPPORT_PRIVACY_REVIEWED:'false'}),false);
  const d=fakeDb(),r=await call(d,'GET','/api/support/readiness',null,false,{});
  assert.equal(r.body.canSubmit,false);
- await assert.rejects(call(d,'POST','/api/support/questions',base,false,{}),/개인정보 보호/);
+ await assert.rejects(call(d,'POST','/api/support/questions',base,false,{...env,WITHU_SUPPORT_INQUIRIES_ENABLED:'false'}),/개인정보 보호/);
 });
 test('public questions reject contact details and refunds cannot be public',()=>{
  assert.equal(normalizeSupportQuestion(base).visibility,'private');

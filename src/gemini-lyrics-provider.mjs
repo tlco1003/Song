@@ -39,7 +39,7 @@ export function createGeminiLyricsProvider({
      method:'POST',
      headers:{'Content-Type':'application/json','x-goog-api-key':apiKey},
      body:JSON.stringify({
-      model,input:prompt,
+      model,input:prompt,store:false,
       generation_config:{max_output_tokens:lyricLength==='full'?4500:1800}
      }),
      signal:AbortSignal.timeout(timeoutMs)
@@ -49,7 +49,7 @@ export function createGeminiLyricsProvider({
    let payload;
    try{payload=await response.json();}
    catch(_){throw new GeminiLyricsError('INVALID_GEMINI_LYRICS_RESPONSE');}
-   if(payload?.error||payload?.status==='failed')
+   if(payload?.error||payload?.status==='failed'||payload?.status==='incomplete')
     throw new GeminiLyricsError('GEMINI_LYRICS_FAILED');
    const text=geminiTextFromResponse(payload);
    if(!text)throw new GeminiLyricsError('EMPTY_GEMINI_LYRICS');

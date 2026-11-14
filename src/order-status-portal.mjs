@@ -9,16 +9,18 @@ export function summarizePaidOrder(o){
  const working=o.production?.status==='working';
  const manual=o.production?.status==='manual_required';
  const autoReview=o.production?.status==='awaiting_review';
+ const musicGenerating=o.production?.status==='generating_music';
  const lyrics=typeof o.confirmedLyrics==='string'&&o.confirmedLyrics.length>0;
  const qc=Array.isArray(o.tracks)&&o.tracks.some(t=>t?.reviewed===true);
  const phase=complete?'노래가 완성되어 전달됐어요.':
   qc||autoReview?'AI 음악 생성 후보를 저장했어요. 제작자가 노래를 검수하고 있어요.':
+  musicGenerating?'가사가 준비됐어요. 음악 생성이 진행되고 있어요.':
   manual?(lyrics?'가사가 준비됐어요. 제작자가 음원을 제작·검수하고 있어요.':'제작자가 가사와 음원을 준비하고 있어요.'):
   working?'가사를 준비하고 있어요.':'노래 제작을 준비하고 있어요.';
  return {status:complete?'delivered':'in_production',
   productLabel:o.productId==='audio_duo'?'맞춤 노래 2곡':'맞춤 노래 1곡',
   steps:{payment:'completed',lyrics:lyrics?'completed':working?'in_progress':'pending',
-   music:complete?'completed':manual||qc||autoReview?'in_progress':'pending',
+   music:complete?'completed':manual||qc||autoReview||musicGenerating?'in_progress':'pending',
    delivery:complete?'completed':o.delivery?.status==='sending'?'in_progress':'pending'},
   phase};
 }

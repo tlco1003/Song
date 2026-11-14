@@ -1,108 +1,115 @@
 {
   "schema": "MOMENT_NEWS_RSS_v1",
-  "generatedAt": "2026-11-14T10:34:06.816Z",
+  "generatedAt": "2026-11-14T17:07:53.470Z",
   "kind": "RECENT_PUBLISHER_RSS_NOT_POPULARITY_RANKING",
   "coverage": "연합뉴스·뉴시스·동아일보·IT동아 등 연결된 피드의 최신 헤드라인. 국가 전체 인기 순위가 아닙니다.",
   "categories": {
     "headlines": [
       {
-        "title": "\"한층 가늘어진 허리 라인\"…닝닝, 아보카도 즐기는 근황 공개",
-        "link": "https://www.newsis.com/view/NISX20261114_0003868112",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-14T10:25:00.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "정부가 백신 안믿더니…美, 26년만에 홍역 청정국 지위 상실",
-        "link": "https://www.yna.co.kr/view/AKR20261114045400009",
+        "title": "백악관 '野의회 조사' 대응전략은…\"조사 예고를 범죄로 간주\"",
+        "link": "https://www.yna.co.kr/view/AKR20261115000900071",
         "source": "연합뉴스",
-        "publishedAt": "2026-11-14T10:24:04.000Z",
+        "publishedAt": "2026-11-14T16:40:23.000Z",
         "category": "headlines"
       },
       {
-        "title": "4연승 지휘한 정관장 유도훈 감독 \"선수들 각자 역할 해줬다\"",
-        "link": "https://www.yna.co.kr/view/AKR20261114045600007",
+        "title": "17일 마닐라서 쿼드 정상회의…트럼프, 첫 참석",
+        "link": "https://www.newsis.com/view/NISX20261115_0003868280",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-14T16:39:41.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "BTS 3관왕·에스파 2관왕…'MMA2026' 첫날 나란히 대상",
+        "link": "https://www.yna.co.kr/view/AKR20261114049700005",
         "source": "연합뉴스",
-        "publishedAt": "2026-11-14T10:23:37.000Z",
+        "publishedAt": "2026-11-14T16:35:21.000Z",
         "category": "headlines"
       },
       {
-        "title": "HL안양 김상욱, 아시아리그 사상 첫 통산 600포인트 달성",
-        "link": "https://www.yna.co.kr/view/AKR20261114045700007",
+        "title": "美 이어 러도 \"19일 미중러 정상회담 개최\" 확인",
+        "link": "https://www.yna.co.kr/view/AKR20261115000800109",
         "source": "연합뉴스",
-        "publishedAt": "2026-11-14T10:22:43.000Z",
+        "publishedAt": "2026-11-14T16:08:20.000Z",
         "category": "headlines"
       },
       {
-        "title": "양양 현남면 고가도로 역주행 SUV…3중 연쇄 충돌",
-        "link": "https://www.newsis.com/view/NISX20261114_0003868225",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-14T10:19:06.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "고성 아야진해변 앞 도로서 버스가 SUV 추돌…9명 이송",
-        "link": "https://www.newsis.com/view/NISX20261114_0003868224",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-14T10:18:46.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "광주 아파트 방화범 구속…1명 사망·13명 부상(종합)",
-        "link": "https://www.yna.co.kr/view/AKR20261114037251054",
+        "title": "프랑스 5주연속 주말 시위…\"정부 부스러기 대책으론 안돼\"",
+        "link": "https://www.yna.co.kr/view/AKR20261115000600085",
         "source": "연합뉴스",
-        "publishedAt": "2026-11-14T10:14:37.000Z",
+        "publishedAt": "2026-11-14T15:40:09.000Z",
         "category": "headlines"
       },
       {
-        "title": "전세계 업무 마비시킨 MS 서비스 장애 36시간만에 복구",
-        "link": "https://www.yna.co.kr/view/AKR20261114045100009",
+        "title": "인천서 상가로 차량 돌진…60대 운전자 \"감기약 복용\"",
+        "link": "https://www.yna.co.kr/view/AKR20261115000500065",
         "source": "연합뉴스",
-        "publishedAt": "2026-11-14T10:01:46.000Z",
+        "publishedAt": "2026-11-14T15:32:47.000Z",
         "category": "headlines"
       },
       {
-        "title": "유조선 충돌에 옆으로 뒤집힌 크루즈…197명 전원 생존, 32명 병원행",
-        "link": "https://www.newsis.com/view/NISX20261114_0003868133",
+        "title": "\"4개월 만에 체지방률 5.1%p 감량\"…유이, 탄탄한 복근 자랑",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867627",
         "source": "뉴시스",
-        "publishedAt": "2026-11-14T09:57:00.000Z",
+        "publishedAt": "2026-11-14T15:29:00.000Z",
         "category": "headlines"
       },
       {
-        "title": "굿바이 잠실구장…야구 전설들, 팬들과 나눈 마지막 추억 [뉴시스Pic]",
-        "link": "https://www.newsis.com/view/NISX20261114_0003868223",
+        "title": "홍진영, 롱부츠 신고 뽐낸 늘씬한 각선미…'1일 1식' 관리법 눈길",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867601",
         "source": "뉴시스",
-        "publishedAt": "2026-11-14T09:56:31.000Z",
+        "publishedAt": "2026-11-14T15:28:00.000Z",
         "category": "headlines"
       },
       {
-        "title": "국힘, 부산서 '조작기소 특검법' 규탄 장외집회…\"'이재명 탈옥법' 100% 위헌\"(종합)",
-        "link": "https://www.newsis.com/view/NISX20261114_0003868208",
+        "title": "송은이, 60.5㎏ 찍고 다이어트…\"내 키에 그 몸무게 되니 아파\"",
+        "link": "https://www.newsis.com/view/NISX20261113_0003866909",
         "source": "뉴시스",
-        "publishedAt": "2026-11-14T09:54:09.000Z",
+        "publishedAt": "2026-11-14T15:01:00.000Z",
         "category": "headlines"
       },
       {
-        "title": "JYP 걸그룹 걸셋, 새 싱글 '영 앤드 덤' 발매…멤버 전원 작사",
-        "link": "https://www.newsis.com/view/NISX20261112_0003866333",
+        "title": "백지영, '학비 3000만원' 딸 64점 성적에 \"다른 사람 신경쓰지마\"",
+        "link": "https://www.newsis.com/view/NISX20261114_0003868241",
         "source": "뉴시스",
-        "publishedAt": "2026-11-14T09:52:00.000Z",
+        "publishedAt": "2026-11-14T15:00:00.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "민혜연, 결혼 8년차 임신 \"노력해보자 했는데 바로 찾아왔다\"",
+        "link": "https://www.newsis.com/view/NISX20261114_0003868240",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-14T15:00:00.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "'105억 전세 피해' 이승기 \"부동산에 악마들이 득실거려\"",
+        "link": "https://www.newsis.com/view/NISX20261114_0003868186",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-14T15:00:00.000Z",
         "category": "headlines"
       }
     ],
     "technology": [
       {
+        "title": "\"피 한 방울만 있으면\"…'신장 섬유화' 예측한다",
+        "link": "https://www.newsis.com/view/NISX20261113_0003867441",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-14T16:01:00.000Z",
+        "category": "technology"
+      },
+      {
+        "title": "\"보톡스 10년 맞으면 얼굴 이렇게 될수도\"…전문의의 경고",
+        "link": "https://www.newsis.com/view/NISX20261113_0003866927",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-14T15:00:00.000Z",
+        "category": "technology"
+      },
+      {
         "title": "피부과 전문의가 알려준 피부 망치는 샤워 습관 5가지…\"뜨거운 물·때타월 피하고 보습해야\"",
         "link": "https://www.newsis.com/view/NISX20261114_0003868121",
         "source": "뉴시스",
         "publishedAt": "2026-11-14T09:21:00.000Z",
-        "category": "technology"
-      },
-      {
-        "title": "\"단감 잘라보니 검은 점이\"…먹어도 괜찮을까?",
-        "link": "https://www.newsis.com/view/NISX20261113_0003866806",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-14T09:01:00.000Z",
         "category": "technology"
       },
       {
@@ -167,28 +174,35 @@
         "source": "뉴시스",
         "publishedAt": "2026-11-13T23:45:20.000Z",
         "category": "technology"
-      },
-      {
-        "title": "[롤드컵]바이퍼 \"마지막 LCK 팀도 꺾겠다\"…젠지에 도전장",
-        "link": "https://www.newsis.com/view/NISX20261114_0003867964",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-13T23:21:10.000Z",
-        "category": "technology"
       }
     ],
     "culture": [
+      {
+        "title": "[녹유 오늘의 운세] 89년생 꼿꼿한 자세로 반대와 맞서요",
+        "link": "https://www.newsis.com/view/NISX20261114_0003867990",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-14T15:00:00.000Z",
+        "category": "culture"
+      },
+      {
+        "title": "방탄소년단, ‘MMA2026’ 첫날 ‘올해의 앨범’ 등 3관왕…에스파 ‘올해의 글로벌-K 아티스트’",
+        "link": "https://www.donga.com/news/Culture/article/all/20261114/135024615/1",
+        "source": "동아일보",
+        "publishedAt": "2026-11-14T14:57:21.000Z",
+        "category": "culture"
+      },
+      {
+        "title": "박진영, 지하철서 독서 삼매경…“아무도 못 알아봐”",
+        "link": "https://www.donga.com/news/Culture/article/all/20261114/135024524/1",
+        "source": "동아일보",
+        "publishedAt": "2026-11-14T11:51:29.000Z",
+        "category": "culture"
+      },
       {
         "title": "JYP 걸그룹 걸셋, 새 싱글 ‘영 앤드 덤’ 발매…멤버 전원 작사",
         "link": "https://www.donga.com/news/Culture/article/all/20261114/135024436/1",
         "source": "동아일보",
         "publishedAt": "2026-11-14T10:20:05.000Z",
-        "category": "culture"
-      },
-      {
-        "title": "전소미, 학폭 상처 고백 “지금도 눈물 난다”",
-        "link": "https://www.donga.com/news/Culture/article/all/20261114/135024215/1",
-        "source": "동아일보",
-        "publishedAt": "2026-11-14T05:33:01.000Z",
         "category": "culture"
       },
       {
@@ -246,28 +260,49 @@
         "source": "뉴시스",
         "publishedAt": "2026-11-14T00:30:00.000Z",
         "category": "culture"
-      },
-      {
-        "title": "기안84, 3년 만에 개인전 연다…'기원'",
-        "link": "https://www.newsis.com/view/NISX20261114_0003867968",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-13T23:34:56.000Z",
-        "category": "culture"
-      },
-      {
-        "title": "560년 지켜온 왕의 숲…광릉 비밀숲길 가보니[출동!인턴]",
-        "link": "https://www.newsis.com/view/NISX20261112_0003866148",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-13T23:30:00.000Z",
-        "category": "culture"
       }
     ],
     "economy": [
       {
-        "title": "\"내년 봄 증시 다시 오른다\"…스테이블코인 유동성·유가 하락에 증시 반등 전망",
-        "link": "https://www.newsis.com/view/NISX20261114_0003867994",
+        "title": "\"살던 집에서 쫓겨날 판\"…1주택 은퇴자까지 덮친 종부세 공포",
+        "link": "https://www.newsis.com/view/NISX20261111_0003863744",
         "source": "뉴시스",
-        "publishedAt": "2026-11-14T08:38:00.000Z",
+        "publishedAt": "2026-11-14T15:00:00.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "\"마트 세일에 국가 쿠폰 겹쳤다\"…하락장 속 '연금저축·IRP' 절세 전략",
+        "link": "https://www.newsis.com/view/NISX20261112_0003864767",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-14T15:00:00.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "'국힙 원톱' 박재범, 경매로 산 삼성동 아파트 10년 만에 38억…'3배 대박'",
+        "link": "https://www.newsis.com/view/NISX20261114_0003868177",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-14T15:00:00.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "[올댓차이나] 3분기 中 경상수지 2761억＄ 흑자…1~3분기 누적 6541억＄",
+        "link": "https://www.newsis.com/view/NISX20261114_0003868269",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-14T14:12:56.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "\"트럼프, 中수출 규제 완화 전 엔비디아 주식 대규모 매입\"",
+        "link": "https://www.newsis.com/view/NISX20261114_0003868260",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-14T14:01:46.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "[올댓차이나] 10월 中 은행 신규대출 20조원↓… 올해 3번째 감소",
+        "link": "https://www.newsis.com/view/NISX20261114_0003868258",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-14T12:53:46.000Z",
         "category": "economy"
       },
       {
@@ -311,41 +346,6 @@
         "source": "연합뉴스",
         "publishedAt": "2026-11-14T00:30:00.000Z",
         "category": "economy"
-      },
-      {
-        "title": "오픈AI, AI 에이전트용 '챗GPT 월렛' 공개…카드 3사와 맞손",
-        "link": "https://www.yna.co.kr/view/AKR20261114022000091",
-        "source": "연합뉴스",
-        "publishedAt": "2026-11-14T00:19:23.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "[IPO챗] 내주 영광와이케이엠씨 등 3개사 코스닥 입성",
-        "link": "https://www.yna.co.kr/view/AKR20261113076800008",
-        "source": "연합뉴스",
-        "publishedAt": "2026-11-14T00:00:03.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "[다음주 경제] 2천조원 넘긴 가계부채, 얼마나 더 늘었을까",
-        "link": "https://www.yna.co.kr/view/AKR20261114014500002",
-        "source": "연합뉴스",
-        "publishedAt": "2026-11-13T23:58:18.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "\"주담대 6~8% 땐 집값 조정\"…2027년 부동산 가를 5대 변수",
-        "link": "https://www.newsis.com/view/NISX20261111_0003863101",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-13T23:00:00.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "접촉보고 누락 50명…'한화 유출 의혹' 감찰 주목[공정위 내부감찰②]",
-        "link": "https://www.newsis.com/view/NISX20261113_0003867432",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-13T23:00:00.000Z",
-        "category": "economy"
       }
     ]
   },
@@ -372,13 +372,13 @@
       "name": "뉴시스",
       "category": "economy",
       "status": "ok",
-      "count": 100
+      "count": 26
     },
     {
       "name": "뉴시스",
       "category": "culture",
       "status": "ok",
-      "count": 49
+      "count": 19
     },
     {
       "name": "동아일보",
@@ -390,13 +390,13 @@
       "name": "뉴시스",
       "category": "technology",
       "status": "ok",
-      "count": 100
+      "count": 31
     },
     {
       "name": "IT동아",
       "category": "technology",
       "status": "ok",
-      "count": 13
+      "count": 12
     }
   ],
   "status": "partial_or_ready",

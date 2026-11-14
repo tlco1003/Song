@@ -54,20 +54,46 @@ try{
     assert.equal(diagnostic.lyricSyncPreserved,true);
     assert.equal(diagnostic.priceSectionPreserved,true);
     assert.equal(diagnostic.createLink,true);
+    // The scene is scroll-driven: no timer should advance it while the page stays put.
+    const getProgress=()=>page.evaluate(()=>({
+      offset:window.scrollY,
+      bar:parseFloat(document.querySelector('#cinematic-progress')?.style.width||'0'),
+      chapter:document.querySelector('#cinematic-counter')?.textContent?.trim()
+    }));
+    const start=await getProgress();
+    await page.waitForTimeout(550);
+    const idle=await getProgress();
+    assert.ok(Math.abs(idle.bar-start.bar)<.1,'idle page must not auto-play');
+    const seek=ratio=>page.evaluate(r=>{
+      const node=document.getElementById('cinematic-intro');
+      const top=node.getBoundingClientRect().top+scrollY;
+      const travel=node.offsetHeight-innerHeight;
+      scrollTo({top:top+travel*r,behavior:'instant'});
+    },ratio);
+    await seek(.42);
+    await page.waitForFunction(()=>parseFloat(document.querySelector('#cinematic-progress')?.style.width||'0')>40);
+    const middle=await getProgress();
+    assert.ok(middle.bar>40&&middle.bar<45,'scroll moves timeline forward');
+    await page.screenshot({path:'artifacts/cinematic-'+cfg.name+'-clouds.png'});
+    await seek(.14);
+    await page.waitForFunction(()=>parseFloat(document.querySelector('#cinematic-progress')?.style.width||'0')<20);
+    const rewind=await getProgress();
+    assert.ok(rewind.bar<middle.bar,'back scroll reverses timeline');
+    await page.screenshot({path:'artifacts/cinematic-'+cfg.name+'-train.png'});
     await page.locator('[data-cinematic-action="skip"]').click();
     await page.waitForFunction(()=>document.querySelector('#cinematic-counter')?.textContent?.includes('04 / 04'));
-    await page.waitForTimeout(350);
+    await page.waitForTimeout(250);
     await page.screenshot({path:'artifacts/cinematic-'+cfg.name+'-book.png'});
     await page.locator('[data-cinematic-action="replay"]').click();
     await page.waitForFunction(()=>document.querySelector('#cinematic-counter')?.textContent?.includes('01 / 04'));
-    await page.waitForTimeout(500);
-    await page.screenshot({path:'artifacts/cinematic-'+cfg.name+'-train.png'});
-    if(!cfg.mobile){
-      await page.waitForTimeout(6600);
-      await page.screenshot({path:'artifacts/cinematic-desktop-clouds.png'});
-      await page.waitForTimeout(6200);
-      await page.screenshot({path:'artifacts/cinematic-desktop-arrival.png'});
-    }
+    await seek(.78);
+    await page.waitForFunction(()=>{
+      const n=document.getElementById('cinematic-intro'), r=n.getBoundingClientRect();
+      const p=parseFloat(document.querySelector('#cinematic-progress')?.style.width||'0');
+      return p>76&&p<80&&r.top<0&&r.bottom>innerHeight;
+    },null,{timeout:8000});
+    await page.waitForTimeout(350);
+    await page.screenshot({path:'artifacts/cinematic-'+cfg.name+'-arrival.png'});
     if(jsErrors.length)console.warn(cfg.name+' console errors:',JSON.stringify(jsErrors.slice(0,8)));
     console.log('PASS '+cfg.name+': '+JSON.stringify(diagnostic));
     await context.close();

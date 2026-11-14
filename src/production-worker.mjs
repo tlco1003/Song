@@ -9,6 +9,7 @@ import {buildSongProductionPlan} from './song-production-plan.mjs';
 import {now,paid} from './production-runtime.mjs';
 import {sendPaidOrderReceipt} from './order-status-portal.mjs';
 import {configuredLyriaAutoMode,runLyriaPaidAutomation} from './lyria-paid-automation.mjs';
+import {configuredMurekaAutoMode,submitMurekaPaidAutomation} from './mureka-paid-automation.mjs';
 import {artistSearchEnabled,researchArtistMusicalTraits}
  from './artist-research-provider.mjs';
 
@@ -63,8 +64,10 @@ async function alertOwner({orderId,order,env,fetcher}){
   '주문금액: '+order.amountKrw+'원',
   'AI 가사 상태: '+(order.confirmedLyrics?'자동 작사 완료':'관리자 수동 작사 필요'),
   '음악 제작: '+(order.production?.status==='awaiting_review'
-   ?'공식 Lyria API로 비공개 후보 저장 완료 — 관리자 품질·권리 검수 필요'
-   :'관리자 직접 제작 또는 자동 제작 실패 점검 필요'),
+   ?'공식 음악 API로 비공개 후보 저장 완료 — 관리자 품질·권리 검수 필요'
+   :order.production?.status==='generating_music'
+    ?'공식 Mureka API 작업 등록 완료 — 서버가 완료 상태를 확인 중'
+    :'관리자 직접 제작 또는 자동 제작 실패 점검 필요'),
   '고객 사연과 서버 전용 스타일 지시를 관리자 화면에서만 확인:',
   page
  ].join('\n');
@@ -124,25 +127,28 @@ export async function processVerifiedPaidWork({db,bucket,orderId,env=process.env
  if(lyrics&&plan)await ref.update({confirmedLyrics:lyrics,privateProductionPlan:plan,
   ...(artistResearch?{artistResearch}:{} )});
  let generation=null,generationError=null;
- if(lyrics&&plan&&configuredLyriaAutoMode(env)){
+ if(lyrics&&plan&&(configuredLyriaAutoMode(env)||configuredMurekaAutoMode(env))){
   try{
-   generation=await runLyriaPaidAutomation({
-    db,bucket,orderId,order,plan,env,fetcher
-   });
+   generation=configuredMurekaAutoMode(env)
+    ?await submitMurekaPaidAutomation({db,orderId,order,plan,env,fetcher})
+    :await runLyriaPaidAutomation({db,bucket,orderId,order,plan,env,fetcher});
   }catch(error){
    // External calls can have unknown billable outcomes. Never silently retry.
    generationError=typeof error?.code==='string'?error.code:'AUTOMATIC_GENERATION_FAILED';
   }
  }
  const production={
-  status:generation?.status==='awaiting_review'?'awaiting_review':'manual_required',
+  status:generation?.status==='awaiting_review'?'awaiting_review':
+   generation?.status==='generating_music'?'generating_music':'manual_required',
   lyricsReady:Boolean(lyrics&&plan),
   styleReady:Boolean(plan),
   lyricError,source:'verified_paid_order',
-  reason:generation?'generated_private_candidates_review_required':
+  reason:generation?(generation.status==='generating_music'
+   ?'mureka_async_task_submitted':'generated_private_candidates_review_required'):
    generationError||'commercial_music_api_not_enabled',
   ...(generation?{provider:generation.provider,
-   candidateCount:generation.candidateCount}:{}),
+   ...(generation.candidateCount!==undefined?{candidateCount:generation.candidateCount}:{}),
+   ...(generation.submittedCount!==undefined?{submittedCount:generation.submittedCount}:{})}:{}),
   attempts:(order.production?.attempts||0)+1,
   updatedAt:now(),alertStatus:'pending'
  };

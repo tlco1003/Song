@@ -4,7 +4,7 @@
 <meta name="robots" content="noindex,nofollow">
 <title>WITHU · 운영자 제작 관리실</title>
 <link rel="stylesheet" href="style.css"><link rel="stylesheet" href="admin.css?v=production-02">
-<script type="module" src="admin.js?v=20261115-support-01"></script>
+<script type="module" src="admin.js?v=20261116-owner-verify-01"></script>
 </head>
 <body class="admin-body">
 <header class="site-header"><div class="frame header-inner">
@@ -26,6 +26,17 @@
 </div>
 <div class="admin-toolbar"><button type="button" class="admin-primary" id="admin-sign-in">관리자 로그인</button>
 <button type="button" class="admin-secondary" id="admin-sign-out" hidden>로그아웃</button>
+</div>
+<div id="admin-owner-identity" hidden style="border:1px solid #ddd0da;border-radius:10px;padding:14px 16px;margin:12px 0">
+ <p style="font-size:13px;line-height:1.75;margin:0 0 10px">
+  로그인한 Firebase 사용자의 UID:
+  <code id="admin-owner-uid" style="overflow-wrap:anywhere;user-select:all"></code>
+ </p>
+ <div class="admin-toolbar">
+  <button type="button" class="admin-secondary" id="admin-send-verification" hidden>내 이메일 인증 메일 보내기</button>
+  <button type="button" class="admin-secondary" id="admin-refresh-verification" hidden>인증 상태 다시 확인</button>
+ </div>
+ <p style="font-size:12px;line-height:1.8">이 UID를 로컬 <code>functions/.env</code>의 <code>WITHU_ADMIN_UID</code>에 등록해야 서버에서 관리자로 승인됩니다. 비밀번호나 Firebase ID 토큰은 공개하지 마세요.</p>
 </div>
 <p id="admin-status" role="status" aria-live="polite">운영 서버의 인증 설정을 확인하는 중이에요.</p>
 </section>

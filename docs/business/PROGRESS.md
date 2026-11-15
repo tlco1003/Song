@@ -93,3 +93,13 @@ No private accounting or actual qualified-lead registry is connected to this fil
 - 설정: `WITHU_SUPPORT_INQUIRIES_ENABLED`, `WITHU_SUPPORT_PRIVACY_REVIEWED`, `WITHU_SUPPORT_OPERATOR_VERIFIED`, `WITHU_SUPPORT_HMAC_KEY` (비공개 Firebase Secret). Firestore TTL `deleteAfter` 준비. `functions/.env.example`에 사후 운영 필요 구성 표기.
 - 신규 테스트: `test/support-board.test.mjs`에서 개인정보 누출·비공개·승인·일일 제한 검증. Node syntax check에 신규 모듈 포함.
 - **주의:** GitHub Pages는 정적 웹사이트여서 문의 양식 접수 불가. 고객 이메일은 작동 가능하고, Firebase Hosting/Functions 배포 및 비공개 운영 가드 활성화 전까지 게시판은 공개 UI와 이메일 대체 안내만 제공. 90/365일 TTL 필드는 실제 Firebase 정책으로 활성화하기 전까지 자동 삭제 보장 아님. 실제 자동 답변 메일·PG 환불 기능은 구축하지 않음.
+
+## 2026-11-15 — Song 선택적 DRM 보호 재생 경로
+
+- 기준 Git commit: `72c16ed3571bbb3c64ecd394073c292aa9437e81`. 구현 commit은 이 기록을 포함하는 Git commit/PR 참조.
+- 기존 고객 세션·실결제·전달·공유·유료 재다운로드 계약 위에 DRM config/라이선스 중계와 운영자 곡별 등록 API를 추가. DRM곡의 기존 원본 재생 경로 차단, 보호 실패 시 원본 우회 금지. 공개 예시와 미지정곡 유지.
+- Shaka 4.16.11 원본 배포파일/라이선스 포함, Widevine/PlayReady/FairPlay 시스템 구성. 자산별 60초 서명 JWT와 외부 gateway 보안 계약, 바이너리 크기·시간 제한, 주문 단위 라이선스 요청 제한.
+- VERIFIED (로컬 모의 검사): `node scripts/business-ops-audit.mjs` exit 0 (48/48), `npm run check` exit 0, `npm test` exit 0 (286/286, 신규 DRM 서버/플레이어 7건 포함). 브라우저 테스트의 CDM·공급자는 모의 객체이며 실제 라이선스 성공을 뜻하지 않는다.
+- 브라우저 검증 불가: Playwright 기본 Chromium 실행파일 없음. `/usr/bin/chromium` 재시도는 환경의 socket/ptrace 제한으로 실행 실패(exit 1). 따라서 실제 UI 렌더/EME/모바일 녹화 검증 완료라고 보고하지 않는다.
+- BLOCKED: 실제 암호화 패키징·공급자별 gateway 어댑터·상용 DRM 계정/자격증명·KID 소유 검증·Firebase 배포·실단말 재생. 보호는 기본 비활성이며 이 변경은 라이선스 서비스/암호화 자산을 자동 생성하지 않는다. 상세 `docs/business/DRM_SETUP.md`.
+- Apple 공식 문서상 FPS 비디오 보호가 오디오 녹음 자동 차단을 보장하지 않음. 기존 구매자 다운로드 파일에 스트리밍 DRM을 소급 적용하지 않는다.

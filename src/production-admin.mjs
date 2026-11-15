@@ -1,3 +1,4 @@
+import {drmConfig} from './production-drm.mjs';
 /**
  * Protected operator dashboard. Firebase Authentication's verified UID is
  * checked on the server for EVERY request; no client-side admin flag.
@@ -46,6 +47,23 @@ export async function handleProductionAdmin(req,res,{db,bucket,auth,env,fetcher}
  }
  if(!['POST','PUT'].includes(req.method))stop(405,'해당 작업을 지원하지 않습니다.');
  checkOrigin(req,env);
+ const drm=/^\/api\/admin\/orders\/(withu_[a-f0-9]{32})\/tracks\/([12])\/drm$/.exec(path);
+ if(req.method==='POST'&&drm){
+  const input=json(req,40000),id=drm[1],index=Number(drm[2]);
+  const config=drmConfig({drm:input});
+  if(!config)stop(400,'DRM 설정이 필요합니다.');
+  const ref=db.collection('withuOrders').doc(id);
+  await db.runTransaction(async tx=>{
+   const snap=await tx.get(ref);if(!snap.exists)stop(404,'주문 없음');
+   const order=snap.data();paid(order);
+   if(order.delivery?.status==='sent'||index>countTracks(order))stop(409,'전달 전 음원에만 DRM을 연결할 수 있습니다.');
+   const tracks=[...(order.tracks||[])];
+   if(!tracks[index-1]?.storagePath)stop(409,'비공개 원본 음원을 먼저 올려주세요.');
+   tracks[index-1]={...tracks[index-1],drm:{...config,packagingVerified:true},drmReviewedAt:now()};
+   tx.update(ref,{tracks});
+  });
+  respond(res,200,{status:'drm_configured',index});return true;
+ }
  const upload=/^\/api\/admin\/orders\/(withu_[a-f0-9]{32})\/tracks\/([12])\/audio$/.exec(path);
  if(req.method==='PUT'&&upload){
   const id=upload[1],index=Number(upload[2]);
@@ -75,6 +93,7 @@ export async function handleProductionAdmin(req,res,{db,bucket,auth,env,fetcher}
     if(current.delivery?.status==='sent')stop(409,'이미 전달한 곡은 변경할 수 없습니다.');
     const tracks=Array.from({length:countTracks(current)},(_,i)=>
      current.tracks?.[i]||null);
+    if(tracks[index-1]?.drm)stop(409,'DRM 연결 후 원본을 교체하려면 보호 스트림을 함께 재검수해야 합니다.');
     tracks[index-1]={index,storagePath,fileName:filename,ext,contentType,
      reviewed:false,rightsVerified:false,uploadedAt:now()};
     tx.update(ref,{tracks});

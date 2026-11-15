@@ -89,7 +89,16 @@ async function fetchLyrics(url){
   $('detail-lyrics-text').textContent=pure||'가사가 등록되지 않았습니다.';
  }catch(_){$('detail-lyrics-text').textContent='가사를 불러오지 못했어요.'}
 }
+let trackLoadVersion=0,trackLoadQueue=Promise.resolve();
 function loadTrack(item,publicDemo){
+ const version=++trackLoadVersion;mediaReady=false;
+ const job=trackLoadQueue.catch(()=>{}).then(()=>loadTrackNow(item,publicDemo,version));
+ trackLoadQueue=job;return job;
+}
+async function loadTrackNow(item,publicDemo,version){
+ if(version!==trackLoadVersion)return;
+ await window.WithuProtectedMedia?.reset();
+ if(version!==trackLoadVersion)return;
  track=item;isPrivate=!publicDemo;
  $('detail-title').textContent=item.title||'나만의 노래';
  $('detail-genre').textContent=item.genre||'나만의 음악';
@@ -126,7 +135,14 @@ function loadTrack(item,publicDemo){
   video.controls=false;video.loop=hasSeparateAudio||repeatOne;
  }
  player=hasSeparateAudio||!isVideo?audio:video;
- player.src=player===video?mediaPath:audioPath;
+ if(!publicDemo&&item.protectedPlayback?.required===true){
+  player.removeAttribute('src');player.load();
+  try{
+   if(!window.WithuProtectedMedia)throw Error('보호 플레이어를 불러올 수 없습니다.');
+   await window.WithuProtectedMedia.attach(player,item.protectedPlayback,notice);
+   if(version!==trackLoadVersion)return;
+  }catch(error){mediaReady=false;notice(error.message||'보호 음원을 재생할 수 없습니다.');return;}
+ }else player.src=player===video?mediaPath:audioPath;
  // An MP4 without separate audio must stay audible, and may not continue
  // playing when the screen locks. Do not claim background audio support.
  player.loop=repeatOne;
@@ -152,7 +168,7 @@ async function loadDemo(id){
   const res=await fetch('media/tracks.json',{cache:'no-store'});if(!res.ok)throw Error('playlist');
   const catalog=await res.json(),item=catalog.tracks?.find(t=>t.id===id);
   if(!item||!simpleName(item.file))throw Error('unknown track');
-  loadTrack(item,true);
+  await loadTrack(item,true);
  }catch(_){
   $('detail-title').textContent='노래를 찾을 수 없어요';
   $('detail-lyrics-text').textContent='홈페이지의 다른 노래를 선택해 주세요.';
@@ -245,7 +261,7 @@ async function loadPrivate(token=null){
    if(asset.origin!==location.origin||!asset.pathname.startsWith('/api/delivery-assets/'))
     throw Error('invalid_track_asset');
   }
-  loadTrack(t,false);
+  await loadTrack(t,false);
   if(!mediaReady)throw Error('not_ready');
   configurePrivateLicense(j,t);
   if(!privateShareUrl){
@@ -270,10 +286,10 @@ async function loadPrivate(token=null){
     $('commercial-upgrade-status').textContent='[시연용] 관리자 모의 10,000원 결제 상태입니다. 실제 상업적 이용권이 부여된 것은 아닙니다.';
   }
   const select=$('private-track-choice');
-  select.onchange=()=>{
+  select.onchange=async()=>{
    const index=Number(select.value);
    if(!Number.isSafeInteger(index)||index<0||index>=privateTrackChoices.length)return;
-   loadTrack(privateTrackChoices[index],false);
+   await loadTrack(privateTrackChoices[index],false);
    configurePrivateLicense(j,privateTrackChoices[index]);
   };
   if(isCustomerLibrary){

@@ -1,3 +1,4 @@
+import {drmPlayback} from './production-drm.mjs';
 import {createHash,randomBytes,createCipheriv,createDecipheriv} from 'node:crypto';
 import {requireProductionId,tokenHash,makeOpaqueToken,authorizeOrderMedia} from './production-contract.mjs';
 export const UPGRADE_PRICE=10000;
@@ -77,6 +78,7 @@ export function visibleTracks(o,{downloadGranted=false}={}){
   file:'withu_song_'+(i+1)+'.'+(t.ext||'mp3'),
   productType:'audio_with_cover',mediaKind:'audio',
   privateMediaUrl:'/api/delivery-assets/'+o.id+'_'+(i+1),
+  ...(t.drm?{protectedPlayback:drmPlayback(t,o.id,i+1)}:{}),
   lyrics:t.lyrics,orderRef:'ord_'+o.id.slice(6),
   commercialUpgrade:upgraded?{
    status:'active',paymentVerified:true,rightsVerified:true,amountKrw:UPGRADE_PRICE

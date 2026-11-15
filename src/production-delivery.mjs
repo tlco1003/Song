@@ -1,3 +1,4 @@
+import {drmConfig} from './production-drm.mjs';
 /**
  * Durable shareable order-only listening links, private GCS byte-range audio,
  * and a separately verified 10,000 KRW file download right.
@@ -134,6 +135,8 @@ export async function handleProductionDelivery(req,res,{db,bucket,env,fetcher}){
   });}catch(_){stop(403,'이 고객에게 허가되지 않은 음원입니다.');}
   const track=approvedTracks(order)[Number(media[3])-1];
   if(!track)stop(404,'음원 파일을 찾을 수 없습니다.');
+  if(type==='playback'&&drmConfig(track))
+   stop(403,'이 음원은 DRM 보호 플레이어에서만 감상할 수 있습니다.');
   const file=bucket.file(track.storagePath);
   const [metadata]=await file.getMetadata();
   const size=Number(metadata.size);

@@ -6,7 +6,8 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js';
 import {loadVideoAdInquiries} from './video-ads-admin.js?v=20261114-video-pilot-01';
 import {loadSupportQuestions} from './support-admin.js?v=20261115-support-01';
-import {getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}
+import {getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged,
+ sendEmailVerification}
  from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js';
 const $=id=>document.getElementById(id);
 let firebaseAuth=null,orders=[],selected=null;
@@ -48,6 +49,10 @@ async function init(){
  onAuthStateChanged(firebaseAuth,async user=>{
   const authenticated=Boolean(user&&user.emailVerified);
   $('admin-sign-out').hidden=!user;
+  $('admin-owner-identity').hidden=!user;
+  $('admin-owner-uid').textContent=user?.uid||'';
+  $('admin-send-verification').hidden=!user||user.emailVerified;
+  $('admin-refresh-verification').hidden=!user||user.emailVerified;
   $('admin-workspace').hidden=!authenticated;
   if(!authenticated){
    if(user)status('운영자 이메일 인증을 완료한 뒤 다시 로그인해 주세요.');
@@ -310,6 +315,33 @@ async function revoke(){
  await refresh();
 }
 $('admin-sign-in').addEventListener('click',run(login));
+$('admin-send-verification').addEventListener('click',run(async()=>{
+ const user=firebaseAuth?.currentUser;
+ if(!user)throw Error('이메일로 먼저 로그인해 주세요.');
+ if(user.emailVerified){status('이미 인증된 이메일입니다.');return;}
+ const btn=$('admin-send-verification');
+ btn.disabled=true;
+ try{
+  await sendEmailVerification(user);
+  status('Firebase 인증 메일을 보냈습니다. 받은편지함과 스팸함을 확인한 뒤 인증 상태 다시 확인을 눌러 주세요.');
+ }finally{btn.disabled=false;}
+}));
+$('admin-refresh-verification').addEventListener('click',run(async()=>{
+ const user=firebaseAuth?.currentUser;
+ if(!user)throw Error('다시 로그인해 주세요.');
+ await user.reload();
+ await user.getIdToken(true);
+ $('admin-owner-uid').textContent=user.uid;
+ if(!user.emailVerified){
+  status('아직 이메일 인증이 확인되지 않았습니다. 메일의 인증 링크를 먼저 열어 주세요.');
+  return;
+ }
+ $('admin-send-verification').hidden=true;
+ $('admin-refresh-verification').hidden=true;
+ status('이메일 인증 완료. 서버에서 등록된 관리자 UID와 일치하는지 확인하고 있어요.');
+ try{await refresh();$('admin-workspace').hidden=false;status('관리자 이메일·UID 인증 완료 · 주문 DB 연결');}
+ catch(error){$('admin-workspace').hidden=true;status(error?.message||'관리자 UID가 서버에 연결되지 않았습니다.');}
+}));
 $('admin-sign-out').addEventListener('click',run(async()=>{
  await signOut(firebaseAuth);$('admin-workspace').hidden=true;
 }));

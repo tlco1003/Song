@@ -1,194 +1,236 @@
 {
   "schema": "MOMENT_NEWS_RSS_v1",
-  "generatedAt": "2026-11-18T04:20:17.913Z",
+  "generatedAt": "2026-11-18T13:58:00.669Z",
   "kind": "RECENT_PUBLISHER_RSS_NOT_POPULARITY_RANKING",
   "coverage": "연합뉴스·뉴시스·동아일보·IT동아 등 연결된 피드의 최신 헤드라인. 국가 전체 인기 순위가 아닙니다.",
   "categories": {
     "headlines": [
       {
-        "title": "신라젠 \"항암바이러스, 국가신약개발 과제로 선정\"",
-        "link": "https://www.newsis.com/view/NISX20261118_0003873152",
+        "title": "이 대통령, APEC 환영만찬에서 미·중·러 정상과 한자리에 [뉴시스Pic]",
+        "link": "https://www.newsis.com/view/NISX20261118_0003874083",
         "source": "뉴시스",
-        "publishedAt": "2026-11-18T04:15:11.000Z",
+        "publishedAt": "2026-11-18T13:55:51.000Z",
         "category": "headlines"
       },
       {
-        "title": "논란의 '리트 만점자' 수사 받나…현직 변호사 3명이 고발",
-        "link": "https://www.newsis.com/view/NISX20261118_0003873140",
+        "title": "[당진소식]당진 2호 정미면 그냥해드림센터 개소 등",
+        "link": "https://www.newsis.com/view/NISX20261118_0003874079",
         "source": "뉴시스",
-        "publishedAt": "2026-11-18T04:13:41.000Z",
+        "publishedAt": "2026-11-18T13:53:37.000Z",
         "category": "headlines"
       },
       {
-        "title": "평택시, 내년도 영농자재 지원사업 접수…12월11일 마감",
-        "link": "https://www.newsis.com/view/NISX20261118_0003873149",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-18T04:12:46.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "LEET시험 만점자에 변호사 줄고발…책구매자 집단소송 가능성도(종합2보)",
-        "link": "https://www.yna.co.kr/view/AKR20261117174952004",
+        "title": "IAEA 사무총장 \"北 영변 우라늄 농축시설 증축 외부 공사 완료\"(종합)",
+        "link": "https://www.yna.co.kr/view/AKR20261118185551079",
         "source": "연합뉴스",
-        "publishedAt": "2026-11-18T04:12:09.000Z",
+        "publishedAt": "2026-11-18T13:52:58.000Z",
         "category": "headlines"
       },
       {
-        "title": "글로벌 완성차 첫 여성 CEO 바라 취임 12년…GM, 안팎서 후임 찾는다",
-        "link": "https://www.newsis.com/view/NISX20261118_0003872885",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-18T04:10:00.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "日 무역적자 6개월째 지속…원유가격 상승으로 지난달 수입액↑",
-        "link": "https://www.yna.co.kr/view/AKR20261118101200073",
+        "title": "경주한수원, 4전5기 끝 창단 첫 WK리그 우승…'3위팀 새 역사'(종합)",
+        "link": "https://www.yna.co.kr/view/AKR20261118184551007",
         "source": "연합뉴스",
-        "publishedAt": "2026-11-18T04:09:53.000Z",
+        "publishedAt": "2026-11-18T13:44:55.000Z",
         "category": "headlines"
       },
       {
-        "title": "보온부터 뚜껑 압력 테스트까지…'도시락 예행연습' 나선 부모들[2027 수능]",
-        "link": "https://www.newsis.com/view/NISX20261118_0003873049",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-18T04:09:08.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "목포시 마른김거래소 운영기관 공모…12월28일까지 접수",
-        "link": "https://www.newsis.com/view/NISX20261118_0003873122",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-18T04:07:35.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "국힘 박정훈 \"공정한 수능 위해 전파 차단\"…'AI 부정행위 방지' 법안 발의",
-        "link": "https://www.newsis.com/view/NISX20261118_0003873134",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-18T04:04:36.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "[부산소식]부산대학교 80년사 발간 등",
-        "link": "https://www.newsis.com/view/NISX20261118_0003873141",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-18T04:04:17.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "성남시, 고액·상습 체납자 110명 명단공개…체납액 90억",
-        "link": "https://www.newsis.com/view/NISX20261118_0003873139",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-18T04:04:15.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "서울 명동, 세계 도심상권 중 임대료 9번째 비싸…9% 올라",
-        "link": "https://www.yna.co.kr/view/AKR20261118100700003",
+        "title": "푸틴 APEC 참석 맞춰 러 군용기 亞 곳곳 출몰…\"군사력 과시\"",
+        "link": "https://www.yna.co.kr/view/AKR20261118188300109",
         "source": "연합뉴스",
-        "publishedAt": "2026-11-18T04:03:52.000Z",
+        "publishedAt": "2026-11-18T13:42:37.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "10년만의 복귀 감독과 창단 첫 우승…WK리그 한수원 '기쁨 두배'",
+        "link": "https://www.yna.co.kr/view/AKR20261118189000007",
+        "source": "연합뉴스",
+        "publishedAt": "2026-11-18T13:41:54.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "[올댓차이나] 홍콩 증시, 美 증시 약세· 수출 규제 우려에 속락 마감… H주 0.86%↓",
+        "link": "https://www.newsis.com/view/NISX20261118_0003874078",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-18T13:33:30.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "[태안소식]'존경과 감사'…우운 문양목 선생 추모제 거행 등",
+        "link": "https://www.newsis.com/view/NISX20261118_0003874076",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-18T13:24:39.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "미중러 정상, 사상 첫 3자회담 앞두고 APEC 환영행사서 첫 인사(종합)",
+        "link": "https://www.yna.co.kr/view/AKR20261118185651089",
+        "source": "연합뉴스",
+        "publishedAt": "2026-11-18T13:22:26.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "'세계 2위' 中콘텐츠 시장 열린다…최혜국대우에 공동제작 확대(종합2보)",
+        "link": "https://www.yna.co.kr/view/AKR20261118156252005",
+        "source": "연합뉴스",
+        "publishedAt": "2026-11-18T13:17:56.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "\"순위 1등인데 턴오버도 1등\"…삼성 김상식 감독의 남모를 고민",
+        "link": "https://www.yna.co.kr/view/AKR20261118188600007",
+        "source": "연합뉴스",
+        "publishedAt": "2026-11-18T13:17:15.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "정부, 이번 수능부터 '부정행위 신고포상금 최대 1억원' 즉시 적용 추진(종합)",
+        "link": "https://www.newsis.com/view/NISX20261118_0003874066",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-18T13:12:11.000Z",
         "category": "headlines"
       }
     ],
     "technology": [
       {
-        "title": "신라젠 \"항암바이러스, 국가신약개발 과제로 선정\"",
-        "link": "https://www.newsis.com/view/NISX20261118_0003873152",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-18T04:15:11.000Z",
-        "category": "technology"
-      },
-      {
-        "title": "엔비디아, 고객사에 경고…\"中 기업 AI칩 원격 사용에 법적 위험\"",
-        "link": "https://www.newsis.com/view/NISX20261118_0003873086",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-18T04:03:29.000Z",
-        "category": "technology"
-      },
-      {
-        "title": "국민 10명 중 7명 \"항생제, 감기 치료에 도움\" 오인",
-        "link": "https://www.newsis.com/view/NISX20261118_0003872750",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-18T03:00:00.000Z",
-        "category": "technology"
-      },
-      {
-        "title": "\"자율주행 장치 없어도 AI 기지국이 운전한다\"…SKT, 전파방송 기술대상",
-        "link": "https://www.newsis.com/view/NISX20261118_0003872586",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-18T03:00:00.000Z",
-        "category": "technology"
-      },
-      {
-        "title": "\"하루 평균 스타링크 위성 6500기 한반도 상공 지난다\"",
-        "link": "https://www.newsis.com/view/NISX20261118_0003872931",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-18T02:48:35.000Z",
-        "category": "technology"
-      },
-      {
-        "title": "코나아이, 인천 검단구 첫 지역화폐 '검단e음' 운영 맡는다",
-        "link": "https://www.newsis.com/view/NISX20261118_0003872968",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-18T02:42:04.000Z",
-        "category": "technology"
-      },
-      {
-        "title": "\"하늘길 끊기고 MS·애플도 한때 멈췄다\"…전 세계 덮친 '테크스톰' 공포",
-        "link": "https://www.newsis.com/view/NISX20261118_0003872776",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-18T02:40:31.000Z",
-        "category": "technology"
-      },
-      {
-        "title": "망고부스트, SC26서 日 프리퍼드 네트웍스와 맞손··· '국경 없는 이기종컴퓨팅 협력'",
-        "link": "https://it.donga.com/109952/",
+        "title": "항공대·고양시, 에어로AI 심포지엄 2026에서 “피지컬 AI 기반 항공산업 거점 도약” 선언",
+        "link": "https://it.donga.com/109957/",
         "source": "IT동아",
-        "publishedAt": "2026-11-18T02:34:12.000Z",
+        "publishedAt": "2026-11-18T11:13:54.000Z",
         "category": "technology"
       },
       {
-        "title": "\"크리에이터를 창업가로 키운다\" 크리에이터벤처스튜디오, 벤처스튜디오형 MCN 지향 [Start-up NEST 19기]",
-        "link": "https://it.donga.com/109949/",
+        "title": "[주간스타트업동향] 업스테이지, 캐나다 코히어와 전략적 파트너십 체결 外",
+        "link": "https://it.donga.com/109956/",
         "source": "IT동아",
-        "publishedAt": "2026-11-18T02:32:15.000Z",
+        "publishedAt": "2026-11-18T09:43:11.000Z",
         "category": "technology"
       },
       {
-        "title": "EU, AI 키우려 데이터센터 용량 3배로…유럽 곳곳서 건설 반대 시위",
-        "link": "https://www.newsis.com/view/NISX20261118_0003872745",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-18T02:26:52.000Z",
-        "category": "technology"
-      },
-      {
-        "title": "임상 마친 국산 치매약…'성공 vs 실패' 의견 분분",
-        "link": "https://www.newsis.com/view/NISX20261118_0003872937",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-18T02:04:39.000Z",
-        "category": "technology"
-      },
-      {
-        "title": "안정적인 데이터·SDK 연동 편의성···타이로스코프, 가민 헬스 선택한 이유",
-        "link": "https://it.donga.com/109938/",
+        "title": "[2026 강소특구] 서울 홍릉 강소특구 “세계 수준의 인공지능 융합 헬스케어 클러스터로”",
+        "link": "https://it.donga.com/109955/",
         "source": "IT동아",
-        "publishedAt": "2026-11-18T01:37:45.000Z",
+        "publishedAt": "2026-11-18T09:42:57.000Z",
+        "category": "technology"
+      },
+      {
+        "title": "페이먼트솔루션즈 “가상터치 기반 키오스크로 구매부터 결제까지 불편함 없는 환경 만들 것” [Start-up NEST 19기]",
+        "link": "https://it.donga.com/109954/",
+        "source": "IT동아",
+        "publishedAt": "2026-11-18T09:00:00.000Z",
+        "category": "technology"
+      },
+      {
+        "title": "'붉은사막' 대한민국 게임대상 8관왕 달성…'아이온2' 최우수상",
+        "link": "https://www.newsis.com/view/NISX20261118_0003873895",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-18T08:53:16.000Z",
+        "category": "technology"
+      },
+      {
+        "title": "\"겉은 일반 안경인데 X선 찍자 기판·배터리 딱 걸렸다\"…AI 커닝 잡는 'AI 검사기' 등장",
+        "link": "https://www.newsis.com/view/NISX20261118_0003873795",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-18T08:29:06.000Z",
+        "category": "technology"
+      },
+      {
+        "title": "학교 와이파이 60만개 수능날 셧다운…정부·통신 3사 실시간 합동 관제",
+        "link": "https://www.newsis.com/view/NISX20261118_0003873833",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-18T08:20:46.000Z",
+        "category": "technology"
+      },
+      {
+        "title": "CDMO 시동 건 롯데바이오…\"경쟁무기는 이것\"",
+        "link": "https://www.newsis.com/view/NISX20261118_0003873802",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-18T08:08:24.000Z",
+        "category": "technology"
+      },
+      {
+        "title": "누리호 5차 큐브위성 1기 왜 못 나왔나…\"덮개 열 모터에 전기가 안 흘렀다\"",
+        "link": "https://www.newsis.com/view/NISX20261118_0003873655",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-18T08:00:00.000Z",
+        "category": "technology"
+      },
+      {
+        "title": "국가 AI 사업 경험 살린 크래프톤, 자체 언어모델 '라온' 내놔",
+        "link": "https://www.newsis.com/view/NISX20261118_0003872763",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-18T07:10:50.000Z",
+        "category": "technology"
+      },
+      {
+        "title": "큐리언트 \"이중 페이로드 ADC 정부 과제 선정\"",
+        "link": "https://www.newsis.com/view/NISX20261118_0003873600",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-18T06:58:55.000Z",
+        "category": "technology"
+      },
+      {
+        "title": "인기 애니 '최애의 아이' 퍼즐 게임 나왔다…NHN, 글로벌 출시",
+        "link": "https://www.newsis.com/view/NISX20261118_0003873572",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-18T06:56:29.000Z",
         "category": "technology"
       }
     ],
     "culture": [
       {
-        "title": "교황 발길 잡아라…WYD 앞두고 지자체들 지역 방문 유치전",
-        "link": "https://www.donga.com/news/Culture/article/all/20261118/135043567/1",
-        "source": "동아일보",
-        "publishedAt": "2026-11-18T02:55:00.000Z",
+        "title": "사막에 솟은 150m 황금빛 액자…‘두바이 프레임’ 위용",
+        "link": "https://www.newsis.com/view/NISX20261118_0003874009",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-18T11:24:40.000Z",
         "category": "culture"
       },
       {
-        "title": "유키 구라모토가 찾은 해금 명인…'예인열전-강은일'",
-        "link": "https://www.newsis.com/view/NISX20261118_0003872939",
+        "title": "'한국뮤지컬어워즈' 후보작 접수…축하공연 첫 공개모집",
+        "link": "https://www.newsis.com/view/NISX20261118_0003873945",
         "source": "뉴시스",
-        "publishedAt": "2026-11-18T02:12:37.000Z",
+        "publishedAt": "2026-11-18T09:17:25.000Z",
+        "category": "culture"
+      },
+      {
+        "title": "SNS 속 대구 사투리와 얼굴들…청문당 전시장 '웃다가 멈칫'",
+        "link": "https://www.newsis.com/view/NISX20261118_0003873877",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-18T08:40:05.000Z",
+        "category": "culture"
+      },
+      {
+        "title": "성탄·연말 선물은 K굿즈…DDP서 펼쳐지는 관광기념품 박람회",
+        "link": "https://www.newsis.com/view/NISX20261118_0003873697",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-18T07:31:45.000Z",
+        "category": "culture"
+      },
+      {
+        "title": "양주시립예술단, 12월12일 송년음악회…전주영 지휘자 데뷔",
+        "link": "https://www.newsis.com/view/NISX20261118_0003873545",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-18T06:49:31.000Z",
+        "category": "culture"
+      },
+      {
+        "title": "1억 명 태우고 지구 48바퀴 거리 오간 롯데월드 ‘스페인해적선’…잠시 정박",
+        "link": "https://www.newsis.com/view/NISX20261116_0003869390",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-18T06:15:43.000Z",
+        "category": "culture"
+      },
+      {
+        "title": "\"수험생 앞길 밝힌다\"…종교계, 수능 당일 특별 기도[2027 수능]",
+        "link": "https://www.newsis.com/view/NISX20261118_0003873250",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-18T05:25:02.000Z",
+        "category": "culture"
+      },
+      {
+        "title": "\"단 1원도 아깝다\"…리트 만점자 책 '브레인 악셀', 환불 요구 속출",
+        "link": "https://www.newsis.com/view/NISX20261118_0003873284",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-18T05:18:03.000Z",
         "category": "culture"
       },
       {
@@ -196,13 +238,6 @@
         "link": "https://www.newsis.com/view/NISX20261118_0003872933",
         "source": "뉴시스",
         "publishedAt": "2026-11-18T02:08:53.000Z",
-        "category": "culture"
-      },
-      {
-        "title": "해 짧아진 겨울철, 한국인도 비타민D 보충제 먹어야 할까? [건강팩트체크]",
-        "link": "https://www.donga.com/news/It/article/all/20261118/135044235/2",
-        "source": "동아일보",
-        "publishedAt": "2026-11-18T01:37:00.000Z",
         "category": "culture"
       },
       {
@@ -220,131 +255,96 @@
         "category": "culture"
       },
       {
-        "title": "K-팝 아이돌, 올해도 수능 치르지 않는 이유",
-        "link": "https://www.donga.com/news/Entertainment/article/all/20261118/135043591/1",
-        "source": "동아일보",
-        "publishedAt": "2026-11-17T23:24:22.000Z",
-        "category": "culture"
-      },
-      {
         "title": "'AI 감시 폭로' 美 페글렌 \"커닝 막으려 손글씨? 무의미\"",
         "link": "https://www.newsis.com/view/NISX20261117_0003872164",
         "source": "뉴시스",
         "publishedAt": "2026-11-17T22:00:00.000Z",
         "category": "culture"
-      },
-      {
-        "title": "제품·기술 개발 뒷이야기…서울시립과학관, DDP서 특별전",
-        "link": "https://www.newsis.com/view/NISX20261117_0003872096",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-17T21:00:00.000Z",
-        "category": "culture"
-      },
-      {
-        "title": "[오늘의 주요일정]문화체육관광부(11월18일 수요일)",
-        "link": "https://www.newsis.com/view/NISX20261117_0003871555",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-17T21:00:00.000Z",
-        "category": "culture"
-      },
-      {
-        "title": "“대통령의 ‘처음 듣는 얘기’ 1년… 北 억류 선교사 생사조차 몰라”",
-        "link": "https://www.donga.com/news/Culture/article/all/20261117/135042451/2",
-        "source": "동아일보",
-        "publishedAt": "2026-11-17T19:30:00.000Z",
-        "category": "culture"
-      },
-      {
-        "title": "“창작자 한 명이 만든 AI영화 1, 2년내 극장 걸릴 것”[스타트업 人터뷰]",
-        "link": "https://www.donga.com/news/Economy/article/all/20261117/135041879/2",
-        "source": "동아일보",
-        "publishedAt": "2026-11-17T15:30:00.000Z",
-        "category": "culture"
       }
     ],
     "economy": [
       {
-        "title": "\"노동법 해체\" \"노동자 희생 강요\"…초광역특구 특례에 비판 쏟아져(종합)",
-        "link": "https://www.newsis.com/view/NISX20261118_0003873115",
+        "title": "[올댓차이나] 홍콩 증시, 美 증시 약세· 수출 규제 우려에 속락 마감… H주 0.86%↓",
+        "link": "https://www.newsis.com/view/NISX20261118_0003874078",
         "source": "뉴시스",
-        "publishedAt": "2026-11-18T04:13:39.000Z",
+        "publishedAt": "2026-11-18T13:33:30.000Z",
         "category": "economy"
       },
       {
-        "title": "서울 명동, 세계 도심상권 중 임대료 9번째 비싸…9% 올라",
-        "link": "https://www.yna.co.kr/view/AKR20261118100700003",
+        "title": "'세계 2위' 中콘텐츠 시장 열린다…최혜국대우에 공동제작 확대(종합2보)",
+        "link": "https://www.yna.co.kr/view/AKR20261118156252005",
         "source": "연합뉴스",
-        "publishedAt": "2026-11-18T04:03:52.000Z",
+        "publishedAt": "2026-11-18T13:17:56.000Z",
         "category": "economy"
       },
       {
-        "title": "엔비디아, 고객사에 경고…\"中 기업 AI칩 원격 사용에 법적 위험\"",
-        "link": "https://www.newsis.com/view/NISX20261118_0003873086",
+        "title": "[올댓차이나] 대만 10월 IT매출 121.3조원·53.6%↑…AI 서버 수요 견인",
+        "link": "https://www.newsis.com/view/NISX20261118_0003874074",
         "source": "뉴시스",
-        "publishedAt": "2026-11-18T04:03:29.000Z",
+        "publishedAt": "2026-11-18T13:09:03.000Z",
         "category": "economy"
       },
       {
-        "title": "\"결혼해야 한다\" 55%, 12년 만에 최고…안 하는 이유 1위는 '돈'",
-        "link": "https://www.newsis.com/view/NISX20261118_0003873102",
+        "title": "유로존 10월 인플레 4.0% 확정…獨 2.9% 佛 3.7% 伊 5.6%",
+        "link": "https://www.newsis.com/view/NISX20261118_0003873984",
         "source": "뉴시스",
-        "publishedAt": "2026-11-18T03:50:25.000Z",
+        "publishedAt": "2026-11-18T10:34:58.000Z",
         "category": "economy"
       },
       {
-        "title": "KDI \"내년 성장률 3.9%, 3분의 2가 반도체…체감경기와 격차\"[일문일답]",
-        "link": "https://www.newsis.com/view/NISX20261118_0003873099",
+        "title": "황종우 해수장관 \"연락 두절 '해광호' 수색·구조에 총력\"",
+        "link": "https://www.yna.co.kr/view/AKR20261118178500030",
+        "source": "연합뉴스",
+        "publishedAt": "2026-11-18T10:13:35.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "李대통령, 中 'K콘텐츠 최혜국대우'에 \"새로운 한중관계 토대\"",
+        "link": "https://www.yna.co.kr/view/AKR20261118177100001",
+        "source": "연합뉴스",
+        "publishedAt": "2026-11-18T10:11:12.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "韓, IEA와 '라이즈 아시아' 소개…아시아 에너지 안보 협력 강화",
+        "link": "https://www.newsis.com/view/NISX20261118_0003873305",
         "source": "뉴시스",
-        "publishedAt": "2026-11-18T03:36:14.000Z",
+        "publishedAt": "2026-11-18T10:00:00.000Z",
         "category": "economy"
       },
       {
-        "title": "美 6일간 대형 시스템 장애 6건 왜?…\"AI 해킹 아닌 SW 패치 문제\"",
-        "link": "https://www.newsis.com/view/NISX20261118_0003872756",
+        "title": "미 10월 소매상 매출 0.2% 증가해 997조원…총소비의 30%",
+        "link": "https://www.newsis.com/view/NISX20261118_0003873971",
         "source": "뉴시스",
-        "publishedAt": "2026-11-18T03:06:52.000Z",
+        "publishedAt": "2026-11-18T09:58:19.000Z",
         "category": "economy"
       },
       {
-        "title": "[표] 코스닥시장 3분기 누적 순이익 상·하위 20개사",
-        "link": "https://www.yna.co.kr/view/AKR20261118095900008",
+        "title": "경제계 \"한중 FTA 서비스·투자협상 타결 환영…새로운 기회\"(종합2보)",
+        "link": "https://www.yna.co.kr/view/AKR20261118156552003",
         "source": "연합뉴스",
-        "publishedAt": "2026-11-18T03:00:23.000Z",
+        "publishedAt": "2026-11-18T09:55:44.000Z",
         "category": "economy"
       },
       {
-        "title": "매출 1조 넘는 해외사업자, 국내대리인 둬야…공정위 가이드라인",
-        "link": "https://www.yna.co.kr/view/AKR20261118034900002",
+        "title": "씨티, 내년 성장률 전망치 4.1%로 상향…\"반도체 호황 지속\"",
+        "link": "https://www.yna.co.kr/view/AKR20261118175200002",
         "source": "연합뉴스",
-        "publishedAt": "2026-11-18T03:00:19.000Z",
+        "publishedAt": "2026-11-18T09:40:44.000Z",
         "category": "economy"
       },
       {
-        "title": "대전 부사동, 야구 경기일 방문 2.5배로 늘어…주변으로도 발길",
-        "link": "https://www.yna.co.kr/view/AKR20261118037700002",
-        "source": "연합뉴스",
-        "publishedAt": "2026-11-18T03:00:15.000Z",
+        "title": "영 10월 인플레 3.6%로↑…4개월 연속 상승하며 1년래 최고",
+        "link": "https://www.newsis.com/view/NISX20261118_0003873915",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-18T09:37:17.000Z",
         "category": "economy"
       },
       {
-        "title": "반도체 호조로 3분기 충북 광공업생산 30%↑…소매판매 13곳↓",
-        "link": "https://www.yna.co.kr/view/AKR20261118062900002",
+        "title": "하나에어로다이내믹스, 코스닥 신규 상장…오는 20일 거래 개시",
+        "link": "https://www.yna.co.kr/view/AKR20261118173400008",
         "source": "연합뉴스",
-        "publishedAt": "2026-11-18T03:00:10.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "3분기 가계부채 증가폭 1년반 만에 최소…카드 외상은 급증",
-        "link": "https://www.yna.co.kr/view/AKR20261118077900002",
-        "source": "연합뉴스",
-        "publishedAt": "2026-11-18T03:00:06.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "불법사금융 피해자 절반 이상 20·30대…1년 새 비중 6%p↑",
-        "link": "https://www.yna.co.kr/view/AKR20261118077000004",
-        "source": "연합뉴스",
-        "publishedAt": "2026-11-18T03:00:06.000Z",
+        "publishedAt": "2026-11-18T09:21:44.000Z",
         "category": "economy"
       }
     ]
@@ -378,25 +378,26 @@
       "name": "뉴시스",
       "category": "culture",
       "status": "ok",
-      "count": 54
+      "count": 69
     },
     {
       "name": "동아일보",
       "category": "culture",
-      "status": "ok",
-      "count": 50
+      "status": "failed",
+      "count": 0,
+      "error": "fetch failed"
     },
     {
       "name": "뉴시스",
       "category": "technology",
       "status": "ok",
-      "count": 125
+      "count": 160
     },
     {
       "name": "IT동아",
       "category": "technology",
       "status": "ok",
-      "count": 18
+      "count": 19
     }
   ],
   "status": "partial_or_ready",

@@ -1,101 +1,136 @@
 {
   "schema": "MOMENT_NEWS_RSS_v1",
-  "generatedAt": "2026-11-21T02:13:50.379Z",
+  "generatedAt": "2026-11-21T09:52:19.877Z",
   "kind": "RECENT_PUBLISHER_RSS_NOT_POPULARITY_RANKING",
   "coverage": "연합뉴스·뉴시스·동아일보·IT동아 등 연결된 피드의 최신 헤드라인. 국가 전체 인기 순위가 아닙니다.",
   "categories": {
     "headlines": [
       {
-        "title": "보은 고속도로서 화물차끼리 추돌…운전자 2명 부상",
-        "link": "https://www.newsis.com/view/NISX20261121_0003877634",
+        "title": "'이정효호' K리그2 수원, 승격 이어 우승 조기 확정…수원FC도 미소(종합)",
+        "link": "https://www.newsis.com/view/NISX20261121_0003877761",
         "source": "뉴시스",
-        "publishedAt": "2026-11-21T02:11:00.000Z",
+        "publishedAt": "2026-11-21T09:46:51.000Z",
         "category": "headlines"
       },
       {
-        "title": "\"불안과 조급함이 문제\"…파산 전문 변호사가 지적한 '빚더미'의 원인",
-        "link": "https://www.newsis.com/view/NISX20261121_0003877557",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-21T02:11:00.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "태안 서격렬비도 인근서 해광호 소유 추정 부이 1개 발견",
-        "link": "https://www.newsis.com/view/NISX20261121_0003877620",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-21T02:05:35.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "'황인범 교체' 포르투, '3부' 파레데스에 승부차기 끝 진땀승",
-        "link": "https://www.newsis.com/view/NISX20261121_0003877607",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-21T02:03:07.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "[게임위드인] AI로 외연 확장 노린 지스타…관람객은 게임에 몰렸다",
-        "link": "https://www.yna.co.kr/view/AKR20261120169900017",
+        "title": "추미애 \"조희대 대법원장 탄핵 실행, 좌고우면 안 돼\"",
+        "link": "https://www.yna.co.kr/view/AKR20261121045800061",
         "source": "연합뉴스",
-        "publishedAt": "2026-11-21T02:00:01.000Z",
+        "publishedAt": "2026-11-21T09:44:48.000Z",
         "category": "headlines"
       },
       {
-        "title": "프로포폴 7년 자숙 브아걸 가인 복귀 \"혼자 너무 외로워\"",
-        "link": "https://www.newsis.com/view/NISX20261121_0003877582",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-21T02:00:00.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "서울 외국인 관광객 3000만명 시대 되면 쓰레기는 얼마나",
-        "link": "https://www.newsis.com/view/NISX20261120_0003877381",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-21T02:00:00.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "AI 캐릭터부터 QWER까지…게임, 경계를 넘다[지스타 2026]",
-        "link": "https://www.newsis.com/view/NISX20261120_0003876722",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-21T02:00:00.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "부산서 시내버스·화물차 정면 충돌…1명 사망·3명 부상(종합)",
-        "link": "https://www.newsis.com/view/NISX20261121_0003877623",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-21T01:59:27.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "경과원, 바이오스타트업 10곳 투자유치 지원",
-        "link": "https://www.newsis.com/view/NISX20261121_0003877613",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-21T01:51:20.000Z",
-        "category": "headlines"
-      },
-      {
-        "title": "K팝에 입힌 색다른 감성…인디 뮤지션이 쓰고 아이돌이 부른다",
-        "link": "https://www.yna.co.kr/view/AKR20261121000300005",
+        "title": "[프로축구 중간순위] 21일",
+        "link": "https://www.yna.co.kr/view/AKR20261121046000007",
         "source": "연합뉴스",
-        "publishedAt": "2026-11-21T01:49:02.000Z",
+        "publishedAt": "2026-11-21T09:43:49.000Z",
         "category": "headlines"
       },
       {
-        "title": "고령군, 내년 예산 4860억원 편성…본예산보다 3.15%↑",
-        "link": "https://www.newsis.com/view/NISX20261121_0003877606",
+        "title": "경남교육청, 제22회 경남독서한마당 독서공모전 시상식",
+        "link": "https://www.newsis.com/view/NISX20261121_0003877800",
         "source": "뉴시스",
-        "publishedAt": "2026-11-21T01:47:57.000Z",
+        "publishedAt": "2026-11-21T09:41:29.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "K리그1 대전, 10경기 무패 행진…2위 울산과 승점 1 차이(종합)",
+        "link": "https://www.yna.co.kr/view/AKR20261121040751007",
+        "source": "연합뉴스",
+        "publishedAt": "2026-11-21T09:41:27.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "양양서 스킨스쿠버 40대 남성 호흡곤란…병원 이송",
+        "link": "https://www.newsis.com/view/NISX20261121_0003877799",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-21T09:41:16.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "정선 호텔 공사장서 낙상 50대 심정지…의식 회복",
+        "link": "https://www.newsis.com/view/NISX20261121_0003877797",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-21T09:41:07.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "K리그1 챔피언 서울, 5경기 만에 승리…2위 울산은 인천에 덜미(종합)",
+        "link": "https://www.newsis.com/view/NISX20261121_0003877760",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-21T09:33:36.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "정관장, 풀세트 끝에 SOOP에 역전승…SOOP은 창단 첫 승점 수확(종합)",
+        "link": "https://www.newsis.com/view/NISX20261121_0003877757",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-21T09:32:09.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "김혜수, '28세 연하' 성소 드레스 완벽 소화…'수중 운동'으로 다진 몸매",
+        "link": "https://www.newsis.com/view/NISX20261121_0003877695",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-21T09:32:00.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "남자배구 삼성화재, OK저축은행 잡고 3연승으로 2위 도약(종합)",
+        "link": "https://www.yna.co.kr/view/AKR20261121041351007",
+        "source": "연합뉴스",
+        "publishedAt": "2026-11-21T09:29:22.000Z",
+        "category": "headlines"
+      },
+      {
+        "title": "[프로축구 강릉전적] 대전 3-1 강원",
+        "link": "https://www.yna.co.kr/view/AKR20261121045600007",
+        "source": "연합뉴스",
+        "publishedAt": "2026-11-21T09:27:27.000Z",
         "category": "headlines"
       }
     ],
     "technology": [
       {
-        "title": "회전근개 파열 수술로 완치?…성패 가르는 '이것'",
-        "link": "https://www.newsis.com/view/NISX20261120_0003876452",
+        "title": "\"찬바람부니 피부가 울긋불긋\"…'이 질환' 주의보",
+        "link": "https://www.newsis.com/view/NISX20261120_0003876479",
         "source": "뉴시스",
-        "publishedAt": "2026-11-21T02:01:00.000Z",
+        "publishedAt": "2026-11-21T09:01:00.000Z",
+        "category": "technology"
+      },
+      {
+        "title": "증상 없으면 '갑상선 초음파·CT' 신중해야…전문가가 꼽은 필수 검진은",
+        "link": "https://www.newsis.com/view/NISX20261116_0003868965",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-21T09:00:00.000Z",
+        "category": "technology"
+      },
+      {
+        "title": "MTN, 오는 25일 '2026 서울퓨처포럼' 개최…韓 AI 경제 생존 전략 제시",
+        "link": "https://www.newsis.com/view/NISX20261121_0003877748",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-21T06:59:58.000Z",
+        "category": "technology"
+      },
+      {
+        "title": "\"기술로는 못 막는다\"…가짜·진짜 공존하는 3대 해법은[AI發 신뢰 실종 시대③]",
+        "link": "https://www.newsis.com/view/NISX20261120_0003877102",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-21T06:00:00.000Z",
+        "category": "technology"
+      },
+      {
+        "title": "수능 전 문항 3분 만에 '올킬', 총리 사칭 화상회의까지…AI가 '공포'가 된 이유 [AI發 신뢰 실종 시대 ②]",
+        "link": "https://www.newsis.com/view/NISX20261120_0003877213",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-21T05:00:00.000Z",
+        "category": "technology"
+      },
+      {
+        "title": "시험도, 논문도, 문학도 '진짜'의 위기…일상에 스며드는 불신[AI發 신뢰 실종 시대①]",
+        "link": "https://www.newsis.com/view/NISX20261118_0003874062",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-21T04:00:00.000Z",
         "category": "technology"
       },
       {
@@ -120,13 +155,6 @@
         "category": "technology"
       },
       {
-        "title": "응급실 도착전 경고해준 AI…협심증 환자 살렸다[빠정예진]",
-        "link": "https://www.newsis.com/view/NISX20261116_0003870358",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-20T21:01:00.000Z",
-        "category": "technology"
-      },
-      {
         "title": "[2026 강소특구] 전남나주 강소특구 “기술·인재·기업 모아 에너지 특화도시로”",
         "link": "https://it.donga.com/109972/",
         "source": "IT동아",
@@ -146,42 +174,42 @@
         "source": "IT동아",
         "publishedAt": "2026-11-20T08:54:03.000Z",
         "category": "technology"
-      },
-      {
-        "title": "'국산1호 CAR-T 신약' 림카토, 내달부터 급여 적용",
-        "link": "https://www.newsis.com/view/NISX20261120_0003877342",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-20T08:53:13.000Z",
-        "category": "technology"
-      },
-      {
-        "title": "증권 앱 내 AI로 CES 2027 혁신상 수상··· 한국투자증권이 선택한 에이전틱 AI '스키퍼’",
-        "link": "https://it.donga.com/109978/",
-        "source": "IT동아",
-        "publishedAt": "2026-11-20T08:37:14.000Z",
-        "category": "technology"
-      },
-      {
-        "title": "두아 리파·카디 비, 'GTA 6' 공식 OST 발매…제니 韓 유일",
-        "link": "https://www.newsis.com/view/NISX20261120_0003877214",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-20T08:25:40.000Z",
-        "category": "technology"
-      },
-      {
-        "title": "컬리, 1만700여명 개인정보 유출…김슬아 대표 \"피해액 전액 보상\"",
-        "link": "https://www.newsis.com/view/NISX20261120_0003877289",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-20T08:23:11.000Z",
-        "category": "technology"
       }
     ],
     "culture": [
       {
-        "title": "몸으로 묻는 인간 존재…국립현대무용단 '더블 빌'",
-        "link": "https://www.newsis.com/view/NISX20261120_0003877110",
+        "title": "美 ‘독립 250주년’의 화룡점정 ③인종·민족·문화 용광로의 송구영신",
+        "link": "https://www.newsis.com/view/NISX20261121_0003877781",
         "source": "뉴시스",
-        "publishedAt": "2026-11-21T02:00:00.000Z",
+        "publishedAt": "2026-11-21T09:02:00.000Z",
+        "category": "culture"
+      },
+      {
+        "title": "김기리, 아들 100일에 1000만원 기부 “받은 사랑 많아”",
+        "link": "https://www.donga.com/news/Culture/article/all/20261121/135064917/1",
+        "source": "동아일보",
+        "publishedAt": "2026-11-21T05:38:28.000Z",
+        "category": "culture"
+      },
+      {
+        "title": "시호, 후쿠오카 어묵 가게서 정준하 발견 “왜 여기서 나와”",
+        "link": "https://www.donga.com/news/Culture/article/all/20261121/135064891/1",
+        "source": "동아일보",
+        "publishedAt": "2026-11-21T04:54:59.000Z",
+        "category": "culture"
+      },
+      {
+        "title": "취향 기록했을 뿐인데 팔로워 44만명…성공 비밀은? [신간]",
+        "link": "https://www.newsis.com/view/NISX20261120_0003877439",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-21T03:00:00.000Z",
+        "category": "culture"
+      },
+      {
+        "title": "프로포폴 7년 자숙 브아걸 가인 복귀 “혼자 너무 외로워”",
+        "link": "https://www.donga.com/news/Culture/article/all/20261121/135064707/1",
+        "source": "동아일보",
+        "publishedAt": "2026-11-21T02:29:38.000Z",
         "category": "culture"
       },
       {
@@ -232,42 +260,63 @@
         "source": "동아일보",
         "publishedAt": "2026-11-20T16:40:00.000Z",
         "category": "culture"
-      },
-      {
-        "title": "[오늘의 운세/11월 21일]",
-        "link": "https://www.donga.com/news/Culture/article/all/20261121/135063083/2",
-        "source": "동아일보",
-        "publishedAt": "2026-11-20T16:40:00.000Z",
-        "category": "culture"
-      },
-      {
-        "title": "원빈, 12년 전 21억에 산 성수동 건물 지금은…“그래도 영화 좀 찍자”",
-        "link": "https://www.donga.com/news/Culture/article/all/20261121/135064323/1",
-        "source": "동아일보",
-        "publishedAt": "2026-11-20T16:24:10.000Z",
-        "category": "culture"
-      },
-      {
-        "title": "“8㎏ 쪘다”던 이세영, 레드 터틀넥에 ‘쏙’…다이어트 비결은",
-        "link": "https://www.donga.com/news/Culture/article/all/20261121/135064320/1",
-        "source": "동아일보",
-        "publishedAt": "2026-11-20T16:23:27.000Z",
-        "category": "culture"
-      },
-      {
-        "title": "‘내년 4월 결혼’ 이규한·솔비, 2세 계획 언급했다",
-        "link": "https://www.donga.com/news/Culture/article/all/20261121/135064314/1",
-        "source": "동아일보",
-        "publishedAt": "2026-11-20T16:22:53.000Z",
-        "category": "culture"
       }
     ],
     "economy": [
       {
-        "title": "\"불안과 조급함이 문제\"…파산 전문 변호사가 지적한 '빚더미'의 원인",
-        "link": "https://www.newsis.com/view/NISX20261121_0003877557",
+        "title": "국토 2차관 \"화물열차 탈선 사고 엄중 인식…재발방지 대책 강구\"",
+        "link": "https://www.newsis.com/view/NISX20261121_0003877754",
         "source": "뉴시스",
-        "publishedAt": "2026-11-21T02:11:00.000Z",
+        "publishedAt": "2026-11-21T07:12:12.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "[성장의 온도차③]반도체 있어도 갈렸다…충북 29.8% 늘 때 충남 4.5% 줄어",
+        "link": "https://www.newsis.com/view/NISX20261120_0003876881",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-21T07:00:00.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "[성장의 온도차②]3% 후반 성장 전망에도 청년은 4년째 '취업 한파'",
+        "link": "https://www.newsis.com/view/NISX20261120_0003877451",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-21T06:30:00.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "[성장의 온도차①] 수출 1조弗 축포 터졌는데…식당 '80만' 선 무너졌다",
+        "link": "https://www.newsis.com/view/NISX20261120_0003877416",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-21T06:00:00.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "K-베이커리 페스티벌 사흘간 37만명 찾아…\"내년엔 세계 축제로\"",
+        "link": "https://www.yna.co.kr/view/AKR20261121035200030",
+        "source": "연합뉴스",
+        "publishedAt": "2026-11-21T05:10:42.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "강남은 떨어지고 외곽은 올랐다…서울 집값 상승률 6개월 만에 최저",
+        "link": "https://www.newsis.com/view/NISX20261121_0003877602",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-21T04:45:00.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "BNK금융 임직원, 부울경서 해양생태계 보전 '사회공헌의 날'",
+        "link": "https://www.yna.co.kr/view/AKR20261121033200051",
+        "source": "연합뉴스",
+        "publishedAt": "2026-11-21T04:01:40.000Z",
+        "category": "economy"
+      },
+      {
+        "title": "\"망하면 그건 비상사태가 아냐\"…이광수, 정부·국회 증시 대응에 쓴소리",
+        "link": "https://www.newsis.com/view/NISX20261121_0003877554",
+        "source": "뉴시스",
+        "publishedAt": "2026-11-21T03:56:00.000Z",
         "category": "economy"
       },
       {
@@ -296,55 +345,6 @@
         "link": "https://www.yna.co.kr/view/AKR20261120156900017",
         "source": "연합뉴스",
         "publishedAt": "2026-11-21T01:00:03.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "재건축 운명 가른 2017년…반포124 '0원' vs 트리니원 '3.5억'[재초환 후폭풍②]",
-        "link": "https://www.newsis.com/view/NISX20261120_0003877407",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-21T01:00:00.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "[민선9기 서울] 서준오 노원구청장 \"베드타운 벗고 기업집중 경제도시로\"",
-        "link": "https://www.yna.co.kr/view/AKR20261120135700004",
-        "source": "연합뉴스",
-        "publishedAt": "2026-11-21T00:00:01.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "\"반도체 호황에도 파급 미미…10억원당 취업유발 2.4명\"",
-        "link": "https://www.yna.co.kr/view/AKR20261120167400002",
-        "source": "연합뉴스",
-        "publishedAt": "2026-11-21T00:00:00.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "재초환 20년만에 현실화…산정·배분 기준 놓고 갈등 불씨[재초환 후폭풍①]",
-        "link": "https://www.newsis.com/view/NISX20261120_0003876480",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-20T23:00:00.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "4년 만에 대중 무역흑자 돌아섰지만…반도체 빼면 적자 확대",
-        "link": "https://www.yna.co.kr/view/AKR20261120164900003",
-        "source": "연합뉴스",
-        "publishedAt": "2026-11-20T22:00:02.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "[AI돋보기] 해킹에 커닝까지…AI의 역습에 한국 사회 비상",
-        "link": "https://www.yna.co.kr/view/AKR20261119149900017",
-        "source": "연합뉴스",
-        "publishedAt": "2026-11-20T21:33:01.000Z",
-        "category": "economy"
-      },
-      {
-        "title": "국제 유가 3주 연속 주간 하락세",
-        "link": "https://www.newsis.com/view/NISX20261121_0003877515",
-        "source": "뉴시스",
-        "publishedAt": "2026-11-20T21:22:26.000Z",
         "category": "economy"
       }
     ]
@@ -378,7 +378,7 @@
       "name": "뉴시스",
       "category": "culture",
       "status": "ok",
-      "count": 42
+      "count": 47
     },
     {
       "name": "동아일보",
@@ -390,13 +390,13 @@
       "name": "뉴시스",
       "category": "technology",
       "status": "ok",
-      "count": 72
+      "count": 81
     },
     {
       "name": "IT동아",
       "category": "technology",
       "status": "ok",
-      "count": 20
+      "count": 11
     }
   ],
   "status": "partial_or_ready",
